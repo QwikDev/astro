@@ -11,7 +11,7 @@ function getRenderer(): AstroRenderer {
 
 async function getViteConfiguration(): Promise<UserConfig> {
   const config: UserConfig = {
-    plugins: [qwikVite()],
+    plugins: [qwikVite({})],
   };
 
   return config;
