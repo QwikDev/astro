@@ -1,0 +1,3 @@
+packages:
+  - "apps/astro-demo"
+  - "libs/astrojs-qwik"
