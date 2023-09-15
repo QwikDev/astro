@@ -10,6 +10,9 @@ importers:
 
   apps/astro-demo:
     dependencies:
+      '@astrojs/qwik':
+        specifier: workspace:*
+        version: link:../../libs/astrojs-qwik
       astro:
         specifier: ^3.1.0
         version: 3.1.0

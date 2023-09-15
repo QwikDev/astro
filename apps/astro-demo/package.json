@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "astro": "^3.1.0",
-    "@astro-qwik/astrojs-qwik": "workspace:*"
+    "@astrojs/qwik": "workspace:*"
   }
 }
