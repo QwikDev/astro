@@ -1,7 +1,7 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useSignal } from "@builder.io/qwik";
 
 export const Button = component$(() => {
-  return (
-    <button onClick$={() => console.log("I should resume!")}>Click me!</button>
-  );
+  const counter = useSignal(0);
+
+  return <button onClick$={() => counter.value++}>{counter.value}</button>;
 });
