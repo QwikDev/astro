@@ -10,7 +10,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^3.1.0",
-    "@astrojs/qwik": "workspace:*"
+    "@astrojs/qwik": "workspace:*",
+    "@builder.io/qwik": "^1.2.11",
+    "astro": "^3.1.0"
   }
 }
