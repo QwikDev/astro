@@ -13,6 +13,9 @@ importers:
       '@astrojs/qwik':
         specifier: workspace:*
         version: link:../../libs/astrojs-qwik
+      '@builder.io/qwik':
+        specifier: ^1.2.11
+        version: 1.2.11(undici@5.24.0)
       astro:
         specifier: ^3.1.0
         version: 3.1.0
@@ -299,7 +302,6 @@ packages:
     dependencies:
       csstype: 3.1.2
       undici: 5.24.0
-    dev: true
 
   /@esbuild/android-arm64@0.18.20:
     resolution: {integrity: sha512-Nz4rJcchGDtENV0eMKUNa6L12zz2zBDXuhj/Vjh18zGqB44Bi7MBMSXjgunJgjRhCmKOjnPuZp4Mb6OKqtMHLQ==}
@@ -1094,7 +1096,6 @@ packages:
 
   /csstype@3.1.2:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}
-    dev: true
 
   /debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
