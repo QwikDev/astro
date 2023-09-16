@@ -1,7 +1,7 @@
 /*
  * WHAT IS THIS FILE?
  *
- * Development entry point using only client-side modules:
+ * Development entry point for Qwik using only client-side modules:
  * - Do not use this mode in production!
  * - No SSR
  * - No portion of the application is pre-rendered on the server.
