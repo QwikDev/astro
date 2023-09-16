@@ -1,13 +1,14 @@
 import { h } from "@builder.io/qwik";
 import { renderToString } from "@builder.io/qwik/server";
 
-async function renderToStaticMarkup(Component, props, slotted) {
+export async function renderToStaticMarkup(Component, props, slotted) {
   const slots = {};
   for (const [key, value] of Object.entries(slotted)) {
     slots[key] = value;
   }
   const app = h(Component, { ...props, slots });
   const html = await renderToString(app);
+
   return { html };
 }
 

@@ -4,16 +4,17 @@
   "version": "0.0.1",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./src/index.ts",
+    "./server": "./server.ts",
+    "./package.json": "./package.json"
   },
   "files": [
-    "src",
-    "index.ts"
+    "dist",
+    "server.ts"
   ],
   "keywords": [
     "withastro"
   ],
-  "scripts": {},
   "devDependencies": {
     "@builder.io/qwik": "^1.2.11",
     "astro": "^3.1.0",

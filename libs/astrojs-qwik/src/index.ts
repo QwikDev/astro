@@ -5,7 +5,7 @@ import type { UserConfig } from "vite";
 function getRenderer(): AstroRenderer {
   return {
     name: "@astrojs/qwik",
-    serverEntrypoint: "@astrojs/qwik/server.js",
+    serverEntrypoint: "@astrojs/qwik/server",
   };
 }
 
