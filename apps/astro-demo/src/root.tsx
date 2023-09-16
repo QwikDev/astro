@@ -1,10 +1,12 @@
 /* LEAVING HERE FOR NOW SO IT WORKS 
 
+Qwik seems to make assumptions of where root.tsx is placed
+
 We've kept a blank root.tsx in **astro-demo** and then added a root.tsx inside the integration, and it seems to be using the one inside of **astrojs-qwik** now suppressing the error.
 
 Giorgio mentioned that the framework needs to compose a path but is making the wrong assumption with Astro.
 
-Inside of **optimizer.mjs** we get the following error
+Inside of **optimizer.mjs** we get the following error <-- root.tsx is input
 ```
 throw new Error(`Qwik input "${input}" not found.`);
 ```
