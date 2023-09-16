@@ -1,12 +1,32 @@
+// libs/astrojs-qwik/server.ts
 import { h } from "@builder.io/qwik";
 import { renderToString } from "@builder.io/qwik/server";
+import type { RendererContext } from "./types";
+import Root from "@astrojs/qwik/root";
 
-export async function renderToStaticMarkup(Component, props, slotted) {
+function check(
+  this: RendererContext,
+  Component: any,
+  props: Record<string, any>,
+  slotted: any
+) {
+  if (typeof Component !== "function") return false;
+  const { html } = renderToStaticMarkup.call(this, Component, props, slotted);
+  return typeof html === "string";
+}
+
+export async function renderToStaticMarkup(
+  this: RendererContext,
+  Component: any,
+  props: Record<string, any>,
+  slotted: any
+) {
   const slots = {};
   for (const [key, value] of Object.entries(slotted)) {
     slots[key] = value;
   }
-  const app = h(Component, { ...props, slots });
+
+  const app = h(Root, { component: Component, props, slots });
   const html = await renderToString(app);
 
   return { html };
@@ -15,12 +35,5 @@ export async function renderToStaticMarkup(Component, props, slotted) {
 export default {
   renderToStaticMarkup,
   supportsAstroStaticSlot: true,
+  check,
 };
-
-/* 
-
-I don't believe we need static-html.js or shouldComponentUpdate, Qwik views components as if they are static already. The listeners are themselves are the roots of the application.
-
-https://www.builder.io/blog/hydration-tree-resumability-map#resumability-is-fundamentally-a-different-algorithm
-
-*/

@@ -6,11 +6,15 @@
   "exports": {
     ".": "./src/index.ts",
     "./server": "./server.ts",
+    "./root": "./root.tsx",
+    "./entry.dev": "./entry.dev.tsx",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
-    "server.ts"
+    "server.ts",
+    "root.tsx",
+    "entry.dev"
   ],
   "keywords": [
     "withastro"
