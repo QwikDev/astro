@@ -10,6 +10,7 @@ function check(
   props: Record<string, any>,
   slotted: any
 ) {
+  console.log("Inside check");
   if (typeof Component !== "function") return false;
   const { html } = renderToStaticMarkup.call(this, Component, props, slotted);
   return typeof html === "string";
@@ -22,6 +23,7 @@ export async function renderToStaticMarkup(
   slotted: any
 ) {
   const slots = {};
+  console.log("Inside renderToStaticMarkup");
   for (const [key, value] of Object.entries(slotted)) {
     slots[key] = value;
   }
