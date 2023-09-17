@@ -4,20 +4,26 @@
   "version": "0.0.1",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./server": "./server.ts",
-    "./root": "./root.tsx",
-    "./dev": "./entry.dev.tsx",
-    "./ssr": "./entry.ssr.tsx"
+    ".": "./dist/index.js",
+    "./*": "./*",
+    "./root": "./dist/root.tsx",
+    "./server": "./dist/server.ts",
+    "./dev": "./dist/entry.dev.tsx",
+    "./ssr": "./dist/entry.ssr.tsx",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc"
   },
   "files": [
     "dist",
-    "server.ts",
-    "root.tsx",
-    "entry.dev.tsx"
+    "server.ts"
   ],
   "keywords": [
-    "withastro"
+    "astro-integration",
+    "astro-component",
+    "renderer",
+    "qwik"
   ],
   "devDependencies": {
     "@builder.io/qwik": "^1.2.11",

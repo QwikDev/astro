@@ -1,6 +1,7 @@
 import type { AstroIntegration, AstroRenderer } from "astro";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import type { UserConfig } from "vite";
+import { manifest } from "@qwik-client-manifest";
 
 function getRenderer(): AstroRenderer {
   return {
@@ -20,6 +21,7 @@ async function getViteConfiguration(): Promise<UserConfig> {
         },
         ssr: {
           input: "@astrojs/qwik/ssr",
+          manifestInput: manifest,
         },
       }),
     ],

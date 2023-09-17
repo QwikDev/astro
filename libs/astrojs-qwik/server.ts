@@ -1,4 +1,3 @@
-// libs/astrojs-qwik/server.ts
 import { h } from "@builder.io/qwik";
 import { renderToString } from "@builder.io/qwik/server";
 import type { RendererContext } from "./types";
@@ -23,7 +22,9 @@ export async function renderToStaticMarkup(
   slotted: any
 ) {
   const slots = {};
+
   console.log("Inside renderToStaticMarkup");
+
   for (const [key, value] of Object.entries(slotted)) {
     slots[key] = value;
   }
