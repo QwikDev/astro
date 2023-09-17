@@ -7,14 +7,14 @@
     ".": "./src/index.ts",
     "./server": "./server.ts",
     "./root": "./root.tsx",
-    "./entry.dev": "./entry.dev.tsx",
-    "./package.json": "./package.json"
+    "./dev": "./entry.dev.tsx",
+    "./ssr": "./entry.ssr.tsx"
   },
   "files": [
     "dist",
     "server.ts",
     "root.tsx",
-    "entry.dev"
+    "entry.dev.tsx"
   ],
   "keywords": [
     "withastro"

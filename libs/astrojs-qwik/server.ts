@@ -2,7 +2,7 @@
 import { h } from "@builder.io/qwik";
 import { renderToString } from "@builder.io/qwik/server";
 import type { RendererContext } from "./types";
-import Root from "@astrojs/qwik/root";
+import Root from "./root";
 
 function check(
   this: RendererContext,
