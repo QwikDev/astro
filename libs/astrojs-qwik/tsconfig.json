@@ -2,6 +2,9 @@
   "extends": "astro/tsconfigs/base",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "@builder.io/qwik"
+    "jsxImportSource": "@builder.io/qwik",
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    "noEmit": false
   }
 }

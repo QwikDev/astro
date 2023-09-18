@@ -4,12 +4,12 @@
   "version": "0.0.1",
   "type": "module",
   "exports": {
-    ".": "./dist/index.js",
-    "./*": "./*",
-    "./root": "./dist/root.tsx",
-    "./server": "./dist/server.ts",
-    "./dev": "./dist/entry.dev.tsx",
-    "./ssr": "./dist/entry.ssr.tsx",
+    ".": "./dist/src/index.js",
+    "./*": "./dist/*",
+    "./root": "./dist/root.js",
+    "./server": "./dist/server.js",
+    "./dev": "./dist/entry.dev.js",
+    "./ssr": "./dist/entry.ssr.js",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -32,5 +32,8 @@
   },
   "peerDependencies": {
     "astro": "^2.0.0-beta.0"
+  },
+  "dependencies": {
+    "typescript": "^5.2.2"
   }
 }

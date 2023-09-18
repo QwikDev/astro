@@ -1,7 +1,6 @@
 import type { AstroIntegration, AstroRenderer } from "astro";
-import { qwikVite } from "@builder.io/qwik/optimizer";
+import { qwikVite, qwikRollup } from "@builder.io/qwik/optimizer";
 import type { UserConfig } from "vite";
-import { manifest } from "@qwik-client-manifest";
 
 function getRenderer(): AstroRenderer {
   return {
@@ -10,18 +9,17 @@ function getRenderer(): AstroRenderer {
   };
 }
 
+// qwikRollup({ target: "ssr" })
 async function getViteConfiguration(): Promise<UserConfig> {
   const config: UserConfig = {
     plugins: [
       qwikVite({
-        debug: true,
         client: {
           input: "@astrojs/qwik/root",
           devInput: "@astrojs/qwik/dev",
         },
         ssr: {
           input: "@astrojs/qwik/ssr",
-          manifestInput: manifest,
         },
       }),
     ],
