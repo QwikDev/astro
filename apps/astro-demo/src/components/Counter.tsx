@@ -1,6 +1,11 @@
 // import { component$, useSignal } from "@builder.io/qwik";
 
-import { componentQrl, inlinedQrl, useSignal } from "@builder.io/qwik";
+import {
+  component$,
+  componentQrl,
+  inlinedQrl,
+  useSignal,
+} from "@builder.io/qwik";
 
 // export const Counter = component$(() => {
 //   const counter = useSignal(0);
