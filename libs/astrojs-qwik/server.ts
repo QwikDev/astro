@@ -1,7 +1,6 @@
 import { h } from "@builder.io/qwik";
 import { renderToString } from "@builder.io/qwik/server";
 import type { RendererContext } from "./types";
-import Root from "./root";
 
 function check(
   this: RendererContext,
@@ -9,10 +8,14 @@ function check(
   props: Record<string, any>,
   slotted: any
 ) {
-  console.log("Inside check");
-  if (typeof Component !== "function") return false;
-  const { html } = renderToStaticMarkup.call(this, Component, props, slotted);
-  return typeof html === "string";
+  try {
+    if (typeof Component !== "function") return false;
+    const { html } = renderToStaticMarkup.call(this, Component, props, slotted);
+    console.log("End of check");
+    return typeof html === "string";
+  } catch (error) {
+    console.error("Error in check:", error);
+  }
 }
 
 export async function renderToStaticMarkup(
@@ -21,18 +24,22 @@ export async function renderToStaticMarkup(
   props: Record<string, any>,
   slotted: any
 ) {
-  const slots = {};
+  try {
+    const slots = {};
 
-  console.log("Inside renderToStaticMarkup");
+    for (const [key, value] of Object.entries(slotted)) {
+      slots[key] = value;
+    }
 
-  for (const [key, value] of Object.entries(slotted)) {
-    slots[key] = value;
+    const app = h(Component, { props, slots });
+    const html = await renderToString(app);
+
+    console.log("end of renderToStaticMarkup");
+    console.log(html);
+    return { html };
+  } catch (error) {
+    console.error("Error in renderToStaticMarkup:", error);
   }
-
-  const app = h(Root, { component: Component, props, slots });
-  const html = await renderToString(app);
-
-  return { html };
 }
 
 export default {

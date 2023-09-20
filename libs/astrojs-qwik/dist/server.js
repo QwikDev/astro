@@ -1,22 +1,32 @@
 import { h } from "@builder.io/qwik";
 import { renderToString } from "@builder.io/qwik/server";
-import Root from "./root";
 function check(Component, props, slotted) {
-    console.log("Inside check");
-    if (typeof Component !== "function")
-        return false;
-    const { html } = renderToStaticMarkup.call(this, Component, props, slotted);
-    return typeof html === "string";
+    try {
+        if (typeof Component !== "function")
+            return false;
+        const { html } = renderToStaticMarkup.call(this, Component, props, slotted);
+        console.log("End of check");
+        return typeof html === "string";
+    }
+    catch (error) {
+        console.error("Error in check:", error);
+    }
 }
 export async function renderToStaticMarkup(Component, props, slotted) {
-    const slots = {};
-    console.log("Inside renderToStaticMarkup");
-    for (const [key, value] of Object.entries(slotted)) {
-        slots[key] = value;
+    try {
+        const slots = {};
+        for (const [key, value] of Object.entries(slotted)) {
+            slots[key] = value;
+        }
+        const app = h(Component, { props, slots });
+        const html = await renderToString(app);
+        console.log("end of renderToStaticMarkup");
+        console.log(html);
+        return { html };
     }
-    const app = h(Root, { component: Component, props, slots });
-    const html = await renderToString(app);
-    return { html };
+    catch (error) {
+        console.error("Error in renderToStaticMarkup:", error);
+    }
 }
 export default {
     renderToStaticMarkup,

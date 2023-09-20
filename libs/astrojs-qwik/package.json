@@ -6,10 +6,7 @@
   "exports": {
     ".": "./dist/src/index.js",
     "./*": "./dist/*",
-    "./root": "./dist/root.js",
     "./server": "./dist/server.js",
-    "./dev": "./dist/entry.dev.js",
-    "./ssr": "./dist/entry.ssr.js",
     "./package.json": "./package.json"
   },
   "scripts": {
