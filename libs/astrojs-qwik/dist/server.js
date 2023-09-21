@@ -1,10 +1,10 @@
 import { h } from "@builder.io/qwik";
 import { renderToString } from "@builder.io/qwik/server";
-function check(Component, props, slotted) {
+async function check(Component, props, slotted) {
     try {
         if (typeof Component !== "function")
             return false;
-        const { html } = renderToStaticMarkup.call(this, Component, props, slotted);
+        const { html } = await renderToStaticMarkup.call(this, Component, props, slotted);
         console.log("End of check");
         return typeof html === "string";
     }
@@ -19,10 +19,10 @@ export async function renderToStaticMarkup(Component, props, slotted) {
             slots[key] = value;
         }
         const app = h(Component, { props, slots });
-        const html = await renderToString(app);
+        const html = await renderToString(app, { containerTagName: "div" });
         console.log("end of renderToStaticMarkup");
-        console.log(html);
-        return { html };
+        console.log(html.html);
+        return html;
     }
     catch (error) {
         console.error("Error in renderToStaticMarkup:", error);
