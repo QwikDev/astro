@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/errors/errors.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import { codeFrame } from \"./printer.js\";\nfunction isAstroError(e) {\n  return e instanceof Error && e.type === \"AstroError\";\n}\nclass AstroError extends Error {\n  loc;\n  title;\n  hint;\n  frame;\n  type = \"AstroError\";\n  constructor(props, ...params) {\n    super(...params);\n    const { name, title, message, stack, location, hint, frame } = props;\n    this.title = title;\n    this.name = name;\n    if (message)\n      this.message = message;\n    this.stack = stack ? stack : this.stack;\n    this.loc = location;\n    this.hint = hint;\n    this.frame = frame;\n  }\n  setLocation(location) {\n    this.loc = location;\n  }\n  setName(name) {\n    this.name = name;\n  }\n  setMessage(message) {\n    this.message = message;\n  }\n  setHint(hint) {\n    this.hint = hint;\n  }\n  setFrame(source, location) {\n    this.frame = codeFrame(source, location);\n  }\n  static is(err) {\n    return err.type === \"AstroError\";\n  }\n}\nclass CompilerError extends AstroError {\n  type = \"CompilerError\";\n  constructor(props, ...params) {\n    super(props, ...params);\n  }\n  static is(err) {\n    return err.type === \"CompilerError\";\n  }\n}\nclass CSSError extends AstroError {\n  type = \"CSSError\";\n  static is(err) {\n    return err.type === \"CSSError\";\n  }\n}\nclass MarkdownError extends AstroError {\n  type = \"MarkdownError\";\n  static is(err) {\n    return err.type === \"MarkdownError\";\n  }\n}\nclass InternalError extends AstroError {\n  type = \"InternalError\";\n  static is(err) {\n    return err.type === \"InternalError\";\n  }\n}\nclass AggregateError extends AstroError {\n  type = \"AggregateError\";\n  errors;\n  // Despite being a collection of errors, AggregateError still needs to have a main error attached to it\n  // This is because Vite expects every thrown errors handled during HMR to be, well, Error and have a message\n  constructor(props, ...params) {\n    super(props, ...params);\n    this.errors = props.errors;\n  }\n  static is(err) {\n    return err.type === \"AggregateError\";\n  }\n}\nconst astroConfigZodErrors = /* @__PURE__ */ new WeakSet();\nfunction isAstroConfigZodError(error) {\n  return astroConfigZodErrors.has(error);\n}\nfunction trackAstroConfigZodError(error) {\n  astroConfigZodErrors.add(error);\n}\nclass AstroUserError extends Error {\n  type = \"AstroUserError\";\n  /**\n   * A message that explains to the user how they can fix the error.\n   */\n  hint;\n  name = \"AstroUserError\";\n  constructor(message, hint) {\n    super();\n    this.message = message;\n    this.hint = hint;\n  }\n  static is(err) {\n    return err.type === \"AstroUserError\";\n  }\n}\nexport {\n  AggregateError,\n  AstroError,\n  AstroUserError,\n  CSSError,\n  CompilerError,\n  InternalError,\n  MarkdownError,\n  isAstroConfigZodError,\n  isAstroError,\n  trackAstroConfigZodError\n};\n",
+      "start": 1695410711189,
+      "end": 1695410711304,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711304,
+      "end": 1695410711304,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711304,
+      "end": 1695410711304,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711304,
+      "end": 1695410711304,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711304,
+      "end": 1695410711304,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711304,
+      "end": 1695410711305,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711304,
+      "end": 1695410711305,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711305,
+      "end": 1695410711305,
+      "order": "normal"
+    }
+  ]
+}

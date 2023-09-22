@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/transitions/index.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "const EASE_IN_OUT_QUART = \"cubic-bezier(0.76, 0, 0.24, 1)\";\nfunction slide({\n  duration\n} = {}) {\n  return {\n    forwards: {\n      old: [\n        {\n          name: \"astroFadeOut\",\n          duration: duration ?? \"90ms\",\n          easing: EASE_IN_OUT_QUART,\n          fillMode: \"both\"\n        },\n        {\n          name: \"astroSlideToLeft\",\n          duration: duration ?? \"220ms\",\n          easing: EASE_IN_OUT_QUART,\n          fillMode: \"both\"\n        }\n      ],\n      new: [\n        {\n          name: \"astroFadeIn\",\n          duration: duration ?? \"210ms\",\n          easing: EASE_IN_OUT_QUART,\n          delay: duration ? void 0 : \"30ms\",\n          fillMode: \"both\"\n        },\n        {\n          name: \"astroSlideFromRight\",\n          duration: duration ?? \"220ms\",\n          easing: EASE_IN_OUT_QUART,\n          fillMode: \"both\"\n        }\n      ]\n    },\n    backwards: {\n      old: [{ name: \"astroFadeOut\" }, { name: \"astroSlideToRight\" }],\n      new: [{ name: \"astroFadeIn\" }, { name: \"astroSlideFromLeft\" }]\n    }\n  };\n}\nfunction fade({\n  duration\n} = {}) {\n  const anim = {\n    old: {\n      name: \"astroFadeOut\",\n      duration: duration ?? 180,\n      easing: EASE_IN_OUT_QUART,\n      fillMode: \"both\"\n    },\n    new: {\n      name: \"astroFadeIn\",\n      duration: duration ?? 180,\n      easing: EASE_IN_OUT_QUART,\n      fillMode: \"both\"\n    }\n  };\n  return {\n    forwards: anim,\n    backwards: anim\n  };\n}\nexport {\n  fade,\n  slide\n};\n",
+      "start": 1695410711361,
+      "end": 1695410711424,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711424,
+      "end": 1695410711424,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711425,
+      "end": 1695410711425,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711425,
+      "end": 1695410711425,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711425,
+      "end": 1695410711425,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711425,
+      "end": 1695410711425,
+      "order": "normal"
+    }
+  ]
+}

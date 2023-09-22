@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/result.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import { renderSlotToString } from \"../../runtime/server/index.js\";\nimport { renderJSX } from \"../../runtime/server/jsx.js\";\nimport { chunkToString } from \"../../runtime/server/render/index.js\";\nimport { AstroCookies } from \"../cookies/index.js\";\nimport { AstroError, AstroErrorData } from \"../errors/index.js\";\nconst clientAddressSymbol = Symbol.for(\"astro.clientAddress\");\nconst responseSentSymbol = Symbol.for(\"astro.responseSent\");\nfunction getFunctionExpression(slot) {\n  if (!slot)\n    return;\n  if (slot.expressions?.length !== 1)\n    return;\n  return slot.expressions[0];\n}\nclass Slots {\n  #result;\n  #slots;\n  #logger;\n  constructor(result, slots, logger) {\n    this.#result = result;\n    this.#slots = slots;\n    this.#logger = logger;\n    if (slots) {\n      for (const key of Object.keys(slots)) {\n        if (this[key] !== void 0) {\n          throw new AstroError({\n            ...AstroErrorData.ReservedSlotName,\n            message: AstroErrorData.ReservedSlotName.message(key)\n          });\n        }\n        Object.defineProperty(this, key, {\n          get() {\n            return true;\n          },\n          enumerable: true\n        });\n      }\n    }\n  }\n  has(name) {\n    if (!this.#slots)\n      return false;\n    return Boolean(this.#slots[name]);\n  }\n  async render(name, args = []) {\n    if (!this.#slots || !this.has(name))\n      return;\n    const result = this.#result;\n    if (!Array.isArray(args)) {\n      this.#logger.warn(\n        \"Astro.slots.render\",\n        `Expected second parameter to be an array, received a ${typeof args}. If you're trying to pass an array as a single argument and getting unexpected results, make sure you're passing your array as a item of an array. Ex: Astro.slots.render('default', [[\"Hello\", \"World\"]])`\n      );\n    } else if (args.length > 0) {\n      const slotValue = this.#slots[name];\n      const component = typeof slotValue === \"function\" ? await slotValue(result) : await slotValue;\n      const expression = getFunctionExpression(component);\n      if (expression) {\n        const slot = async () => typeof expression === \"function\" ? expression(...args) : expression;\n        return await renderSlotToString(result, slot).then((res) => {\n          return res != null ? String(res) : res;\n        });\n      }\n      if (typeof component === \"function\") {\n        return await renderJSX(result, component(...args)).then(\n          (res) => res != null ? String(res) : res\n        );\n      }\n    }\n    const content = await renderSlotToString(result, this.#slots[name]);\n    const outHTML = chunkToString(result, content);\n    return outHTML;\n  }\n}\nfunction createResult(args) {\n  const { params, request, resolve, locals } = args;\n  const url = new URL(request.url);\n  const headers = new Headers();\n  headers.set(\"Content-Type\", \"text/html\");\n  const response = {\n    status: args.status,\n    statusText: \"OK\",\n    headers\n  };\n  Object.defineProperty(response, \"headers\", {\n    value: response.headers,\n    enumerable: true,\n    writable: false\n  });\n  let cookies = args.cookies;\n  const result = {\n    styles: args.styles ?? /* @__PURE__ */ new Set(),\n    scripts: args.scripts ?? /* @__PURE__ */ new Set(),\n    links: args.links ?? /* @__PURE__ */ new Set(),\n    componentMetadata: args.componentMetadata ?? /* @__PURE__ */ new Map(),\n    renderers: args.renderers,\n    clientDirectives: args.clientDirectives,\n    compressHTML: args.compressHTML,\n    pathname: args.pathname,\n    cookies,\n    /** This function returns the `Astro` faux-global */\n    createAstro(astroGlobal, props, slots) {\n      const astroSlots = new Slots(result, slots, args.logger);\n      const Astro = {\n        // @ts-expect-error\n        __proto__: astroGlobal,\n        get clientAddress() {\n          if (!(clientAddressSymbol in request)) {\n            if (args.adapterName) {\n              throw new AstroError({\n                ...AstroErrorData.ClientAddressNotAvailable,\n                message: AstroErrorData.ClientAddressNotAvailable.message(args.adapterName)\n              });\n            } else {\n              throw new AstroError(AstroErrorData.StaticClientAddressNotAvailable);\n            }\n          }\n          return Reflect.get(request, clientAddressSymbol);\n        },\n        get cookies() {\n          if (cookies) {\n            return cookies;\n          }\n          cookies = new AstroCookies(request);\n          result.cookies = cookies;\n          return cookies;\n        },\n        params,\n        props,\n        locals,\n        request,\n        url,\n        redirect(path, status) {\n          if (request[responseSentSymbol]) {\n            throw new AstroError({\n              ...AstroErrorData.ResponseSentError\n            });\n          }\n          return new Response(null, {\n            status: status || 302,\n            headers: {\n              Location: path\n            }\n          });\n        },\n        response,\n        slots: astroSlots\n      };\n      return Astro;\n    },\n    resolve,\n    response,\n    _metadata: {\n      hasHydrationScript: false,\n      hasRenderedHead: false,\n      hasDirectives: /* @__PURE__ */ new Set(),\n      headInTree: false,\n      extraHead: [],\n      propagators: /* @__PURE__ */ new Map()\n    }\n  };\n  return result;\n}\nexport {\n  createResult\n};\n",
+      "start": 1695410711179,
+      "end": 1695410711307,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711307,
+      "end": 1695410711307,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711307,
+      "end": 1695410711307,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711307,
+      "end": 1695410711307,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711307,
+      "end": 1695410711307,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711307,
+      "end": 1695410711307,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711307,
+      "end": 1695410711307,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711307,
+      "end": 1695410711307,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711307,
+      "end": 1695410711307,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711307,
+      "end": 1695410711307,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711307,
+      "end": 1695410711307,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711307,
+      "end": 1695410711307,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711307,
+      "end": 1695410711308,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711308,
+      "end": 1695410711308,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711308,
+      "end": 1695410711308,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711308,
+      "end": 1695410711308,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711308,
+      "end": 1695410711308,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711308,
+      "end": 1695410711308,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711308,
+      "end": 1695410711308,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711308,
+      "end": 1695410711308,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711308,
+      "end": 1695410711308,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711308,
+      "end": 1695410711308,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711308,
+      "end": 1695410711308,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711308,
+      "end": 1695410711309,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711309,
+      "end": 1695410711309,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711309,
+      "end": 1695410711309,
+      "order": "normal"
+    }
+  ]
+}

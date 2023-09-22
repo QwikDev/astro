@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/common.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import { HTMLBytes, HTMLString, markHTMLString } from \"../escape.js\";\nimport {\n  determineIfNeedsHydrationScript,\n  determinesIfNeedsDirectiveScript,\n  getPrescripts\n} from \"../scripts.js\";\nimport { renderAllHeadContent } from \"./head.js\";\nimport { isRenderInstruction } from \"./instruction.js\";\nimport { isSlotString } from \"./slot.js\";\nconst Fragment = Symbol.for(\"astro:fragment\");\nconst Renderer = Symbol.for(\"astro:renderer\");\nconst encoder = new TextEncoder();\nconst decoder = new TextDecoder();\nfunction stringifyChunk(result, chunk) {\n  if (isRenderInstruction(chunk)) {\n    const instruction = chunk;\n    switch (instruction.type) {\n      case \"directive\": {\n        const { hydration } = instruction;\n        let needsHydrationScript = hydration && determineIfNeedsHydrationScript(result);\n        let needsDirectiveScript = hydration && determinesIfNeedsDirectiveScript(result, hydration.directive);\n        let prescriptType = needsHydrationScript ? \"both\" : needsDirectiveScript ? \"directive\" : null;\n        if (prescriptType) {\n          let prescripts = getPrescripts(result, prescriptType, hydration.directive);\n          return markHTMLString(prescripts);\n        } else {\n          return \"\";\n        }\n      }\n      case \"head\": {\n        if (result._metadata.hasRenderedHead) {\n          return \"\";\n        }\n        return renderAllHeadContent(result);\n      }\n      case \"maybe-head\": {\n        if (result._metadata.hasRenderedHead || result._metadata.headInTree) {\n          return \"\";\n        }\n        return renderAllHeadContent(result);\n      }\n      default: {\n        throw new Error(`Unknown chunk type: ${chunk.type}`);\n      }\n    }\n  } else if (chunk instanceof Response) {\n    return \"\";\n  } else if (isSlotString(chunk)) {\n    let out = \"\";\n    const c = chunk;\n    if (c.instructions) {\n      for (const instr of c.instructions) {\n        out += stringifyChunk(result, instr);\n      }\n    }\n    out += chunk.toString();\n    return out;\n  }\n  return chunk.toString();\n}\nfunction chunkToString(result, chunk) {\n  if (ArrayBuffer.isView(chunk)) {\n    return decoder.decode(chunk);\n  } else {\n    return stringifyChunk(result, chunk);\n  }\n}\nfunction chunkToByteArray(result, chunk) {\n  if (ArrayBuffer.isView(chunk)) {\n    return chunk;\n  } else {\n    const stringified = stringifyChunk(result, chunk);\n    return encoder.encode(stringified.toString());\n  }\n}\nfunction isRenderInstance(obj) {\n  return !!obj && typeof obj === \"object\" && \"render\" in obj && typeof obj.render === \"function\";\n}\nexport {\n  Fragment,\n  Renderer,\n  chunkToByteArray,\n  chunkToString,\n  decoder,\n  encoder,\n  isRenderInstance\n};\n",
+      "start": 1695410711356,
+      "end": 1695410711400,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711400,
+      "end": 1695410711400,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711400,
+      "end": 1695410711401,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711401,
+      "end": 1695410711401,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711401,
+      "end": 1695410711401,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711401,
+      "end": 1695410711401,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711401,
+      "end": 1695410711401,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711401,
+      "end": 1695410711401,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711401,
+      "end": 1695410711401,
+      "order": "normal"
+    }
+  ]
+}

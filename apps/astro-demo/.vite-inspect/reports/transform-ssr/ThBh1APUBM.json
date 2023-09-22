@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/any.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import { escapeHTML, isHTMLString, markHTMLString } from \"../escape.js\";\nimport { isAstroComponentInstance, isRenderTemplateResult } from \"./astro/index.js\";\nimport { isRenderInstance } from \"./common.js\";\nimport { SlotString } from \"./slot.js\";\nimport { renderToBufferDestination } from \"./util.js\";\nasync function renderChild(destination, child) {\n  child = await child;\n  if (child instanceof SlotString) {\n    destination.write(child);\n  } else if (isHTMLString(child)) {\n    destination.write(child);\n  } else if (Array.isArray(child)) {\n    const childRenders = child.map((c) => {\n      return renderToBufferDestination((bufferDestination) => {\n        return renderChild(bufferDestination, c);\n      });\n    });\n    for (const childRender of childRenders) {\n      if (!childRender)\n        continue;\n      await childRender.renderToFinalDestination(destination);\n    }\n  } else if (typeof child === \"function\") {\n    await renderChild(destination, child());\n  } else if (typeof child === \"string\") {\n    destination.write(markHTMLString(escapeHTML(child)));\n  } else if (!child && child !== 0) {\n  } else if (isRenderInstance(child)) {\n    await child.render(destination);\n  } else if (isRenderTemplateResult(child)) {\n    await child.render(destination);\n  } else if (isAstroComponentInstance(child)) {\n    await child.render(destination);\n  } else if (ArrayBuffer.isView(child)) {\n    destination.write(child);\n  } else if (typeof child === \"object\" && (Symbol.asyncIterator in child || Symbol.iterator in child)) {\n    for await (const value of child) {\n      await renderChild(destination, value);\n    }\n  } else {\n    destination.write(child);\n  }\n}\nexport {\n  renderChild\n};\n",
+      "start": 1695410711417,
+      "end": 1695410711544,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711544,
+      "end": 1695410711544,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711544,
+      "end": 1695410711545,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711545,
+      "end": 1695410711545,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711545,
+      "end": 1695410711545,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711545,
+      "end": 1695410711545,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711545,
+      "end": 1695410711545,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711545,
+      "end": 1695410711545,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711545,
+      "end": 1695410711545,
+      "order": "normal"
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/index.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import { createHeadAndContent, renderTemplate, renderToString } from \"./astro/index.js\";\nimport { Fragment, Renderer, chunkToByteArray, chunkToString } from \"./common.js\";\nimport { renderComponent, renderComponentToString } from \"./component.js\";\nimport { renderHTMLElement } from \"./dom.js\";\nimport { maybeRenderHead, renderHead } from \"./head.js\";\nimport { renderPage } from \"./page.js\";\nimport { renderSlot, renderSlotToString } from \"./slot.js\";\nimport { renderScriptElement, renderUniqueStylesheet } from \"./tags.js\";\nimport { addAttribute, defineScriptVars, voidElementNames } from \"./util.js\";\nexport {\n  Fragment,\n  Renderer,\n  addAttribute,\n  chunkToByteArray,\n  chunkToString,\n  createHeadAndContent,\n  defineScriptVars,\n  maybeRenderHead,\n  renderComponent,\n  renderComponentToString,\n  renderHTMLElement,\n  renderHead,\n  renderPage,\n  renderScriptElement,\n  renderSlot,\n  renderSlotToString,\n  renderTemplate,\n  renderToString,\n  renderUniqueStylesheet,\n  voidElementNames\n};\n",
+      "start": 1695410711267,
+      "end": 1695410711352,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711352,
+      "end": 1695410711352,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711352,
+      "end": 1695410711353,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711353,
+      "end": 1695410711353,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711353,
+      "end": 1695410711353,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711353,
+      "end": 1695410711353,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711353,
+      "end": 1695410711353,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711353,
+      "end": 1695410711353,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711353,
+      "end": 1695410711353,
+      "order": "normal"
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/routing/validation.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import { AstroError, AstroErrorData } from \"../errors/index.js\";\nconst VALID_PARAM_TYPES = [\"string\", \"number\", \"undefined\"];\nfunction validateGetStaticPathsParameter([key, value], route) {\n  if (!VALID_PARAM_TYPES.includes(typeof value)) {\n    throw new AstroError({\n      ...AstroErrorData.GetStaticPathsInvalidRouteParam,\n      message: AstroErrorData.GetStaticPathsInvalidRouteParam.message(key, value, typeof value),\n      location: {\n        file: route\n      }\n    });\n  }\n}\nfunction validateDynamicRouteModule(mod, {\n  ssr,\n  route\n}) {\n  if ((!ssr || route.prerender) && !mod.getStaticPaths) {\n    throw new AstroError({\n      ...AstroErrorData.GetStaticPathsRequired,\n      location: { file: route.component }\n    });\n  }\n}\nfunction validateGetStaticPathsResult(result, logger, route) {\n  if (!Array.isArray(result)) {\n    throw new AstroError({\n      ...AstroErrorData.InvalidGetStaticPathsReturn,\n      message: AstroErrorData.InvalidGetStaticPathsReturn.message(typeof result),\n      location: {\n        file: route.component\n      }\n    });\n  }\n  result.forEach((pathObject) => {\n    if (typeof pathObject === \"object\" && Array.isArray(pathObject) || pathObject === null) {\n      throw new AstroError({\n        ...AstroErrorData.InvalidGetStaticPathsEntry,\n        message: AstroErrorData.InvalidGetStaticPathsEntry.message(\n          Array.isArray(pathObject) ? \"array\" : typeof pathObject\n        )\n      });\n    }\n    if (pathObject.params === void 0 || pathObject.params === null || pathObject.params && Object.keys(pathObject.params).length === 0) {\n      throw new AstroError({\n        ...AstroErrorData.GetStaticPathsExpectedParams,\n        location: {\n          file: route.component\n        }\n      });\n    }\n    for (const [key, val] of Object.entries(pathObject.params)) {\n      if (!(typeof val === \"undefined\" || typeof val === \"string\" || typeof val === \"number\")) {\n        logger.warn(\n          \"getStaticPaths\",\n          `invalid path param: ${key}. A string, number or undefined value was expected, but got \\`${JSON.stringify(\n            val\n          )}\\`.`\n        );\n      }\n      if (typeof val === \"string\" && val === \"\") {\n        logger.warn(\n          \"getStaticPaths\",\n          `invalid path param: ${key}. \\`undefined\\` expected for an optional param, but got empty string.`\n        );\n      }\n    }\n  });\n}\nexport {\n  validateDynamicRouteModule,\n  validateGetStaticPathsParameter,\n  validateGetStaticPathsResult\n};\n",
+      "start": 1695410711120,
+      "end": 1695410711194,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711194,
+      "end": 1695410711194,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711195,
+      "end": 1695410711195,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711195,
+      "end": 1695410711195,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711195,
+      "end": 1695410711195,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711195,
+      "end": 1695410711195,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711195,
+      "end": 1695410711195,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711195,
+      "end": 1695410711195,
+      "order": "normal"
+    }
+  ]
+}

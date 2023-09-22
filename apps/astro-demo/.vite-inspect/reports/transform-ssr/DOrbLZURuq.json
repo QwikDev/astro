@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/logger/core.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import { dim } from \"kleur/colors\";\nimport stringWidth from \"string-width\";\nconst dateTimeFormat = new Intl.DateTimeFormat([], {\n  hour: \"2-digit\",\n  minute: \"2-digit\",\n  second: \"2-digit\"\n});\nconst levels = {\n  debug: 20,\n  info: 30,\n  warn: 40,\n  error: 50,\n  silent: 90\n};\nfunction log(opts, level, label, message) {\n  const logLevel = opts.level;\n  const dest = opts.dest;\n  const event = {\n    label,\n    level,\n    message\n  };\n  if (levels[logLevel] > levels[level]) {\n    return;\n  }\n  dest.write(event);\n}\nfunction info(opts, label, message) {\n  return log(opts, \"info\", label, message);\n}\nfunction warn(opts, label, message) {\n  return log(opts, \"warn\", label, message);\n}\nfunction error(opts, label, message) {\n  return log(opts, \"error\", label, message);\n}\nfunction table(opts, columns) {\n  return function logTable(logFn, ...input) {\n    const message = columns.map((len, i) => padStr(input[i].toString(), len)).join(\" \");\n    logFn(opts, null, message);\n  };\n}\nfunction debug(...args) {\n  if (\"_astroGlobalDebug\" in globalThis) {\n    globalThis._astroGlobalDebug(...args);\n  }\n}\nfunction padStr(str, len) {\n  const strLen = stringWidth(str);\n  if (strLen > len) {\n    return str.substring(0, len - 3) + \"...\";\n  }\n  const spaces = Array.from({ length: len - strLen }, () => \" \").join(\"\");\n  return str + spaces;\n}\nlet defaultLogLevel;\nif (typeof process !== \"undefined\") {\n  let proc = process;\n  if (\"argv\" in proc && Array.isArray(proc.argv)) {\n    if (proc.argv.includes(\"--verbose\")) {\n      defaultLogLevel = \"debug\";\n    } else if (proc.argv.includes(\"--silent\")) {\n      defaultLogLevel = \"silent\";\n    } else {\n      defaultLogLevel = \"info\";\n    }\n  } else {\n    defaultLogLevel = \"info\";\n  }\n} else {\n  defaultLogLevel = \"info\";\n}\nfunction timerMessage(message, startTime = Date.now()) {\n  let timeDiff = Date.now() - startTime;\n  let timeDisplay = timeDiff < 750 ? `${Math.round(timeDiff)}ms` : `${(timeDiff / 1e3).toFixed(1)}s`;\n  return `${message}   ${dim(timeDisplay)}`;\n}\nclass Logger {\n  options;\n  constructor(options) {\n    this.options = options;\n  }\n  info(label, message) {\n    info(this.options, label, message);\n  }\n  warn(label, message) {\n    warn(this.options, label, message);\n  }\n  error(label, message) {\n    error(this.options, label, message);\n  }\n  debug(label, message, ...args) {\n    debug(this.options, label, message, args);\n  }\n  level() {\n    return this.options.level;\n  }\n  forkIntegrationLogger(label) {\n    return new AstroIntegrationLogger(this.options, label);\n  }\n}\nclass AstroIntegrationLogger {\n  options;\n  label;\n  constructor(logging, label) {\n    this.options = logging;\n    this.label = label;\n  }\n  /**\n   * Creates a new logger instance with a new label, but the same log options.\n   */\n  fork(label) {\n    return new AstroIntegrationLogger(this.options, label);\n  }\n  info(message) {\n    info(this.options, this.label, message);\n  }\n  warn(message) {\n    warn(this.options, this.label, message);\n  }\n  error(message) {\n    error(this.options, this.label, message);\n  }\n  debug(message) {\n    debug(this.options, this.label, message);\n  }\n}\nexport {\n  AstroIntegrationLogger,\n  Logger,\n  dateTimeFormat,\n  debug,\n  defaultLogLevel,\n  error,\n  info,\n  levels,\n  log,\n  table,\n  timerMessage,\n  warn\n};\n",
+      "start": 1695410710968,
+      "end": 1695410711102,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711102,
+      "end": 1695410711102,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711102,
+      "end": 1695410711103,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711103,
+      "end": 1695410711103,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711103,
+      "end": 1695410711103,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711103,
+      "end": 1695410711103,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711103,
+      "end": 1695410711103,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711103,
+      "end": 1695410711103,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711103,
+      "end": 1695410711103,
+      "order": "normal"
+    }
+  ]
+}

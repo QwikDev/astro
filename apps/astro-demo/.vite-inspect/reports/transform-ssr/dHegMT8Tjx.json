@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/scripts.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import islandScript from \"./astro-island.prebuilt.js\";\nconst ISLAND_STYLES = `<style>astro-island,astro-slot,astro-static-slot{display:contents}</style>`;\nfunction determineIfNeedsHydrationScript(result) {\n  if (result._metadata.hasHydrationScript) {\n    return false;\n  }\n  return result._metadata.hasHydrationScript = true;\n}\nfunction determinesIfNeedsDirectiveScript(result, directive) {\n  if (result._metadata.hasDirectives.has(directive)) {\n    return false;\n  }\n  result._metadata.hasDirectives.add(directive);\n  return true;\n}\nfunction getDirectiveScriptText(result, directive) {\n  const clientDirectives = result.clientDirectives;\n  const clientDirective = clientDirectives.get(directive);\n  if (!clientDirective) {\n    throw new Error(`Unknown directive: ${directive}`);\n  }\n  return clientDirective;\n}\nfunction getPrescripts(result, type, directive) {\n  switch (type) {\n    case \"both\":\n      return `${ISLAND_STYLES}<script>${getDirectiveScriptText(\n        result,\n        directive\n      )};${islandScript}</script>`;\n    case \"directive\":\n      return `<script>${getDirectiveScriptText(result, directive)}</script>`;\n  }\n  return \"\";\n}\nexport {\n  determineIfNeedsHydrationScript,\n  determinesIfNeedsDirectiveScript,\n  getPrescripts\n};\n",
+      "start": 1695410711405,
+      "end": 1695410711541,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711541,
+      "end": 1695410711541,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711541,
+      "end": 1695410711542,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711542,
+      "end": 1695410711542,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711542,
+      "end": 1695410711542,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711542,
+      "end": 1695410711542,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711542,
+      "end": 1695410711542,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711542,
+      "end": 1695410711542,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711542,
+      "end": 1695410711542,
+      "order": "normal"
+    }
+  ]
+}

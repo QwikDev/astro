@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/tags.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import { renderElement } from \"./util.js\";\nfunction renderScriptElement({ props, children }) {\n  return renderElement(\"script\", {\n    props,\n    children\n  });\n}\nfunction renderUniqueStylesheet(result, sheet) {\n  if (sheet.type === \"external\") {\n    if (Array.from(result.styles).some((s) => s.props.href === sheet.src))\n      return \"\";\n    return renderElement(\"link\", { props: { rel: \"stylesheet\", href: sheet.src }, children: \"\" });\n  }\n  if (sheet.type === \"inline\") {\n    if (Array.from(result.styles).some((s) => s.children.includes(sheet.content)))\n      return \"\";\n    return renderElement(\"style\", { props: {}, children: sheet.content });\n  }\n}\nexport {\n  renderScriptElement,\n  renderUniqueStylesheet\n};\n",
+      "start": 1695410711356,
+      "end": 1695410711417,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711417,
+      "end": 1695410711417,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711417,
+      "end": 1695410711418,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711418,
+      "end": 1695410711418,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711418,
+      "end": 1695410711418,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711418,
+      "end": 1695410711418,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711418,
+      "end": 1695410711418,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711418,
+      "end": 1695410711418,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711418,
+      "end": 1695410711418,
+      "order": "normal"
+    }
+  ]
+}

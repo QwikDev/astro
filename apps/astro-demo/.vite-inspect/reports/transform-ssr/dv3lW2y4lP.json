@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/hydration.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import { AstroError, AstroErrorData } from \"../../core/errors/index.js\";\nimport { escapeHTML } from \"./escape.js\";\nimport { serializeProps } from \"./serialize.js\";\nconst transitionDirectivesToCopyOnIsland = Object.freeze([\n  \"data-astro-transition-scope\",\n  \"data-astro-transition-persist\"\n]);\nfunction extractDirectives(inputProps, clientDirectives) {\n  let extracted = {\n    isPage: false,\n    hydration: null,\n    props: {}\n  };\n  for (const [key, value] of Object.entries(inputProps)) {\n    if (key.startsWith(\"server:\")) {\n      if (key === \"server:root\") {\n        extracted.isPage = true;\n      }\n    }\n    if (key.startsWith(\"client:\")) {\n      if (!extracted.hydration) {\n        extracted.hydration = {\n          directive: \"\",\n          value: \"\",\n          componentUrl: \"\",\n          componentExport: { value: \"\" }\n        };\n      }\n      switch (key) {\n        case \"client:component-path\": {\n          extracted.hydration.componentUrl = value;\n          break;\n        }\n        case \"client:component-export\": {\n          extracted.hydration.componentExport.value = value;\n          break;\n        }\n        case \"client:component-hydration\": {\n          break;\n        }\n        case \"client:display-name\": {\n          break;\n        }\n        default: {\n          extracted.hydration.directive = key.split(\":\")[1];\n          extracted.hydration.value = value;\n          if (!clientDirectives.has(extracted.hydration.directive)) {\n            const hydrationMethods = Array.from(clientDirectives.keys()).map((d) => `client:${d}`).join(\", \");\n            throw new Error(\n              `Error: invalid hydration directive \"${key}\". Supported hydration methods: ${hydrationMethods}`\n            );\n          }\n          if (extracted.hydration.directive === \"media\" && typeof extracted.hydration.value !== \"string\") {\n            throw new AstroError(AstroErrorData.MissingMediaQueryDirective);\n          }\n          break;\n        }\n      }\n    } else {\n      extracted.props[key] = value;\n    }\n  }\n  for (const sym of Object.getOwnPropertySymbols(inputProps)) {\n    extracted.props[sym] = inputProps[sym];\n  }\n  return extracted;\n}\nasync function generateHydrateScript(scriptOptions, metadata) {\n  const { renderer, result, astroId, props, attrs } = scriptOptions;\n  const { hydrate, componentUrl, componentExport } = metadata;\n  if (!componentExport.value) {\n    throw new Error(\n      `Unable to resolve a valid export for \"${metadata.displayName}\"! Please open an issue at https://astro.build/issues!`\n    );\n  }\n  const island = {\n    children: \"\",\n    props: {\n      // This is for HMR, probably can avoid it in prod\n      uid: astroId\n    }\n  };\n  if (attrs) {\n    for (const [key, value] of Object.entries(attrs)) {\n      island.props[key] = escapeHTML(value);\n    }\n  }\n  island.props[\"component-url\"] = await result.resolve(decodeURI(componentUrl));\n  if (renderer.clientEntrypoint) {\n    island.props[\"component-export\"] = componentExport.value;\n    island.props[\"renderer-url\"] = await result.resolve(decodeURI(renderer.clientEntrypoint));\n    island.props[\"props\"] = escapeHTML(serializeProps(props, metadata));\n  }\n  island.props[\"ssr\"] = \"\";\n  island.props[\"client\"] = hydrate;\n  let beforeHydrationUrl = await result.resolve(\"astro:scripts/before-hydration.js\");\n  if (beforeHydrationUrl.length) {\n    island.props[\"before-hydration-url\"] = beforeHydrationUrl;\n  }\n  island.props[\"opts\"] = escapeHTML(\n    JSON.stringify({\n      name: metadata.displayName,\n      value: metadata.hydrateArgs || \"\"\n    })\n  );\n  transitionDirectivesToCopyOnIsland.forEach((name) => {\n    if (props[name]) {\n      island.props[name] = props[name];\n    }\n  });\n  return island;\n}\nexport {\n  extractDirectives,\n  generateHydrateScript\n};\n",
+      "start": 1695410711397,
+      "end": 1695410711483,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711483,
+      "end": 1695410711483,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711484,
+      "end": 1695410711484,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711484,
+      "end": 1695410711485,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711485,
+      "end": 1695410711485,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711485,
+      "end": 1695410711485,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711485,
+      "end": 1695410711485,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711485,
+      "end": 1695410711485,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711485,
+      "end": 1695410711485,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711485,
+      "end": 1695410711485,
+      "order": "normal"
+    }
+  ]
+}

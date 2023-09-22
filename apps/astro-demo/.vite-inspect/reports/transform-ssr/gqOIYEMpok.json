@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/ansi-regex@6.0.1/node_modules/ansi-regex/index.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "export default function ansiRegex({onlyFirst = false} = {}) {\n\tconst pattern = [\n\t    '[\\\\u001B\\\\u009B][[\\\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\\\d\\\\/#&.:=?%@~_]+)*|[a-zA-Z\\\\d]+(?:;[-a-zA-Z\\\\d\\\\/#&.:=?%@~_]*)*)?\\\\u0007)',\n\t\t'(?:(?:\\\\d{1,4}(?:;\\\\d{0,4})*)?[\\\\dA-PR-TZcf-ntqry=><~]))'\n\t].join('|');\n\n\treturn new RegExp(pattern, onlyFirst ? undefined : 'g');\n}\n",
+      "start": 1695410711255,
+      "end": 1695410711334,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711334,
+      "end": 1695410711334,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711334,
+      "end": 1695410711335,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711335,
+      "end": 1695410711335,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711335,
+      "end": 1695410711335,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711335,
+      "end": 1695410711335,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711335,
+      "end": 1695410711335,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711335,
+      "end": 1695410711335,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711335,
+      "end": 1695410711335,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711335,
+      "end": 1695410711335,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711335,
+      "end": 1695410711335,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711335,
+      "end": 1695410711335,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711335,
+      "end": 1695410711335,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711335,
+      "end": 1695410711335,
+      "order": "normal"
+    }
+  ]
+}

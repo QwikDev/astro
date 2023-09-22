@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/params-and-props.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import { AstroError, AstroErrorData } from \"../errors/index.js\";\nimport { getParams } from \"../routing/params.js\";\nimport { RouteCache, callGetStaticPaths, findPathItemByKey } from \"./route-cache.js\";\nasync function getParamsAndProps(opts) {\n  const { logger, mod, route, routeCache, pathname, ssr } = opts;\n  if (!route || route.pathname) {\n    return [{}, {}];\n  }\n  const params = getRouteParams(route, pathname) ?? {};\n  validatePrerenderEndpointCollision(route, mod, params);\n  const staticPaths = await callGetStaticPaths({\n    mod,\n    route,\n    routeCache,\n    logger,\n    ssr\n  });\n  const matchedStaticPath = findPathItemByKey(staticPaths, params, route, logger);\n  if (!matchedStaticPath && (ssr ? route.prerender : true)) {\n    throw new AstroError({\n      ...AstroErrorData.NoMatchingStaticPathFound,\n      message: AstroErrorData.NoMatchingStaticPathFound.message(pathname),\n      hint: AstroErrorData.NoMatchingStaticPathFound.hint([route.component])\n    });\n  }\n  const props = matchedStaticPath?.props ? { ...matchedStaticPath.props } : {};\n  return [params, props];\n}\nfunction getRouteParams(route, pathname) {\n  if (route.params.length) {\n    const paramsMatch = route.pattern.exec(decodeURIComponent(pathname));\n    if (paramsMatch) {\n      return getParams(route.params)(paramsMatch);\n    }\n  }\n}\nfunction validatePrerenderEndpointCollision(route, mod, params) {\n  if (route.type === \"endpoint\" && mod.getStaticPaths) {\n    const lastSegment = route.segments[route.segments.length - 1];\n    const paramValues = Object.values(params);\n    const lastParam = paramValues[paramValues.length - 1];\n    if (lastSegment.length === 1 && lastSegment[0].dynamic && lastParam === void 0) {\n      throw new AstroError({\n        ...AstroErrorData.PrerenderDynamicEndpointPathCollide,\n        message: AstroErrorData.PrerenderDynamicEndpointPathCollide.message(route.route),\n        hint: AstroErrorData.PrerenderDynamicEndpointPathCollide.hint(route.component),\n        location: {\n          file: route.component\n        }\n      });\n    }\n  }\n}\nexport {\n  getParamsAndProps\n};\n",
+      "start": 1695410711116,
+      "end": 1695410711180,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711180,
+      "end": 1695410711180,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711180,
+      "end": 1695410711181,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711181,
+      "end": 1695410711181,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711181,
+      "end": 1695410711181,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711181,
+      "end": 1695410711181,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711181,
+      "end": 1695410711181,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711181,
+      "end": 1695410711181,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711181,
+      "end": 1695410711181,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711181,
+      "end": 1695410711181,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711181,
+      "end": 1695410711181,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711181,
+      "end": 1695410711181,
+      "order": "normal"
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/string-width@6.1.0/node_modules/string-width/index.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import stripAnsi from 'strip-ansi';\nimport eastAsianWidth from 'eastasianwidth';\nimport emojiRegex from 'emoji-regex';\n\nexport default function stringWidth(string, options) {\n\tif (typeof string !== 'string' || string.length === 0) {\n\t\treturn 0;\n\t}\n\n\toptions = {\n\t\tambiguousIsNarrow: true,\n\t\tcountAnsiEscapeCodes: false,\n\t\t...options,\n\t};\n\n\tif (!options.countAnsiEscapeCodes) {\n\t\tstring = stripAnsi(string);\n\t}\n\n\tif (string.length === 0) {\n\t\treturn 0;\n\t}\n\n\tconst ambiguousCharacterWidth = options.ambiguousIsNarrow ? 1 : 2;\n\tlet width = 0;\n\n\tfor (const {segment: character} of new Intl.Segmenter().segment(string)) {\n\t\tconst codePoint = character.codePointAt(0);\n\n\t\t// Ignore control characters\n\t\tif (codePoint <= 0x1F || (codePoint >= 0x7F && codePoint <= 0x9F)) {\n\t\t\tcontinue;\n\t\t}\n\n\t\t// Ignore combining characters\n\t\tif (codePoint >= 0x3_00 && codePoint <= 0x3_6F) {\n\t\t\tcontinue;\n\t\t}\n\n\t\tif (emojiRegex().test(character)) {\n\t\t\twidth += 2;\n\t\t\tcontinue;\n\t\t}\n\n\t\tconst code = eastAsianWidth.eastAsianWidth(character);\n\t\tswitch (code) {\n\t\t\tcase 'F':\n\t\t\tcase 'W': {\n\t\t\t\twidth += 2;\n\t\t\t\tbreak;\n\t\t\t}\n\n\t\t\tcase 'A': {\n\t\t\t\twidth += ambiguousCharacterWidth;\n\t\t\t\tbreak;\n\t\t\t}\n\n\t\t\tdefault: {\n\t\t\t\twidth += 1;\n\t\t\t}\n\t\t}\n\t}\n\n\treturn width;\n}\n",
+      "start": 1695410711111,
+      "end": 1695410711161,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711161,
+      "end": 1695410711161,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711161,
+      "end": 1695410711161,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711161,
+      "end": 1695410711161,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711161,
+      "end": 1695410711162,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711162,
+      "end": 1695410711162,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711162,
+      "end": 1695410711163,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711163,
+      "end": 1695410711163,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711163,
+      "end": 1695410711163,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711163,
+      "end": 1695410711163,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711163,
+      "end": 1695410711163,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711163,
+      "end": 1695410711163,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711163,
+      "end": 1695410711163,
+      "order": "normal"
+    }
+  ]
+}

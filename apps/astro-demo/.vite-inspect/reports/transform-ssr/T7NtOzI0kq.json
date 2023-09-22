@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/serialize.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "const PROP_TYPE = {\n  Value: 0,\n  JSON: 1,\n  // Actually means Array\n  RegExp: 2,\n  Date: 3,\n  Map: 4,\n  Set: 5,\n  BigInt: 6,\n  URL: 7,\n  Uint8Array: 8,\n  Uint16Array: 9,\n  Uint32Array: 10\n};\nfunction serializeArray(value, metadata = {}, parents = /* @__PURE__ */ new WeakSet()) {\n  if (parents.has(value)) {\n    throw new Error(`Cyclic reference detected while serializing props for <${metadata.displayName} client:${metadata.hydrate}>!\n\nCyclic references cannot be safely serialized for client-side usage. Please remove the cyclic reference.`);\n  }\n  parents.add(value);\n  const serialized = value.map((v) => {\n    return convertToSerializedForm(v, metadata, parents);\n  });\n  parents.delete(value);\n  return serialized;\n}\nfunction serializeObject(value, metadata = {}, parents = /* @__PURE__ */ new WeakSet()) {\n  if (parents.has(value)) {\n    throw new Error(`Cyclic reference detected while serializing props for <${metadata.displayName} client:${metadata.hydrate}>!\n\nCyclic references cannot be safely serialized for client-side usage. Please remove the cyclic reference.`);\n  }\n  parents.add(value);\n  const serialized = Object.fromEntries(\n    Object.entries(value).map(([k, v]) => {\n      return [k, convertToSerializedForm(v, metadata, parents)];\n    })\n  );\n  parents.delete(value);\n  return serialized;\n}\nfunction convertToSerializedForm(value, metadata = {}, parents = /* @__PURE__ */ new WeakSet()) {\n  const tag = Object.prototype.toString.call(value);\n  switch (tag) {\n    case \"[object Date]\": {\n      return [PROP_TYPE.Date, value.toISOString()];\n    }\n    case \"[object RegExp]\": {\n      return [PROP_TYPE.RegExp, value.source];\n    }\n    case \"[object Map]\": {\n      return [PROP_TYPE.Map, serializeArray(Array.from(value), metadata, parents)];\n    }\n    case \"[object Set]\": {\n      return [PROP_TYPE.Set, serializeArray(Array.from(value), metadata, parents)];\n    }\n    case \"[object BigInt]\": {\n      return [PROP_TYPE.BigInt, value.toString()];\n    }\n    case \"[object URL]\": {\n      return [PROP_TYPE.URL, value.toString()];\n    }\n    case \"[object Array]\": {\n      return [PROP_TYPE.JSON, serializeArray(value, metadata, parents)];\n    }\n    case \"[object Uint8Array]\": {\n      return [PROP_TYPE.Uint8Array, Array.from(value)];\n    }\n    case \"[object Uint16Array]\": {\n      return [PROP_TYPE.Uint16Array, Array.from(value)];\n    }\n    case \"[object Uint32Array]\": {\n      return [PROP_TYPE.Uint32Array, Array.from(value)];\n    }\n    default: {\n      if (value !== null && typeof value === \"object\") {\n        return [PROP_TYPE.Value, serializeObject(value, metadata, parents)];\n      } else if (value === void 0) {\n        return [PROP_TYPE.Value];\n      } else {\n        return [PROP_TYPE.Value, value];\n      }\n    }\n  }\n}\nfunction serializeProps(props, metadata) {\n  const serialized = JSON.stringify(serializeObject(props, metadata));\n  return serialized;\n}\nexport {\n  serializeProps\n};\n",
+      "start": 1695410711397,
+      "end": 1695410711477,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711477,
+      "end": 1695410711477,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711477,
+      "end": 1695410711478,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711478,
+      "end": 1695410711478,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711478,
+      "end": 1695410711478,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711478,
+      "end": 1695410711478,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711478,
+      "end": 1695410711478,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711478,
+      "end": 1695410711478,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711478,
+      "end": 1695410711478,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711478,
+      "end": 1695410711478,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711478,
+      "end": 1695410711478,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711478,
+      "end": 1695410711478,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711478,
+      "end": 1695410711478,
+      "order": "normal"
+    }
+  ]
+}

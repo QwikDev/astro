@@ -1,0 +1,1142 @@
+{
+  "root": "/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo",
+  "modules": [],
+  "ssrModules": [
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/@builder.io/qwik/build",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite-plugin-qwik",
+          "transform": 0
+        }
+      ],
+      "virtual": true,
+      "totalTime": 0
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/components/Hello.tsx",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 28
+        },
+        {
+          "name": "vite-plugin-qwik",
+          "transform": 3
+        },
+        {
+          "name": "vite-plugin-qwik",
+          "transform": 3
+        },
+        {
+          "name": "vite:esbuild",
+          "transform": 442
+        }
+      ],
+      "virtual": false,
+      "totalTime": 476
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/pages/index.astro",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 167
+        },
+        {
+          "name": "astro:build",
+          "transform": 409
+        },
+        {
+          "name": "astro:scanner",
+          "transform": 1
+        }
+      ],
+      "virtual": false,
+      "totalTime": 577
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/libs/astrojs-qwik/dist/server.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 16
+        }
+      ],
+      "virtual": false,
+      "totalTime": 16
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/@astrojs+internal-helpers@0.2.0/node_modules/@astrojs/internal-helpers/dist/path.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 53
+        }
+      ],
+      "virtual": false,
+      "totalTime": 53
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/@builder.io+qwik@1.2.11_undici@5.24.0/node_modules/@builder.io/qwik/core.prod.mjs",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 63
+        }
+      ],
+      "virtual": false,
+      "totalTime": 63
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/@builder.io+qwik@1.2.11_undici@5.24.0/node_modules/@builder.io/qwik/server.mjs",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 32
+        }
+      ],
+      "virtual": false,
+      "totalTime": 32
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/ansi-regex@6.0.1/node_modules/ansi-regex/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 79
+        }
+      ],
+      "virtual": false,
+      "totalTime": 79
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/app/common.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 160
+        }
+      ],
+      "virtual": false,
+      "totalTime": 160
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/app/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 22
+        }
+      ],
+      "virtual": false,
+      "totalTime": 22
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/app/ssrPipeline.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 158
+        }
+      ],
+      "virtual": false,
+      "totalTime": 158
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/constants.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 91
+        }
+      ],
+      "virtual": false,
+      "totalTime": 91
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/cookies/cookies.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 52
+        }
+      ],
+      "virtual": false,
+      "totalTime": 52
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/cookies/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 129
+        }
+      ],
+      "virtual": false,
+      "totalTime": 129
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/cookies/response.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 59
+        }
+      ],
+      "virtual": false,
+      "totalTime": 59
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/endpoint/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 88
+        }
+      ],
+      "virtual": false,
+      "totalTime": 88
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/errors/errors-data.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 96
+        }
+      ],
+      "virtual": false,
+      "totalTime": 96
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/errors/errors.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 115
+        }
+      ],
+      "virtual": false,
+      "totalTime": 115
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/errors/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 66
+        }
+      ],
+      "virtual": false,
+      "totalTime": 66
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/errors/printer.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 123
+        }
+      ],
+      "virtual": false,
+      "totalTime": 123
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/errors/utils.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 125
+        }
+      ],
+      "virtual": false,
+      "totalTime": 125
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/logger/console.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 130
+        }
+      ],
+      "virtual": false,
+      "totalTime": 130
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/logger/core.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 134
+        }
+      ],
+      "virtual": false,
+      "totalTime": 134
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/middleware/callMiddleware.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 93
+        }
+      ],
+      "virtual": false,
+      "totalTime": 93
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/path.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 144
+        }
+      ],
+      "virtual": false,
+      "totalTime": 144
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/pipeline.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 76
+        }
+      ],
+      "virtual": false,
+      "totalTime": 76
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/redirects/component.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 77
+        }
+      ],
+      "virtual": false,
+      "totalTime": 77
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/redirects/helpers.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 78
+        }
+      ],
+      "virtual": false,
+      "totalTime": 78
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/redirects/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 152
+        }
+      ],
+      "virtual": false,
+      "totalTime": 152
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/redirects/validate.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 76
+        }
+      ],
+      "virtual": false,
+      "totalTime": 76
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/context.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 55
+        }
+      ],
+      "virtual": false,
+      "totalTime": 55
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/core.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 58
+        }
+      ],
+      "virtual": false,
+      "totalTime": 58
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/environment.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 63
+        }
+      ],
+      "virtual": false,
+      "totalTime": 63
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 146
+        }
+      ],
+      "virtual": false,
+      "totalTime": 146
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/paginate.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 76
+        }
+      ],
+      "virtual": false,
+      "totalTime": 76
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/params-and-props.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 64
+        }
+      ],
+      "virtual": false,
+      "totalTime": 64
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/renderer.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 68
+        }
+      ],
+      "virtual": false,
+      "totalTime": 68
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/result.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 128
+        }
+      ],
+      "virtual": false,
+      "totalTime": 128
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/route-cache.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 149
+        }
+      ],
+      "virtual": false,
+      "totalTime": 149
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/ssr-element.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 154
+        }
+      ],
+      "virtual": false,
+      "totalTime": 154
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/routing/manifest/generator.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 111
+        }
+      ],
+      "virtual": false,
+      "totalTime": 111
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/routing/manifest/serialization.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 77
+        }
+      ],
+      "virtual": false,
+      "totalTime": 77
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/routing/match.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 157
+        }
+      ],
+      "virtual": false,
+      "totalTime": 157
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/routing/params.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 70
+        }
+      ],
+      "virtual": false,
+      "totalTime": 70
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/routing/validation.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 74
+        }
+      ],
+      "virtual": false,
+      "totalTime": 74
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/jsx-runtime/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 30
+        }
+      ],
+      "virtual": false,
+      "totalTime": 30
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/compiler/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 3
+        }
+      ],
+      "virtual": false,
+      "totalTime": 3
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/astro-component.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 70
+        }
+      ],
+      "virtual": false,
+      "totalTime": 70
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/astro-global.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 75
+        }
+      ],
+      "virtual": false,
+      "totalTime": 75
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/astro-island.prebuilt.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 12
+        }
+      ],
+      "virtual": false,
+      "totalTime": 12
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/endpoint.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 73
+        }
+      ],
+      "virtual": false,
+      "totalTime": 73
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/escape.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 76
+        }
+      ],
+      "virtual": false,
+      "totalTime": 76
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/hydration.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 86
+        }
+      ],
+      "virtual": false,
+      "totalTime": 86
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 76
+        }
+      ],
+      "virtual": false,
+      "totalTime": 76
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/jsx.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 80
+        }
+      ],
+      "virtual": false,
+      "totalTime": 80
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/any.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 127
+        }
+      ],
+      "virtual": false,
+      "totalTime": 127
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/astro/factory.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 92
+        }
+      ],
+      "virtual": false,
+      "totalTime": 92
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/astro/head-and-content.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 93
+        }
+      ],
+      "virtual": false,
+      "totalTime": 93
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/astro/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 41
+        }
+      ],
+      "virtual": false,
+      "totalTime": 41
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/astro/instance.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 103
+        }
+      ],
+      "virtual": false,
+      "totalTime": 103
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/astro/render-template.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 126
+        }
+      ],
+      "virtual": false,
+      "totalTime": 126
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/astro/render.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 132
+        }
+      ],
+      "virtual": false,
+      "totalTime": 132
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/common.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 44
+        }
+      ],
+      "virtual": false,
+      "totalTime": 44
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/component.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 33
+        }
+      ],
+      "virtual": false,
+      "totalTime": 33
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/dom.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 48
+        }
+      ],
+      "virtual": false,
+      "totalTime": 48
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/head.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 51
+        }
+      ],
+      "virtual": false,
+      "totalTime": 51
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 85
+        }
+      ],
+      "virtual": false,
+      "totalTime": 85
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/instruction.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 79
+        }
+      ],
+      "virtual": false,
+      "totalTime": 79
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/page.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 55
+        }
+      ],
+      "virtual": false,
+      "totalTime": 55
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/slot.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 58
+        }
+      ],
+      "virtual": false,
+      "totalTime": 58
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/tags.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 61
+        }
+      ],
+      "virtual": false,
+      "totalTime": 61
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/render/util.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 63
+        }
+      ],
+      "virtual": false,
+      "totalTime": 63
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/scripts.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 136
+        }
+      ],
+      "virtual": false,
+      "totalTime": 136
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/serialize.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 80
+        }
+      ],
+      "virtual": false,
+      "totalTime": 80
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/shorthash.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 83
+        }
+      ],
+      "virtual": false,
+      "totalTime": 83
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/transition.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 89
+        }
+      ],
+      "virtual": false,
+      "totalTime": 89
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/runtime/server/util.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 35
+        }
+      ],
+      "virtual": false,
+      "totalTime": 35
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/transitions/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 63
+        }
+      ],
+      "virtual": false,
+      "totalTime": 63
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/clsx@2.0.0/node_modules/clsx/dist/clsx.mjs",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 100
+        }
+      ],
+      "virtual": false,
+      "totalTime": 100
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/cookie@0.5.0/node_modules/cookie/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 57
+        },
+        {
+          "name": "commonjs",
+          "transform": 9
+        }
+      ],
+      "virtual": false,
+      "totalTime": 66
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/eastasianwidth@0.2.0/node_modules/eastasianwidth/eastasianwidth.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 60
+        },
+        {
+          "name": "commonjs",
+          "transform": 13
+        }
+      ],
+      "virtual": false,
+      "totalTime": 73
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/emoji-regex@10.2.1/node_modules/emoji-regex/index.mjs",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 107
+        }
+      ],
+      "virtual": false,
+      "totalTime": 107
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/html-escaper@3.0.3/node_modules/html-escaper/esm/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 33
+        }
+      ],
+      "virtual": false,
+      "totalTime": 33
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/kleur@4.1.5/node_modules/kleur/colors.mjs",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 57
+        }
+      ],
+      "virtual": false,
+      "totalTime": 57
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/mime@3.0.0/node_modules/mime/Mime.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 62
+        },
+        {
+          "name": "commonjs",
+          "transform": 2
+        }
+      ],
+      "virtual": false,
+      "totalTime": 64
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/mime@3.0.0/node_modules/mime/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 89
+        },
+        {
+          "name": "commonjs",
+          "transform": 102
+        }
+      ],
+      "virtual": false,
+      "totalTime": 191
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/mime@3.0.0/node_modules/mime/types/other.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 82
+        },
+        {
+          "name": "commonjs",
+          "transform": 9
+        }
+      ],
+      "virtual": false,
+      "totalTime": 91
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/mime@3.0.0/node_modules/mime/types/standard.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 71
+        },
+        {
+          "name": "commonjs",
+          "transform": 6
+        }
+      ],
+      "virtual": false,
+      "totalTime": 77
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/path-to-regexp@6.2.1/node_modules/path-to-regexp/dist.es2015/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 42
+        }
+      ],
+      "virtual": false,
+      "totalTime": 42
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/string-width@6.1.0/node_modules/string-width/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 50
+        }
+      ],
+      "virtual": false,
+      "totalTime": 50
+    },
+    {
+      "id": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/strip-ansi@7.1.0/node_modules/strip-ansi/index.js",
+      "deps": [],
+      "plugins": [
+        {
+          "name": "vite:load-fallback",
+          "transform": 86
+        }
+      ],
+      "virtual": false,
+      "totalTime": 86
+    }
+  ]
+}

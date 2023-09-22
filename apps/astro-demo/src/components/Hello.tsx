@@ -7,22 +7,28 @@ import {
   useSignal,
 } from "@builder.io/qwik";
 
-// export const Hello = component$(() => {
-//   const counter = useSignal(0);
+export const Hello = component$(() => {
+  const counter = useSignal(0);
 
-//   return <button onClick$={() => counter.value++}>{counter.value}</button>;
-// });
+  return <button onClick$={() => counter.value++}>{counter.value}</button>;
+});
 
 // export const Counter = componentQrl(
-//   inlinedQrl(() => {
+//   () => {
 //     const counter = useSignal(0);
 
 //     return <button>{counter.value}</button>;
 //   }, "counterqrl")
 // );
 
-export const Hello = componentQrl(
-  inlinedQrl(() => {
-    return <p>Hello World</p>;
-  }, "helloqrl")
-);
+// export const Hello = componentQrl(
+//   inlinedQrl(() => {
+//     const counter = useSignal(0);
+
+//     return (
+//       <button onClick$={inlinedQrl(() => counter.value++, "clickqrl")}>
+//         Hello World
+//       </button>
+//     );
+//   }, "helloqrl")
+// );

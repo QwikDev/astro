@@ -1,0 +1,162 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/node_modules/.pnpm/astro@3.1.0/node_modules/astro/dist/core/render/route-cache.js",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import { AstroError, AstroErrorData } from \"../errors/index.js\";\nimport { stringifyParams } from \"../routing/params.js\";\nimport { validateDynamicRouteModule, validateGetStaticPathsResult } from \"../routing/validation.js\";\nimport { generatePaginateFunction } from \"./paginate.js\";\nasync function callGetStaticPaths({\n  mod,\n  route,\n  routeCache,\n  logger,\n  ssr\n}) {\n  const cached = routeCache.get(route);\n  if (cached?.staticPaths)\n    return cached.staticPaths;\n  validateDynamicRouteModule(mod, { ssr, route });\n  if (ssr && !route.prerender) {\n    const entry = Object.assign([], { keyed: /* @__PURE__ */ new Map() });\n    routeCache.set(route, { ...cached, staticPaths: entry });\n    return entry;\n  }\n  if (!mod.getStaticPaths) {\n    throw new Error(\"Unexpected Error.\");\n  }\n  let staticPaths = [];\n  staticPaths = await mod.getStaticPaths({\n    // Q: Why the cast?\n    // A: So users downstream can have nicer typings, we have to make some sacrifice in our internal typings, which necessitate a cast here\n    paginate: generatePaginateFunction(route),\n    rss() {\n      throw new AstroError(AstroErrorData.GetStaticPathsRemovedRSSHelper);\n    }\n  });\n  validateGetStaticPathsResult(staticPaths, logger, route);\n  const keyedStaticPaths = staticPaths;\n  keyedStaticPaths.keyed = /* @__PURE__ */ new Map();\n  for (const sp of keyedStaticPaths) {\n    const paramsKey = stringifyParams(sp.params, route);\n    keyedStaticPaths.keyed.set(paramsKey, sp);\n  }\n  routeCache.set(route, { ...cached, staticPaths: keyedStaticPaths });\n  return keyedStaticPaths;\n}\nclass RouteCache {\n  logger;\n  cache = {};\n  mode;\n  constructor(logger, mode = \"production\") {\n    this.logger = logger;\n    this.mode = mode;\n  }\n  /** Clear the cache. */\n  clearAll() {\n    this.cache = {};\n  }\n  set(route, entry) {\n    if (this.mode === \"production\" && this.cache[route.component]?.staticPaths) {\n      this.logger.warn(\n        \"routeCache\",\n        `Internal Warning: route cache overwritten. (${route.component})`\n      );\n    }\n    this.cache[route.component] = entry;\n  }\n  get(route) {\n    return this.cache[route.component];\n  }\n}\nfunction findPathItemByKey(staticPaths, params, route, logger) {\n  const paramsKey = stringifyParams(params, route);\n  const matchedStaticPath = staticPaths.keyed.get(paramsKey);\n  if (matchedStaticPath) {\n    return matchedStaticPath;\n  }\n  logger.debug(\"findPathItemByKey\", `Unexpected cache miss looking for ${paramsKey}`);\n}\nexport {\n  RouteCache,\n  callGetStaticPaths,\n  findPathItemByKey\n};\n",
+      "start": 1695410710968,
+      "end": 1695410711117,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1695410711117,
+      "end": 1695410711117,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1695410711117,
+      "end": 1695410711118,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1695410711118,
+      "end": 1695410711118,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1695410711118,
+      "end": 1695410711118,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1695410711118,
+      "end": 1695410711118,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1695410711118,
+      "end": 1695410711118,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1695410711118,
+      "end": 1695410711118,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1695410711118,
+      "end": 1695410711118,
+      "order": "normal"
+    }
+  ]
+}
