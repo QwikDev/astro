@@ -19,9 +19,11 @@ export async function renderToStaticMarkup(Component, props, slotted) {
             slots[key] = value;
         }
         const app = h(Component, { props, slots });
-        const html = await renderToString(app, { containerTagName: "div" });
+        /* error here */
+        const html = await renderToString(app, {
+            containerTagName: "div",
+        });
         console.log("end of renderToStaticMarkup");
-        console.log(html.html);
         return html;
     }
     catch (error) {

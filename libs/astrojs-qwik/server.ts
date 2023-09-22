@@ -1,5 +1,5 @@
 import { h } from "@builder.io/qwik";
-import { renderToString, renderToStream } from "@builder.io/qwik/server";
+import { renderToString } from "@builder.io/qwik/server";
 import type { RendererContext } from "./types";
 
 async function check(
@@ -37,10 +37,12 @@ export async function renderToStaticMarkup(
     }
 
     const app = h(Component, { props, slots });
-    const html = await renderToString(app, { containerTagName: "div" });
+    /* error here */
+    const html = await renderToString(app, {
+      containerTagName: "div",
+    });
 
     console.log("end of renderToStaticMarkup");
-    console.log(html.html);
     return html;
   } catch (error) {
     console.error("Error in renderToStaticMarkup:", error);
