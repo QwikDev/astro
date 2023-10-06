@@ -4,158 +4,158 @@
     {
       "name": "vite:load-fallback",
       "result": "import { getSetCookiesFromResponse } from \"../cookies/index.js\";\nimport { consoleLogDestination } from \"../logger/console.js\";\nimport { AstroIntegrationLogger, Logger } from \"../logger/core.js\";\nimport {\n  collapseDuplicateSlashes,\n  prependForwardSlash,\n  removeTrailingForwardSlash\n} from \"../path.js\";\nimport { RedirectSinglePageBuiltModule } from \"../redirects/index.js\";\nimport { createEnvironment, createRenderContext } from \"../render/index.js\";\nimport { RouteCache } from \"../render/route-cache.js\";\nimport {\n  createAssetLink,\n  createModuleScriptElement,\n  createStylesheetElementSet\n} from \"../render/ssr-element.js\";\nimport { matchRoute } from \"../routing/match.js\";\nimport { EndpointNotFoundError, SSRRoutePipeline } from \"./ssrPipeline.js\";\nimport { deserializeManifest } from \"./common.js\";\nconst clientLocalsSymbol = Symbol.for(\"astro.locals\");\nconst responseSentSymbol = Symbol.for(\"astro.responseSent\");\nconst STATUS_CODES = /* @__PURE__ */ new Set([404, 500]);\nclass App {\n  /**\n   * The current environment of the application\n   */\n  #manifest;\n  #manifestData;\n  #routeDataToRouteInfo;\n  #logger = new Logger({\n    dest: consoleLogDestination,\n    level: \"info\"\n  });\n  #baseWithoutTrailingSlash;\n  #pipeline;\n  #adapterLogger;\n  constructor(manifest, streaming = true) {\n    this.#manifest = manifest;\n    this.#manifestData = {\n      routes: manifest.routes.map((route) => route.routeData)\n    };\n    this.#routeDataToRouteInfo = new Map(manifest.routes.map((route) => [route.routeData, route]));\n    this.#baseWithoutTrailingSlash = removeTrailingForwardSlash(this.#manifest.base);\n    this.#pipeline = new SSRRoutePipeline(this.#createEnvironment(streaming));\n    this.#adapterLogger = new AstroIntegrationLogger(\n      this.#logger.options,\n      this.#manifest.adapterName\n    );\n  }\n  getAdapterLogger() {\n    return this.#adapterLogger;\n  }\n  /**\n   * Creates an environment by reading the stored manifest\n   *\n   * @param streaming\n   * @private\n   */\n  #createEnvironment(streaming = false) {\n    return createEnvironment({\n      adapterName: this.#manifest.adapterName,\n      logger: this.#logger,\n      mode: \"production\",\n      compressHTML: this.#manifest.compressHTML,\n      renderers: this.#manifest.renderers,\n      clientDirectives: this.#manifest.clientDirectives,\n      resolve: async (specifier) => {\n        if (!(specifier in this.#manifest.entryModules)) {\n          throw new Error(`Unable to resolve [${specifier}]`);\n        }\n        const bundlePath = this.#manifest.entryModules[specifier];\n        switch (true) {\n          case bundlePath.startsWith(\"data:\"):\n          case bundlePath.length === 0: {\n            return bundlePath;\n          }\n          default: {\n            return createAssetLink(bundlePath, this.#manifest.base, this.#manifest.assetsPrefix);\n          }\n        }\n      },\n      routeCache: new RouteCache(this.#logger),\n      site: this.#manifest.site,\n      ssr: true,\n      streaming\n    });\n  }\n  set setManifestData(newManifestData) {\n    this.#manifestData = newManifestData;\n  }\n  removeBase(pathname) {\n    if (pathname.startsWith(this.#manifest.base)) {\n      return pathname.slice(this.#baseWithoutTrailingSlash.length + 1);\n    }\n    return pathname;\n  }\n  match(request, _opts = {}) {\n    const url = new URL(request.url);\n    if (this.#manifest.assets.has(url.pathname))\n      return void 0;\n    const pathname = prependForwardSlash(this.removeBase(url.pathname));\n    const routeData = matchRoute(pathname, this.#manifestData);\n    if (!routeData || routeData.prerender)\n      return void 0;\n    return routeData;\n  }\n  async render(request, routeData, locals) {\n    if (request.url !== collapseDuplicateSlashes(request.url)) {\n      request = new Request(collapseDuplicateSlashes(request.url), request);\n    }\n    if (!routeData) {\n      routeData = this.match(request);\n    }\n    if (!routeData) {\n      return this.#renderError(request, { status: 404 });\n    }\n    Reflect.set(request, clientLocalsSymbol, locals ?? {});\n    const defaultStatus = this.#getDefaultStatusCode(routeData.route);\n    const mod = await this.#getModuleForRoute(routeData);\n    const pageModule = await mod.page();\n    const url = new URL(request.url);\n    const renderContext = await this.#createRenderContext(\n      url,\n      request,\n      routeData,\n      mod,\n      defaultStatus\n    );\n    let response;\n    try {\n      if (mod.onRequest) {\n        this.#pipeline.setMiddlewareFunction(mod.onRequest);\n      }\n      response = await this.#pipeline.renderRoute(renderContext, pageModule);\n    } catch (err) {\n      if (err instanceof EndpointNotFoundError) {\n        return this.#renderError(request, { status: 404, response: err.originalResponse });\n      } else {\n        this.#logger.error(\"ssr\", err.stack || err.message || String(err));\n        return this.#renderError(request, { status: 500 });\n      }\n    }\n    if (routeData.type === \"page\" || routeData.type === \"redirect\") {\n      if (STATUS_CODES.has(response.status)) {\n        return this.#renderError(request, {\n          response,\n          status: response.status\n        });\n      }\n      Reflect.set(response, responseSentSymbol, true);\n      return response;\n    }\n    return response;\n  }\n  setCookieHeaders(response) {\n    return getSetCookiesFromResponse(response);\n  }\n  /**\n   * Creates the render context of the current route\n   */\n  async #createRenderContext(url, request, routeData, page, status = 200) {\n    if (routeData.type === \"endpoint\") {\n      const pathname = \"/\" + this.removeBase(url.pathname);\n      const mod = await page.page();\n      const handler = mod;\n      return await createRenderContext({\n        request,\n        pathname,\n        route: routeData,\n        status,\n        env: this.#pipeline.env,\n        mod: handler\n      });\n    } else {\n      const pathname = prependForwardSlash(this.removeBase(url.pathname));\n      const info = this.#routeDataToRouteInfo.get(routeData);\n      const links = /* @__PURE__ */ new Set();\n      const styles = createStylesheetElementSet(info.styles);\n      let scripts = /* @__PURE__ */ new Set();\n      for (const script of info.scripts) {\n        if (\"stage\" in script) {\n          if (script.stage === \"head-inline\") {\n            scripts.add({\n              props: {},\n              children: script.children\n            });\n          }\n        } else {\n          scripts.add(createModuleScriptElement(script));\n        }\n      }\n      const mod = await page.page();\n      return await createRenderContext({\n        request,\n        pathname,\n        componentMetadata: this.#manifest.componentMetadata,\n        scripts,\n        styles,\n        links,\n        route: routeData,\n        status,\n        mod,\n        env: this.#pipeline.env\n      });\n    }\n  }\n  /**\n   * If it is a known error code, try sending the according page (e.g. 404.astro / 500.astro).\n   * This also handles pre-rendered /404 or /500 routes\n   */\n  async #renderError(request, { status, response: originalResponse }) {\n    const errorRouteData = matchRoute(\"/\" + status, this.#manifestData);\n    const url = new URL(request.url);\n    if (errorRouteData) {\n      if (errorRouteData.prerender) {\n        const maybeDotHtml = errorRouteData.route.endsWith(`/${status}`) ? \".html\" : \"\";\n        const statusURL = new URL(\n          `${this.#baseWithoutTrailingSlash}/${status}${maybeDotHtml}`,\n          url\n        );\n        const response2 = await fetch(statusURL.toString());\n        const override = { status };\n        return this.#mergeResponses(response2, originalResponse, override);\n      }\n      const mod = await this.#getModuleForRoute(errorRouteData);\n      try {\n        const newRenderContext = await this.#createRenderContext(\n          url,\n          request,\n          errorRouteData,\n          mod,\n          status\n        );\n        const page = await mod.page();\n        if (mod.onRequest) {\n          this.#pipeline.setMiddlewareFunction(mod.onRequest);\n        }\n        const response2 = await this.#pipeline.renderRoute(newRenderContext, page);\n        return this.#mergeResponses(response2, originalResponse);\n      } catch {\n      }\n    }\n    const response = this.#mergeResponses(new Response(null, { status }), originalResponse);\n    Reflect.set(response, responseSentSymbol, true);\n    return response;\n  }\n  #mergeResponses(newResponse, oldResponse, override) {\n    if (!oldResponse) {\n      if (override !== void 0) {\n        return new Response(newResponse.body, {\n          status: override.status,\n          statusText: newResponse.statusText,\n          headers: newResponse.headers\n        });\n      }\n      return newResponse;\n    }\n    const { statusText, headers } = oldResponse;\n    const status = override?.status ? override.status : oldResponse.status === 200 ? newResponse.status : oldResponse.status;\n    return new Response(newResponse.body, {\n      status,\n      statusText: status === 200 ? newResponse.statusText : statusText,\n      headers: new Headers(Array.from(headers))\n    });\n  }\n  #getDefaultStatusCode(route) {\n    route = removeTrailingForwardSlash(route);\n    if (route.endsWith(\"/404\"))\n      return 404;\n    if (route.endsWith(\"/500\"))\n      return 500;\n    return 200;\n  }\n  async #getModuleForRoute(route) {\n    if (route.type === \"redirect\") {\n      return RedirectSinglePageBuiltModule;\n    } else {\n      if (this.#manifest.pageMap) {\n        const importComponentInstance = this.#manifest.pageMap.get(route.component);\n        if (!importComponentInstance) {\n          throw new Error(\n            `Unexpectedly unable to find a component instance for route ${route.route}`\n          );\n        }\n        const pageModule = await importComponentInstance();\n        return pageModule;\n      } else if (this.#manifest.pageModule) {\n        const importComponentInstance = this.#manifest.pageModule;\n        return importComponentInstance;\n      } else {\n        throw new Error(\n          \"Astro couldn't find the correct page to render, probably because it wasn't correctly mapped for SSR usage. This is an internal error, please file an issue.\"\n        );\n      }\n    }\n  }\n}\nexport {\n  App,\n  deserializeManifest\n};\n",
-      "start": 1695410710920,
-      "end": 1695410710942,
+      "start": 1696585308853,
+      "end": 1696585308869,
       "sourcemaps": null
     },
     {
       "name": "astro:build",
-      "start": 1695410710942,
-      "end": 1695410710942,
+      "start": 1696585308869,
+      "end": 1696585308869,
       "order": "pre"
     },
     {
       "name": "astro:vite-plugin-env",
-      "start": 1695410710942,
-      "end": 1695410710942,
+      "start": 1696585308869,
+      "end": 1696585308869,
       "order": "pre"
     },
     {
       "name": "astro:jsx",
-      "start": 1695410710942,
-      "end": 1695410710942,
+      "start": 1696585308869,
+      "end": 1696585308869,
       "order": "pre"
     },
     {
       "name": "astro:content-asset-propagation",
-      "start": 1695410710942,
-      "end": 1695410710942,
+      "start": 1696585308869,
+      "end": 1696585308869,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410710942,
-      "end": 1695410710942,
+      "start": 1696585308869,
+      "end": 1696585308870,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410710942,
-      "end": 1695410710942,
+      "start": 1696585308869,
+      "end": 1696585308870,
       "order": "pre"
     },
     {
       "name": "vite:css",
-      "start": 1695410710942,
-      "end": 1695410710942,
+      "start": 1696585308870,
+      "end": 1696585308870,
       "order": "normal"
     },
     {
       "name": "vite:esbuild",
-      "start": 1695410710942,
-      "end": 1695410710942,
+      "start": 1696585308870,
+      "end": 1696585308870,
       "order": "normal"
     },
     {
       "name": "vite:json",
-      "start": 1695410710943,
-      "end": 1695410710943,
+      "start": 1696585308870,
+      "end": 1696585308870,
       "order": "normal"
     },
     {
       "name": "vite:worker",
-      "start": 1695410710943,
-      "end": 1695410710943,
+      "start": 1696585308870,
+      "end": 1696585308870,
       "order": "normal"
     },
     {
       "name": "astro:html",
-      "start": 1695410710943,
-      "end": 1695410710943,
+      "start": 1696585308870,
+      "end": 1696585308870,
       "order": "normal"
     },
     {
       "name": "astro:postprocess",
-      "start": 1695410710943,
-      "end": 1695410710943,
+      "start": 1696585308870,
+      "end": 1696585308870,
       "order": "normal"
     },
     {
       "name": "astro:head-metadata",
-      "start": 1695410710943,
-      "end": 1695410710943,
+      "start": 1696585308870,
+      "end": 1696585308870,
       "order": "normal"
     },
     {
       "name": "astro:content-imports",
-      "start": 1695410710943,
-      "end": 1695410710943,
+      "start": 1696585308870,
+      "end": 1696585308870,
       "order": "normal"
     },
     {
       "name": "vite:define",
-      "start": 1695410710943,
-      "end": 1695410710943,
+      "start": 1696585308870,
+      "end": 1696585308870,
       "order": "normal"
     },
     {
       "name": "vite:css-post",
-      "start": 1695410710943,
-      "end": 1695410710943,
+      "start": 1696585308870,
+      "end": 1696585308870,
       "order": "normal"
     },
     {
       "name": "vite:worker-import-meta-url",
-      "start": 1695410710943,
-      "end": 1695410710943,
+      "start": 1696585308870,
+      "end": 1696585308870,
       "order": "normal"
     },
     {
       "name": "vite:asset-import-meta-url",
-      "start": 1695410710943,
-      "end": 1695410710943,
+      "start": 1696585308870,
+      "end": 1696585308870,
       "order": "normal"
     },
     {
       "name": "commonjs",
-      "start": 1695410710943,
-      "end": 1695410710951,
+      "start": 1696585308870,
+      "end": 1696585308877,
       "order": "normal"
     },
     {
       "name": "vite:dynamic-import-vars",
-      "start": 1695410710951,
-      "end": 1695410710951,
+      "start": 1696585308877,
+      "end": 1696585308877,
       "order": "normal"
     },
     {
       "name": "vite:import-glob",
-      "start": 1695410710951,
-      "end": 1695410710951,
+      "start": 1696585308877,
+      "end": 1696585308877,
       "order": "normal"
     },
     {
       "name": "astro:scripts:page-ssr",
-      "start": 1695410710951,
-      "end": 1695410710951,
+      "start": 1696585308877,
+      "end": 1696585308877,
       "order": "post"
     },
     {
       "name": "astro:scanner",
-      "start": 1695410710951,
-      "end": 1695410710951,
+      "start": 1696585308877,
+      "end": 1696585308878,
       "order": "post"
     },
     {
       "name": "vite:build-import-analysis",
-      "start": 1695410710951,
-      "end": 1695410710951,
+      "start": 1696585308878,
+      "end": 1696585308878,
       "order": "normal"
     },
     {
       "name": "vite:reporter",
-      "start": 1695410710951,
-      "end": 1695410710951,
+      "start": 1696585308878,
+      "end": 1696585308878,
       "order": "normal"
     }
   ]

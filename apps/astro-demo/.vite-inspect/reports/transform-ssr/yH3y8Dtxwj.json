@@ -4,123 +4,123 @@
     {
       "name": "vite:load-fallback",
       "result": "'use strict';\n\n/**\n * @param typeMap [Object] Map of MIME type -> Array[extensions]\n * @param ...\n */\nfunction Mime() {\n  this._types = Object.create(null);\n  this._extensions = Object.create(null);\n\n  for (let i = 0; i < arguments.length; i++) {\n    this.define(arguments[i]);\n  }\n\n  this.define = this.define.bind(this);\n  this.getType = this.getType.bind(this);\n  this.getExtension = this.getExtension.bind(this);\n}\n\n/**\n * Define mimetype -> extension mappings.  Each key is a mime-type that maps\n * to an array of extensions associated with the type.  The first extension is\n * used as the default extension for the type.\n *\n * e.g. mime.define({'audio/ogg', ['oga', 'ogg', 'spx']});\n *\n * If a type declares an extension that has already been defined, an error will\n * be thrown.  To suppress this error and force the extension to be associated\n * with the new type, pass `force`=true.  Alternatively, you may prefix the\n * extension with \"*\" to map the type to extension, without mapping the\n * extension to the type.\n *\n * e.g. mime.define({'audio/wav', ['wav']}, {'audio/x-wav', ['*wav']});\n *\n *\n * @param map (Object) type definitions\n * @param force (Boolean) if true, force overriding of existing definitions\n */\nMime.prototype.define = function(typeMap, force) {\n  for (let type in typeMap) {\n    let extensions = typeMap[type].map(function(t) {\n      return t.toLowerCase();\n    });\n    type = type.toLowerCase();\n\n    for (let i = 0; i < extensions.length; i++) {\n      const ext = extensions[i];\n\n      // '*' prefix = not the preferred type for this extension.  So fixup the\n      // extension, and skip it.\n      if (ext[0] === '*') {\n        continue;\n      }\n\n      if (!force && (ext in this._types)) {\n        throw new Error(\n          'Attempt to change mapping for \"' + ext +\n          '\" extension from \"' + this._types[ext] + '\" to \"' + type +\n          '\". Pass `force=true` to allow this, otherwise remove \"' + ext +\n          '\" from the list of extensions for \"' + type + '\".'\n        );\n      }\n\n      this._types[ext] = type;\n    }\n\n    // Use first extension as default\n    if (force || !this._extensions[type]) {\n      const ext = extensions[0];\n      this._extensions[type] = (ext[0] !== '*') ? ext : ext.substr(1);\n    }\n  }\n};\n\n/**\n * Lookup a mime type based on extension\n */\nMime.prototype.getType = function(path) {\n  path = String(path);\n  let last = path.replace(/^.*[/\\\\]/, '').toLowerCase();\n  let ext = last.replace(/^.*\\./, '').toLowerCase();\n\n  let hasPath = last.length < path.length;\n  let hasDot = ext.length < last.length - 1;\n\n  return (hasDot || !hasPath) && this._types[ext] || null;\n};\n\n/**\n * Return file extension associated with a mime type\n */\nMime.prototype.getExtension = function(type) {\n  type = /^\\s*([^;\\s]*)/.test(type) && RegExp.$1;\n  return type && this._extensions[type.toLowerCase()] || null;\n};\n\nmodule.exports = Mime;\n",
-      "start": 1695410711363,
-      "end": 1695410711425,
+      "start": 1696585309291,
+      "end": 1696585309345,
       "sourcemaps": null
     },
     {
       "name": "astro:build",
-      "start": 1695410711425,
-      "end": 1695410711425,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "pre"
     },
     {
       "name": "astro:vite-plugin-env",
-      "start": 1695410711429,
-      "end": 1695410711429,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "pre"
     },
     {
       "name": "astro:jsx",
-      "start": 1695410711429,
-      "end": 1695410711429,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "pre"
     },
     {
       "name": "astro:content-asset-propagation",
-      "start": 1695410711429,
-      "end": 1695410711429,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711429,
-      "end": 1695410711430,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711429,
-      "end": 1695410711430,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "pre"
     },
     {
       "name": "vite:css",
-      "start": 1695410711430,
-      "end": 1695410711430,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "normal"
     },
     {
       "name": "vite:esbuild",
-      "start": 1695410711430,
-      "end": 1695410711430,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "normal"
     },
     {
       "name": "vite:json",
-      "start": 1695410711430,
-      "end": 1695410711430,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "normal"
     },
     {
       "name": "vite:worker",
-      "start": 1695410711430,
-      "end": 1695410711430,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "normal"
     },
     {
       "name": "astro:html",
-      "start": 1695410711430,
-      "end": 1695410711430,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "normal"
     },
     {
       "name": "astro:postprocess",
-      "start": 1695410711430,
-      "end": 1695410711430,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "normal"
     },
     {
       "name": "astro:head-metadata",
-      "start": 1695410711430,
-      "end": 1695410711430,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "normal"
     },
     {
       "name": "astro:content-imports",
-      "start": 1695410711430,
-      "end": 1695410711430,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "normal"
     },
     {
       "name": "vite:define",
-      "start": 1695410711430,
-      "end": 1695410711430,
+      "start": 1696585309345,
+      "end": 1696585309345,
       "order": "normal"
     },
     {
       "name": "vite:css-post",
-      "start": 1695410711430,
-      "end": 1695410711430,
+      "start": 1696585309346,
+      "end": 1696585309346,
       "order": "normal"
     },
     {
       "name": "vite:worker-import-meta-url",
-      "start": 1695410711430,
-      "end": 1695410711430,
+      "start": 1696585309346,
+      "end": 1696585309346,
       "order": "normal"
     },
     {
       "name": "vite:asset-import-meta-url",
-      "start": 1695410711430,
-      "end": 1695410711430,
+      "start": 1696585309346,
+      "end": 1696585309346,
       "order": "normal"
     },
     {
       "name": "commonjs",
       "result": "import * as commonjsHelpers from \"\u0000commonjsHelpers.js\";\n\n'use strict';\n\n/**\n * @param typeMap [Object] Map of MIME type -> Array[extensions]\n * @param ...\n */\nfunction Mime() {\n  this._types = Object.create(null);\n  this._extensions = Object.create(null);\n\n  for (let i = 0; i < arguments.length; i++) {\n    this.define(arguments[i]);\n  }\n\n  this.define = this.define.bind(this);\n  this.getType = this.getType.bind(this);\n  this.getExtension = this.getExtension.bind(this);\n}\n\n/**\n * Define mimetype -> extension mappings.  Each key is a mime-type that maps\n * to an array of extensions associated with the type.  The first extension is\n * used as the default extension for the type.\n *\n * e.g. mime.define({'audio/ogg', ['oga', 'ogg', 'spx']});\n *\n * If a type declares an extension that has already been defined, an error will\n * be thrown.  To suppress this error and force the extension to be associated\n * with the new type, pass `force`=true.  Alternatively, you may prefix the\n * extension with \"*\" to map the type to extension, without mapping the\n * extension to the type.\n *\n * e.g. mime.define({'audio/wav', ['wav']}, {'audio/x-wav', ['*wav']});\n *\n *\n * @param map (Object) type definitions\n * @param force (Boolean) if true, force overriding of existing definitions\n */\nMime.prototype.define = function(typeMap, force) {\n  for (let type in typeMap) {\n    let extensions = typeMap[type].map(function(t) {\n      return t.toLowerCase();\n    });\n    type = type.toLowerCase();\n\n    for (let i = 0; i < extensions.length; i++) {\n      const ext = extensions[i];\n\n      // '*' prefix = not the preferred type for this extension.  So fixup the\n      // extension, and skip it.\n      if (ext[0] === '*') {\n        continue;\n      }\n\n      if (!force && (ext in this._types)) {\n        throw new Error(\n          'Attempt to change mapping for \"' + ext +\n          '\" extension from \"' + this._types[ext] + '\" to \"' + type +\n          '\". Pass `force=true` to allow this, otherwise remove \"' + ext +\n          '\" from the list of extensions for \"' + type + '\".'\n        );\n      }\n\n      this._types[ext] = type;\n    }\n\n    // Use first extension as default\n    if (force || !this._extensions[type]) {\n      const ext = extensions[0];\n      this._extensions[type] = (ext[0] !== '*') ? ext : ext.substr(1);\n    }\n  }\n};\n\n/**\n * Lookup a mime type based on extension\n */\nMime.prototype.getType = function(path) {\n  path = String(path);\n  let last = path.replace(/^.*[/\\\\]/, '').toLowerCase();\n  let ext = last.replace(/^.*\\./, '').toLowerCase();\n\n  let hasPath = last.length < path.length;\n  let hasDot = ext.length < last.length - 1;\n\n  return (hasDot || !hasPath) && this._types[ext] || null;\n};\n\n/**\n * Return file extension associated with a mime type\n */\nMime.prototype.getExtension = function(type) {\n  type = /^\\s*([^;\\s]*)/.test(type) && RegExp.$1;\n  return type && this._extensions[type.toLowerCase()] || null;\n};\n\nvar Mime_1 = Mime;\n\nexport default /*@__PURE__*/commonjsHelpers.getDefaultExportFromCjs(Mime_1);\nexport { Mime_1 as __moduleExports };",
-      "start": 1695410711430,
-      "end": 1695410711432,
+      "start": 1696585309346,
+      "end": 1696585309347,
       "order": "normal",
       "sourcemaps": {
         "version": 3,
@@ -137,38 +137,38 @@
     },
     {
       "name": "vite:dynamic-import-vars",
-      "start": 1695410711432,
-      "end": 1695410711432,
+      "start": 1696585309347,
+      "end": 1696585309348,
       "order": "normal"
     },
     {
       "name": "vite:import-glob",
-      "start": 1695410711432,
-      "end": 1695410711432,
+      "start": 1696585309348,
+      "end": 1696585309348,
       "order": "normal"
     },
     {
       "name": "astro:scripts:page-ssr",
-      "start": 1695410711432,
-      "end": 1695410711432,
+      "start": 1696585309348,
+      "end": 1696585309348,
       "order": "post"
     },
     {
       "name": "astro:scanner",
-      "start": 1695410711432,
-      "end": 1695410711432,
+      "start": 1696585309348,
+      "end": 1696585309348,
       "order": "post"
     },
     {
       "name": "vite:build-import-analysis",
-      "start": 1695410711432,
-      "end": 1695410711432,
+      "start": 1696585309348,
+      "end": 1696585309348,
       "order": "normal"
     },
     {
       "name": "vite:reporter",
-      "start": 1695410711432,
-      "end": 1695410711432,
+      "start": 1696585309348,
+      "end": 1696585309348,
       "order": "normal"
     }
   ]

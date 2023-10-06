@@ -4,158 +4,158 @@
     {
       "name": "vite:load-fallback",
       "result": "import mime from \"mime\";\nimport { renderEndpoint } from \"../../runtime/server/index.js\";\nimport { ASTRO_VERSION } from \"../constants.js\";\nimport { AstroCookies, attachCookiesToResponse } from \"../cookies/index.js\";\nimport { AstroError, AstroErrorData } from \"../errors/index.js\";\nimport { callMiddleware } from \"../middleware/callMiddleware.js\";\nconst encoder = new TextEncoder();\nconst clientAddressSymbol = Symbol.for(\"astro.clientAddress\");\nconst clientLocalsSymbol = Symbol.for(\"astro.locals\");\nfunction createAPIContext({\n  request,\n  params,\n  site,\n  props,\n  adapterName\n}) {\n  initResponseWithEncoding();\n  const context = {\n    cookies: new AstroCookies(request),\n    request,\n    params,\n    site: site ? new URL(site) : void 0,\n    generator: `Astro v${ASTRO_VERSION}`,\n    props,\n    redirect(path, status) {\n      return new Response(null, {\n        status: status || 302,\n        headers: {\n          Location: path\n        }\n      });\n    },\n    ResponseWithEncoding,\n    url: new URL(request.url),\n    get clientAddress() {\n      if (!(clientAddressSymbol in request)) {\n        if (adapterName) {\n          throw new AstroError({\n            ...AstroErrorData.ClientAddressNotAvailable,\n            message: AstroErrorData.ClientAddressNotAvailable.message(adapterName)\n          });\n        } else {\n          throw new AstroError(AstroErrorData.StaticClientAddressNotAvailable);\n        }\n      }\n      return Reflect.get(request, clientAddressSymbol);\n    }\n  };\n  Object.defineProperty(context, \"locals\", {\n    enumerable: true,\n    get() {\n      return Reflect.get(request, clientLocalsSymbol);\n    },\n    set(val) {\n      if (typeof val !== \"object\") {\n        throw new AstroError(AstroErrorData.LocalsNotAnObject);\n      } else {\n        Reflect.set(request, clientLocalsSymbol, val);\n      }\n    }\n  });\n  return context;\n}\nlet ResponseWithEncoding;\nlet initResponseWithEncoding = () => {\n  class LocalResponseWithEncoding extends Response {\n    constructor(body, init, encoding) {\n      if (typeof body === \"string\") {\n        if (typeof Buffer !== \"undefined\" && Buffer.from) {\n          body = Buffer.from(body, encoding);\n        } else if (encoding == null || encoding === \"utf8\" || encoding === \"utf-8\") {\n          body = encoder.encode(body);\n        }\n      }\n      super(body, init);\n      if (encoding) {\n        this.headers.set(\"X-Astro-Encoding\", encoding);\n      }\n    }\n  }\n  ResponseWithEncoding = LocalResponseWithEncoding;\n  initResponseWithEncoding = () => {\n  };\n  return LocalResponseWithEncoding;\n};\nasync function callEndpoint(mod, env, ctx, onRequest) {\n  const context = createAPIContext({\n    request: ctx.request,\n    params: ctx.params,\n    props: ctx.props,\n    site: env.site,\n    adapterName: env.adapterName\n  });\n  let response;\n  if (onRequest) {\n    response = await callMiddleware(\n      env.logger,\n      onRequest,\n      context,\n      async () => {\n        return await renderEndpoint(mod, context, env.ssr, env.logger);\n      }\n    );\n  } else {\n    response = await renderEndpoint(mod, context, env.ssr, env.logger);\n  }\n  const isEndpointSSR = env.ssr && !ctx.route?.prerender;\n  if (response instanceof Response) {\n    if (isEndpointSSR && response.headers.get(\"X-Astro-Encoding\")) {\n      env.logger.warn(\n        \"ssr\",\n        \"`ResponseWithEncoding` is ignored in SSR. Please return an instance of Response. See https://docs.astro.build/en/core-concepts/endpoints/#server-endpoints-api-routes for more information.\"\n      );\n    }\n    attachCookiesToResponse(response, context.cookies);\n    return response;\n  }\n  env.logger.warn(\n    \"astro\",\n    `${ctx.route.component} returns a simple object which is deprecated. Please return an instance of Response. See https://docs.astro.build/en/core-concepts/endpoints/#server-endpoints-api-routes for more information.`\n  );\n  if (isEndpointSSR) {\n    if (response.hasOwnProperty(\"headers\")) {\n      env.logger.warn(\n        \"ssr\",\n        \"Setting headers is not supported when returning an object. Please return an instance of Response. See https://docs.astro.build/en/core-concepts/endpoints/#server-endpoints-api-routes for more information.\"\n      );\n    }\n    if (response.encoding) {\n      env.logger.warn(\n        \"ssr\",\n        \"`encoding` is ignored in SSR. To return a charset other than UTF-8, please return an instance of Response. See https://docs.astro.build/en/core-concepts/endpoints/#server-endpoints-api-routes for more information.\"\n      );\n    }\n  }\n  let body;\n  const headers = new Headers();\n  const pathname = ctx.route ? (\n    // Try the static route `pathname`\n    ctx.route.pathname ?? // Dynamic routes don't include `pathname`, so synthesize a path for these (e.g. 'src/pages/[slug].svg')\n    ctx.route.segments.map((s) => s.map((p) => p.content).join(\"\")).join(\"/\")\n  ) : (\n    // Fallback to pathname of the request\n    ctx.pathname\n  );\n  const mimeType = mime.getType(pathname) || \"text/plain\";\n  headers.set(\"Content-Type\", `${mimeType};charset=utf-8`);\n  if (response.encoding) {\n    headers.set(\"X-Astro-Encoding\", response.encoding);\n  }\n  if (response.body instanceof Uint8Array) {\n    body = response.body;\n    headers.set(\"Content-Length\", body.byteLength.toString());\n  } else if (typeof Buffer !== \"undefined\" && Buffer.from) {\n    body = Buffer.from(response.body, response.encoding);\n    headers.set(\"Content-Length\", body.byteLength.toString());\n  } else if (response.encoding == null || response.encoding === \"utf8\" || response.encoding === \"utf-8\") {\n    body = encoder.encode(response.body);\n    headers.set(\"Content-Length\", body.byteLength.toString());\n  } else {\n    body = response.body;\n  }\n  response = new Response(body, {\n    status: 200,\n    headers\n  });\n  attachCookiesToResponse(response, context.cookies);\n  return response;\n}\nexport {\n  ResponseWithEncoding,\n  callEndpoint,\n  createAPIContext\n};\n",
-      "start": 1695410711179,
-      "end": 1695410711267,
+      "start": 1696585309131,
+      "end": 1696585309221,
       "sourcemaps": null
     },
     {
       "name": "astro:build",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "pre"
     },
     {
       "name": "astro:vite-plugin-env",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "pre"
     },
     {
       "name": "astro:jsx",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "pre"
     },
     {
       "name": "astro:content-asset-propagation",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "pre"
     },
     {
       "name": "vite:css",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "normal"
     },
     {
       "name": "vite:esbuild",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "normal"
     },
     {
       "name": "vite:json",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "normal"
     },
     {
       "name": "vite:worker",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "normal"
     },
     {
       "name": "astro:html",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "normal"
     },
     {
       "name": "astro:postprocess",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "normal"
     },
     {
       "name": "astro:head-metadata",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "normal"
     },
     {
       "name": "astro:content-imports",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "normal"
     },
     {
       "name": "vite:define",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "normal"
     },
     {
       "name": "vite:css-post",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "normal"
     },
     {
       "name": "vite:worker-import-meta-url",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "normal"
     },
     {
       "name": "vite:asset-import-meta-url",
-      "start": 1695410711267,
-      "end": 1695410711267,
+      "start": 1696585309221,
+      "end": 1696585309221,
       "order": "normal"
     },
     {
       "name": "commonjs",
-      "start": 1695410711267,
-      "end": 1695410711268,
+      "start": 1696585309221,
+      "end": 1696585309222,
       "order": "normal"
     },
     {
       "name": "vite:dynamic-import-vars",
-      "start": 1695410711269,
-      "end": 1695410711269,
+      "start": 1696585309222,
+      "end": 1696585309222,
       "order": "normal"
     },
     {
       "name": "vite:import-glob",
-      "start": 1695410711269,
-      "end": 1695410711269,
+      "start": 1696585309222,
+      "end": 1696585309222,
       "order": "normal"
     },
     {
       "name": "astro:scripts:page-ssr",
-      "start": 1695410711269,
-      "end": 1695410711269,
+      "start": 1696585309222,
+      "end": 1696585309223,
       "order": "post"
     },
     {
       "name": "astro:scanner",
-      "start": 1695410711269,
-      "end": 1695410711269,
+      "start": 1696585309223,
+      "end": 1696585309223,
       "order": "post"
     },
     {
       "name": "vite:build-import-analysis",
-      "start": 1695410711269,
-      "end": 1695410711269,
+      "start": 1696585309223,
+      "end": 1696585309223,
       "order": "normal"
     },
     {
       "name": "vite:reporter",
-      "start": 1695410711269,
-      "end": 1695410711269,
+      "start": 1696585309223,
+      "end": 1696585309223,
       "order": "normal"
     }
   ]

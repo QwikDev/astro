@@ -37,7 +37,7 @@ export async function renderToStaticMarkup(
     }
 
     const app = h(Component, { props, slots });
-    console.log(app);
+    // console.log(app);
 
     const html = await renderToString(app, {
       containerTagName: "div",

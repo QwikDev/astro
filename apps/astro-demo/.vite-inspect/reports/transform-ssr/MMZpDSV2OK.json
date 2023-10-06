@@ -4,158 +4,158 @@
     {
       "name": "vite:load-fallback",
       "result": "import { HTMLString, markHTMLString } from \"../escape.js\";\nimport { renderChild } from \"./any.js\";\nimport { chunkToString } from \"./common.js\";\nconst slotString = Symbol.for(\"astro:slot-string\");\nclass SlotString extends HTMLString {\n  instructions;\n  [slotString];\n  constructor(content, instructions) {\n    super(content);\n    this.instructions = instructions;\n    this[slotString] = true;\n  }\n}\nfunction isSlotString(str) {\n  return !!str[slotString];\n}\nfunction renderSlot(result, slotted, fallback) {\n  if (!slotted && fallback) {\n    return renderSlot(result, fallback);\n  }\n  return {\n    async render(destination) {\n      await renderChild(destination, typeof slotted === \"function\" ? slotted(result) : slotted);\n    }\n  };\n}\nasync function renderSlotToString(result, slotted, fallback) {\n  let content = \"\";\n  let instructions = null;\n  const temporaryDestination = {\n    write(chunk) {\n      if (chunk instanceof Response)\n        return;\n      if (typeof chunk === \"object\" && \"type\" in chunk && typeof chunk.type === \"string\") {\n        if (instructions === null) {\n          instructions = [];\n        }\n        instructions.push(chunk);\n      } else {\n        content += chunkToString(result, chunk);\n      }\n    }\n  };\n  const renderInstance = renderSlot(result, slotted, fallback);\n  await renderInstance.render(temporaryDestination);\n  return markHTMLString(new SlotString(content, instructions));\n}\nasync function renderSlots(result, slots = {}) {\n  let slotInstructions = null;\n  let children = {};\n  if (slots) {\n    await Promise.all(\n      Object.entries(slots).map(\n        ([key, value]) => renderSlotToString(result, value).then((output) => {\n          if (output.instructions) {\n            if (slotInstructions === null) {\n              slotInstructions = [];\n            }\n            slotInstructions.push(...output.instructions);\n          }\n          children[key] = output;\n        })\n      )\n    );\n  }\n  return { slotInstructions, children };\n}\nexport {\n  SlotString,\n  isSlotString,\n  renderSlot,\n  renderSlotToString,\n  renderSlots\n};\n",
-      "start": 1695410711356,
-      "end": 1695410711414,
+      "start": 1696585309286,
+      "end": 1696585309333,
       "sourcemaps": null
     },
     {
       "name": "astro:build",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "pre"
     },
     {
       "name": "astro:vite-plugin-env",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "pre"
     },
     {
       "name": "astro:jsx",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "pre"
     },
     {
       "name": "astro:content-asset-propagation",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "pre"
     },
     {
       "name": "vite:css",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "normal"
     },
     {
       "name": "vite:esbuild",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "normal"
     },
     {
       "name": "vite:json",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "normal"
     },
     {
       "name": "vite:worker",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "normal"
     },
     {
       "name": "astro:html",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "normal"
     },
     {
       "name": "astro:postprocess",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "normal"
     },
     {
       "name": "astro:head-metadata",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "normal"
     },
     {
       "name": "astro:content-imports",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "normal"
     },
     {
       "name": "vite:define",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "normal"
     },
     {
       "name": "vite:css-post",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "normal"
     },
     {
       "name": "vite:worker-import-meta-url",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "normal"
     },
     {
       "name": "vite:asset-import-meta-url",
-      "start": 1695410711414,
-      "end": 1695410711414,
+      "start": 1696585309333,
+      "end": 1696585309333,
       "order": "normal"
     },
     {
       "name": "commonjs",
-      "start": 1695410711414,
-      "end": 1695410711415,
+      "start": 1696585309333,
+      "end": 1696585309334,
       "order": "normal"
     },
     {
       "name": "vite:dynamic-import-vars",
-      "start": 1695410711415,
-      "end": 1695410711415,
+      "start": 1696585309334,
+      "end": 1696585309334,
       "order": "normal"
     },
     {
       "name": "vite:import-glob",
-      "start": 1695410711415,
-      "end": 1695410711415,
+      "start": 1696585309334,
+      "end": 1696585309334,
       "order": "normal"
     },
     {
       "name": "astro:scripts:page-ssr",
-      "start": 1695410711415,
-      "end": 1695410711415,
+      "start": 1696585309334,
+      "end": 1696585309334,
       "order": "post"
     },
     {
       "name": "astro:scanner",
-      "start": 1695410711415,
-      "end": 1695410711415,
+      "start": 1696585309334,
+      "end": 1696585309334,
       "order": "post"
     },
     {
       "name": "vite:build-import-analysis",
-      "start": 1695410711415,
-      "end": 1695410711415,
+      "start": 1696585309334,
+      "end": 1696585309334,
       "order": "normal"
     },
     {
       "name": "vite:reporter",
-      "start": 1695410711415,
-      "end": 1695410711415,
+      "start": 1696585309334,
+      "end": 1696585309334,
       "order": "normal"
     }
   ]

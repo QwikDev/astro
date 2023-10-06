@@ -19,7 +19,7 @@ export async function renderToStaticMarkup(Component, props, slotted) {
             slots[key] = value;
         }
         const app = h(Component, { props, slots });
-        console.log(app);
+        // console.log(app);
         const html = await renderToString(app, {
             containerTagName: "div",
         });

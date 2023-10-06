@@ -3,16 +3,16 @@
   "transforms": [
     {
       "name": "vite:load-fallback",
-      "result": "---\nimport { Hello } from \"../components/Hello\";\n---\n\n<html lang=\"en\">\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\" />\n\t\t<meta name=\"viewport\" content=\"width=device-width\" />\n\t\t<meta name=\"generator\" content={Astro.generator} />\n\t\t<title>Astro</title>\n\t</head>\n\t<body>\n\t\t<h1>Astro.js - Qwik</h1>\n\t\t<Hello /> \n\t</body>\n</html>",
-      "start": 1695410710973,
-      "end": 1695410711140,
+      "result": "---\nimport { Counter } from \"../components/counter\";\n---\n\n<html lang=\"en\">\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\" />\n\t\t<meta name=\"viewport\" content=\"width=device-width\" />\n\t\t<meta name=\"generator\" content={Astro.generator} />\n\t\t<title>Astro</title>\n\t</head>\n\t<body>\n\t\t<h1>Astro.js - Qwik</h1>\n\t\t<Counter /> \n\t</body>\n</html>",
+      "start": 1696585308900,
+      "end": 1696585309079,
       "sourcemaps": null
     },
     {
       "name": "astro:build",
-      "result": "import {\n  render as $$render,\n  createAstro as $$createAstro,\n  createComponent as $$createComponent,\n  renderComponent as $$renderComponent,\n  renderHead as $$renderHead,\n  addAttribute as $$addAttribute\n} from \"astro/compiler-runtime\";\nimport { Hello } from \"../components/Hello\";\nconst $$Astro = $$createAstro();\nconst Astro = $$Astro;\nconst $$Index = $$createComponent(async ($$result, $$props, $$slots) => {\n  const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);\n  Astro2.self = $$Index;\n  return $$render`<html lang=\"en\"><head><meta charset=\"utf-8\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><meta name=\"viewport\" content=\"width=device-width\"><meta name=\"generator\"${$$addAttribute(Astro2.generator, \"content\")}><title>Astro</title>${$$renderHead($$result)}</head><body><h1>Astro.js - Qwik</h1>${$$renderComponent($$result, \"Hello\", Hello, {})}</body></html>`;\n}, \"/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/pages/index.astro\", void 0);\nexport default $$Index;\n\nconst $$file = \"/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/pages/index.astro\";\nconst $$url = \"\";export { $$file as file, $$url as url };\n",
-      "start": 1695410711140,
-      "end": 1695410711549,
+      "result": "import {\n  render as $$render,\n  createAstro as $$createAstro,\n  createComponent as $$createComponent,\n  renderComponent as $$renderComponent,\n  renderHead as $$renderHead,\n  addAttribute as $$addAttribute\n} from \"astro/compiler-runtime\";\nimport { Counter } from \"../components/counter\";\nconst $$Astro = $$createAstro();\nconst Astro = $$Astro;\nconst $$Index = $$createComponent(async ($$result, $$props, $$slots) => {\n  const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);\n  Astro2.self = $$Index;\n  return $$render`<html lang=\"en\"><head><meta charset=\"utf-8\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><meta name=\"viewport\" content=\"width=device-width\"><meta name=\"generator\"${$$addAttribute(Astro2.generator, \"content\")}><title>Astro</title>${$$renderHead($$result)}</head><body><h1>Astro.js - Qwik</h1>${$$renderComponent($$result, \"Counter\", Counter, {})}</body></html>`;\n}, \"/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/pages/index.astro\", void 0);\nexport default $$Index;\n\nconst $$file = \"/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/pages/index.astro\";\nconst $$url = \"\";export { $$file as file, $$url as url };\n",
+      "start": 1696585309079,
+      "end": 1696585309431,
       "order": "pre",
       "sourcemaps": {
         "version": 3,
@@ -20,9 +20,9 @@
           "/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/pages/index.astro"
         ],
         "sourcesContent": [
-          "---\nimport { Hello } from \"../components/Hello\";\n---\n\n<html lang=\"en\">\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\" />\n\t\t<meta name=\"viewport\" content=\"width=device-width\" />\n\t\t<meta name=\"generator\" content={Astro.generator} />\n\t\t<title>Astro</title>\n\t</head>\n\t<body>\n\t\t<h1>Astro.js - Qwik</h1>\n\t\t<Hello /> \n\t</body>\n</html>"
+          "---\nimport { Counter } from \"../components/counter\";\n---\n\n<html lang=\"en\">\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\" />\n\t\t<meta name=\"viewport\" content=\"width=device-width\" />\n\t\t<meta name=\"generator\" content={Astro.generator} />\n\t\t<title>Astro</title>\n\t</head>\n\t<body>\n\t\t<h1>Astro.js - Qwik</h1>\n\t\t<Counter /> \n\t</body>\n</html>"
         ],
-        "mappings": ";;;;;;;;AACA,SAAS,aAAa;AADtB,MAAA,UAAA,cAAA;AAAA,MAAA,QAAA;AAAA,MAAA,UAAA,kBAAA,OAAA,UAAA,SAAA,YAAA;AAAA,QAAAA,SAAA,SAAA,YAAA,SAAA,SAAA,OAAA;AAAA,EAAAA,OAAA,OAAA;AAAA,SAAA,0LAAA,eASkCA,OAAM,WATxC,SAAA,CAAA,wBAAA,aAAA,QAAA,CAAA,wCAAA,kBAAA,UAAA,SAAA,OAAA,CAAA,CAcG,CAAA;AAdH,GAAA,sFAAA,MAAA;AAAA,eAAA;",
+        "mappings": ";;;;;;;;AACA,SAAS,eAAe;AADxB,MAAA,UAAA,cAAA;AAAA,MAAA,QAAA;AAAA,MAAA,UAAA,kBAAA,OAAA,UAAA,SAAA,YAAA;AAAA,QAAAA,SAAA,SAAA,YAAA,SAAA,SAAA,OAAA;AAAA,EAAAA,OAAA,OAAA;AAAA,SAAA,0LAAA,eASkCA,OAAM,WATxC,SAAA,CAAA,wBAAA,aAAA,QAAA,CAAA,wCAAA,kBAAA,UAAA,WAAA,SAAA,CAAA,CAcG,CAAA;AAdH,GAAA,sFAAA,MAAA;AAAA,eAAA;",
         "names": [
           "Astro"
         ]
@@ -30,148 +30,148 @@
     },
     {
       "name": "astro:vite-plugin-env",
-      "start": 1695410711549,
-      "end": 1695410711549,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "pre"
     },
     {
       "name": "astro:jsx",
-      "start": 1695410711549,
-      "end": 1695410711549,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "pre"
     },
     {
       "name": "astro:content-asset-propagation",
-      "start": 1695410711549,
-      "end": 1695410711549,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711549,
-      "end": 1695410711549,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711549,
-      "end": 1695410711549,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "pre"
     },
     {
       "name": "vite:css",
-      "start": 1695410711549,
-      "end": 1695410711549,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "normal"
     },
     {
       "name": "vite:esbuild",
-      "start": 1695410711549,
-      "end": 1695410711549,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "normal"
     },
     {
       "name": "vite:json",
-      "start": 1695410711549,
-      "end": 1695410711549,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "normal"
     },
     {
       "name": "vite:worker",
-      "start": 1695410711549,
-      "end": 1695410711549,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "normal"
     },
     {
       "name": "astro:html",
-      "start": 1695410711549,
-      "end": 1695410711549,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "normal"
     },
     {
       "name": "astro:postprocess",
-      "start": 1695410711549,
-      "end": 1695410711550,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "normal"
     },
     {
       "name": "astro:head-metadata",
-      "start": 1695410711550,
-      "end": 1695410711550,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "normal"
     },
     {
       "name": "astro:content-imports",
-      "start": 1695410711550,
-      "end": 1695410711550,
+      "start": 1696585309431,
+      "end": 1696585309431,
       "order": "normal"
     },
     {
       "name": "vite:define",
-      "start": 1695410711550,
-      "end": 1695410711550,
+      "start": 1696585309431,
+      "end": 1696585309432,
       "order": "normal"
     },
     {
       "name": "vite:css-post",
-      "start": 1695410711550,
-      "end": 1695410711550,
+      "start": 1696585309432,
+      "end": 1696585309432,
       "order": "normal"
     },
     {
       "name": "vite:worker-import-meta-url",
-      "start": 1695410711550,
-      "end": 1695410711550,
+      "start": 1696585309432,
+      "end": 1696585309432,
       "order": "normal"
     },
     {
       "name": "vite:asset-import-meta-url",
-      "start": 1695410711550,
-      "end": 1695410711550,
+      "start": 1696585309432,
+      "end": 1696585309432,
       "order": "normal"
     },
     {
       "name": "commonjs",
-      "start": 1695410711550,
-      "end": 1695410711550,
+      "start": 1696585309432,
+      "end": 1696585309432,
       "order": "normal"
     },
     {
       "name": "vite:dynamic-import-vars",
-      "start": 1695410711550,
-      "end": 1695410711550,
+      "start": 1696585309432,
+      "end": 1696585309432,
       "order": "normal"
     },
     {
       "name": "vite:import-glob",
-      "start": 1695410711550,
-      "end": 1695410711550,
+      "start": 1696585309432,
+      "end": 1696585309432,
       "order": "normal"
     },
     {
       "name": "astro:scripts:page-ssr",
-      "start": 1695410711550,
-      "end": 1695410711550,
+      "start": 1696585309432,
+      "end": 1696585309432,
       "order": "post"
     },
     {
       "name": "astro:scanner",
-      "result": "import {\n  render as $$render,\n  createAstro as $$createAstro,\n  createComponent as $$createComponent,\n  renderComponent as $$renderComponent,\n  renderHead as $$renderHead,\n  addAttribute as $$addAttribute\n} from \"astro/compiler-runtime\";\nimport { Hello } from \"../components/Hello\";\nconst $$Astro = $$createAstro();\nconst Astro = $$Astro;\nconst $$Index = $$createComponent(async ($$result, $$props, $$slots) => {\n  const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);\n  Astro2.self = $$Index;\n  return $$render`<html lang=\"en\"><head><meta charset=\"utf-8\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><meta name=\"viewport\" content=\"width=device-width\"><meta name=\"generator\"${$$addAttribute(Astro2.generator, \"content\")}><title>Astro</title>${$$renderHead($$result)}</head><body><h1>Astro.js - Qwik</h1>${$$renderComponent($$result, \"Hello\", Hello, {})}</body></html>`;\n}, \"/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/pages/index.astro\", void 0);\nexport default $$Index;\n\nconst $$file = \"/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/pages/index.astro\";\nconst $$url = \"\";export { $$file as file, $$url as url };\n",
-      "start": 1695410711550,
-      "end": 1695410711551,
+      "result": "import {\n  render as $$render,\n  createAstro as $$createAstro,\n  createComponent as $$createComponent,\n  renderComponent as $$renderComponent,\n  renderHead as $$renderHead,\n  addAttribute as $$addAttribute\n} from \"astro/compiler-runtime\";\nimport { Counter } from \"../components/counter\";\nconst $$Astro = $$createAstro();\nconst Astro = $$Astro;\nconst $$Index = $$createComponent(async ($$result, $$props, $$slots) => {\n  const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);\n  Astro2.self = $$Index;\n  return $$render`<html lang=\"en\"><head><meta charset=\"utf-8\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><meta name=\"viewport\" content=\"width=device-width\"><meta name=\"generator\"${$$addAttribute(Astro2.generator, \"content\")}><title>Astro</title>${$$renderHead($$result)}</head><body><h1>Astro.js - Qwik</h1>${$$renderComponent($$result, \"Counter\", Counter, {})}</body></html>`;\n}, \"/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/pages/index.astro\", void 0);\nexport default $$Index;\n\nconst $$file = \"/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/pages/index.astro\";\nconst $$url = \"\";export { $$file as file, $$url as url };\n",
+      "start": 1696585309432,
+      "end": 1696585309433,
       "order": "post",
       "sourcemaps": null
     },
     {
       "name": "vite:build-import-analysis",
-      "start": 1695410711551,
-      "end": 1695410711551,
+      "start": 1696585309433,
+      "end": 1696585309434,
       "order": "normal"
     },
     {
       "name": "vite:reporter",
-      "start": 1695410711551,
-      "end": 1695410711551,
+      "start": 1696585309434,
+      "end": 1696585309434,
       "order": "normal"
     }
   ]

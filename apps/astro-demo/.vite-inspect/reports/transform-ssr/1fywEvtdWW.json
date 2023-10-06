@@ -4,158 +4,158 @@
     {
       "name": "vite:load-fallback",
       "result": "import { parse, serialize } from \"cookie\";\nimport { AstroError, AstroErrorData } from \"../errors/index.js\";\nconst DELETED_EXPIRATION = /* @__PURE__ */ new Date(0);\nconst DELETED_VALUE = \"deleted\";\nconst responseSentSymbol = Symbol.for(\"astro.responseSent\");\nclass AstroCookie {\n  constructor(value) {\n    this.value = value;\n  }\n  json() {\n    if (this.value === void 0) {\n      throw new Error(`Cannot convert undefined to an object.`);\n    }\n    return JSON.parse(this.value);\n  }\n  number() {\n    return Number(this.value);\n  }\n  boolean() {\n    if (this.value === \"false\")\n      return false;\n    if (this.value === \"0\")\n      return false;\n    return Boolean(this.value);\n  }\n}\nclass AstroCookies {\n  #request;\n  #requestValues;\n  #outgoing;\n  constructor(request) {\n    this.#request = request;\n    this.#requestValues = null;\n    this.#outgoing = null;\n  }\n  /**\n   * Astro.cookies.delete(key) is used to delete a cookie. Using this method will result\n   * in a Set-Cookie header added to the response.\n   * @param key The cookie to delete\n   * @param options Options related to this deletion, such as the path of the cookie.\n   */\n  delete(key, options) {\n    const serializeOptions = {\n      expires: DELETED_EXPIRATION\n    };\n    if (options?.domain) {\n      serializeOptions.domain = options.domain;\n    }\n    if (options?.path) {\n      serializeOptions.path = options.path;\n    }\n    this.#ensureOutgoingMap().set(key, [\n      DELETED_VALUE,\n      serialize(key, DELETED_VALUE, serializeOptions),\n      false\n    ]);\n  }\n  /**\n   * Astro.cookies.get(key) is used to get a cookie value. The cookie value is read from the\n   * request. If you have set a cookie via Astro.cookies.set(key, value), the value will be taken\n   * from that set call, overriding any values already part of the request.\n   * @param key The cookie to get.\n   * @returns An object containing the cookie value as well as convenience methods for converting its value.\n   */\n  get(key) {\n    if (this.#outgoing?.has(key)) {\n      let [serializedValue, , isSetValue] = this.#outgoing.get(key);\n      if (isSetValue) {\n        return new AstroCookie(serializedValue);\n      } else {\n        return void 0;\n      }\n    }\n    const values = this.#ensureParsed();\n    if (key in values) {\n      const value = values[key];\n      return new AstroCookie(value);\n    }\n  }\n  /**\n   * Astro.cookies.has(key) returns a boolean indicating whether this cookie is either\n   * part of the initial request or set via Astro.cookies.set(key)\n   * @param key The cookie to check for.\n   * @returns\n   */\n  has(key) {\n    if (this.#outgoing?.has(key)) {\n      let [, , isSetValue] = this.#outgoing.get(key);\n      return isSetValue;\n    }\n    const values = this.#ensureParsed();\n    return !!values[key];\n  }\n  /**\n   * Astro.cookies.set(key, value) is used to set a cookie's value. If provided\n   * an object it will be stringified via JSON.stringify(value). Additionally you\n   * can provide options customizing how this cookie will be set, such as setting httpOnly\n   * in order to prevent the cookie from being read in client-side JavaScript.\n   * @param key The name of the cookie to set.\n   * @param value A value, either a string or other primitive or an object.\n   * @param options Options for the cookie, such as the path and security settings.\n   */\n  set(key, value, options) {\n    let serializedValue;\n    if (typeof value === \"string\") {\n      serializedValue = value;\n    } else {\n      let toStringValue = value.toString();\n      if (toStringValue === Object.prototype.toString.call(value)) {\n        serializedValue = JSON.stringify(value);\n      } else {\n        serializedValue = toStringValue;\n      }\n    }\n    const serializeOptions = {};\n    if (options) {\n      Object.assign(serializeOptions, options);\n    }\n    this.#ensureOutgoingMap().set(key, [\n      serializedValue,\n      serialize(key, serializedValue, serializeOptions),\n      true\n    ]);\n    if (this.#request[responseSentSymbol]) {\n      throw new AstroError({\n        ...AstroErrorData.ResponseSentError\n      });\n    }\n  }\n  /**\n   * Astro.cookies.header() returns an iterator for the cookies that have previously\n   * been set by either Astro.cookies.set() or Astro.cookies.delete().\n   * This method is primarily used by adapters to set the header on outgoing responses.\n   * @returns\n   */\n  *headers() {\n    if (this.#outgoing == null)\n      return;\n    for (const [, value] of this.#outgoing) {\n      yield value[1];\n    }\n  }\n  #ensureParsed() {\n    if (!this.#requestValues) {\n      this.#parse();\n    }\n    if (!this.#requestValues) {\n      this.#requestValues = {};\n    }\n    return this.#requestValues;\n  }\n  #ensureOutgoingMap() {\n    if (!this.#outgoing) {\n      this.#outgoing = /* @__PURE__ */ new Map();\n    }\n    return this.#outgoing;\n  }\n  #parse() {\n    const raw = this.#request.headers.get(\"cookie\");\n    if (!raw) {\n      return;\n    }\n    this.#requestValues = parse(raw);\n  }\n}\nexport {\n  AstroCookies\n};\n",
-      "start": 1695410711098,
-      "end": 1695410711150,
+      "start": 1696585309035,
+      "end": 1696585309108,
       "sourcemaps": null
     },
     {
       "name": "astro:build",
-      "start": 1695410711150,
-      "end": 1695410711150,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "pre"
     },
     {
       "name": "astro:vite-plugin-env",
-      "start": 1695410711150,
-      "end": 1695410711150,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "pre"
     },
     {
       "name": "astro:jsx",
-      "start": 1695410711150,
-      "end": 1695410711150,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "pre"
     },
     {
       "name": "astro:content-asset-propagation",
-      "start": 1695410711150,
-      "end": 1695410711150,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711150,
-      "end": 1695410711150,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711150,
-      "end": 1695410711150,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "pre"
     },
     {
       "name": "vite:css",
-      "start": 1695410711150,
-      "end": 1695410711150,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "normal"
     },
     {
       "name": "vite:esbuild",
-      "start": 1695410711150,
-      "end": 1695410711150,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "normal"
     },
     {
       "name": "vite:json",
-      "start": 1695410711150,
-      "end": 1695410711150,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "normal"
     },
     {
       "name": "vite:worker",
-      "start": 1695410711150,
-      "end": 1695410711150,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "normal"
     },
     {
       "name": "astro:html",
-      "start": 1695410711150,
-      "end": 1695410711150,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "normal"
     },
     {
       "name": "astro:postprocess",
-      "start": 1695410711150,
-      "end": 1695410711150,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "normal"
     },
     {
       "name": "astro:head-metadata",
-      "start": 1695410711151,
-      "end": 1695410711151,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "normal"
     },
     {
       "name": "astro:content-imports",
-      "start": 1695410711151,
-      "end": 1695410711151,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "normal"
     },
     {
       "name": "vite:define",
-      "start": 1695410711151,
-      "end": 1695410711151,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "normal"
     },
     {
       "name": "vite:css-post",
-      "start": 1695410711151,
-      "end": 1695410711151,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "normal"
     },
     {
       "name": "vite:worker-import-meta-url",
-      "start": 1695410711151,
-      "end": 1695410711151,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "normal"
     },
     {
       "name": "vite:asset-import-meta-url",
-      "start": 1695410711151,
-      "end": 1695410711151,
+      "start": 1696585309108,
+      "end": 1696585309108,
       "order": "normal"
     },
     {
       "name": "commonjs",
-      "start": 1695410711151,
-      "end": 1695410711152,
+      "start": 1696585309108,
+      "end": 1696585309109,
       "order": "normal"
     },
     {
       "name": "vite:dynamic-import-vars",
-      "start": 1695410711152,
-      "end": 1695410711152,
+      "start": 1696585309109,
+      "end": 1696585309109,
       "order": "normal"
     },
     {
       "name": "vite:import-glob",
-      "start": 1695410711152,
-      "end": 1695410711152,
+      "start": 1696585309109,
+      "end": 1696585309109,
       "order": "normal"
     },
     {
       "name": "astro:scripts:page-ssr",
-      "start": 1695410711152,
-      "end": 1695410711152,
+      "start": 1696585309109,
+      "end": 1696585309109,
       "order": "post"
     },
     {
       "name": "astro:scanner",
-      "start": 1695410711152,
-      "end": 1695410711153,
+      "start": 1696585309109,
+      "end": 1696585309109,
       "order": "post"
     },
     {
       "name": "vite:build-import-analysis",
-      "start": 1695410711153,
-      "end": 1695410711153,
+      "start": 1696585309109,
+      "end": 1696585309109,
       "order": "normal"
     },
     {
       "name": "vite:reporter",
-      "start": 1695410711153,
-      "end": 1695410711153,
+      "start": 1696585309109,
+      "end": 1696585309109,
       "order": "normal"
     }
   ]

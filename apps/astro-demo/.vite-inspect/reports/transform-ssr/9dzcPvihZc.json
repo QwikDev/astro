@@ -1,0 +1,176 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/entry.ssr.tsx",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "/**\n * WHAT IS THIS FILE?\n *\n * SSR entry point, in all cases the application is render outside the browser, this\n * entry point will be the common one.\n *\n * - Server (express, cloudflare...)\n * - npm run start\n * - npm run preview\n * - npm run build\n *\n */\nimport { renderToStream, type RenderToStreamOptions } from '@builder.io/qwik/server';\nimport { manifest } from '@qwik-client-manifest';\nimport Root from './root';\n\nexport default function (opts: RenderToStreamOptions) {\n  return renderToStream(<Root />, {\n    manifest,\n    ...opts,\n    // Use container attributes to set attributes on the html tag.\n    containerAttributes: {\n      lang: 'en-us',\n      ...opts.containerAttributes,\n    },\n  });\n}\n",
+      "start": 1696585308835,
+      "end": 1696585308858,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1696585308858,
+      "end": 1696585308858,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1696585308858,
+      "end": 1696585308858,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1696585308858,
+      "end": 1696585308858,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1696585308858,
+      "end": 1696585308858,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "result": "/**\n * WHAT IS THIS FILE?\n *\n * SSR entry point, in all cases the application is render outside the browser, this\n * entry point will be the common one.\n *\n * - Server (express, cloudflare...)\n * - npm run start\n * - npm run preview\n * - npm run build\n *\n */ import { _jsxC } from \"@builder.io/qwik\";\nimport { renderToStream } from '@builder.io/qwik/server';\nimport { manifest } from '@qwik-client-manifest';\nimport Root from './root';\nexport default function(opts) {\n    return renderToStream(/*#__PURE__*/ _jsxC(Root, null, 3, \"q0_0\"), {\n        manifest,\n        ...opts,\n        // Use container attributes to set attributes on the html tag.\n        containerAttributes: {\n            lang: 'en-us',\n            ...opts.containerAttributes\n        }\n    });\n}\n",
+      "start": 1696585308858,
+      "end": 1696585308861,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "result": "/**\n * WHAT IS THIS FILE?\n *\n * SSR entry point, in all cases the application is render outside the browser, this\n * entry point will be the common one.\n *\n * - Server (express, cloudflare...)\n * - npm run start\n * - npm run preview\n * - npm run build\n *\n */ import { _jsxC } from \"@builder.io/qwik\";\nimport { renderToStream } from '@builder.io/qwik/server';\nimport { manifest } from '@qwik-client-manifest';\nimport Root from './root';\nexport default function(opts) {\n    return renderToStream(/*#__PURE__*/ _jsxC(Root, null, 3, \"q0_0\"), {\n        manifest,\n        ...opts,\n        // Use container attributes to set attributes on the html tag.\n        containerAttributes: {\n            lang: 'en-us',\n            ...opts.containerAttributes\n        }\n    });\n}\n",
+      "start": 1696585308858,
+      "end": 1696585308861,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1696585308861,
+      "end": 1696585308861,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { _jsxC } from \"@builder.io/qwik\";\nimport { renderToStream } from \"@builder.io/qwik/server\";\nimport { manifest } from \"@qwik-client-manifest\";\nimport Root from \"./root\";\nexport default function(opts) {\n  return renderToStream(/* @__PURE__ */ _jsxC(Root, null, 3, \"q0_0\"), {\n    manifest,\n    ...opts,\n    // Use container attributes to set attributes on the html tag.\n    containerAttributes: {\n      lang: \"en-us\",\n      ...opts.containerAttributes\n    }\n  });\n}\n",
+      "start": 1696585308861,
+      "end": 1696585309303,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/entry.ssr.tsx"
+        ],
+        "sourcesContent": [
+          "/**\n * WHAT IS THIS FILE?\n *\n * SSR entry point, in all cases the application is render outside the browser, this\n * entry point will be the common one.\n *\n * - Server (express, cloudflare...)\n * - npm run start\n * - npm run preview\n * - npm run build\n *\n */ import { _jsxC } from \"@builder.io/qwik\";\nimport { renderToStream } from '@builder.io/qwik/server';\nimport { manifest } from '@qwik-client-manifest';\nimport Root from './root';\nexport default function(opts) {\n    return renderToStream(/*#__PURE__*/ _jsxC(Root, null, 3, \"q0_0\"), {\n        manifest,\n        ...opts,\n        // Use container attributes to set attributes on the html tag.\n        containerAttributes: {\n            lang: 'en-us',\n            ...opts.containerAttributes\n        }\n    });\n}\n"
+        ],
+        "mappings": "AAWI,SAAS,aAAa;AAC1B,SAAS,sBAAsB;AAC/B,SAAS,gBAAgB;AACzB,OAAO,UAAU;AACjB,wBAAwB,MAAM;AAC1B,SAAO,eAA6B,sBAAM,MAAM,MAAM,GAAG,MAAM,GAAG;AAAA,IAC9D;AAAA,IACA,GAAG;AAAA;AAAA,IAEH,qBAAqB;AAAA,MACjB,MAAM;AAAA,MACN,GAAG,KAAK;AAAA,IACZ;AAAA,EACJ,CAAC;AACL;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1696585309303,
+      "end": 1696585309303,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1696585309304,
+      "end": 1696585309304,
+      "order": "normal"
+    }
+  ]
+}

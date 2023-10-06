@@ -4,158 +4,158 @@
     {
       "name": "vite:load-fallback",
       "result": "function positionAt(offset, text) {\n  const lineOffsets = getLineOffsets(text);\n  offset = Math.max(0, Math.min(text.length, offset));\n  let low = 0;\n  let high = lineOffsets.length;\n  if (high === 0) {\n    return {\n      line: 0,\n      column: offset\n    };\n  }\n  while (low <= high) {\n    const mid = Math.floor((low + high) / 2);\n    const lineOffset = lineOffsets[mid];\n    if (lineOffset === offset) {\n      return {\n        line: mid,\n        column: 0\n      };\n    } else if (offset > lineOffset) {\n      low = mid + 1;\n    } else {\n      high = mid - 1;\n    }\n  }\n  const line = low - 1;\n  return { line, column: offset - lineOffsets[line] };\n}\nfunction getLineOffsets(text) {\n  const lineOffsets = [];\n  let isLineStart = true;\n  for (let i = 0; i < text.length; i++) {\n    if (isLineStart) {\n      lineOffsets.push(i);\n      isLineStart = false;\n    }\n    const ch = text.charAt(i);\n    isLineStart = ch === \"\\r\" || ch === \"\\n\";\n    if (ch === \"\\r\" && i + 1 < text.length && text.charAt(i + 1) === \"\\n\") {\n      i++;\n    }\n  }\n  if (isLineStart && text.length > 0) {\n    lineOffsets.push(text.length);\n  }\n  return lineOffsets;\n}\nfunction isYAMLException(err) {\n  return err instanceof Error && err.name === \"YAMLException\";\n}\nfunction formatYAMLException(e) {\n  return {\n    name: e.name,\n    id: e.mark.name,\n    loc: { file: e.mark.name, line: e.mark.line + 1, column: e.mark.column },\n    message: e.reason,\n    stack: e.stack ?? \"\"\n  };\n}\nfunction createSafeError(err) {\n  if (err instanceof Error || err?.name && err.message) {\n    return err;\n  } else {\n    const error = new Error(JSON.stringify(err));\n    error.hint = `To get as much information as possible from your errors, make sure to throw Error objects instead of \\`${typeof err}\\`. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error for more information.`;\n    return error;\n  }\n}\nfunction normalizeLF(code) {\n  return code.replace(/\\r\\n|\\r(?!\\n)|\\n/g, \"\\n\");\n}\nexport {\n  createSafeError,\n  formatYAMLException,\n  isYAMLException,\n  normalizeLF,\n  positionAt\n};\n",
-      "start": 1695410711189,
-      "end": 1695410711314,
+      "start": 1696585309120,
+      "end": 1696585309207,
       "sourcemaps": null
     },
     {
       "name": "astro:build",
-      "start": 1695410711314,
-      "end": 1695410711314,
+      "start": 1696585309207,
+      "end": 1696585309207,
       "order": "pre"
     },
     {
       "name": "astro:vite-plugin-env",
-      "start": 1695410711314,
-      "end": 1695410711314,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "pre"
     },
     {
       "name": "astro:jsx",
-      "start": 1695410711314,
-      "end": 1695410711314,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "pre"
     },
     {
       "name": "astro:content-asset-propagation",
-      "start": 1695410711314,
-      "end": 1695410711314,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711314,
-      "end": 1695410711314,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711314,
-      "end": 1695410711314,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "pre"
     },
     {
       "name": "vite:css",
-      "start": 1695410711314,
-      "end": 1695410711314,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "vite:esbuild",
-      "start": 1695410711314,
-      "end": 1695410711314,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "vite:json",
-      "start": 1695410711314,
-      "end": 1695410711314,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "vite:worker",
-      "start": 1695410711314,
-      "end": 1695410711314,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "astro:html",
-      "start": 1695410711317,
-      "end": 1695410711317,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "astro:postprocess",
-      "start": 1695410711317,
-      "end": 1695410711317,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "astro:head-metadata",
-      "start": 1695410711317,
-      "end": 1695410711317,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "astro:content-imports",
-      "start": 1695410711317,
-      "end": 1695410711317,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "vite:define",
-      "start": 1695410711317,
-      "end": 1695410711317,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "vite:css-post",
-      "start": 1695410711317,
-      "end": 1695410711317,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "vite:worker-import-meta-url",
-      "start": 1695410711317,
-      "end": 1695410711317,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "vite:asset-import-meta-url",
-      "start": 1695410711317,
-      "end": 1695410711317,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "commonjs",
-      "start": 1695410711317,
-      "end": 1695410711318,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "vite:dynamic-import-vars",
-      "start": 1695410711318,
-      "end": 1695410711318,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "vite:import-glob",
-      "start": 1695410711318,
-      "end": 1695410711318,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "astro:scripts:page-ssr",
-      "start": 1695410711318,
-      "end": 1695410711318,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "post"
     },
     {
       "name": "astro:scanner",
-      "start": 1695410711318,
-      "end": 1695410711318,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "post"
     },
     {
       "name": "vite:build-import-analysis",
-      "start": 1695410711318,
-      "end": 1695410711318,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     },
     {
       "name": "vite:reporter",
-      "start": 1695410711318,
-      "end": 1695410711318,
+      "start": 1696585309208,
+      "end": 1696585309208,
       "order": "normal"
     }
   ]

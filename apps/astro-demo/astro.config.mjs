@@ -7,8 +7,5 @@ import node from "@astrojs/node";
 export default defineConfig({
   integrations: [qwik()],
   output: "static",
-  adapter: node({
-    mode: "standalone",
-  }),
-  // vite: [qwikVite()],
+  adapter: node({ mode: "standalone" }),
 });

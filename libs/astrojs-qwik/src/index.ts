@@ -1,7 +1,8 @@
 import type { AstroIntegration, AstroRenderer } from "astro";
-import { qwikVite } from "@builder.io/qwik/optimizer";
+import { qwikVite, type QwikManifest } from "@builder.io/qwik/optimizer";
 import type { UserConfig } from "vite";
 import inspect from "vite-plugin-inspect";
+// import manifest from "../../../apps/astro-demo/dist/client/q-manifest.json";
 
 export default function createIntegration(): AstroIntegration {
   return {
@@ -9,20 +10,31 @@ export default function createIntegration(): AstroIntegration {
     hooks: {
       "astro:config:setup": async (args) => {
         const { addRenderer, updateConfig } = args;
-        console.log(args);
+        // console.log(args);
 
         addRenderer({
           name: "@astrojs/qwik",
           serverEntrypoint: "@astrojs/qwik/server",
+          clientEntrypoint: "./src/root.tsx",
         });
 
         updateConfig({
           vite: {
+            // buildMode: "production",
             plugins: [
               qwikVite({
-                debug: true,
-                client: { input: "./src/components/Hello.tsx" },
-                ssr: { input: "./src/components/Hello.tsx" },
+                client: {
+                  // input: "./src/components/counter.tsx",
+                  // devInput: "./src/components/counter.tsx",
+                  // manifestOutput: (manifest: QwikManifest) => {
+                  //   console.error("yey got manifest", manifest);
+                  //   myManifest = manifest;
+                  // },
+                },
+                ssr: {
+                  input: "./src/entry.ssr.tsx",
+                  // manifestInput: manifest,
+                },
               }),
               inspect({ build: true }),
             ],

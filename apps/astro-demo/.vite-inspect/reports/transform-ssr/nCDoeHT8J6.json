@@ -1,0 +1,176 @@
+{
+  "resolvedId": "/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/root.tsx",
+  "transforms": [
+    {
+      "name": "vite:load-fallback",
+      "result": "import { component$ } from \"@builder.io/qwik\";\nimport { Counter } from \"./components/counter\";\n\nconst App = component$(() => {\n  return (\n    <div>\n      <Counter />\n    </div>\n  );\n});\n\nexport default App;\n",
+      "start": 1696585309305,
+      "end": 1696585309369,
+      "sourcemaps": null
+    },
+    {
+      "name": "astro:build",
+      "start": 1696585309369,
+      "end": 1696585309369,
+      "order": "pre"
+    },
+    {
+      "name": "astro:vite-plugin-env",
+      "start": 1696585309369,
+      "end": 1696585309369,
+      "order": "pre"
+    },
+    {
+      "name": "astro:jsx",
+      "start": 1696585309369,
+      "end": 1696585309369,
+      "order": "pre"
+    },
+    {
+      "name": "astro:content-asset-propagation",
+      "start": 1696585309369,
+      "end": 1696585309369,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "result": "import { componentQrl } from \"@builder.io/qwik\";\nimport { _jsxC } from \"@builder.io/qwik\";\nimport { _jsxQ } from \"@builder.io/qwik\";\nimport { inlinedQrl } from \"@builder.io/qwik\";\nimport { Counter } from \"./components/counter\";\nconst s_R707kEKOo7c = ()=>{\n    return /*#__PURE__*/ _jsxQ(\"div\", null, null, /*#__PURE__*/ _jsxC(Counter, null, 3, \"97_0\"), 1, \"97_1\");\n};\nconst App = /*#__PURE__*/ componentQrl(/*#__PURE__*/ inlinedQrl(s_R707kEKOo7c, \"s_R707kEKOo7c\"));\nexport default App;\n",
+      "start": 1696585309369,
+      "end": 1696585309371,
+      "order": "pre"
+    },
+    {
+      "name": "vite-plugin-qwik",
+      "result": "import { componentQrl } from \"@builder.io/qwik\";\nimport { _jsxC } from \"@builder.io/qwik\";\nimport { _jsxQ } from \"@builder.io/qwik\";\nimport { inlinedQrl } from \"@builder.io/qwik\";\nimport { Counter } from \"./components/counter\";\nconst s_R707kEKOo7c = ()=>{\n    return /*#__PURE__*/ _jsxQ(\"div\", null, null, /*#__PURE__*/ _jsxC(Counter, null, 3, \"97_0\"), 1, \"97_1\");\n};\nconst App = /*#__PURE__*/ componentQrl(/*#__PURE__*/ inlinedQrl(s_R707kEKOo7c, \"s_R707kEKOo7c\"));\nexport default App;\n",
+      "start": 1696585309369,
+      "end": 1696585309371,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1696585309371,
+      "end": 1696585309371,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { componentQrl } from \"@builder.io/qwik\";\nimport { _jsxC } from \"@builder.io/qwik\";\nimport { _jsxQ } from \"@builder.io/qwik\";\nimport { inlinedQrl } from \"@builder.io/qwik\";\nimport { Counter } from \"./components/counter\";\nconst s_R707kEKOo7c = () => {\n  return /* @__PURE__ */ _jsxQ(\"div\", null, null, /* @__PURE__ */ _jsxC(Counter, null, 3, \"97_0\"), 1, \"97_1\");\n};\nconst App = /* @__PURE__ */ componentQrl(/* @__PURE__ */ inlinedQrl(s_R707kEKOo7c, \"s_R707kEKOo7c\"));\nexport default App;\n",
+      "start": 1696585309371,
+      "end": 1696585309376,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/home/jackshelton/dev/open-source/astro-qwik/apps/astro-demo/src/root.tsx"
+        ],
+        "sourcesContent": [
+          "import { componentQrl } from \"@builder.io/qwik\";\nimport { _jsxC } from \"@builder.io/qwik\";\nimport { _jsxQ } from \"@builder.io/qwik\";\nimport { inlinedQrl } from \"@builder.io/qwik\";\nimport { Counter } from \"./components/counter\";\nconst s_R707kEKOo7c = ()=>{\n    return /*#__PURE__*/ _jsxQ(\"div\", null, null, /*#__PURE__*/ _jsxC(Counter, null, 3, \"97_0\"), 1, \"97_1\");\n};\nconst App = /*#__PURE__*/ componentQrl(/*#__PURE__*/ inlinedQrl(s_R707kEKOo7c, \"s_R707kEKOo7c\"));\nexport default App;\n"
+        ],
+        "mappings": "AAAA,SAAS,oBAAoB;AAC7B,SAAS,aAAa;AACtB,SAAS,aAAa;AACtB,SAAS,kBAAkB;AAC3B,SAAS,eAAe;AACxB,MAAM,gBAAgB,MAAI;AACtB,SAAqB,sBAAM,OAAO,MAAM,MAAoB,sBAAM,SAAS,MAAM,GAAG,MAAM,GAAG,GAAG,MAAM;AAC1G;AACA,MAAM,MAAoB,6BAA2B,2BAAW,eAAe,eAAe,CAAC;AAC/F,eAAe;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "astro:html",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "astro:postprocess",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "astro:head-metadata",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "astro:content-imports",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "commonjs",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "normal"
+    },
+    {
+      "name": "astro:scripts:page-ssr",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "post"
+    },
+    {
+      "name": "astro:scanner",
+      "start": 1696585309376,
+      "end": 1696585309376,
+      "order": "post"
+    },
+    {
+      "name": "vite:build-import-analysis",
+      "start": 1696585309376,
+      "end": 1696585309377,
+      "order": "normal"
+    },
+    {
+      "name": "vite:reporter",
+      "start": 1696585309377,
+      "end": 1696585309377,
+      "order": "normal"
+    }
+  ]
+}

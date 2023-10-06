@@ -4,158 +4,158 @@
     {
       "name": "vite:load-fallback",
       "result": "import { AstroJSX, isVNode } from \"../../jsx-runtime/index.js\";\nimport {\n  HTMLString,\n  escapeHTML,\n  markHTMLString,\n  renderToString,\n  spreadAttributes,\n  voidElementNames\n} from \"./index.js\";\nimport { renderComponentToString } from \"./render/component.js\";\nconst ClientOnlyPlaceholder = \"astro-client-only\";\nclass Skip {\n  constructor(vnode) {\n    this.vnode = vnode;\n    this.count = 0;\n  }\n  count;\n  increment() {\n    this.count++;\n  }\n  haveNoTried() {\n    return this.count === 0;\n  }\n  isCompleted() {\n    return this.count > 2;\n  }\n  static symbol = Symbol(\"astro:jsx:skip\");\n}\nlet originalConsoleError;\nlet consoleFilterRefs = 0;\nasync function renderJSX(result, vnode) {\n  switch (true) {\n    case vnode instanceof HTMLString:\n      if (vnode.toString().trim() === \"\") {\n        return \"\";\n      }\n      return vnode;\n    case typeof vnode === \"string\":\n      return markHTMLString(escapeHTML(vnode));\n    case typeof vnode === \"function\":\n      return vnode;\n    case (!vnode && vnode !== 0):\n      return \"\";\n    case Array.isArray(vnode):\n      return markHTMLString(\n        (await Promise.all(vnode.map((v) => renderJSX(result, v)))).join(\"\")\n      );\n  }\n  let skip;\n  if (vnode.props) {\n    if (vnode.props[Skip.symbol]) {\n      skip = vnode.props[Skip.symbol];\n    } else {\n      skip = new Skip(vnode);\n    }\n  } else {\n    skip = new Skip(vnode);\n  }\n  return renderJSXVNode(result, vnode, skip);\n}\nasync function renderJSXVNode(result, vnode, skip) {\n  if (isVNode(vnode)) {\n    switch (true) {\n      case !vnode.type: {\n        throw new Error(`Unable to render ${result.pathname} because it contains an undefined Component!\nDid you forget to import the component or is it possible there is a typo?`);\n      }\n      case vnode.type === Symbol.for(\"astro:fragment\"):\n        return renderJSX(result, vnode.props.children);\n      case vnode.type.isAstroComponentFactory: {\n        let props = {};\n        let slots = {};\n        for (const [key, value] of Object.entries(vnode.props ?? {})) {\n          if (key === \"children\" || value && typeof value === \"object\" && value[\"$$slot\"]) {\n            slots[key === \"children\" ? \"default\" : key] = () => renderJSX(result, value);\n          } else {\n            props[key] = value;\n          }\n        }\n        const str = await renderToString(result, vnode.type, props, slots);\n        if (str instanceof Response) {\n          throw str;\n        }\n        const html = markHTMLString(str);\n        return html;\n      }\n      case (!vnode.type && vnode.type !== 0):\n        return \"\";\n      case (typeof vnode.type === \"string\" && vnode.type !== ClientOnlyPlaceholder):\n        return markHTMLString(await renderElement(result, vnode.type, vnode.props ?? {}));\n    }\n    if (vnode.type) {\n      let extractSlots2 = function(child) {\n        if (Array.isArray(child)) {\n          return child.map((c) => extractSlots2(c));\n        }\n        if (!isVNode(child)) {\n          _slots.default.push(child);\n          return;\n        }\n        if (\"slot\" in child.props) {\n          _slots[child.props.slot] = [..._slots[child.props.slot] ?? [], child];\n          delete child.props.slot;\n          return;\n        }\n        _slots.default.push(child);\n      };\n      var extractSlots = extractSlots2;\n      if (typeof vnode.type === \"function\" && vnode.type[\"astro:renderer\"]) {\n        skip.increment();\n      }\n      if (typeof vnode.type === \"function\" && vnode.props[\"server:root\"]) {\n        const output2 = await vnode.type(vnode.props ?? {});\n        return await renderJSX(result, output2);\n      }\n      if (typeof vnode.type === \"function\") {\n        if (skip.haveNoTried() || skip.isCompleted()) {\n          useConsoleFilter();\n          try {\n            const output2 = await vnode.type(vnode.props ?? {});\n            let renderResult;\n            if (output2?.[AstroJSX]) {\n              renderResult = await renderJSXVNode(result, output2, skip);\n              return renderResult;\n            } else if (!output2) {\n              renderResult = await renderJSXVNode(result, output2, skip);\n              return renderResult;\n            }\n          } catch (e) {\n            if (skip.isCompleted()) {\n              throw e;\n            }\n            skip.increment();\n          } finally {\n            finishUsingConsoleFilter();\n          }\n        } else {\n          skip.increment();\n        }\n      }\n      const { children = null, ...props } = vnode.props ?? {};\n      const _slots = {\n        default: []\n      };\n      extractSlots2(children);\n      for (const [key, value] of Object.entries(props)) {\n        if (value[\"$$slot\"]) {\n          _slots[key] = value;\n          delete props[key];\n        }\n      }\n      const slotPromises = [];\n      const slots = {};\n      for (const [key, value] of Object.entries(_slots)) {\n        slotPromises.push(\n          renderJSX(result, value).then((output2) => {\n            if (output2.toString().trim().length === 0)\n              return;\n            slots[key] = () => output2;\n          })\n        );\n      }\n      await Promise.all(slotPromises);\n      props[Skip.symbol] = skip;\n      let output;\n      if (vnode.type === ClientOnlyPlaceholder && vnode.props[\"client:only\"]) {\n        output = await renderComponentToString(\n          result,\n          vnode.props[\"client:display-name\"] ?? \"\",\n          null,\n          props,\n          slots\n        );\n      } else {\n        output = await renderComponentToString(\n          result,\n          typeof vnode.type === \"function\" ? vnode.type.name : vnode.type,\n          vnode.type,\n          props,\n          slots\n        );\n      }\n      return markHTMLString(output);\n    }\n  }\n  return markHTMLString(`${vnode}`);\n}\nasync function renderElement(result, tag, { children, ...props }) {\n  return markHTMLString(\n    `<${tag}${spreadAttributes(props)}${markHTMLString(\n      (children == null || children == \"\") && voidElementNames.test(tag) ? `/>` : `>${children == null ? \"\" : await renderJSX(result, prerenderElementChildren(tag, children))}</${tag}>`\n    )}`\n  );\n}\nfunction prerenderElementChildren(tag, children) {\n  if (typeof children === \"string\" && (tag === \"style\" || tag === \"script\")) {\n    return markHTMLString(children);\n  } else {\n    return children;\n  }\n}\nfunction useConsoleFilter() {\n  consoleFilterRefs++;\n  if (!originalConsoleError) {\n    originalConsoleError = console.error;\n    try {\n      console.error = filteredConsoleError;\n    } catch (error) {\n    }\n  }\n}\nfunction finishUsingConsoleFilter() {\n  consoleFilterRefs--;\n}\nfunction filteredConsoleError(msg, ...rest) {\n  if (consoleFilterRefs > 0 && typeof msg === \"string\") {\n    const isKnownReactHookError = msg.includes(\"Warning: Invalid hook call.\") && msg.includes(\"https://reactjs.org/link/invalid-hook-call\");\n    if (isKnownReactHookError)\n      return;\n  }\n  originalConsoleError(msg, ...rest);\n}\nexport {\n  renderJSX\n};\n",
-      "start": 1695410711267,
-      "end": 1695410711347,
+      "start": 1696585309212,
+      "end": 1696585309277,
       "sourcemaps": null
     },
     {
       "name": "astro:build",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "pre"
     },
     {
       "name": "astro:vite-plugin-env",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "pre"
     },
     {
       "name": "astro:jsx",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "pre"
     },
     {
       "name": "astro:content-asset-propagation",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "pre"
     },
     {
       "name": "vite:css",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "normal"
     },
     {
       "name": "vite:esbuild",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "normal"
     },
     {
       "name": "vite:json",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "normal"
     },
     {
       "name": "vite:worker",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "normal"
     },
     {
       "name": "astro:html",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "normal"
     },
     {
       "name": "astro:postprocess",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "normal"
     },
     {
       "name": "astro:head-metadata",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "normal"
     },
     {
       "name": "astro:content-imports",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "normal"
     },
     {
       "name": "vite:define",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "normal"
     },
     {
       "name": "vite:css-post",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "normal"
     },
     {
       "name": "vite:worker-import-meta-url",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "normal"
     },
     {
       "name": "vite:asset-import-meta-url",
-      "start": 1695410711347,
-      "end": 1695410711347,
+      "start": 1696585309277,
+      "end": 1696585309277,
       "order": "normal"
     },
     {
       "name": "commonjs",
-      "start": 1695410711347,
-      "end": 1695410711348,
+      "start": 1696585309277,
+      "end": 1696585309278,
       "order": "normal"
     },
     {
       "name": "vite:dynamic-import-vars",
-      "start": 1695410711348,
-      "end": 1695410711348,
+      "start": 1696585309278,
+      "end": 1696585309278,
       "order": "normal"
     },
     {
       "name": "vite:import-glob",
-      "start": 1695410711348,
-      "end": 1695410711348,
+      "start": 1696585309278,
+      "end": 1696585309278,
       "order": "normal"
     },
     {
       "name": "astro:scripts:page-ssr",
-      "start": 1695410711348,
-      "end": 1695410711348,
+      "start": 1696585309278,
+      "end": 1696585309278,
       "order": "post"
     },
     {
       "name": "astro:scanner",
-      "start": 1695410711348,
-      "end": 1695410711348,
+      "start": 1696585309278,
+      "end": 1696585309279,
       "order": "post"
     },
     {
       "name": "vite:build-import-analysis",
-      "start": 1695410711348,
-      "end": 1695410711348,
+      "start": 1696585309279,
+      "end": 1696585309279,
       "order": "normal"
     },
     {
       "name": "vite:reporter",
-      "start": 1695410711348,
-      "end": 1695410711348,
+      "start": 1696585309279,
+      "end": 1696585309279,
       "order": "normal"
     }
   ]

@@ -4,158 +4,158 @@
     {
       "name": "vite:load-fallback",
       "result": "import { callEndpoint, createAPIContext } from \"./endpoint/index.js\";\nimport { callMiddleware } from \"./middleware/callMiddleware.js\";\nimport { renderPage } from \"./render/core.js\";\nimport {} from \"./render/index.js\";\nclass Pipeline {\n  env;\n  #onRequest;\n  /**\n   * The handler accepts the *original* `Request` and result returned by the endpoint.\n   * It must return a `Response`.\n   */\n  #endpointHandler;\n  /**\n   * When creating a pipeline, an environment is mandatory.\n   * The environment won't change for the whole lifetime of the pipeline.\n   */\n  constructor(env) {\n    this.env = env;\n  }\n  setEnvironment() {\n  }\n  /**\n   * When rendering a route, an \"endpoint\" will a type that needs to be handled and transformed into a `Response`.\n   *\n   * Each consumer might have different needs; use this function to set up the handler.\n   */\n  setEndpointHandler(handler) {\n    this.#endpointHandler = handler;\n  }\n  /**\n   * A middleware function that will be called before each request.\n   */\n  setMiddlewareFunction(onRequest) {\n    this.#onRequest = onRequest;\n  }\n  /**\n   * Returns the current environment\n   */\n  getEnvironment() {\n    return this.env;\n  }\n  /**\n   * The main function of the pipeline. Use this function to render any route known to Astro;\n   */\n  async renderRoute(renderContext, componentInstance) {\n    const result = await this.#tryRenderRoute(\n      renderContext,\n      this.env,\n      componentInstance,\n      this.#onRequest\n    );\n    if (renderContext.route.type === \"endpoint\") {\n      if (!this.#endpointHandler) {\n        throw new Error(\n          \"You created a pipeline that does not know how to handle the result coming from an endpoint.\"\n        );\n      }\n      return this.#endpointHandler(renderContext.request, result);\n    } else {\n      return result;\n    }\n  }\n  /**\n   * It attempts to render a route. A route can be a:\n   * - page\n   * - redirect\n   * - endpoint\n   *\n   * ## Errors\n   *\n   * It throws an error if the page can't be rendered.\n   */\n  async #tryRenderRoute(renderContext, env, mod, onRequest) {\n    const apiContext = createAPIContext({\n      request: renderContext.request,\n      params: renderContext.params,\n      props: renderContext.props,\n      site: env.site,\n      adapterName: env.adapterName\n    });\n    switch (renderContext.route.type) {\n      case \"page\":\n      case \"redirect\": {\n        if (onRequest) {\n          return await callMiddleware(\n            env.logger,\n            onRequest,\n            apiContext,\n            () => {\n              return renderPage({\n                mod,\n                renderContext,\n                env,\n                cookies: apiContext.cookies\n              });\n            }\n          );\n        } else {\n          return await renderPage({\n            mod,\n            renderContext,\n            env,\n            cookies: apiContext.cookies\n          });\n        }\n      }\n      case \"endpoint\": {\n        const result = await callEndpoint(\n          mod,\n          env,\n          renderContext,\n          onRequest\n        );\n        return result;\n      }\n      default:\n        throw new Error(`Couldn't find route of type [${renderContext.route.type}]`);\n    }\n  }\n}\nexport {\n  Pipeline\n};\n",
-      "start": 1695410711127,
-      "end": 1695410711203,
+      "start": 1696585309066,
+      "end": 1696585309133,
       "sourcemaps": null
     },
     {
       "name": "astro:build",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "pre"
     },
     {
       "name": "astro:vite-plugin-env",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "pre"
     },
     {
       "name": "astro:jsx",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "pre"
     },
     {
       "name": "astro:content-asset-propagation",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "pre"
     },
     {
       "name": "vite:css",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "normal"
     },
     {
       "name": "vite:esbuild",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "normal"
     },
     {
       "name": "vite:json",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "normal"
     },
     {
       "name": "vite:worker",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "normal"
     },
     {
       "name": "astro:html",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "normal"
     },
     {
       "name": "astro:postprocess",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "normal"
     },
     {
       "name": "astro:head-metadata",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309133,
+      "end": 1696585309133,
       "order": "normal"
     },
     {
       "name": "astro:content-imports",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309134,
+      "end": 1696585309134,
       "order": "normal"
     },
     {
       "name": "vite:define",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309134,
+      "end": 1696585309134,
       "order": "normal"
     },
     {
       "name": "vite:css-post",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309134,
+      "end": 1696585309134,
       "order": "normal"
     },
     {
       "name": "vite:worker-import-meta-url",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309134,
+      "end": 1696585309134,
       "order": "normal"
     },
     {
       "name": "vite:asset-import-meta-url",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309134,
+      "end": 1696585309134,
       "order": "normal"
     },
     {
       "name": "commonjs",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309134,
+      "end": 1696585309134,
       "order": "normal"
     },
     {
       "name": "vite:dynamic-import-vars",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309134,
+      "end": 1696585309134,
       "order": "normal"
     },
     {
       "name": "vite:import-glob",
-      "start": 1695410711204,
-      "end": 1695410711204,
+      "start": 1696585309134,
+      "end": 1696585309134,
       "order": "normal"
     },
     {
       "name": "astro:scripts:page-ssr",
-      "start": 1695410711204,
-      "end": 1695410711205,
+      "start": 1696585309134,
+      "end": 1696585309134,
       "order": "post"
     },
     {
       "name": "astro:scanner",
-      "start": 1695410711205,
-      "end": 1695410711205,
+      "start": 1696585309134,
+      "end": 1696585309134,
       "order": "post"
     },
     {
       "name": "vite:build-import-analysis",
-      "start": 1695410711205,
-      "end": 1695410711205,
+      "start": 1696585309134,
+      "end": 1696585309134,
       "order": "normal"
     },
     {
       "name": "vite:reporter",
-      "start": 1695410711205,
-      "end": 1695410711205,
+      "start": 1696585309134,
+      "end": 1696585309134,
       "order": "normal"
     }
   ]

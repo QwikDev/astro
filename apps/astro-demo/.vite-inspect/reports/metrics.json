@@ -8,6 +8,18 @@
       "invokeCount": 0,
       "totalTime": 0
     },
+    "name": "@astro/plugin-alias-resolve",
+    "enforce": "pre"
+  },
+  {
+    "transform": {
+      "invokeCount": 0,
+      "totalTime": 0
+    },
+    "resolveId": {
+      "invokeCount": 0,
+      "totalTime": 0
+    },
     "name": "@astro/plugin-build-internals"
   },
   {
@@ -19,8 +31,8 @@
       "invokeCount": 0,
       "totalTime": 0
     },
-    "name": "@astro/plugin-build-manifest",
-    "enforce": "post"
+    "name": "@astro/plugin-component-entry",
+    "enforce": "pre"
   },
   {
     "transform": {
@@ -31,40 +43,7 @@
       "invokeCount": 0,
       "totalTime": 0
     },
-    "name": "@astro/plugin-build-pages"
-  },
-  {
-    "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
-    },
-    "resolveId": {
-      "invokeCount": 0,
-      "totalTime": 0
-    },
-    "name": "@astro/plugin-middleware"
-  },
-  {
-    "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
-    },
-    "resolveId": {
-      "invokeCount": 0,
-      "totalTime": 0
-    },
-    "name": "@astro/plugin-renderers"
-  },
-  {
-    "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
-    },
-    "resolveId": {
-      "invokeCount": 0,
-      "totalTime": 0
-    },
-    "name": "@astro/rollup-plugin-astro-analyzer"
+    "name": "@astro/rollup-plugin-astro-hoisted-scripts"
   },
   {
     "transform": {
@@ -137,7 +116,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 6,
       "totalTime": 0
     },
     "resolveId": {
@@ -160,7 +139,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 6,
       "totalTime": 0
     },
     "resolveId": {
@@ -172,18 +151,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
-    },
-    "resolveId": {
-      "invokeCount": 0,
-      "totalTime": 0
-    },
-    "name": "astro:content-build-plugin"
-  },
-  {
-    "transform": {
-      "invokeCount": 0,
+      "invokeCount": 6,
       "totalTime": 0
     },
     "resolveId": {
@@ -194,7 +162,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 6,
       "totalTime": 0
     },
     "resolveId": {
@@ -205,18 +173,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
-    },
-    "resolveId": {
-      "invokeCount": 0,
-      "totalTime": 0
-    },
-    "name": "astro:head-metadata-build"
-  },
-  {
-    "transform": {
-      "invokeCount": 0,
+      "invokeCount": 6,
       "totalTime": 0
     },
     "resolveId": {
@@ -238,8 +195,8 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
+      "invokeCount": 6,
+      "totalTime": 1
     },
     "resolveId": {
       "invokeCount": 0,
@@ -262,7 +219,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 6,
       "totalTime": 0
     },
     "resolveId": {
@@ -303,23 +260,12 @@
       "invokeCount": 0,
       "totalTime": 0
     },
-    "name": "astro:rollup-plugin-prerender"
-  },
-  {
-    "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
-    },
-    "resolveId": {
-      "invokeCount": 0,
-      "totalTime": 0
-    },
     "name": "astro:rollup-plugin-single-css",
     "enforce": "post"
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 6,
       "totalTime": 0
     },
     "resolveId": {
@@ -342,7 +288,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 6,
       "totalTime": 0
     },
     "resolveId": {
@@ -365,7 +311,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 6,
       "totalTime": 0
     },
     "resolveId": {
@@ -377,7 +323,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 3,
       "totalTime": 0
     },
     "resolveId": {
@@ -400,8 +346,8 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
+      "invokeCount": 9,
+      "totalTime": 6
     },
     "resolveId": {
       "invokeCount": 0,
@@ -423,7 +369,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 3,
       "totalTime": 0
     },
     "resolveId": {
@@ -445,8 +391,8 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
+      "invokeCount": 3,
+      "totalTime": 1
     },
     "resolveId": {
       "invokeCount": 0,
@@ -467,7 +413,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 3,
       "totalTime": 0
     },
     "resolveId": {
@@ -478,7 +424,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 3,
       "totalTime": 0
     },
     "resolveId": {
@@ -500,8 +446,8 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
+      "invokeCount": 3,
+      "totalTime": 2
     },
     "resolveId": {
       "invokeCount": 0,
@@ -511,7 +457,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 3,
       "totalTime": 0
     },
     "resolveId": {
@@ -522,8 +468,8 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
+      "invokeCount": 3,
+      "totalTime": 3
     },
     "resolveId": {
       "invokeCount": 0,
@@ -566,7 +512,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 3,
       "totalTime": 0
     },
     "resolveId": {
@@ -577,7 +523,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 3,
       "totalTime": 0
     },
     "resolveId": {
@@ -588,8 +534,8 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
+      "invokeCount": 3,
+      "totalTime": 115
     },
     "resolveId": {
       "invokeCount": 0,
@@ -610,8 +556,8 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
-      "totalTime": 0
+      "invokeCount": 3,
+      "totalTime": 1
     },
     "resolveId": {
       "invokeCount": 0,
@@ -625,10 +571,21 @@
       "totalTime": 0
     },
     "resolveId": {
-      "invokeCount": 0,
+      "invokeCount": 4,
       "totalTime": 0
     },
     "name": "vite:resolve"
+  },
+  {
+    "transform": {
+      "invokeCount": 0,
+      "totalTime": 0
+    },
+    "resolveId": {
+      "invokeCount": 0,
+      "totalTime": 0
+    },
+    "name": "vite:terser"
   },
   {
     "transform": {
@@ -665,7 +622,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 3,
       "totalTime": 0
     },
     "resolveId": {
@@ -676,7 +633,7 @@
   },
   {
     "transform": {
-      "invokeCount": 0,
+      "invokeCount": 3,
       "totalTime": 0
     },
     "resolveId": {

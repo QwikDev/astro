@@ -4,158 +4,158 @@
     {
       "name": "vite:load-fallback",
       "result": "import { Fragment, markHTMLString, Renderer } from \"../runtime/server/index.js\";\nconst AstroJSX = \"astro:jsx\";\nconst Empty = Symbol(\"empty\");\nconst toSlotName = (slotAttr) => slotAttr;\nfunction isVNode(vnode) {\n  return vnode && typeof vnode === \"object\" && vnode[AstroJSX];\n}\nfunction transformSlots(vnode) {\n  if (typeof vnode.type === \"string\")\n    return vnode;\n  const slots = {};\n  if (isVNode(vnode.props.children)) {\n    const child = vnode.props.children;\n    if (!isVNode(child))\n      return;\n    if (!(\"slot\" in child.props))\n      return;\n    const name = toSlotName(child.props.slot);\n    slots[name] = [child];\n    slots[name][\"$$slot\"] = true;\n    delete child.props.slot;\n    delete vnode.props.children;\n  }\n  if (Array.isArray(vnode.props.children)) {\n    vnode.props.children = vnode.props.children.map((child) => {\n      if (!isVNode(child))\n        return child;\n      if (!(\"slot\" in child.props))\n        return child;\n      const name = toSlotName(child.props.slot);\n      if (Array.isArray(slots[name])) {\n        slots[name].push(child);\n      } else {\n        slots[name] = [child];\n        slots[name][\"$$slot\"] = true;\n      }\n      delete child.props.slot;\n      return Empty;\n    }).filter((v) => v !== Empty);\n  }\n  Object.assign(vnode.props, slots);\n}\nfunction markRawChildren(child) {\n  if (typeof child === \"string\")\n    return markHTMLString(child);\n  if (Array.isArray(child))\n    return child.map((c) => markRawChildren(c));\n  return child;\n}\nfunction transformSetDirectives(vnode) {\n  if (!(\"set:html\" in vnode.props || \"set:text\" in vnode.props))\n    return;\n  if (\"set:html\" in vnode.props) {\n    const children = markRawChildren(vnode.props[\"set:html\"]);\n    delete vnode.props[\"set:html\"];\n    Object.assign(vnode.props, { children });\n    return;\n  }\n  if (\"set:text\" in vnode.props) {\n    const children = vnode.props[\"set:text\"];\n    delete vnode.props[\"set:text\"];\n    Object.assign(vnode.props, { children });\n    return;\n  }\n}\nfunction createVNode(type, props) {\n  const vnode = {\n    [Renderer]: \"astro:jsx\",\n    [AstroJSX]: true,\n    type,\n    props: props ?? {}\n  };\n  transformSetDirectives(vnode);\n  transformSlots(vnode);\n  return vnode;\n}\nexport {\n  AstroJSX,\n  Fragment,\n  isVNode,\n  createVNode as jsx,\n  createVNode as jsxDEV,\n  createVNode as jsxs,\n  transformSlots\n};\n",
-      "start": 1695410711352,
-      "end": 1695410711382,
+      "start": 1696585309283,
+      "end": 1696585309311,
       "sourcemaps": null
     },
     {
       "name": "astro:build",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "pre"
     },
     {
       "name": "astro:vite-plugin-env",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "pre"
     },
     {
       "name": "astro:jsx",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "pre"
     },
     {
       "name": "astro:content-asset-propagation",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "pre"
     },
     {
       "name": "vite:css",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "vite:esbuild",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "vite:json",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "vite:worker",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "astro:html",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "astro:postprocess",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "astro:head-metadata",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "astro:content-imports",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "vite:define",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "vite:css-post",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "vite:worker-import-meta-url",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "vite:asset-import-meta-url",
-      "start": 1695410711382,
-      "end": 1695410711382,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "commonjs",
-      "start": 1695410711382,
-      "end": 1695410711383,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "vite:dynamic-import-vars",
-      "start": 1695410711383,
-      "end": 1695410711383,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "vite:import-glob",
-      "start": 1695410711383,
-      "end": 1695410711383,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "astro:scripts:page-ssr",
-      "start": 1695410711383,
-      "end": 1695410711383,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "post"
     },
     {
       "name": "astro:scanner",
-      "start": 1695410711383,
-      "end": 1695410711383,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "post"
     },
     {
       "name": "vite:build-import-analysis",
-      "start": 1695410711383,
-      "end": 1695410711383,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     },
     {
       "name": "vite:reporter",
-      "start": 1695410711383,
-      "end": 1695410711383,
+      "start": 1696585309311,
+      "end": 1696585309311,
       "order": "normal"
     }
   ]

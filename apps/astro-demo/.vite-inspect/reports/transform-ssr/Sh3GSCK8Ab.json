@@ -4,158 +4,158 @@
     {
       "name": "vite:load-fallback",
       "result": "import { bold, cyan, dim, red, reset, yellow } from \"kleur/colors\";\nimport { dateTimeFormat, levels } from \"./core.js\";\nlet lastMessage;\nlet lastMessageCount = 1;\nconst consoleLogDestination = {\n  write(event) {\n    let dest = console.error;\n    if (levels[event.level] < levels[\"error\"]) {\n      dest = console.log;\n    }\n    function getPrefix() {\n      let prefix = \"\";\n      let type = event.label;\n      if (type) {\n        prefix += dim(dateTimeFormat.format(/* @__PURE__ */ new Date()) + \" \");\n        if (event.level === \"info\") {\n          type = bold(cyan(`[${type}]`));\n        } else if (event.level === \"warn\") {\n          type = bold(yellow(`[${type}]`));\n        } else if (event.level === \"error\") {\n          type = bold(red(`[${type}]`));\n        }\n        prefix += `${type} `;\n      }\n      return reset(prefix);\n    }\n    let message = event.message;\n    if (message === lastMessage) {\n      lastMessageCount++;\n      message = `${message} ${yellow(`(x${lastMessageCount})`)}`;\n    } else {\n      lastMessage = message;\n      lastMessageCount = 1;\n    }\n    const outMessage = getPrefix() + message;\n    dest(outMessage);\n    return true;\n  }\n};\nexport {\n  consoleLogDestination\n};\n",
-      "start": 1695410710968,
-      "end": 1695410711098,
+      "start": 1696585308894,
+      "end": 1696585309067,
       "sourcemaps": null
     },
     {
       "name": "astro:build",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309067,
+      "end": 1696585309067,
       "order": "pre"
     },
     {
       "name": "astro:vite-plugin-env",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309067,
+      "end": 1696585309067,
       "order": "pre"
     },
     {
       "name": "astro:jsx",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309067,
+      "end": 1696585309067,
       "order": "pre"
     },
     {
       "name": "astro:content-asset-propagation",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309067,
+      "end": 1696585309067,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "pre"
     },
     {
       "name": "vite-plugin-qwik",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "pre"
     },
     {
       "name": "vite:css",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "vite:esbuild",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "vite:json",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "vite:worker",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "astro:html",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "astro:postprocess",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "astro:head-metadata",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "astro:content-imports",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "vite:define",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "vite:css-post",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "vite:worker-import-meta-url",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "vite:asset-import-meta-url",
-      "start": 1695410711099,
-      "end": 1695410711099,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "commonjs",
-      "start": 1695410711099,
-      "end": 1695410711100,
+      "start": 1696585309068,
+      "end": 1696585309068,
       "order": "normal"
     },
     {
       "name": "vite:dynamic-import-vars",
-      "start": 1695410711100,
-      "end": 1695410711100,
+      "start": 1696585309069,
+      "end": 1696585309069,
       "order": "normal"
     },
     {
       "name": "vite:import-glob",
-      "start": 1695410711100,
-      "end": 1695410711100,
+      "start": 1696585309069,
+      "end": 1696585309069,
       "order": "normal"
     },
     {
       "name": "astro:scripts:page-ssr",
-      "start": 1695410711100,
-      "end": 1695410711100,
+      "start": 1696585309069,
+      "end": 1696585309069,
       "order": "post"
     },
     {
       "name": "astro:scanner",
-      "start": 1695410711100,
-      "end": 1695410711100,
+      "start": 1696585309069,
+      "end": 1696585309069,
       "order": "post"
     },
     {
       "name": "vite:build-import-analysis",
-      "start": 1695410711100,
-      "end": 1695410711100,
+      "start": 1696585309069,
+      "end": 1696585309069,
       "order": "normal"
     },
     {
       "name": "vite:reporter",
-      "start": 1695410711100,
-      "end": 1695410711100,
+      "start": 1696585309069,
+      "end": 1696585309069,
       "order": "normal"
     }
   ]
