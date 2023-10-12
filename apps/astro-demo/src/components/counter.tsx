@@ -11,7 +11,14 @@ export const Counter = component$(() => {
   const counter = useSignal(0);
 
   // builds if onClick$ / any handlers are removed
-  return <button>{counter.value}</button>;
+  return (
+    <button
+      onClick$={() => counter.value++}
+      // /
+    >
+      {counter.value}
+    </button>
+  );
 });
 
 // INLINE WAY IN QWIK (without the optimizer)

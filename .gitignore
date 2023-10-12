@@ -1,3 +1,5 @@
 # dependencies
 node_modules/
 .history
+**/.vite-inspect
+**/dist
