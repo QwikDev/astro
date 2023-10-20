@@ -12,7 +12,7 @@ export default function createIntegration(): AstroIntegration {
         addRenderer({
           name: "@astrojs/qwik",
           serverEntrypoint: "@astrojs/qwik/server",
-          clientEntrypoint: "./src/root.tsx",
+          clientEntrypoint: "./src/components/counter.tsx",
         });
 
         updateConfig({
