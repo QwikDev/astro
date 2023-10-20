@@ -1,8 +1,6 @@
-import type { AstroIntegration, AstroRenderer } from "astro";
-import { qwikVite, type QwikManifest } from "@builder.io/qwik/optimizer";
-import type { UserConfig } from "vite";
+import type { AstroIntegration } from "astro";
+import { qwikRollup } from "@builder.io/qwik/optimizer";
 import inspect from "vite-plugin-inspect";
-// import manifest from "../../../apps/astro-demo/dist/client/q-manifest.json";
 
 export default function createIntegration(): AstroIntegration {
   return {
@@ -10,7 +8,6 @@ export default function createIntegration(): AstroIntegration {
     hooks: {
       "astro:config:setup": async (args) => {
         const { addRenderer, updateConfig } = args;
-        // console.log(args);
 
         addRenderer({
           name: "@astrojs/qwik",
@@ -20,21 +17,10 @@ export default function createIntegration(): AstroIntegration {
 
         updateConfig({
           vite: {
-            // buildMode: "production",
             plugins: [
-              qwikVite({
-                client: {
-                  // input: "./src/components/counter.tsx",
-                  // devInput: "./src/components/counter.tsx",
-                  // manifestOutput: (manifest: QwikManifest) => {
-                  //   console.error("yey got manifest", manifest);
-                  //   myManifest = manifest;
-                  // },
-                },
-                ssr: {
-                  input: "./src/entry.ssr.tsx",
-                  // manifestInput: manifest,
-                },
+              qwikRollup({
+                debug: true,
+                target: "ssr", // TODO: We should not have to hard code this.
               }),
               inspect({ build: true }),
             ],

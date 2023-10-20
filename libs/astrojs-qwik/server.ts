@@ -1,12 +1,8 @@
-import { h } from "@builder.io/qwik";
+import { jsx } from "@builder.io/qwik";
 import { renderToString } from "@builder.io/qwik/server";
 import type { RendererContext } from "./types";
 import { manifest } from "@qwik-client-manifest";
-import type {
-  ResolvedManifest,
-  SymbolMapper,
-  SymbolMapperFn,
-} from "@builder.io/qwik/optimizer";
+import type { SymbolMapper, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 
 async function check(
   this: RendererContext,
@@ -42,32 +38,31 @@ export async function renderToStaticMarkup(
       slots[key] = value;
     }
 
-    const app = h(Component, { props, slots });
-    // console.log(app);
-
-    const manifest: ResolvedManifest = {
-      mapper: undefined,
-      manifest: undefined,
-    };
+    const app = jsx(Component, { props, slots });
 
     const symbolMapper: SymbolMapperFn = (
       symbolName: string,
       mapper: SymbolMapper | undefined
     ) => {
       console.log("SymbolMapperFn", symbolName, mapper);
-      return [symbolName, "q-mock.js"];
+      return [symbolName, "/src/" + symbolName.toLocaleLowerCase() + ".js"];
     };
 
-    const html = await renderToString(app, {
+    // TODO: `jsx` must correctly be imported.
+    // Currently the vite loads `core.mjs` and `core.prod.mjs` at the same time and this causes issues.
+    // WORKAROUND: ensure that `npm postinstall` is run to patch the `@builder.io/qwik/package.json` file.
+    const result = await renderToString(app, {
       containerTagName: "div",
-      // manifest: manifest,
+      manifest: manifest,
       symbolMapper: symbolMapper,
+      qwikLoader: { include: "always" },
     });
 
-    console.log("end of renderToStaticMarkup");
-    return html;
+    console.log("end of renderToStaticMarkup", result.html);
+    return result;
   } catch (error) {
     console.error("Error in renderToStaticMarkup:", error);
+    throw error;
   }
 }
 
