@@ -5,7 +5,7 @@ export const Counter = component$(() => {
 
   return (
     <div>
-      Count: {counter.value}{" "}
+      Count: {counter.value} !
       <button onClick$={() => counter.value++}>+1</button>
     </div>
   );

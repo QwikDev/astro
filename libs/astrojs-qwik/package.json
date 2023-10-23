@@ -11,8 +11,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsc",
-    "postinstall": "node ./patch.cjs"
+    "build": "tsc"
   },
   "files": [
     "dist",
@@ -25,7 +24,7 @@
     "qwik"
   ],
   "devDependencies": {
-    "@builder.io/qwik": "^1.2.11",
+    "@builder.io/qwik": "BuilderIO/qwik-build#e96ee8b9ce1492de5285321bd45fcf11258a393a",
     "astro": "^3.1.0",
     "vite": "^4.4.9",
     "vite-plugin-inspect": "^0.7.38"

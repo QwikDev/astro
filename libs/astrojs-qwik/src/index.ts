@@ -1,5 +1,5 @@
 import type { AstroIntegration } from "astro";
-import { qwikRollup } from "@builder.io/qwik/optimizer";
+import { qwikRollup, qwikVite } from "@builder.io/qwik/optimizer";
 import inspect from "vite-plugin-inspect";
 
 export default function createIntegration(): AstroIntegration {
@@ -12,15 +12,27 @@ export default function createIntegration(): AstroIntegration {
         addRenderer({
           name: "@astrojs/qwik",
           serverEntrypoint: "@astrojs/qwik/server",
-          clientEntrypoint: "./src/components/counter.tsx",
         });
 
         updateConfig({
           vite: {
             plugins: [
-              qwikRollup({
-                debug: true,
-                target: "ssr", // TODO: We should not have to hard code this.
+              // qwikRollup({
+              //   debug: true,
+              //   entryStrategy: { type: "hook" },
+              //   target: "ssr", // TODO: We should not have to hard code this.
+              // }),
+              qwikVite({
+                devSsrServer: false,
+                client: {
+                  // In order to make a client build, we need to know
+                  // all of the entry points to the application so
+                  // that we can generate the manifest.
+                  input: ["./src/components/counter.tsx"],
+                },
+                ssr: {
+                  input: "./src/components/counter.tsx",
+                },
               }),
               inspect({ build: true }),
             ],

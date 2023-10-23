@@ -54,11 +54,11 @@ export async function renderToStaticMarkup(
     const result = await renderToString(app, {
       containerTagName: "div",
       manifest: manifest,
-      symbolMapper: symbolMapper,
+      symbolMapper: manifest ? undefined : symbolMapper,
       qwikLoader: { include: "always" },
     });
 
-    console.log("end of renderToStaticMarkup", result.html);
+    console.log("end of renderToStaticMarkup");
     return result;
   } catch (error) {
     console.error("Error in renderToStaticMarkup:", error);
