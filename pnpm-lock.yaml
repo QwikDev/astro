@@ -17,11 +17,11 @@ importers:
         specifier: workspace:*
         version: link:../../libs/astrojs-qwik
       '@builder.io/qwik':
-        specifier: 1.2.14
-        version: 1.2.14(undici@5.24.0)
+        specifier: BuilderIO/qwik-build#e96ee8b9ce1492de5285321bd45fcf11258a393a
+        version: github.com/BuilderIO/qwik-build/e96ee8b9ce1492de5285321bd45fcf11258a393a(undici@5.24.0)
       astro:
         specifier: ^3.1.0
-        version: 3.1.0
+        version: 3.1.0(@types/node@20.8.9)
 
   libs/astrojs-qwik:
     dependencies:
@@ -30,14 +30,17 @@ importers:
         version: 5.2.2
     devDependencies:
       '@builder.io/qwik':
-        specifier: BuilderIO/qwik-build#e96ee8b9ce1492de5285321bd45fcf11258a393a
-        version: github.com/BuilderIO/qwik-build/e96ee8b9ce1492de5285321bd45fcf11258a393a(undici@5.24.0)
+        specifier: 1.2.15
+        version: 1.2.15(undici@5.24.0)
+      '@types/node':
+        specifier: ^20.8.9
+        version: 20.8.9
       astro:
         specifier: ^3.1.0
-        version: 3.1.0
+        version: 3.1.0(@types/node@20.8.9)
       vite:
         specifier: ^4.4.9
-        version: 4.4.9
+        version: 4.4.9(@types/node@20.8.9)
       vite-plugin-inspect:
         specifier: ^0.7.38
         version: 0.7.38(vite@4.4.9)
@@ -67,7 +70,7 @@ packages:
       astro: ^3.1.0
     dependencies:
       '@astrojs/prism': 3.0.0
-      astro: 3.1.0
+      astro: 3.1.0(@types/node@20.8.9)
       github-slugger: 2.0.0
       import-meta-resolve: 3.0.0
       mdast-util-definitions: 6.0.0
@@ -89,7 +92,7 @@ packages:
     peerDependencies:
       astro: ^3.1.2
     dependencies:
-      astro: 3.1.0
+      astro: 3.1.0(@types/node@20.8.9)
       send: 0.18.0
       server-destroy: 1.0.1
     transitivePeerDependencies:
@@ -319,8 +322,8 @@ packages:
       '@babel/helper-validator-identifier': 7.22.19
       to-fast-properties: 2.0.0
 
-  /@builder.io/qwik@1.2.14(undici@5.24.0):
-    resolution: {integrity: sha512-z+NFSNrAKjCVV/9d2f50Y/AthcHdlH4Hbltyjjl/0wOv4FUR3F/Ke9wz9eIhDYQ6rzFqzdav2/yTiip05El1zA==}
+  /@builder.io/qwik@1.2.15(undici@5.24.0):
+    resolution: {integrity: sha512-5aiU1VL4quzEd8pGdeFfJOiN/SUYr6wu1FLEX3piqBxoJL+j8H/3jZeOl4TUZawNNYWZOckH74a3VzAXai/4ZA==}
     engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
     hasBin: true
     peerDependencies:
@@ -328,7 +331,7 @@ packages:
     dependencies:
       csstype: 3.1.2
       undici: 5.24.0
-    dev: false
+    dev: true
 
   /@esbuild/android-arm64@0.18.20:
     resolution: {integrity: sha512-Nz4rJcchGDtENV0eMKUNa6L12zz2zBDXuhj/Vjh18zGqB44Bi7MBMSXjgunJgjRhCmKOjnPuZp4Mb6OKqtMHLQ==}
@@ -802,6 +805,11 @@ packages:
     dependencies:
       '@types/unist': 2.0.8
 
+  /@types/node@20.8.9:
+    resolution: {integrity: sha512-UzykFsT3FhHb1h7yD4CA4YhBHq545JC0YnEz41xkipN88eKQtL6rSgocL5tbAP6Ola9Izm/Aw4Ora8He4x0BHg==}
+    dependencies:
+      undici-types: 5.26.5
+
   /@types/parse5@6.0.3:
     resolution: {integrity: sha512-SuT16Q1K51EAVPz1K29DJ/sXjhSQ0zjvsypYJ6tlwVsRV9jwW5Adq2ch8Dq8kDBCkYnELS7N7VNCSB5nC56t/g==}
 
@@ -863,7 +871,7 @@ packages:
   /array-iterate@2.0.1:
     resolution: {integrity: sha512-I1jXZMjAgCMmxT4qxXfPXa6SthSoE8h6gkSI9BGGNv8mP8G/v0blc+qFnZu6K42vTOiuME596QaLO0TP3Lk0xg==}
 
-  /astro@3.1.0:
+  /astro@3.1.0(@types/node@20.8.9):
     resolution: {integrity: sha512-hVPZg9uDafqJbDwOwtcujwhJ6Qp3BCaIj1cvablTYI0jdYrZSvcybhIMTf8NhzK5smvZy2Bv9eEDYXLpiLDrRQ==}
     engines: {node: '>=18.14.1', npm: '>=6.14.0'}
     hasBin: true
@@ -919,7 +927,7 @@ packages:
       undici: 5.24.0
       unist-util-visit: 4.1.2
       vfile: 5.3.7
-      vite: 4.4.9
+      vite: 4.4.9(@types/node@20.8.9)
       vitefu: 0.2.4(vite@4.4.9)
       which-pm: 2.1.1
       yargs-parser: 21.1.1
@@ -3116,6 +3124,9 @@ packages:
     hasBin: true
     dev: false
 
+  /undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
   /undici@5.24.0:
     resolution: {integrity: sha512-OKlckxBjFl0oXxcj9FU6oB8fDAaiRUq+D8jrFWGmOfI/gIyjk/IeS75LMzgYKUaeHzLUcYvf9bbJGSrUwTfwwQ==}
     engines: {node: '>=14.0'}
@@ -3267,13 +3278,13 @@ packages:
       open: 9.1.0
       picocolors: 1.0.0
       sirv: 2.0.3
-      vite: 4.4.9
+      vite: 4.4.9(@types/node@20.8.9)
     transitivePeerDependencies:
       - rollup
       - supports-color
     dev: true
 
-  /vite@4.4.9:
+  /vite@4.4.9(@types/node@20.8.9):
     resolution: {integrity: sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -3301,6 +3312,7 @@ packages:
       terser:
         optional: true
     dependencies:
+      '@types/node': 20.8.9
       esbuild: 0.18.20
       postcss: 8.4.29
       rollup: 3.29.2
@@ -3315,7 +3327,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.4.9
+      vite: 4.4.9(@types/node@20.8.9)
 
   /vscode-oniguruma@1.7.0:
     resolution: {integrity: sha512-L9WMGRfrjOhgHSdOYgCt/yRMsXzLDJSL7BPrOZt73gU0iWO4mpqzqQzOz5srxqTvMBaR0XZTSrVWo4j55Rc6cA==}
@@ -3406,4 +3418,4 @@ packages:
     dependencies:
       csstype: 3.1.2
       undici: 5.24.0
-    dev: true
+    dev: false

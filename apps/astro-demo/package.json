@@ -13,7 +13,7 @@
   "dependencies": {
     "@astrojs/node": "^6.0.1",
     "@astrojs/qwik": "workspace:*",
-    "@builder.io/qwik": "1.2.14",
+    "@builder.io/qwik": "BuilderIO/qwik-build#e96ee8b9ce1492de5285321bd45fcf11258a393a",
     "astro": "^3.1.0"
   }
 }

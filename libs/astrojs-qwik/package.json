@@ -24,7 +24,8 @@
     "qwik"
   ],
   "devDependencies": {
-    "@builder.io/qwik": "BuilderIO/qwik-build#e96ee8b9ce1492de5285321bd45fcf11258a393a",
+    "@builder.io/qwik": "1.2.15",
+    "@types/node": "^20.8.9",
     "astro": "^3.1.0",
     "vite": "^4.4.9",
     "vite-plugin-inspect": "^0.7.38"
