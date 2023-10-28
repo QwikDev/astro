@@ -55,7 +55,7 @@ export async function renderToStaticMarkup(
       containerTagName: "div",
       manifest: manifest,
       symbolMapper: manifest ? undefined : symbolMapper,
-      qwikLoader: { include: "always" },
+      qwikLoader: { include: "never" },
     });
 
     console.log("end of renderToStaticMarkup");

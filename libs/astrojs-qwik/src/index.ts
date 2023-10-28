@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { build } from "vite";
 import inspect from "vite-plugin-inspect";
+import { getQwikLoaderScript } from "@builder.io/qwik/server";
 
 export default function createIntegration(): AstroIntegration {
   let viteConfig: ViteUserConfig | null = null;
@@ -33,7 +34,11 @@ export default function createIntegration(): AstroIntegration {
         await moveArtifacts(tempDir, distDir);
         console.log("astro:build:done");
       },
-      "astro:config:setup": async ({ addRenderer, updateConfig }) => {
+      "astro:config:setup": async ({
+        addRenderer,
+        updateConfig,
+        injectScript,
+      }) => {
         console.log("astro:config:setup");
 
         addRenderer({
@@ -41,14 +46,11 @@ export default function createIntegration(): AstroIntegration {
           serverEntrypoint: "@astrojs/qwik/server",
         });
 
+        injectScript("head-inline", getQwikLoaderScript());
+
         updateConfig({
           vite: {
             plugins: [
-              // qwikRollup({
-              //   debug: true,
-              //   entryStrategy: { type: "hook" },
-              //   target: "ssr", // TODO: We should not have to hard code this.
-              // }),
               qwikVite({
                 devSsrServer: false,
                 entryStrategy: {
@@ -72,9 +74,11 @@ export default function createIntegration(): AstroIntegration {
     },
   };
 }
+
 function hash() {
   return Math.random().toString(26).split(".").pop();
 }
+
 async function moveArtifacts(srcDir: string, destDir: string) {
   await mkdir(destDir, { recursive: true });
   for (const file of await readdir(srcDir)) {
