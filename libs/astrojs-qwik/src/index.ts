@@ -11,6 +11,8 @@ export default function createIntegration(): AstroIntegration {
   let viteConfig: ViteUserConfig | null = null;
   let distDir: string = "";
   let tempDir = join(tmpdir(), "qwik-" + hash());
+  let entrypoints = getQwikEntrypoints("./src");
+
   return {
     name: "@astrojs/qwik",
     hooks: {
@@ -60,10 +62,10 @@ export default function createIntegration(): AstroIntegration {
                   // In order to make a client build, we need to know
                   // all of the entry points to the application so
                   // that we can generate the manifest.
-                  input: ["./src/components/counter.tsx"],
+                  input: await entrypoints,
                 },
                 ssr: {
-                  input: "./src/components/counter.tsx",
+                  input: "@astrojs/qwik/server",
                 },
               }),
               inspect({ build: true }),
@@ -85,4 +87,23 @@ async function moveArtifacts(srcDir: string, destDir: string) {
     console.log("Moving file:", join(srcDir, file), "->", join(destDir, file));
     await rename(join(srcDir, file), join(destDir, file));
   }
+}
+
+async function crawlDirectory(dir: string): Promise<string[]> {
+  const entries = await readdir(dir, { withFileTypes: true });
+
+  const files = await Promise.all(
+    entries.map((entry) => {
+      const fullPath = join(dir, entry.name);
+      return entry.isDirectory() ? crawlDirectory(fullPath) : fullPath;
+    })
+  );
+
+  // flatten files array
+  return files.flat();
+}
+
+async function getQwikEntrypoints(dir: string): Promise<string[]> {
+  const files = await crawlDirectory(dir);
+  return files.filter((file) => file.endsWith(".tsx"));
 }
