@@ -18,10 +18,9 @@ async function check(
       props,
       slotted
     );
-    console.log("End of check");
     return typeof html === "string";
   } catch (error) {
-    console.error("Error in check:", error);
+    console.error("Error in check function of @astrojs/qwik: ", error);
   }
 }
 
@@ -44,7 +43,6 @@ export async function renderToStaticMarkup(
       symbolName: string,
       mapper: SymbolMapper | undefined
     ) => {
-      console.log("SymbolMapperFn", symbolName, mapper);
       return [symbolName, "/src/" + symbolName.toLocaleLowerCase() + ".js"];
     };
 
@@ -58,10 +56,12 @@ export async function renderToStaticMarkup(
       qwikLoader: { include: "never" },
     });
 
-    console.log("end of renderToStaticMarkup");
     return result;
   } catch (error) {
-    console.error("Error in renderToStaticMarkup:", error);
+    console.error(
+      "Error in renderToStaticMarkup function of @astrojs/qwik: ",
+      error
+    );
     throw error;
   }
 }

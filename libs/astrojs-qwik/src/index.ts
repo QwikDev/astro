@@ -1,11 +1,16 @@
 import { qwikVite } from "@builder.io/qwik/optimizer";
-import type { AstroConfig, AstroIntegration } from "astro";
-import { mkdir, readdir, rename } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { getQwikLoaderScript } from "@builder.io/qwik/server";
+
 import { build } from "vite";
 import inspect from "vite-plugin-inspect";
-import { getQwikLoaderScript } from "@builder.io/qwik/server";
+
+import { mkdir, readdir, rename } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { createReadStream } from "node:fs";
+import { createInterface } from "node:readline";
+import { join } from "node:path";
+
+import type { AstroConfig, AstroIntegration } from "astro";
 
 export default function createIntegration(): AstroIntegration {
   let astroConfig: AstroConfig | null = null;
@@ -16,35 +21,26 @@ export default function createIntegration(): AstroIntegration {
   return {
     name: "@astrojs/qwik",
     hooks: {
-      "astro:server:setup": async () => {
-        console.log("astro:server:setup");
-      },
-      "astro:config:done": async ({ config, setAdapter, logger }) => {
-        console.log("astro:config:done", config);
+      "astro:config:done": async ({ config }) => {
         astroConfig = config;
         distDir = join(config.root.pathname, "dist");
       },
       "astro:build:start": async ({ logger }) => {
         logger.info("astro:build:start");
-        console.log("astro:build:start");
         await build({ ...astroConfig.vite });
         await moveArtifacts(distDir, tempDir);
       },
-      "astro:build:done": async ({ logger }) => {
-        debugger;
+      "astro:build:done": async () => {
         await moveArtifacts(
           tempDir,
           join(distDir, astroConfig.output === "server" ? "client" : ".")
         );
-        console.log("astro:build:done");
       },
       "astro:config:setup": async ({
         addRenderer,
         updateConfig,
         injectScript,
       }) => {
-        console.log("astro:config:setup");
-
         addRenderer({
           name: "@astrojs/qwik",
           serverEntrypoint: "@astrojs/qwik/server",
@@ -86,7 +82,6 @@ function hash() {
 async function moveArtifacts(srcDir: string, destDir: string) {
   await mkdir(destDir, { recursive: true });
   for (const file of await readdir(srcDir)) {
-    console.log("Moving file:", join(srcDir, file), "->", join(destDir, file));
     await rename(join(srcDir, file), join(destDir, file));
   }
 }
@@ -105,7 +100,38 @@ async function crawlDirectory(dir: string): Promise<string[]> {
   return files.flat();
 }
 
+/**
+ *
+ * We need to find the Qwik entrypoints so that the client build will run successfully.
+ *
+ */
 async function getQwikEntrypoints(dir: string): Promise<string[]> {
   const files = await crawlDirectory(dir);
-  return files.filter((file) => file.endsWith(".tsx"));
+  const qwikFiles = [];
+
+  for (const file of files) {
+    const fileStream = createReadStream(file);
+
+    // holds readline interface
+    const rl = createInterface({
+      input: fileStream,
+      crlfDelay: Infinity,
+    });
+
+    let found = false;
+    for await (const line of rl) {
+      if (line.includes("import") && line.includes("@builder.io/qwik")) {
+        qwikFiles.push(file);
+        found = true;
+        break;
+      }
+    }
+
+    if (found) {
+      rl.close();
+      fileStream.close();
+    }
+  }
+
+  return qwikFiles;
 }
