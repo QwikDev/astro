@@ -41,6 +41,9 @@
     "renderer",
     "qwik"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "bugs": "https://github.com/thejackshelton/astro-qwik/issues",
   "devDependencies": {
     "@builder.io/qwik": "1.2.15",
