@@ -31,7 +31,7 @@ export async function renderToStaticMarkup(
   slotted: any
 ) {
   try {
-    const slots = {};
+    const slots: { [key: string]: any } = {};
 
     for (const [key, value] of Object.entries(slotted)) {
       slots[key] = value;

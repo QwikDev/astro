@@ -27,13 +27,13 @@ export default function createIntegration(): AstroIntegration {
       },
       "astro:build:start": async ({ logger }) => {
         logger.info("astro:build:start");
-        await build({ ...astroConfig.vite });
+        await build({ ...astroConfig?.vite });
         await moveArtifacts(distDir, tempDir);
       },
       "astro:build:done": async () => {
         await moveArtifacts(
           tempDir,
-          join(distDir, astroConfig.output === "server" ? "client" : ".")
+          join(distDir, astroConfig?.output === "server" ? "client" : ".")
         );
       },
       "astro:config:setup": async ({
