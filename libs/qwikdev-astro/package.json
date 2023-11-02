@@ -51,5 +51,8 @@
     "astro": "^3.4.2",
     "typescript": "^5.2.2",
     "vite": "^4.5.0"
+  },
+  "peerDependencies": {
+    "@builder.io/qwik": "^1.2.16"
   }
 }
