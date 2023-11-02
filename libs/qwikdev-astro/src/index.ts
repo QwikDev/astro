@@ -44,6 +44,7 @@ export default function createIntegration(): AstroIntegration {
           serverEntrypoint: "@qwikdev/astro/server",
         });
 
+        // adds qwikLoader once (instead of per container)
         injectScript("head-inline", getQwikLoaderScript());
 
         updateConfig({
