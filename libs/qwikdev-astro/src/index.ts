@@ -49,6 +49,10 @@ export default function createIntegration(): AstroIntegration {
         injectScript("head-inline", getQwikLoaderScript());
 
         // will error unless there is an entrypoint
+        if ((await entrypoints).length === 0) {
+          return;
+        }
+
         updateConfig({
           vite: {
             plugins: [
@@ -70,10 +74,6 @@ export default function createIntegration(): AstroIntegration {
             ],
           },
         });
-
-        if ((await entrypoints).length === 0) {
-          return log("@qwikdev/astro does not have any entrypoints.");
-        }
       },
     },
   };
