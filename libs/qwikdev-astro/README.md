@@ -71,7 +71,7 @@ Hooray! We now have our integration installed. Before deep diving in, there are 
 
 ## Qwik is fundamentally different
 
-Astro is popular for its partial hydration approach and islands. Qwik on the other hand does not need hydration.
+Astro is popular for its partial hydration approach and islands, whereas Qwik does not require hydration.
 
 What does this mean?
 
@@ -116,15 +116,15 @@ It can be consumed in our `index.astro` page like so:
 
 ### Starts fast, stays fast
 
-One of Astro's key features is **Zero JS, by default**. Unfortunately, when we want to add a JavaScript framework this is usually not the case.
+One of Astro's key features is **Zero JS, by default**. Unfortunately, when we want to add a JavaScript framework, and any subsequent components this is usually not the case.
 
-If we want to introduce interactivity with a framework (React, Vue, Svelte, etc.) the framework runtime is then introduced into the mix, and the amount of components added to the page is O(n) with the amount of JavaScript.
+If we want to introduce interactivity with a framework such as React, Vue, Svelte, etc., the framework runtime is then introduced. Consequently, the number of components added to the page increases linearly O(n) with the amount of JavaScript.
 
 #### Astro + Qwik
 
-Qwik builds on top of the Astro's **Zero JS, by defaut** principle. Even with interactivity, the framework is not executed until it needs to be. The components are also not executed unless they are resumed. It is O(1) constant.
+Qwik builds on top of the Astro's **Zero JS, by defaut** principle and then some. Thanks to resumability, the components are not executed unless resumed. Even with interactivity, the framework is also not executed until it needs to be. It is O(1) constant.
 
-Instead, on page load a 1kb minified tiny piece of JavaScript called the [Qwikloader](https://qwik.builder.io/docs/advanced/qwikloader/#qwikloader) downloads the rest of the application on an as needed basis.
+Instead, upon page load, a tiny 1kb minified piece of JavaScript, known as the [Qwikloader](https://qwik.builder.io/docs/advanced/qwikloader/#qwikloader), downloads the rest of the application as needed.
 
 ### Containers vs. Islands
 
@@ -140,11 +140,11 @@ In the DOM, you'll notice there aren't any `<astro-island>` custom elements, thi
 
 Containers in Qwik, and Islands in Astro both have similar limitations. For example, trying to pass state into another island or container.
 
-Sharing state is a crucial aspect of modern web development. How can we achieve this when we need to share state across different containers or islands?
+Sharing state is crucial in modern web development. The question is, how can we achieve this when state needs to be shared across different containers or islands?
 
 Other frameworks with Astro address this by using [nano stores](https://github.com/nanostores/nanostores).
 
-Instead, we recommend using **custom events**. Using custom events has several advantages:
+Instead, we recommend the use of **custom events**, which offer several advantages:
 
 - Micro Frontend (MFE) Support
 - Different versions can exist on the page
