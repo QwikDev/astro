@@ -9,6 +9,7 @@ import { createInterface } from "node:readline";
 import { join } from "node:path";
 
 import type { AstroConfig, AstroIntegration } from "astro";
+import { log } from "node:console";
 
 export default function createIntegration(): AstroIntegration {
   let astroConfig: AstroConfig | null = null;
@@ -48,28 +49,30 @@ export default function createIntegration(): AstroIntegration {
         injectScript("head-inline", getQwikLoaderScript());
 
         // will error unless there is an entrypoint
-        if ((await entrypoints).length !== 0) {
-          updateConfig({
-            vite: {
-              plugins: [
-                qwikVite({
-                  devSsrServer: false,
-                  entryStrategy: {
-                    type: "smart",
-                  },
-                  client: {
-                    // In order to make a client build, we need to know
-                    // all of the entry points to the application so
-                    // that we can generate the manifest.
-                    input: await entrypoints,
-                  },
-                  ssr: {
-                    input: "@qwikdev/astro/server",
-                  },
-                }),
-              ],
-            },
-          });
+        updateConfig({
+          vite: {
+            plugins: [
+              qwikVite({
+                devSsrServer: false,
+                entryStrategy: {
+                  type: "smart",
+                },
+                client: {
+                  // In order to make a client build, we need to know
+                  // all of the entry points to the application so
+                  // that we can generate the manifest.
+                  input: await entrypoints,
+                },
+                ssr: {
+                  input: "@qwikdev/astro/server",
+                },
+              }),
+            ],
+          },
+        });
+
+        if ((await entrypoints).length === 0) {
+          return log("@qwikdev/astro does not have any entrypoints.");
         }
       },
     },
