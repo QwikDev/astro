@@ -40,6 +40,11 @@ export default function createIntegration(): AstroIntegration {
         updateConfig,
         injectScript,
       }) => {
+        // will error unless there is an entrypoint
+        if ((await entrypoints).length === 0) {
+          return;
+        }
+
         addRenderer({
           name: "@qwikdev/astro",
           serverEntrypoint: "@qwikdev/astro/server",
@@ -47,11 +52,6 @@ export default function createIntegration(): AstroIntegration {
 
         // adds qwikLoader once (instead of per container)
         injectScript("head-inline", getQwikLoaderScript());
-
-        // will error unless there is an entrypoint
-        if ((await entrypoints).length === 0) {
-          return;
-        }
 
         updateConfig({
           vite: {
