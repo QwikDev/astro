@@ -1,7 +1,7 @@
 {
-  "name": "astro-qwik",
+  "name": "astrojs-qwik",
   "description": "Use Qwik components and Resumability within Astro",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "contributors": [
     {
       "name": "Miško Hevery",
@@ -18,7 +18,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thejackshelton/astro-qwik.git",
+    "url": "https://github.com/thejackshelton/astrojs-qwik.git",
     "directory": "libs/astrojs-qwik"
   },
   "types": "./dist/src/types.js",
@@ -44,12 +44,12 @@
   "publishConfig": {
     "access": "public"
   },
-  "bugs": "https://github.com/thejackshelton/astro-qwik/issues",
+  "bugs": "https://github.com/thejackshelton/astrojs-qwik/issues",
   "devDependencies": {
     "@builder.io/qwik": "1.2.16",
     "@types/node": "^20.8.9",
     "astro": "^3.4.2",
-    "vite": "^4.4.9",
+    "vite": "^4.5.0",
     "vite-plugin-inspect": "^0.7.38"
   },
   "dependencies": {

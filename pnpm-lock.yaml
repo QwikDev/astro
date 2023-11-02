@@ -19,7 +19,7 @@ importers:
       astro:
         specifier: ^3.4.2
         version: 3.4.2(@types/node@20.8.9)(typescript@5.2.2)
-      astro-qwik:
+      astrojs-qwik:
         specifier: workspace:*
         version: link:../../libs/astrojs-qwik
 
@@ -39,11 +39,11 @@ importers:
         specifier: ^3.4.2
         version: 3.4.2(@types/node@20.8.9)(typescript@5.2.2)
       vite:
-        specifier: ^4.4.9
-        version: 4.4.9(@types/node@20.8.9)
+        specifier: ^4.5.0
+        version: 4.5.0(@types/node@20.8.9)
       vite-plugin-inspect:
         specifier: ^0.7.38
-        version: 0.7.38(vite@4.4.9)
+        version: 0.7.38(vite@4.5.0)
 
 packages:
 
@@ -3428,7 +3428,7 @@ packages:
       unist-util-stringify-position: 4.0.0
       vfile-message: 4.0.2
 
-  /vite-plugin-inspect@0.7.38(vite@4.4.9):
+  /vite-plugin-inspect@0.7.38(vite@4.5.0):
     resolution: {integrity: sha512-+p6pJVtBOLGv+RBrcKAFUdx+euizg0bjL35HhPyM0MjtKlqoC5V9xkCmO9Ctc8JrTyXqODbHqiLWJKumu5zJ7g==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -3446,46 +3446,10 @@ packages:
       open: 9.1.0
       picocolors: 1.0.0
       sirv: 2.0.3
-      vite: 4.4.9(@types/node@20.8.9)
+      vite: 4.5.0(@types/node@20.8.9)
     transitivePeerDependencies:
       - rollup
       - supports-color
-    dev: true
-
-  /vite@4.4.9(@types/node@20.8.9):
-    resolution: {integrity: sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      lightningcss: ^1.21.0
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      '@types/node': 20.8.9
-      esbuild: 0.18.20
-      postcss: 8.4.29
-      rollup: 3.29.2
-    optionalDependencies:
-      fsevents: 2.3.3
     dev: true
 
   /vite@4.5.0(@types/node@20.8.9):

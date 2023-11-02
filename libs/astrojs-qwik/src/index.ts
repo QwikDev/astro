@@ -20,7 +20,7 @@ export default function createIntegration(): AstroIntegration {
   let entrypoints = getQwikEntrypoints("./src");
 
   return {
-    name: "astro-qwik",
+    name: "astrojs-qwik",
     hooks: {
       "astro:config:done": async ({ config }) => {
         astroConfig = config;
@@ -43,7 +43,7 @@ export default function createIntegration(): AstroIntegration {
         injectScript,
       }) => {
         addRenderer({
-          name: "astro-qwik",
+          name: "astrojs-qwik",
           serverEntrypoint: fileURLToPath(
             new URL("../../dist/server.js", import.meta.url)
           ),
