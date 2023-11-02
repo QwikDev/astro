@@ -9,13 +9,12 @@ import { createInterface } from "node:readline";
 import { join } from "node:path";
 
 import type { AstroConfig, AstroIntegration } from "astro";
-import { log } from "node:console";
 
 export default function createIntegration(): AstroIntegration {
   let astroConfig: AstroConfig | null = null;
   let distDir: string = "";
   let tempDir = join(tmpdir(), "qwik-" + hash());
-  let entrypoints = getQwikEntrypoints("./src");
+  let entrypoints: Promise<string[]> = getQwikEntrypoints("./src");
 
   return {
     name: "@qwikdev/astro",
@@ -26,8 +25,13 @@ export default function createIntegration(): AstroIntegration {
       },
       "astro:build:start": async ({ logger }) => {
         logger.info("astro:build:start");
-        await build({ ...astroConfig?.vite });
-        await moveArtifacts(distDir, tempDir);
+
+        if ((await entrypoints).length > 0) {
+          await build({ ...astroConfig?.vite });
+          await moveArtifacts(distDir, tempDir);
+        } else {
+          logger.info("@qwikdev/astro: No entrypoints found. Skipping build.");
+        }
       },
       "astro:build:done": async () => {
         await moveArtifacts(
@@ -40,11 +44,6 @@ export default function createIntegration(): AstroIntegration {
         updateConfig,
         injectScript,
       }) => {
-        // will error unless there is an entrypoint
-        if ((await entrypoints).length === 0) {
-          return;
-        }
-
         addRenderer({
           name: "@qwikdev/astro",
           serverEntrypoint: "@qwikdev/astro/server",
