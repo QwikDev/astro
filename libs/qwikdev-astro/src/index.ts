@@ -50,7 +50,8 @@ export default function createIntegration(): AstroIntegration {
       }) => {
         addRenderer({
           name: "@qwikdev/astro",
-          serverEntrypoint: "@qwikdev/astro/server",
+          serverEntrypoint:
+            (await entrypoints).length > 0 ? "@qwikdev/astro/server" : "",
         });
 
         // adds qwikLoader once (instead of per container)
