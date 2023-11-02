@@ -1,5 +1,5 @@
 {
-  "name": "astrojs-qwik",
+  "name": "astro-qwik",
   "description": "Use Qwik components and Resumability within Astro",
   "version": "0.0.1",
   "contributors": [
@@ -22,9 +22,9 @@
     "directory": "libs/astrojs-qwik"
   },
   "types": "./dist/src/types.js",
+  "main": "./dist/src/index.js",
   "exports": {
     ".": "./dist/src/index.js",
-    "./*": "./dist/*",
     "./server": "./dist/server.js",
     "./package.json": "./package.json"
   },

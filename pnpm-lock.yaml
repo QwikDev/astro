@@ -13,15 +13,15 @@ importers:
       '@astrojs/node':
         specifier: ^6.0.1
         version: 6.0.1(astro@3.4.0)
-      '@astrojs/qwik':
-        specifier: workspace:*
-        version: link:../../libs/astrojs-qwik
       '@builder.io/qwik':
         specifier: ^1.2.15
         version: 1.2.15(undici@5.24.0)
       astro:
         specifier: ^3.4.0
         version: 3.4.0(@types/node@20.8.9)(typescript@5.2.2)
+      astro-qwik:
+        specifier: workspace:*
+        version: link:../../libs/astrojs-qwik
 
   libs/astrojs-qwik:
     dependencies:

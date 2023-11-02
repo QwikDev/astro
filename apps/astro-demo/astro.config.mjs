@@ -1,5 +1,5 @@
 import { defineConfig } from "astro/config";
-import qwik from "@astrojs/qwik";
+import qwik from "astro-qwik";
 import node from "@astrojs/node";
 
 // https://astro.build/config

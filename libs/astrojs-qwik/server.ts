@@ -20,7 +20,7 @@ async function check(
     );
     return typeof html === "string";
   } catch (error) {
-    console.error("Error in check function of @astrojs/qwik: ", error);
+    console.error("Error in check function of astro-qwik: ", error);
   }
 }
 
@@ -59,7 +59,7 @@ export async function renderToStaticMarkup(
     return result;
   } catch (error) {
     console.error(
-      "Error in renderToStaticMarkup function of @astrojs/qwik: ",
+      "Error in renderToStaticMarkup function of astro-qwik: ",
       error
     );
     throw error;

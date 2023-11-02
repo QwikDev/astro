@@ -3,6 +3,7 @@ import { getQwikLoaderScript } from "@builder.io/qwik/server";
 
 import { build } from "vite";
 import inspect from "vite-plugin-inspect";
+import { fileURLToPath } from "node:url";
 
 import { mkdir, readdir, rename } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -19,7 +20,7 @@ export default function createIntegration(): AstroIntegration {
   let entrypoints = getQwikEntrypoints("./src");
 
   return {
-    name: "@astrojs/qwik",
+    name: "astro-qwik",
     hooks: {
       "astro:config:done": async ({ config }) => {
         astroConfig = config;
@@ -42,8 +43,10 @@ export default function createIntegration(): AstroIntegration {
         injectScript,
       }) => {
         addRenderer({
-          name: "@astrojs/qwik",
-          serverEntrypoint: "@astrojs/qwik/server",
+          name: "astro-qwik",
+          serverEntrypoint: fileURLToPath(
+            new URL("../../dist/server.js", import.meta.url)
+          ),
         });
 
         injectScript("head-inline", getQwikLoaderScript());
@@ -63,7 +66,9 @@ export default function createIntegration(): AstroIntegration {
                   input: await entrypoints,
                 },
                 ssr: {
-                  input: "@astrojs/qwik/server",
+                  input: fileURLToPath(
+                    new URL("../../dist/server.js", import.meta.url)
+                  ),
                 },
               }),
               inspect({ build: true }),
