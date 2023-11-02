@@ -19,6 +19,43 @@ export default function createIntegration(): AstroIntegration {
   return {
     name: "@qwikdev/astro",
     hooks: {
+      "astro:config:setup": async ({
+        addRenderer,
+        updateConfig,
+        injectScript,
+      }) => {
+        if ((await entrypoints).length !== 0) {
+          addRenderer({
+            name: "@qwikdev/astro",
+            serverEntrypoint: "@qwikdev/astro/server",
+          });
+
+          // adds qwikLoader once (instead of per container)
+          injectScript("head-inline", getQwikLoaderScript());
+
+          updateConfig({
+            vite: {
+              plugins: [
+                qwikVite({
+                  devSsrServer: false,
+                  entryStrategy: {
+                    type: "smart",
+                  },
+                  client: {
+                    // In order to make a client build, we need to know
+                    // all of the entry points to the application so
+                    // that we can generate the manifest.
+                    input: await entrypoints,
+                  },
+                  ssr: {
+                    input: "@qwikdev/astro/server",
+                  },
+                }),
+              ],
+            },
+          });
+        }
+      },
       "astro:config:done": async ({ config }) => {
         astroConfig = config;
         distDir = join(config.root.pathname, "dist");
@@ -42,42 +79,6 @@ export default function createIntegration(): AstroIntegration {
         } else {
           logger.info("Build finished. No artifacts moved.");
         }
-      },
-      "astro:config:setup": async ({
-        addRenderer,
-        updateConfig,
-        injectScript,
-      }) => {
-        addRenderer({
-          name: "@qwikdev/astro",
-          serverEntrypoint:
-            (await entrypoints).length > 0 ? "@qwikdev/astro/server" : "",
-        });
-
-        // adds qwikLoader once (instead of per container)
-        injectScript("head-inline", getQwikLoaderScript());
-
-        updateConfig({
-          vite: {
-            plugins: [
-              qwikVite({
-                devSsrServer: false,
-                entryStrategy: {
-                  type: "smart",
-                },
-                client: {
-                  // In order to make a client build, we need to know
-                  // all of the entry points to the application so
-                  // that we can generate the manifest.
-                  input: await entrypoints,
-                },
-                ssr: {
-                  input: "@qwikdev/astro/server",
-                },
-              }),
-            ],
-          },
-        });
       },
     },
   };
