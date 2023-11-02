@@ -30,14 +30,18 @@ export default function createIntegration(): AstroIntegration {
           await build({ ...astroConfig?.vite });
           await moveArtifacts(distDir, tempDir);
         } else {
-          logger.info("@qwikdev/astro: No entrypoints found. Skipping build.");
+          logger.info("No entrypoints found. Skipping build.");
         }
       },
-      "astro:build:done": async () => {
-        await moveArtifacts(
-          tempDir,
-          join(distDir, astroConfig?.output === "server" ? "client" : ".")
-        );
+      "astro:build:done": async ({ logger }) => {
+        if ((await entrypoints).length > 0) {
+          await moveArtifacts(
+            tempDir,
+            join(distDir, astroConfig?.output === "server" ? "client" : ".")
+          );
+        } else {
+          logger.info("Build finished. No artifacts moved.");
+        }
       },
       "astro:config:setup": async ({
         addRenderer,
