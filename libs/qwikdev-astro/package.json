@@ -1,7 +1,7 @@
 {
   "name": "@qwikdev/astro",
   "description": "Use Qwik components and Resumability within Astro",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "contributors": [
     {
       "name": "Miško Hevery",
@@ -18,7 +18,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thejackshelton/@qwikdev/astro.git",
+    "url": "https://github.com/QwikDev/astro",
     "directory": "libs/qwikdev/astro"
   },
   "types": "./dist/src/types.js",
