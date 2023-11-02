@@ -46,14 +46,11 @@
   },
   "bugs": "https://github.com/thejackshelton/astro-qwik/issues",
   "devDependencies": {
-    "@builder.io/qwik": "1.2.15",
+    "@builder.io/qwik": "1.2.16",
     "@types/node": "^20.8.9",
-    "astro": "^3.4.0",
+    "astro": "^3.4.2",
     "vite": "^4.4.9",
     "vite-plugin-inspect": "^0.7.38"
-  },
-  "peerDependencies": {
-    "astro": "^2.0.0-beta.0"
   },
   "dependencies": {
     "typescript": "^5.2.2"
