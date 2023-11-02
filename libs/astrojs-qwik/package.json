@@ -46,13 +46,11 @@
   },
   "bugs": "https://github.com/thejackshelton/astrojs-qwik/issues",
   "devDependencies": {
-    "@builder.io/qwik": "1.2.16",
     "@types/node": "^20.8.9",
     "astro": "^3.4.2",
-    "vite": "^4.5.0",
-    "vite-plugin-inspect": "^0.7.38"
+    "vite": "^4.5.0"
   },
   "dependencies": {
-    "typescript": "^5.2.2"
+    "@builder.io/qwik": "^1.2.16"
   }
 }

@@ -2,7 +2,6 @@ import { qwikVite } from "@builder.io/qwik/optimizer";
 import { getQwikLoaderScript } from "@builder.io/qwik/server";
 
 import { build } from "vite";
-import inspect from "vite-plugin-inspect";
 import { fileURLToPath } from "node:url";
 
 import { mkdir, readdir, rename } from "node:fs/promises";
@@ -71,7 +70,6 @@ export default function createIntegration(): AstroIntegration {
                   ),
                 },
               }),
-              inspect({ build: true }),
             ],
           },
         });
