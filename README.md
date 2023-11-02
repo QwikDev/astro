@@ -1,6 +1,6 @@
-clone this package https://github.com/thejackshelton/astrojs-qwik & `pnpm i``
+clone this package https://github.com/thejackshelton/@qwikdev/astro & `pnpm i``
 
-Run `tsc -w` in the `libs/astrojs-qwik`
+Run `tsc -w` in the `libs/@qwikdev/astro`
 (we get type errors from the astro/tsconfigs/base, I've left those for now)
 
 Have another terminal session running
