@@ -69,7 +69,7 @@ Now, add the integration to your `astro.config.*` file using the `integrations` 
 
 ## Key differences
 
-Hooray! We now have our integration installed. Before deep diving in, there are quite a few differences than
+Hooray! We now have our integration installed. Before deep diving in, there are quite a few differences than other UI frameworks.
 
 ## Qwik does not hydrate, it is **fundamentally different**.
 
