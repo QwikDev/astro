@@ -159,7 +159,7 @@ Instead, we recommend the use of **custom events**, which offer several advantag
 
 ## Contributing
 
-We welcome contributions to this project! Before getting started, please read our [Contributing Guide](./contributing.md). It contains useful information about getting involved in the project, submitting bugs, proposing enhancements, and more. We look forward to your contributions!
+We welcome contributions to this project! Before getting started, please read our [Contributing Guide](https://github.com/QwikDev/astro/blob/main/contributing.md). It contains useful information about getting involved in the project, submitting bugs, proposing enhancements, and more. We look forward to your contributions!
 
 ## Credits
 
