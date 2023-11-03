@@ -1,7 +1,7 @@
 {
   "name": "@qwikdev/astro",
   "description": "Use Qwik components and Resumability within Astro",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "contributors": [
     {
       "name": "Miško Hevery",

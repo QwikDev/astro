@@ -134,13 +134,13 @@ The framework! We do not execute it until it is needed. In this case it is gzipp
 
 One of Astro's key features is **Zero JS, by default**. Unfortunately, after adding a JavaScript framework, and any subsequent components this is usually not the case.
 
-![Resumability vs. Hydration chart](https://i.gyazo.com/3996e249ae856e12a1918ea389b399e6.webp)
-
 If we want to introduce interactivity with a framework such as React, Vue, Svelte, etc., the framework runtime is then introduced. The number of components added to the page also increases linearly O(n) with the amount of JavaScript.
 
 ### Astro + Qwik
 
 Qwik builds on top of Astro's **Zero JS, by defaut** principle and then some. Thanks to resumability, the components are not executed unless resumed. Even with interactivity, the framework is also not executed until it needs to be. It is O(1) constant, and zero effort on the developer.
+
+![Resumability vs. Hydration chart](https://i.gyazo.com/3996e249ae856e12a1918ea389b399e6.webp)
 
 Instead, upon page load, a tiny 1kb minified piece of JavaScript, known as the [Qwikloader](https://qwik.builder.io/docs/advanced/qwikloader/#qwikloader), downloads the rest of the application as needed.
 
