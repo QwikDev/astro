@@ -1,6 +1,6 @@
 # @qwikdev/astro 💜
 
-Leverage the power of [Resumability](https://qwik.builder.io/docs/concepts/resumable/) and fine-grained lazy loading inside of Astro, using Qwik components.
+Leverage the power of [Resumability](https://qwik.builder.io/docs/concepts/resumable/) inside of Astro, using Qwik components.
 
 ## Installation
 
@@ -15,11 +15,13 @@ Astro comes with a command-line tool for incorporating built-in integrations: `a
 
 To install `@qwikdev/astro`, run the following from your project directory and follow the prompts:
 
-```
+```sh
 # Using NPM
 npx astro add @qwikdev/astro
+
 # Using Yarn
 yarn astro add @qwikdev/astro
+
 # Using PNPM
 pnpm astro add @qwikdev/astro
 ```
@@ -35,19 +37,19 @@ The integration needs the following in `tsconfig.json` for typescript to recogni
 }
 ```
 
-If you face any issues, please post them on Github and attempt the manual installation below.
+If you face any issues, please [post them on Github](https://github.com/QwikDev/astro/issues) and attempt the manual installation below.
 
 ### Manual Installation
 
 First, install the `@qwikdev/astro` integration like so:
 
-```
+```sh
 npm install @qwikdev/astro
 ```
 
 Typically, package managers install peer dependencies. However, if you get a `Cannot find package '@builder.io/qwik'` warning when starting Astro, install Qwik.
 
-```
+```sh
 npm install @builder.io/qwik
 ```
 
@@ -67,17 +69,19 @@ Now, add the integration to your `astro.config.*` file using the `integrations` 
 
 ## Key differences
 
-Hooray! We now have our integration installed. Before deep diving in, there are some major things to cover.
+Hooray! We now have our integration installed. Before deep diving in, there are quite a few differences than
 
-## Qwik is fundamentally different
+## Qwik does not hydrate, it is **fundamentally different**.
 
-Astro is popular for its partial hydration approach and islands, whereas Qwik does not require hydration.
+Astro is popular for its partial hydration approach, whereas Qwik [does not require hydration](https://www.builder.io/blog/hydration-tree-resumability-map#resumability-is-fundamentally-a-different-algorithm).
 
 What does this mean?
 
 ### Qwik components **do not need hydration directives**,
 
-When using Qwik inside a meta framework like Astro or Qwik City, they are loaded on the server and "resumed" on the client.
+In other UI frameworks, a hydration directive would be needed for interactivity, such as `client:only` or `client:load`. These are not needed with Qwik, because it never hydrates!
+
+When using Qwik inside a meta framework like Astro or Qwik City, components are loaded on the server, prefetched in a separate thread, and "resumed" on the client.
 
 For example here's how we create a counter component in Qwik.
 
@@ -93,7 +97,7 @@ export const Counter = component$(() => {
 
 It can be consumed in our `index.astro` page like so:
 
-```tsx
+```astro
     ---
     import { Counter } from "../components/counter";
     ---
@@ -114,31 +118,31 @@ It can be consumed in our `index.astro` page like so:
     </html>
 ```
 
-### Starts fast, stays fast
+## Starts fast, stays fast
 
 One of Astro's key features is **Zero JS, by default**. Unfortunately, when we want to add a JavaScript framework, and any subsequent components this is usually not the case.
 
 If we want to introduce interactivity with a framework such as React, Vue, Svelte, etc., the framework runtime is then introduced. Consequently, the number of components added to the page increases linearly O(n) with the amount of JavaScript.
 
-#### Astro + Qwik
+### Astro + Qwik
 
-Qwik builds on top of the Astro's **Zero JS, by defaut** principle and then some. Thanks to resumability, the components are not executed unless resumed. Even with interactivity, the framework is also not executed until it needs to be. It is O(1) constant.
+Qwik builds on top of Astro's **Zero JS, by defaut** principle and then some. Thanks to resumability, the components are not executed unless resumed. Even with interactivity, the framework is also not executed until it needs to be. It is O(1) constant.
 
 Instead, upon page load, a tiny 1kb minified piece of JavaScript, known as the [Qwikloader](https://qwik.builder.io/docs/advanced/qwikloader/#qwikloader), downloads the rest of the application as needed.
 
-### Containers vs. Islands
+## Containers vs. Islands
 
 While Astro generally adopts an islands architecture with other frameworks, Qwik uses a different strategy known as [Qwik containers](https://qwik.builder.io/docs/advanced/containers/). Despite the differences in approach, both share similar limitations.
 
-![An example of a Qwik container](https://imgur.com/a/iDgQrgG)
+![An example of a Qwik container](https://i.imgur.com/hJJtRHj.jpeg)
 
 In the DOM, you'll notice there aren't any `<astro-island>` custom elements, this is because to Astro, Qwik looks like static data.
 
 > This is because in Qwik, the handlers themselves are the roots / entrypoints of the application.
 
-#### Communicating across containers
+### Communicating across containers
 
-Containers in Qwik, and Islands in Astro both have similar limitations. For example, trying to pass state into another island or container.
+One common limitation is trying to pass state into another island or container.
 
 Sharing state is crucial in modern web development. The question is, how can we achieve this when state needs to be shared across different containers or islands?
 
@@ -152,6 +156,10 @@ Instead, we recommend the use of **custom events**, which offer several advantag
 - Performance (avoid unnecessary state synchronization)
 - Event Driven
 - Decoupled
+
+## Contributing
+
+We welcome contributions to this project! Before getting started, please read our [Contributing Guide](./contributing.md). It contains useful information about getting involved in the project, submitting bugs, proposing enhancements, and more. We look forward to your contributions!
 
 ## Credits
 
