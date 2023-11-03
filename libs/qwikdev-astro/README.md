@@ -120,9 +120,9 @@ It can be consumed in our `index.astro` page like so:
 
 ## Starts fast, stays fast
 
-One of Astro's key features is **Zero JS, by default**. Unfortunately, adding a JavaScript framework, and any subsequent components this is usually not the case.
+One of Astro's key features is **Zero JS, by default**. Unfortunately, after adding a JavaScript framework, and any subsequent components this is usually not the case.
 
-If we want to introduce interactivity with a framework such as React, Vue, Svelte, etc., the framework runtime is then introduced. The number of components added to the page increases linearly O(n) with the amount of JavaScript.
+If we want to introduce interactivity with a framework such as React, Vue, Svelte, etc., the framework runtime is then introduced. The number of components added to the page also increases linearly O(n) with the amount of JavaScript.
 
 ### Astro + Qwik
 
