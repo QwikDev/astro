@@ -118,9 +118,23 @@ It can be consumed in our `index.astro` page like so:
     </html>
 ```
 
+Let's take a look at this in the wild.
+
+![A gif showing a button clicked and the onClick$ resumed](https://i.imgur.com/unp1MRN.gif)
+
+Here we are refreshing the page, and you'll notice nothing was executed until the button was clicked. Without resumability, our `<Counter />` would have been executed on page load.
+
+The 402 byte q-chunk is our Counter's `onClick$` handler.
+
+#### What's in that 17.61kb chunk?
+
+The framework! We do not execute it until it is needed. In this case it is gzipped using SSG.
+
 ## Starts fast, stays fast
 
 One of Astro's key features is **Zero JS, by default**. Unfortunately, after adding a JavaScript framework, and any subsequent components this is usually not the case.
+
+![Resumability vs. Hydration chart](https://i.gyazo.com/3996e249ae856e12a1918ea389b399e6.webp)
 
 If we want to introduce interactivity with a framework such as React, Vue, Svelte, etc., the framework runtime is then introduced. The number of components added to the page also increases linearly O(n) with the amount of JavaScript.
 
@@ -162,6 +176,34 @@ Instead, we recommend the use of **custom events**, which offer several advantag
 - Performance (avoid unnecessary state synchronization)
 - Event Driven
 - Decoupled
+
+## Using multiple JSX frameworks
+
+Unfortunately, TypeScript can only have one `jsxImportSource` default. If you're using React, Solid, or Preact's Astro integration in your Astro app alongside, please override each component's import source.
+
+> If you're using [@astrojs/react](https://www.npmjs.com/package/@astrojs/react), you can use [qwik-react](https://qwik.builder.io/docs/integrations/react/#qwik-react-%EF%B8%8F) instead. The proper configuration will be supported out of the box.
+
+```tsx
+/** @jsxImportSource react */
+import { useState } from "react";
+
+export const ReactCounter = () => {
+  const [count, setCount] = useState(0);
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+```
+
+Solid JS for example, is:
+
+```
+/** @jsxImportSource solid-js */
+```
+
+Preact for example, is:
+
+```
+/** @jsxImportSource preact */
+```
 
 ## Contributing
 
