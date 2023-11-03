@@ -71,15 +71,15 @@ Now, add the integration to your `astro.config.*` file using the `integrations` 
 
 Hooray! We now have our integration installed. Before deep diving in, there are quite a few differences than other UI frameworks.
 
-## Qwik does not hydrate, it is **fundamentally different**.
+## Qwik does not hydrate, it is **fundamentally different**
 
 Astro is popular for its partial hydration approach, whereas Qwik [does not require hydration](https://www.builder.io/blog/hydration-tree-resumability-map#resumability-is-fundamentally-a-different-algorithm).
 
 What does this mean?
 
-### Qwik components **do not need hydration directives**,
+### Qwik components **do not need hydration directives**
 
-In other UI frameworks, a hydration directive would be needed for interactivity, such as `client:only` or `client:load`. These are not needed with Qwik, because it never hydrates!
+In other UI frameworks, a hydration directive would be needed for interactivity, such as `client:only` or `client:load`. These are not needed with Qwik, because there is no hydration!
 
 When using Qwik inside a meta framework like Astro or Qwik City, components are loaded on the server, prefetched in a separate thread, and "resumed" on the client.
 
@@ -120,15 +120,21 @@ It can be consumed in our `index.astro` page like so:
 
 ## Starts fast, stays fast
 
-One of Astro's key features is **Zero JS, by default**. Unfortunately, when we want to add a JavaScript framework, and any subsequent components this is usually not the case.
+One of Astro's key features is **Zero JS, by default**. Unfortunately, adding a JavaScript framework, and any subsequent components this is usually not the case.
 
-If we want to introduce interactivity with a framework such as React, Vue, Svelte, etc., the framework runtime is then introduced. Consequently, the number of components added to the page increases linearly O(n) with the amount of JavaScript.
+If we want to introduce interactivity with a framework such as React, Vue, Svelte, etc., the framework runtime is then introduced. The number of components added to the page increases linearly O(n) with the amount of JavaScript.
 
 ### Astro + Qwik
 
-Qwik builds on top of Astro's **Zero JS, by defaut** principle and then some. Thanks to resumability, the components are not executed unless resumed. Even with interactivity, the framework is also not executed until it needs to be. It is O(1) constant.
+Qwik builds on top of Astro's **Zero JS, by defaut** principle and then some. Thanks to resumability, the components are not executed unless resumed. Even with interactivity, the framework is also not executed until it needs to be. It is O(1) constant, and zero effort on the developer.
 
 Instead, upon page load, a tiny 1kb minified piece of JavaScript, known as the [Qwikloader](https://qwik.builder.io/docs/advanced/qwikloader/#qwikloader), downloads the rest of the application as needed.
+
+### Fine-grained lazy loading
+
+Hydration forces your hand [to eagerly execute code](https://www.builder.io/blog/hydration-sabotages-lazy-loading). It's not a problem with components that are outside of the tree, such as modals, but it must exhaustively check each component in the render tree just in case.
+
+Qwik works exceptionally well in Astro due to Resumability and its ability to lazy load code in a fine-grained manner. Especially for marketing sites, blogs, and content oriented sites with many components.
 
 ## Containers vs. Islands
 
