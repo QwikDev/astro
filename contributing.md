@@ -6,14 +6,13 @@ Hey, Welcome to the contributing guide for `@qwikdev/astro`! We really appreciat
 
 You can quickly get up and running with the playground by doing the following:
 
-1. clone this package https://github.com/QwikDev/astro & `pnpm i``
+1. clone this package:
+   https://github.com/QwikDev/astro
+   and run the command `pnpm install` or `pnpm i`
 
-2. Run `tsc -w` in the `libs/@qwikdev/astro`
-   (we get type errors from the astro/tsconfigs/base, we've left those for now)
+2. Once the dependencies are installed, you can build by running `pnpm build` in `apps/astro-demo`
 
-Have another terminal session running
-
-Run `pnpm build` in `apps/astro-demo`
+That's it!
 
 To see the preview, run `pnpm preview`. To see dev mode, run `pnpm dev`.
 
