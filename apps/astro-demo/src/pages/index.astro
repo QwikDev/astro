@@ -1,5 +1,6 @@
 ---
 import { Counter } from "../components/counter";
+import { ReactCounter } from "../components/react-counter";
 ---
 
 <html lang="en">
@@ -13,5 +14,6 @@ import { Counter } from "../components/counter";
 	<body>
 		<h1>Astro.js - Qwik</h1>
 		<Counter /> 
+		<ReactCounter client:visible />
 	</body>
 </html>

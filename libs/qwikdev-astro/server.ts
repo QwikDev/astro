@@ -51,6 +51,7 @@ export async function renderToStaticMarkup(
     // WORKAROUND: ensure that `npm postinstall` is run to patch the `@builder.io/qwik/package.json` file.
     const result = await renderToString(app, {
       containerTagName: "div",
+      containerAttributes: { style: "display: contents" },
       manifest: manifest,
       symbolMapper: manifest ? undefined : symbolMapper,
       qwikLoader: { include: "never" },

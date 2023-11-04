@@ -12,8 +12,13 @@
   },
   "dependencies": {
     "@astrojs/node": "^6.0.1",
+    "@astrojs/react": "^3.0.4",
     "@builder.io/qwik": "^1.2.16",
+    "@qwikdev/astro": "workspace:*",
+    "@types/react": "^18.0.21",
+    "@types/react-dom": "^18.0.6",
     "astro": "^3.4.2",
-    "@qwikdev/astro": "workspace:*"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }
