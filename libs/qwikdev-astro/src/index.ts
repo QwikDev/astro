@@ -6,7 +6,7 @@ import { mkdir, readdir, rename } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { createReadStream } from "node:fs";
 import { createInterface } from "node:readline";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 
 import type { AstroConfig, AstroIntegration } from "astro";
 
@@ -58,7 +58,7 @@ export default function createIntegration(): AstroIntegration {
       },
       "astro:config:done": async ({ config }) => {
         astroConfig = config;
-        distDir = join(config.root.pathname, "dist");
+        distDir = join(relative(config.root.pathname, "dist"));
       },
       "astro:build:start": async ({ logger }) => {
         logger.info("astro:build:start");
