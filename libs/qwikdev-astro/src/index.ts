@@ -4,7 +4,7 @@ import { build } from "vite";
 
 import { mkdir, readdir, rename } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { createReadStream } from "node:fs";
+import { createReadStream, rmdirSync } from "node:fs";
 import { createInterface } from "node:readline";
 import { join, relative } from "node:path";
 
@@ -13,7 +13,7 @@ import type { AstroConfig, AstroIntegration } from "astro";
 export default function createIntegration(): AstroIntegration {
   let astroConfig: AstroConfig | null = null;
   let distDir: string = "";
-  let tempDir = join(tmpdir(), "qwik-" + hash());
+  let tempDir = join(distDir, ".tmp-" + hash());
   let entrypoints: Promise<string[]> = getQwikEntrypoints("./src");
 
   return {
@@ -23,12 +23,19 @@ export default function createIntegration(): AstroIntegration {
         addRenderer,
         updateConfig,
         injectScript,
+        config,
       }) => {
         if ((await entrypoints).length !== 0) {
           addRenderer({
             name: "@qwikdev/astro",
             serverEntrypoint: "@qwikdev/astro/server",
           });
+
+          astroConfig = config;
+          distDir = relative(
+            astroConfig.root.pathname,
+            astroConfig.outDir.pathname
+          );
 
           // adds qwikLoader once (instead of per container)
           injectScript("head-inline", getQwikLoaderScript());
@@ -46,9 +53,11 @@ export default function createIntegration(): AstroIntegration {
                     // all of the entry points to the application so
                     // that we can generate the manifest.
                     input: await entrypoints,
+                    outDir: join(process.cwd(), distDir),
                   },
                   ssr: {
                     input: "@qwikdev/astro/server",
+                    outDir: join(process.cwd(), distDir),
                   },
                 }),
               ],
@@ -58,7 +67,6 @@ export default function createIntegration(): AstroIntegration {
       },
       "astro:config:done": async ({ config }) => {
         astroConfig = config;
-        distDir = join(relative(config.root.pathname, "dist"));
       },
       "astro:build:start": async ({ logger }) => {
         logger.info("astro:build:start");
@@ -76,6 +84,9 @@ export default function createIntegration(): AstroIntegration {
             tempDir,
             join(distDir, astroConfig?.output === "server" ? "client" : ".")
           );
+
+          // remove the temp dir folder
+          rmdirSync(tempDir, { recursive: true });
         } else {
           logger.info("Build finished. No artifacts moved.");
         }
