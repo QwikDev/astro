@@ -41,6 +41,7 @@ export default function createIntegration(): AstroIntegration {
 
           updateConfig({
             vite: {
+              outDir: astroConfig.outDir.pathname,
               plugins: [
                 qwikVite({
                   devSsrServer: false,
@@ -52,7 +53,7 @@ export default function createIntegration(): AstroIntegration {
                     // all of the entry points to the application so
                     // that we can generate the manifest.
                     input: await entrypoints,
-                    outDir: join(astroConfig.root.pathname, distDir),
+                    outDir: distDir,
                   },
                   ssr: {
                     input: "@qwikdev/astro/server",
@@ -80,7 +81,10 @@ export default function createIntegration(): AstroIntegration {
         if ((await entrypoints).length > 0) {
           await moveArtifacts(
             tempDir,
-            join(distDir, astroConfig?.output === "server" ? "client" : ".")
+            join(
+              distDir,
+              astroConfig?.output === "server" ? "dist/client" : "."
+            )
           );
 
           // remove the temp dir folder
