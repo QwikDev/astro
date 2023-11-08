@@ -3,7 +3,6 @@ import { getQwikLoaderScript } from "@builder.io/qwik/server";
 import { build } from "vite";
 
 import { mkdir, readdir, rename } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import { createReadStream, rmdirSync } from "node:fs";
 import { createInterface } from "node:readline";
 import { join, relative } from "node:path";
@@ -53,11 +52,10 @@ export default function createIntegration(): AstroIntegration {
                     // all of the entry points to the application so
                     // that we can generate the manifest.
                     input: await entrypoints,
-                    outDir: join(process.cwd(), distDir),
+                    outDir: join(astroConfig.root.pathname, distDir),
                   },
                   ssr: {
                     input: "@qwikdev/astro/server",
-                    outDir: join(process.cwd(), distDir),
                   },
                 }),
               ],
