@@ -79,11 +79,18 @@ export default function createIntegration(): AstroIntegration {
       },
       "astro:build:done": async ({ logger }) => {
         if ((await entrypoints).length > 0) {
+          // TODO: Fix this and have one source of truth, instead of reaching for this dist file that qwikVite seems to create for us automatically
+          let clientBuildPath = "client";
+
+          if (distDir !== "dist") {
+            clientBuildPath = "dist/client";
+          }
+
           await moveArtifacts(
             tempDir,
             join(
               distDir,
-              astroConfig?.output === "server" ? "dist/client" : "."
+              astroConfig?.output === "server" ? clientBuildPath : "."
             )
           );
 
