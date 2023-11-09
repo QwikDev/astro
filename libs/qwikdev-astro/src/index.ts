@@ -41,6 +41,13 @@ export default function createIntegration(): AstroIntegration {
 
           updateConfig({
             vite: {
+              build: {
+                rollupOptions: {
+                  output: {
+                    inlineDynamicImports: false,
+                  },
+                },
+              },
               outDir: astroConfig.outDir.pathname,
               plugins: [
                 qwikVite({
