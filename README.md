@@ -207,8 +207,15 @@ Preact for example, is:
 
 ## Contributing
 
-We welcome contributions to this project! Before getting started, please read our [Contributing Guide](https://github.com/QwikDev/astro/blob/main/contributing.md). It contains useful information about getting involved in the project, submitting bugs, proposing enhancements, and more. We look forward to your contributions!
+We'd love for you to contribute! Start by reading our [Contributing Guide](https://github.com/QwikDev/astro/blob/main/contributing.md). It's got all the info you need to get involved, including an in-depth section on how the integration works under the hood.
+
+There's also a `qwik-astro` channel in the builder.io discord to discuss API changes, possible ideas to the integration, and other cool stuff. 😊
 
 ## Credits
 
 Special thanks to Matthew and Nate from the Astro core team! This integration would not be possible without their help.
+
+Nate's handles:
+
+- [Twitter](https://twitter.com/n_moore)
+- [GitHub](https://github.com/natemoo-re)

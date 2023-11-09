@@ -95,10 +95,7 @@ export default function createIntegration(): AstroIntegration {
 
           await moveArtifacts(
             tempDir,
-            join(
-              distDir,
-              astroConfig?.output === "server" ? clientBuildPath : "."
-            )
+            join(distDir, astroConfig?.output === "server" ? "client" : ".")
           );
 
           // remove the temp dir folder
