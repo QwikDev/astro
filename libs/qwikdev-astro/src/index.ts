@@ -2,7 +2,7 @@ import { build } from "vite";
 import { join, relative } from "node:path";
 import { createInterface } from "node:readline";
 import { qwikVite } from "@builder.io/qwik/optimizer";
-import { createReadStream, rmdirSync } from "node:fs";
+import { createReadStream, rmSync } from "node:fs";
 import { mkdir, readdir, rename } from "node:fs/promises";
 import { getQwikLoaderScript } from "@builder.io/qwik/server";
 
@@ -91,7 +91,7 @@ export default function createIntegration(): AstroIntegration {
               : astroConfig.outDir.pathname
           );
           // remove the temp dir folder
-          rmdirSync(tempDir, { recursive: true });
+          rmSync(tempDir, { recursive: true });
         } else {
           logger.info("Build finished. No artifacts moved.");
         }

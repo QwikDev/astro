@@ -2,7 +2,12 @@ import { jsx } from "@builder.io/qwik";
 import { renderToString } from "@builder.io/qwik/server";
 import type { RendererContext } from "./types";
 import { manifest } from "@qwik-client-manifest";
-import type { SymbolMapper, SymbolMapperFn } from "@builder.io/qwik/optimizer";
+import { isDev } from "@builder.io/qwik/build";
+import type {
+  QwikManifest,
+  SymbolMapper,
+  SymbolMapperFn,
+} from "@builder.io/qwik/optimizer";
 
 async function check(
   this: RendererContext,
@@ -52,10 +57,12 @@ export async function renderToStaticMarkup(
     const result = await renderToString(app, {
       containerTagName: "div",
       containerAttributes: { style: "display: contents" },
-      manifest: manifest,
+      manifest: isDev ? ({} as QwikManifest) : manifest,
       symbolMapper: manifest ? undefined : symbolMapper,
       qwikLoader: { include: "never" },
     });
+
+    // In dev mode we use the symbolMapper not the manifest, the empty object prevents a warning of a missing manifest. This should be fixed in Qwik core.
 
     return result;
   } catch (error) {
