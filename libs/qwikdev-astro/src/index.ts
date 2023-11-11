@@ -2,10 +2,10 @@ import { qwikVite } from '@builder.io/qwik/optimizer';
 import { getQwikLoaderScript } from '@builder.io/qwik/server';
 import { build } from 'vite';
 
-import { mkdir, readdir, rename } from "node:fs/promises";
-import { createReadStream, rmSync } from "node:fs";
-import { createInterface } from "node:readline";
-import { join, relative } from "node:path";
+import { mkdir, readdir } from 'node:fs/promises';
+import { createReadStream, rmSync } from 'node:fs';
+import { createInterface } from 'node:readline';
+import { join, relative } from 'node:path';
 
 import type { AstroConfig, AstroIntegration } from 'astro';
 
@@ -171,10 +171,10 @@ async function getQwikEntrypoints(dir: string): Promise<string[]> {
     let builderFound = false;
     let found = false;
     for await (const line of rl) {
-      if (line.includes("import")) {
+      if (line.includes('import')) {
         importFound = true;
       }
-      if (line.includes("@builder.io/qwik")) {
+      if (line.includes('@builder.io/qwik')) {
         builderFound = true;
       }
       if (importFound && builderFound) {
