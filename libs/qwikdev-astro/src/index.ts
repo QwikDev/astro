@@ -159,8 +159,9 @@ async function getQwikEntrypoints(dir: string): Promise<string[]> {
 
     let importFound = false;
     let builderFound = false;
+    let found = false;
     for await (const line of rl) {
-      if (line.includes("import") {
+      if (line.includes("import")) {
         importFound = true;
       }
       if (line.includes("@builder.io/qwik")) {
