@@ -10,9 +10,10 @@ import type { AstroConfig, AstroIntegration } from "astro";
 
 export default function createIntegration(): AstroIntegration {
   let distDir: string = "";
+  let entryDir: string = "";
   let astroConfig: AstroConfig | null = null;
   let tempDir = join(distDir, ".tmp-" + hash());
-  let entrypoints: Promise<string[]> = getQwikEntrypoints("./src");
+  let entrypoints: Promise<string[]>;
 
   return {
     name: "@qwikdev/astro",
@@ -23,13 +24,20 @@ export default function createIntegration(): AstroIntegration {
         injectScript,
         config,
       }) => {
+        // Update the global config
+        astroConfig = config;
+        // Retrieve Qwik files
+        // from the project source directory
+        entryDir = relative(
+          astroConfig.root.pathname,
+          astroConfig.srcDir.pathname
+        );
+        entrypoints = getQwikEntrypoints(entryDir);
         if ((await entrypoints).length !== 0) {
           addRenderer({
             name: "@qwikdev/astro",
             serverEntrypoint: "@qwikdev/astro/server",
           });
-          // Update the global config
-          astroConfig = config;
           // Update the global dist directory relative
           // to the current project directory
           distDir = relative(
