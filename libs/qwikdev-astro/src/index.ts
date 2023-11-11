@@ -1,24 +1,24 @@
-import { qwikVite } from "@builder.io/qwik/optimizer";
-import { getQwikLoaderScript } from "@builder.io/qwik/server";
-import { build } from "vite";
+import { qwikVite } from '@builder.io/qwik/optimizer';
+import { getQwikLoaderScript } from '@builder.io/qwik/server';
+import { build } from 'vite';
 
 import { mkdir, readdir, rename } from "node:fs/promises";
 import { createReadStream, rmSync } from "node:fs";
 import { createInterface } from "node:readline";
 import { join, relative } from "node:path";
 
-import type { AstroConfig, AstroIntegration } from "astro";
+import type { AstroConfig, AstroIntegration } from 'astro';
 
 export default function createIntegration(): AstroIntegration {
   let astroConfig: AstroConfig | null = null;
-  let distDir: string = "";
-  let tempDir = join(distDir, ".tmp-" + hash());
-  let entrypoints: Promise<string[]> = getQwikEntrypoints("./src");
+  let distDir: string = '';
+  let tempDir = join(distDir, '.tmp-' + hash());
+  let entrypoints: Promise<string[]> = getQwikEntrypoints('./src');
 
   return {
-    name: "@qwikdev/astro",
+    name: '@qwikdev/astro',
     hooks: {
-      "astro:config:setup": async ({
+      'astro:config:setup': async ({
         addRenderer,
         updateConfig,
         injectScript,
@@ -26,8 +26,8 @@ export default function createIntegration(): AstroIntegration {
       }) => {
         if ((await entrypoints).length !== 0) {
           addRenderer({
-            name: "@qwikdev/astro",
-            serverEntrypoint: "@qwikdev/astro/server",
+            name: '@qwikdev/astro',
+            serverEntrypoint: '@qwikdev/astro/server',
           });
 
           astroConfig = config;
@@ -37,7 +37,7 @@ export default function createIntegration(): AstroIntegration {
           );
 
           // adds qwikLoader once (instead of per container)
-          injectScript("head-inline", getQwikLoaderScript());
+          injectScript('head-inline', getQwikLoaderScript());
 
           updateConfig({
             vite: {
@@ -53,7 +53,7 @@ export default function createIntegration(): AstroIntegration {
                 qwikVite({
                   devSsrServer: false,
                   entryStrategy: {
-                    type: "smart",
+                    type: 'smart',
                   },
                   client: {
                     // In order to make a client build, we need to know
@@ -63,7 +63,7 @@ export default function createIntegration(): AstroIntegration {
                     outDir: distDir,
                   },
                   ssr: {
-                    input: "@qwikdev/astro/server",
+                    input: '@qwikdev/astro/server',
                   },
                 }),
               ],
@@ -71,43 +71,43 @@ export default function createIntegration(): AstroIntegration {
           });
         }
       },
-      "astro:config:done": async ({ config }) => {
+      'astro:config:done': async ({ config }) => {
         astroConfig = config;
       },
-      "astro:build:start": async ({ logger }) => {
-        logger.info("astro:build:start");
+      'astro:build:start': async ({ logger }) => {
+        logger.info('astro:build:start');
 
         if ((await entrypoints).length > 0) {
           await build({ ...astroConfig?.vite });
           await moveArtifacts(distDir, tempDir);
         } else {
-          logger.info("No entrypoints found. Skipping build.");
+          logger.info('No entrypoints found. Skipping build.');
         }
       },
-      "astro:build:done": async ({ logger }) => {
+      'astro:build:done': async ({ logger }) => {
         if ((await entrypoints).length > 0) {
           // TODO: Fix this and have one source of truth, instead of reaching for this dist file that qwikVite seems to create for us automatically
-          let nodeBuildPath = "client";
+          let nodeBuildPath = 'client';
 
-          if (distDir !== "dist") {
-            nodeBuildPath = "dist/client";
+          if (distDir !== 'dist') {
+            nodeBuildPath = 'dist/client';
           }
 
           await moveArtifacts(
             tempDir,
             join(
               distDir,
-              astroConfig?.adapter?.name === "@astrojs/node" &&
-                astroConfig.output === "server"
+              astroConfig?.adapter?.name === '@astrojs/node' &&
+                astroConfig.output === 'server'
                 ? nodeBuildPath
-                : "."
+                : '.'
             )
           );
 
           // remove the temp dir folder
           rmSync(tempDir, { recursive: true });
         } else {
-          logger.info("Build finished. No artifacts moved.");
+          logger.info('Build finished. No artifacts moved.');
         }
       },
     },
@@ -115,13 +115,23 @@ export default function createIntegration(): AstroIntegration {
 }
 
 function hash() {
-  return Math.random().toString(26).split(".").pop();
+  return Math.random().toString(26).split('.').pop();
 }
 
 async function moveArtifacts(srcDir: string, destDir: string) {
   await mkdir(destDir, { recursive: true });
-  for (const file of await readdir(srcDir)) {
-    await rename(join(srcDir, file), join(destDir, file));
+  const files = await readdir(srcDir);
+
+  for (const file of files) {
+    const srcFile = join(srcDir, file);
+    const destFile = join(destDir, file);
+
+    const stat = await lstat(srcFile);
+    if (stat.isFile()) {
+      // Overwrite the destination file if it exists
+      await copyFile(srcFile, destFile);
+      await unlink(srcFile);
+    }
   }
 }
 
