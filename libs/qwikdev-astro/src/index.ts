@@ -2,7 +2,7 @@ import { qwikVite } from '@builder.io/qwik/optimizer';
 import { getQwikLoaderScript } from '@builder.io/qwik/server';
 import { build } from 'vite';
 
-import { mkdir, readdir } from 'node:fs/promises';
+import { copyFile, lstat, mkdir, readdir, unlink } from 'node:fs/promises';
 import { createReadStream, rmSync } from 'node:fs';
 import { createInterface } from 'node:readline';
 import { join, relative } from 'node:path';
