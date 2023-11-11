@@ -2,6 +2,7 @@ import { jsx } from "@builder.io/qwik";
 import { renderToString } from "@builder.io/qwik/server";
 import type { RendererContext } from "./types";
 import { manifest } from "@qwik-client-manifest";
+import { isDev } from "@builder.io/qwik/build";
 import type {
   QwikManifest,
   SymbolMapper,
@@ -56,7 +57,7 @@ export async function renderToStaticMarkup(
     const result = await renderToString(app, {
       containerTagName: "div",
       containerAttributes: { style: "display: contents" },
-      manifest: manifest ? manifest : ({} as QwikManifest),
+      manifest: isDev ? ({} as QwikManifest) : manifest,
       symbolMapper: manifest ? undefined : symbolMapper,
       qwikLoader: { include: "never" },
     });
