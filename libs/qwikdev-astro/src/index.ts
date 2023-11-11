@@ -1,17 +1,16 @@
-import { qwikVite } from "@builder.io/qwik/optimizer";
-import { getQwikLoaderScript } from "@builder.io/qwik/server";
 import { build } from "vite";
-
-import { mkdir, readdir, rename } from "node:fs/promises";
-import { createReadStream, rmSync } from "node:fs";
-import { createInterface } from "node:readline";
 import { join, relative } from "node:path";
+import { createInterface } from "node:readline";
+import { qwikVite } from "@builder.io/qwik/optimizer";
+import { createReadStream, rmSync } from "node:fs";
+import { mkdir, readdir, rename } from "node:fs/promises";
+import { getQwikLoaderScript } from "@builder.io/qwik/server";
 
 import type { AstroConfig, AstroIntegration } from "astro";
 
 export default function createIntegration(): AstroIntegration {
-  let astroConfig: AstroConfig | null = null;
   let distDir: string = "";
+  let astroConfig: AstroConfig | null = null;
   let tempDir = join(distDir, ".tmp-" + hash());
   let entrypoints: Promise<string[]> = getQwikEntrypoints("./src");
 
@@ -29,16 +28,16 @@ export default function createIntegration(): AstroIntegration {
             name: "@qwikdev/astro",
             serverEntrypoint: "@qwikdev/astro/server",
           });
-
+          // Update the global config
           astroConfig = config;
+          // Update the global dist directory relative
+          // to the current project directory
           distDir = relative(
             astroConfig.root.pathname,
             astroConfig.outDir.pathname
           );
-
           // adds qwikLoader once (instead of per container)
           injectScript("head-inline", getQwikLoaderScript());
-
           updateConfig({
             vite: {
               build: {
@@ -76,7 +75,6 @@ export default function createIntegration(): AstroIntegration {
       },
       "astro:build:start": async ({ logger }) => {
         logger.info("astro:build:start");
-
         if ((await entrypoints).length > 0) {
           await build({ ...astroConfig?.vite });
           await moveArtifacts(distDir, tempDir);
@@ -85,25 +83,13 @@ export default function createIntegration(): AstroIntegration {
         }
       },
       "astro:build:done": async ({ logger }) => {
-        if ((await entrypoints).length > 0) {
-          // TODO: Fix this and have one source of truth, instead of reaching for this dist file that qwikVite seems to create for us automatically
-          let nodeBuildPath = "client";
-
-          if (distDir !== "dist") {
-            nodeBuildPath = "dist/client";
-          }
-
+        if (((await entrypoints).length > 0) && astroConfig) {
           await moveArtifacts(
             tempDir,
-            join(
-              distDir,
-              astroConfig?.adapter?.name === "@astrojs/node" &&
-                astroConfig.output === "server"
-                ? nodeBuildPath
-                : "."
-            )
+            astroConfig.output === "server"
+              ? astroConfig.build.client.pathname
+              : astroConfig.outDir.pathname
           );
-
           // remove the temp dir folder
           rmSync(tempDir, { recursive: true });
         } else {
