@@ -157,9 +157,16 @@ async function getQwikEntrypoints(dir: string): Promise<string[]> {
       crlfDelay: Infinity,
     });
 
-    let found = false;
+    let importFound = false;
+    let builderFound = false;
     for await (const line of rl) {
-      if (line.includes("import") && line.includes("@builder.io/qwik")) {
+      if (line.includes("import") {
+        importFound = true;
+      }
+      if (line.includes("@builder.io/qwik")) {
+        builderFound = true;
+      }
+      if (importFound && builderFound) {
         qwikFiles.push(file);
         found = true;
         break;
