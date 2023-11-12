@@ -205,11 +205,9 @@ Preact for example, is:
 /** @jsxImportSource preact */
 ```
 
-## Deploying with SSR to Vercel
+## Community Guides
 
-After installing the `@astrojs/vercel` adapter, add `outDir: ".vercel/output/static"` inside of `astro.config.mjs`
-
-A community member has also written an awesome guide on [deploying with vercel](https://dev.to/reeshee/qwik-look-at-resumability-with-astro-on-vercel-44fj).
+- [Rishi Raj Jain](https://twitter.com/rishi_raj_jain_) has written an awesome guide on setting up Qwik with Astro's [Vercel SSR Adapter](https://dev.to/reeshee/qwik-look-at-resumability-with-astro-on-vercel-44fj).
 
 ## Contributing
 
