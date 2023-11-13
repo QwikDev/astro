@@ -42,7 +42,7 @@ export async function renderToStaticMarkup(
       slots[key] = value;
     }
 
-    const app = jsx(Component, { props, slots });
+    const app = jsx(Component, { ...props, slots });
 
     const symbolMapper: SymbolMapperFn = (
       symbolName: string,
