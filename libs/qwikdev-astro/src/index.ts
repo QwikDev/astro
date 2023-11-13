@@ -114,8 +114,13 @@ function hash() {
 
 async function moveArtifacts(srcDir: string, destDir: string) {
   await mkdir(destDir, { recursive: true });
-  for (const file of await readdir(srcDir)) {
-    await rename(join(srcDir, file), join(destDir, file));
+
+  try {
+    for (const file of await readdir(srcDir)) {
+      await rename(join(srcDir, file), join(destDir, file));
+    }
+  } catch {
+    // ignore error if directory not empty
   }
 }
 
