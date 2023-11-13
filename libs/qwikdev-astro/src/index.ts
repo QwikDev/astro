@@ -2,7 +2,13 @@ import { build } from "vite";
 import { join, relative } from "node:path";
 import { createInterface } from "node:readline";
 import { qwikVite } from "@builder.io/qwik/optimizer";
-import { createReadStream, rmSync } from "node:fs";
+import {
+  createReadStream,
+  existsSync,
+  rmSync,
+  statSync,
+  unlinkSync,
+} from "node:fs";
 import { mkdir, readdir, rename } from "node:fs/promises";
 import { getQwikLoaderScript } from "@builder.io/qwik/server";
 
@@ -12,7 +18,7 @@ export default function createIntegration(): AstroIntegration {
   let distDir: string = "";
   let entryDir: string = "";
   let astroConfig: AstroConfig | null = null;
-  let tempDir = join(distDir, ".tmp-" + hash());
+  let tempDir = getUniqueTempDir(distDir);
   let entrypoints: Promise<string[]>;
 
   return {
@@ -91,7 +97,7 @@ export default function createIntegration(): AstroIntegration {
         }
       },
       "astro:build:done": async ({ logger }) => {
-        if (((await entrypoints).length > 0) && astroConfig) {
+        if ((await entrypoints).length > 0 && astroConfig) {
           await moveArtifacts(
             tempDir,
             astroConfig.output === "server"
@@ -115,7 +121,16 @@ function hash() {
 async function moveArtifacts(srcDir: string, destDir: string) {
   await mkdir(destDir, { recursive: true });
   for (const file of await readdir(srcDir)) {
-    await rename(join(srcDir, file), join(destDir, file));
+    let destPath = join(destDir, file);
+    if (existsSync(destPath)) {
+      if (statSync(destPath).isDirectory()) {
+        destPath = getUniqueTempDir(destPath);
+        await mkdir(destPath);
+      } else {
+        unlinkSync(destPath);
+      }
+    }
+    await rename(join(srcDir, file), destPath);
   }
 }
 
@@ -175,4 +190,14 @@ async function getQwikEntrypoints(dir: string): Promise<string[]> {
   }
 
   return qwikFiles;
+}
+
+function getUniqueTempDir(baseDir: string): string {
+  let i = 0;
+  let tempDir;
+  do {
+    tempDir = join(baseDir, `.local-${hash()}-${i}`);
+    i++;
+  } while (existsSync(tempDir));
+  return tempDir;
 }
