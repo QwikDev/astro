@@ -3,10 +3,10 @@ import { join, relative } from "node:path";
 import { createInterface } from "node:readline";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { createReadStream, rmSync } from "node:fs";
-import { mkdir, readdir, rename } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import { getQwikLoaderScript } from "@builder.io/qwik/server";
-
 import type { AstroConfig, AstroIntegration } from "astro";
+import fsExtra from "fs-extra";
 
 export default function createIntegration(): AstroIntegration {
   let distDir: string = "";
@@ -24,6 +24,7 @@ export default function createIntegration(): AstroIntegration {
         injectScript,
         config,
       }) => {
+        console.log("testtt");
         // Update the global config
         astroConfig = config;
         // Retrieve Qwik files
@@ -91,7 +92,7 @@ export default function createIntegration(): AstroIntegration {
         }
       },
       "astro:build:done": async ({ logger }) => {
-        if (((await entrypoints).length > 0) && astroConfig) {
+        if ((await entrypoints).length > 0 && astroConfig) {
           await moveArtifacts(
             tempDir,
             astroConfig.output === "server"
@@ -113,9 +114,13 @@ function hash() {
 }
 
 async function moveArtifacts(srcDir: string, destDir: string) {
-  await mkdir(destDir, { recursive: true });
+  // Ensure the destination dir exists, create if not
+  await fsExtra.ensureDir(destDir);
   for (const file of await readdir(srcDir)) {
-    await rename(join(srcDir, file), join(destDir, file));
+    // move files from source to destintation, overwrite if they exist
+    await fsExtra.move(join(srcDir, file), join(destDir, file), {
+      overwrite: true,
+    });
   }
 }
 
