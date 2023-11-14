@@ -24,7 +24,6 @@ export default function createIntegration(): AstroIntegration {
         injectScript,
         config,
       }) => {
-        console.log("testtt");
         // Update the global config
         astroConfig = config;
         // Retrieve Qwik files
