@@ -8,5 +8,10 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
-  integrations: [qwik()],
+  integrations: [qwik({
+    exclude: [
+      "**/react/*",
+      "**/react-*",
+    ]
+  })],
 });

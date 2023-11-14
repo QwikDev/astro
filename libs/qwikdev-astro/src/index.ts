@@ -1,4 +1,4 @@
-import { build } from "vite";
+import { build, createFilter, type FilterPattern } from "vite";
 import { join, relative } from "node:path";
 import { createInterface } from "node:readline";
 import { qwikVite } from "@builder.io/qwik/optimizer";
@@ -8,7 +8,10 @@ import { getQwikLoaderScript } from "@builder.io/qwik/server";
 import type { AstroConfig, AstroIntegration } from "astro";
 import fsExtra from "fs-extra";
 
-export default function createIntegration(): AstroIntegration {
+export type Options = Partial<{ include: FilterPattern, exclude: FilterPattern }>;
+
+export default function createIntegration(options: Options = {}): AstroIntegration {
+  let filter = createFilter(options.include, options.exclude);
   let distDir: string = "";
   let entryDir: string = "";
   let astroConfig: AstroConfig | null = null;
@@ -32,7 +35,7 @@ export default function createIntegration(): AstroIntegration {
           astroConfig.root.pathname,
           astroConfig.srcDir.pathname
         );
-        entrypoints = getQwikEntrypoints(entryDir);
+        entrypoints = getQwikEntrypoints(entryDir, filter);
         if ((await entrypoints).length !== 0) {
           addRenderer({
             name: "@qwikdev/astro",
@@ -142,11 +145,16 @@ async function crawlDirectory(dir: string): Promise<string[]> {
  * We need to find the Qwik entrypoints so that the client build will run successfully.
  *
  */
-async function getQwikEntrypoints(dir: string): Promise<string[]> {
+async function getQwikEntrypoints(dir: string, filter: (id: unknown) => boolean ): Promise<string[]> {
   const files = await crawlDirectory(dir);
   const qwikFiles = [];
 
   for (const file of files) {
+    // Skip files not matching patterns
+    if (! filter(file)) {
+      continue;
+    }
+
     const fileStream = createReadStream(file);
 
     // holds readline interface
