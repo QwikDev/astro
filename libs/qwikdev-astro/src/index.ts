@@ -65,6 +65,7 @@ export default function createIntegration(options: Options = {}): AstroIntegrati
                   entryStrategy: {
                     type: "smart",
                   },
+                  srcDir: entryDir,
                   client: {
                     // In order to make a client build, we need to know
                     // all of the entry points to the application so
