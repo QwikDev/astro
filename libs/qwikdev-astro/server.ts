@@ -8,6 +8,10 @@ import type {
   SymbolMapper,
   SymbolMapperFn,
 } from "@builder.io/qwik/optimizer";
+import type { AstroUserConfig } from "astro";
+import fs from 'node:fs';
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 async function check(
   this: RendererContext,
@@ -35,6 +39,48 @@ export async function renderToStaticMarkup(
   props: Record<string, any>,
   slotted: any
 ) {
+  const resolveRoot = (cwd?: string | URL): string => {
+    if (cwd instanceof URL) {
+      cwd = fileURLToPath(cwd);
+    }
+
+    return cwd ? path.resolve(cwd) : process.cwd();
+  };
+
+  const resolveConfig = async (): Promise<AstroUserConfig> => {       
+    const paths = [
+      'astro.config.mjs',
+      'astro.config.js',
+      'astro.config.ts',
+      'astro.config.mts',
+      'astro.config.cjs',
+      'astro.config.cts',
+    ].map((p) => path.join(process.cwd(), p));
+
+    for (const file of paths) {
+      if (fs.existsSync(file)) {
+        try {
+          const configModule = await import(/* @vite-ignore */ file);
+          return configModule.default || {};
+        } catch (error) {
+          console.error(error);
+          throw error;
+        }
+      }
+    }
+
+    return {};
+  }
+
+  const userConfig = await resolveConfig();
+
+  // Get the relative path
+  // of the user-defined source directory
+  const srcDir = path.relative(
+    userConfig.root || resolveRoot(),
+    userConfig.srcDir || "./src",
+  );
+
   try {
     const slots: { [key: string]: any } = {};
 
@@ -48,7 +94,7 @@ export async function renderToStaticMarkup(
       symbolName: string,
       mapper: SymbolMapper | undefined
     ) => {
-      return [symbolName, "/src/" + symbolName.toLocaleLowerCase() + ".js"];
+      return [symbolName, `/${srcDir}/${symbolName.toLocaleLowerCase()}.js`];
     };
 
     // TODO: `jsx` must correctly be imported.
