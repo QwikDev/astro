@@ -39,10 +39,13 @@ export async function renderToStaticMarkup(
     const slots: { [key: string]: any } = {};
 
     for (const [key, value] of Object.entries(slotted)) {
-      slots[key] = value;
+      slots[key] = jsx("span", {
+        dangerouslySetInnerHTML: String(value),
+        style: "display: contents",
+      });
     }
 
-    const app = jsx(Component, { ...props, slots });
+    const app = jsx(Component, { props, children: slots.default });
 
     const symbolMapper: SymbolMapperFn = (
       symbolName: string,
