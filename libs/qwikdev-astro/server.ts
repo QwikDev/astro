@@ -45,7 +45,7 @@ export async function renderToStaticMarkup(
       });
     }
 
-    const app = jsx(Component, { props, children: slots.default });
+    const app = jsx(Component, { ...props, children: slots.default });
 
     const symbolMapper: SymbolMapperFn = (
       symbolName: string,
