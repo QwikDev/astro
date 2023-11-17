@@ -51,7 +51,10 @@ export async function renderToStaticMarkup(
       symbolName: string,
       mapper: SymbolMapper | undefined
     ) => {
-      return [symbolName, "/src/" + symbolName.toLocaleLowerCase() + ".js"];
+      return [
+        symbolName,
+        `/${process.env.SRC_DIR}/` + symbolName.toLocaleLowerCase() + ".js",
+      ];
     };
 
     // TODO: `jsx` must correctly be imported.
