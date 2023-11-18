@@ -1,5 +1,5 @@
 import { build, createFilter, type FilterPattern } from "vite";
-import { join, relative } from "node:path";
+import { join, normalize, relative } from "node:path";
 import { createInterface } from "node:readline";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { createReadStream, rmSync } from "node:fs";
@@ -108,12 +108,12 @@ export default function createIntegration(
       },
       "astro:build:done": async ({ logger }) => {
         if ((await entrypoints).length > 0 && astroConfig) {
-          await moveArtifacts(
-            tempDir,
+          const outputPath =
             astroConfig.output === "server"
               ? astroConfig.build.client.pathname
-              : astroConfig.outDir.pathname
-          );
+              : astroConfig.outDir.pathname;
+          const normalizedPath = normalize(outputPath).replace("C:\\", "");
+          await moveArtifacts(tempDir, normalizedPath);
           // remove the temp dir folder
           rmSync(tempDir, { recursive: true });
         } else {
