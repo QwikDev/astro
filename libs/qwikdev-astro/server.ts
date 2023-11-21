@@ -37,15 +37,28 @@ export async function renderToStaticMarkup(
 ) {
   try {
     const slots: { [key: string]: any } = {};
+    let defaultSlot;
 
+    // getting functions from index causes a rollup issue.
     for (const [key, value] of Object.entries(slotted)) {
-      slots[key] = jsx("span", {
+      const jsxElement = jsx("span", {
         dangerouslySetInnerHTML: String(value),
         style: "display: contents",
+        ...(key !== "default" && { "q:slot": key }),
+        "q:key": Math.random().toString(26).split(".").pop(),
       });
+
+      if (key === "default") {
+        defaultSlot = jsxElement;
+      } else {
+        slots[key] = jsxElement;
+      }
     }
 
-    const app = jsx(Component, { ...props, children: slots.default });
+    const app = jsx(Component, {
+      ...props,
+      children: [defaultSlot, ...Object.values(slots)],
+    });
 
     const symbolMapper: SymbolMapperFn = (
       symbolName: string,

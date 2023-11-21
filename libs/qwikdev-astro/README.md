@@ -205,6 +205,34 @@ Preact for example, is:
 /** @jsxImportSource preact */
 ```
 
+## Named Slots
+
+For named slots within Astro, instead of adding `q:slot` on the markup, add `slot` instead.
+
+**my-slot-comp.tsx**
+
+```tsx
+import { Slot, component$, useSignal } from "@builder.io/qwik";
+
+export const MySlotComp = component$<{ initial: number }>((props) => {
+  return (
+    <>
+      <Slot name="test" />
+    </>
+  );
+});
+```
+
+**index.astro**
+
+```astro
+  <MySlotComp>
+    <div slot="test">Content inside the slot named test!</div>
+  </MySlotComp>
+```
+
+Default slots work as expected in their Qwik City counterpart.
+
 ## Community Guides
 
 - [Rishi Raj Jain](https://twitter.com/rishi_raj_jain_) has written an awesome guide on setting up Qwik with Astro's [Vercel SSR Adapter](https://dev.to/reeshee/qwik-look-at-resumability-with-astro-on-vercel-44fj).
