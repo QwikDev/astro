@@ -4,7 +4,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "@builder.io/qwik",
     "outDir": "./dist",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "noEmit": false,
     "allowImportingTsExtensions": false
   }
