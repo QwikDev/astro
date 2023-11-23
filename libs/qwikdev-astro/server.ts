@@ -17,12 +17,23 @@ async function check(
 ) {
   try {
     if (typeof Component !== "function") return false;
-    const { html } = await renderToStaticMarkup.call(
+
+    if (Component.name !== "QwikComponent") {
+      return false;
+    }
+
+    const result = await renderToStaticMarkup.call(
       this,
       Component,
       props,
       slotted
     );
+
+    if (!result) {
+      throw new Error("renderToStaticMarkup returned undefined");
+    }
+
+    const { html } = result;
     return typeof html === "string";
   } catch (error) {
     console.error("Error in check function of @qwikdev/astro: ", error);
@@ -36,6 +47,10 @@ export async function renderToStaticMarkup(
   slotted: any
 ) {
   try {
+    if (Component.name !== "QwikComponent") {
+      return;
+    }
+
     const slots: { [key: string]: any } = {};
     let defaultSlot;
 
