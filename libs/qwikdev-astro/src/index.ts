@@ -7,6 +7,7 @@ import { readdir } from "node:fs/promises";
 import { getQwikLoaderScript } from "@builder.io/qwik/server";
 import type { AstroConfig, AstroIntegration } from "astro";
 import fsExtra from "fs-extra";
+import os from "os";
 
 export type Options = Partial<{
   include: FilterPattern;
@@ -112,7 +113,14 @@ export default function createIntegration(
             astroConfig.output === "server"
               ? astroConfig.build.client.pathname
               : astroConfig.outDir.pathname;
-          const normalizedPath = normalize(outputPath).replace("C:\\", "");
+
+          let normalizedPath = normalize(outputPath);
+
+          // checks all windows platforms and removes drive ex: C:\\
+          if (os.platform() === "win32") {
+            normalizedPath = normalizedPath.substring(3);
+          }
+
           await moveArtifacts(tempDir, normalizedPath);
           // remove the temp dir folder
           rmSync(tempDir, { recursive: true });
