@@ -14,9 +14,23 @@ You can quickly get up and running with the playground by doing the following:
 
 That's it!
 
-- dev: `pnpm dev`
-- build: `pnpm build`
-- preview: `pnpm preview`
+**dev:**
+
+```shell
+pnpm dev
+```
+
+**build:**
+
+```shell
+pnpm build
+```
+
+**preview:**
+
+```shell
+pnpm preview
+```
 
 ## Getting started
 
@@ -27,7 +41,7 @@ This project is a pnpm workspace monorepo. It contains:
 
 Below is an outline of the file structure.
 
-```
+```tsx
 .
 └── Project Structure/
     ├── apps/
@@ -58,25 +72,25 @@ There are two major files to be aware of. `index.ts` and `server.ts`.
 
 Astro hooks are functions that are called at specific points during the build process. In this file, we define the following hooks:
 
-- "astro:config:setup": This hook is used to set up the configuration for the Astro project. It retrieves Qwik files from the project source directory, adds the [renderer](https://docs.astro.build/en/reference/integrations-reference/#addrenderer-option), injects the [QwikLoader script](https://qwik.builder.io/docs/advanced/qwikloader/#qwikloader), and updates the Vite configuration.
+- **"astro:config:setup"**: This hook is used to set up the configuration for the Astro project. It retrieves Qwik files from the project source directory, adds the [renderer](https://docs.astro.build/en/reference/integrations-reference/#addrenderer-option), injects the [QwikLoader script](https://qwik.builder.io/docs/advanced/qwikloader/#qwikloader), and updates the Vite configuration.
 
-- "astro:config:done": This hook is used to update the astroConfig after the configuration setup is done.
+- **"astro:config:done"**: This hook is used to update the astroConfig after the configuration setup is done.
 
-- "astro:build:start": This hook is called at the start of the build process. It initiates the build and moves the build artifacts to a temporary directory.
+- **"astro:build:start"**: This hook is called at the start of the build process. It initiates the build and moves the build artifacts to a temporary directory.
 
-- "astro:build:done": This hook is called at the end of the build process. It moves the build artifacts from the temporary directory to the final output directory and removes the temporary directory.
+- **"astro:build:done"**: This hook is called at the end of the build process. It moves the build artifacts from the temporary directory to the final output directory and removes the temporary directory.
 
 ### Helper Functions
 
 The `index.ts` file also includes several helper functions:
 
-- hash: This function generates a random string that is used as part of the temporary directory name.
+- **hash**: This function generates a random string that is used as part of the temporary directory name.
 
-- moveArtifacts: This function moves files from one directory to another. It's used to move the build artifacts from the temporary directory to the final output directory.
+- **moveArtifacts**: This function moves files from one directory to another. It's used to move the build artifacts from the temporary directory to the final output directory.
 
-- crawlDirectory: This function recursively traverses a directory and returns an array of all the files in that directory and its subdirectories.
+- **crawlDirectory**: This function recursively traverses a directory and returns an array of all the files in that directory and its subdirectories.
 
-- getQwikEntrypoints: This function finds all the Qwik entrypoints in a given directory. These entrypoints are needed for the client build to run successfully.
+- **getQwikEntrypoints**: This function finds all the Qwik entrypoints in a given directory. These entrypoints are needed for the client build to run successfully.
 
 We are also using `qwikVite`, a plugin that is part of the [Qwik Optimizer](https://qwik.builder.io/docs/advanced/optimizer/#optimizer). As both Astro & Qwik are built on top of [Vite](https://vitejs.dev/), this enables us to offer various configuration options for tailoring the interaction between Astro and Qwik.
 
@@ -172,7 +186,11 @@ We only use the symbolMapper in dev mode. This is because we already get this in
 
 A full graph of all of the symbols and their corresponding chunks. It also knows the import graph, so if a symbol is prefetched, the service worker will also prefetch all other symbols which are needed as part of the import graph.
 
+## Roadmap
+
 That's about it! Some exciting features we would like to add to Qwik + Astro are:
 
 - Similar [prefetching](https://qwik.builder.io/docs/advanced/speculative-module-fetching/#speculative-module-fetching) functionality to Qwik City
 - [Qwik Insights](https://qwik.builder.io/docs/labs/insights/#-insights)
+- Moving [Qwik Image optimizations](<https://github.com/BuilderIO/qwik/blob/85552d7f381e43e46fb1db79717c0a1e5b44b868/starters/apps/qwikcity-test/src/routes/(common)/index.tsx#L4>) (?jsx) off the Qwik City Vite plugin to Qwik core.
+- Moving [@builder.io/qwik/testing](https://github.com/BuilderIO/qwik/blob/85552d7f381e43e46fb1db79717c0a1e5b44b868/packages/qwik/src/testing/README.md#L1) off the Qwik City Vite plugin.
