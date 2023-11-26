@@ -1,11 +1,13 @@
-import { build, createFilter, type FilterPattern } from "vite";
-import { join, normalize, relative } from "node:path";
-import { createInterface } from "node:readline";
-import { qwikVite } from "@builder.io/qwik/optimizer";
-import { createReadStream, rmSync } from "node:fs";
-import { readdir } from "node:fs/promises";
-import { getQwikLoaderScript } from "@builder.io/qwik/server";
 import type { AstroConfig, AstroIntegration } from "astro";
+import ts from "typescript";
+
+import { build, createFilter, type FilterPattern } from "vite";
+import { qwikVite } from "@builder.io/qwik/optimizer";
+import { getQwikLoaderScript } from "@builder.io/qwik/server";
+
+import { join, normalize, relative } from "node:path";
+import fs, { rmSync } from "node:fs";
+import { readdir } from "node:fs/promises";
 import fsExtra from "fs-extra";
 import os from "os";
 
@@ -19,7 +21,7 @@ export default function createIntegration(
 ): AstroIntegration {
   let filter = createFilter(options.include, options.exclude);
   let distDir: string = "";
-  let entryDir: string = "";
+  let srcDir: string = "";
   let astroConfig: AstroConfig | null = null;
   let tempDir = join(distDir, ".tmp-" + hash());
   let entrypoints: Promise<string[]>;
@@ -37,7 +39,7 @@ export default function createIntegration(
         astroConfig = config;
         // Retrieve Qwik files
         // from the project source directory
-        entryDir = relative(
+        srcDir = relative(
           astroConfig.root.pathname,
           astroConfig.srcDir.pathname
         );
@@ -48,7 +50,7 @@ export default function createIntegration(
           astroConfig.srcDir.pathname
         );
 
-        entrypoints = getQwikEntrypoints(entryDir, filter);
+        entrypoints = getQwikEntrypoints(srcDir, filter);
         if ((await entrypoints).length !== 0) {
           addRenderer({
             name: "@qwikdev/astro",
@@ -78,11 +80,12 @@ export default function createIntegration(
                   entryStrategy: {
                     type: "smart",
                   },
-                  srcDir: entryDir,
+                  srcDir,
                   client: {
-                    // In order to make a client build, we need to know
-                    // all of the entry points to the application so
-                    // that we can generate the manifest.
+                    /* In order to make a client build, we need to know
+                      all of the entry points to the application so
+                      that we can generate the manifest. 
+                    */
                     input: await entrypoints,
                     outDir: distDir,
                   },
@@ -174,39 +177,38 @@ async function getQwikEntrypoints(
   const qwikFiles = [];
 
   for (const file of files) {
-    // Skip files not matching patterns
+    // Skip files not matching patterns w/ astro config include & exclude
     if (!filter(file)) {
       continue;
     }
 
-    const fileStream = createReadStream(file);
+    const fileContent = fs.readFileSync(file, "utf-8");
+    const sourceFile = ts.createSourceFile(
+      file,
+      fileContent,
+      ts.ScriptTarget.ESNext,
+      true
+    );
 
-    // holds readline interface
-    const rl = createInterface({
-      input: fileStream,
-      crlfDelay: Infinity,
+    let qwikImportFound = false;
+
+    ts.forEachChild(sourceFile, function nodeVisitor(node) {
+      if (
+        ts.isImportDeclaration(node) &&
+        ts.isStringLiteral(node.moduleSpecifier)
+      ) {
+        if (node.moduleSpecifier.text === "@builder.io/qwik") {
+          qwikImportFound = true;
+        }
+      }
+
+      if (!qwikImportFound) {
+        ts.forEachChild(node, nodeVisitor);
+      }
     });
 
-    let importFound = false;
-    let builderFound = false;
-    let found = false;
-    for await (const line of rl) {
-      if (line.includes("import")) {
-        importFound = true;
-      }
-      if (line.includes("@builder.io/qwik")) {
-        builderFound = true;
-      }
-      if (importFound && builderFound) {
-        qwikFiles.push(file);
-        found = true;
-        break;
-      }
-    }
-
-    if (found) {
-      rl.close();
-      fileStream.close();
+    if (qwikImportFound) {
+      qwikFiles.push(file);
     }
   }
 

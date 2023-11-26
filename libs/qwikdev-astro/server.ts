@@ -1,13 +1,13 @@
 import { jsx } from "@builder.io/qwik";
 import { renderToString } from "@builder.io/qwik/server";
-import type { RendererContext } from "./types";
 import { manifest } from "@qwik-client-manifest";
 import { isDev } from "@builder.io/qwik/build";
-import type {
-  QwikManifest,
-  SymbolMapper,
-  SymbolMapperFn,
-} from "@builder.io/qwik/optimizer";
+import type { QwikManifest, SymbolMapperFn } from "@builder.io/qwik/optimizer";
+import type { SSRResult } from "astro";
+
+type RendererContext = {
+  result: SSRResult;
+};
 
 async function check(
   this: RendererContext,
@@ -75,10 +75,7 @@ export async function renderToStaticMarkup(
       children: [defaultSlot, ...Object.values(slots)],
     });
 
-    const symbolMapper: SymbolMapperFn = (
-      symbolName: string,
-      mapper: SymbolMapper | undefined
-    ) => {
+    const symbolMapper: SymbolMapperFn = (symbolName: string) => {
       return [
         symbolName,
         `/${process.env.SRC_DIR}/` + symbolName.toLocaleLowerCase() + ".js",

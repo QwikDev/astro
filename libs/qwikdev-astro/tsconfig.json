@@ -6,6 +6,12 @@
     "outDir": "./dist",
     "moduleResolution": "Bundler",
     "noEmit": false,
-    "allowImportingTsExtensions": false
+    "allowImportingTsExtensions": false,
+    "baseUrl": ".",
+    "paths": {
+      "@builder.io/qwik/build": [
+        "node_modules/@builder.io/qwik/build/index.d.ts"
+      ]
+    }
   }
 }
