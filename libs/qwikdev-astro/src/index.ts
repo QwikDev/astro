@@ -118,6 +118,7 @@ export default function createIntegration(
               : astroConfig.outDir.pathname;
 
           let normalizedPath = normalize(outputPath);
+          process.env.Q_BASE = normalizedPath;
 
           // checks all windows platforms and removes drive ex: C:\\
           if (os.platform() === "win32") {

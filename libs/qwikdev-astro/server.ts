@@ -82,7 +82,7 @@ export async function renderToStaticMarkup(
       ];
     };
 
-    const base = props["q:base"] || "/build/";
+    const base = props["q:base"] || process.env.Q_BASE;
 
     // TODO: `jsx` must correctly be imported.
     // Currently the vite loads `core.mjs` and `core.prod.mjs` at the same time and this causes issues.
