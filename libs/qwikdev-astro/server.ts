@@ -82,10 +82,13 @@ export async function renderToStaticMarkup(
       ];
     };
 
+    const base = props["q:base"] || process.env.Q_BASE;
+
     // TODO: `jsx` must correctly be imported.
     // Currently the vite loads `core.mjs` and `core.prod.mjs` at the same time and this causes issues.
     // WORKAROUND: ensure that `npm postinstall` is run to patch the `@builder.io/qwik/package.json` file.
     const result = await renderToString(app, {
+      base,
       containerTagName: "div",
       containerAttributes: { style: "display: contents" },
       manifest: isDev ? ({} as QwikManifest) : manifest,
