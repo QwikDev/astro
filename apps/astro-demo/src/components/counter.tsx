@@ -1,13 +1,15 @@
-import { Slot, component$, useSignal } from "@builder.io/qwik";
+import { component$, useSignal } from "@builder.io/qwik";
 
 export const Counter = component$<{ initial: number }>((props) => {
-  const counter = useSignal(0);
+
+  const counter = useSignal(props.initial);
 
   return (
-    <button onClick$={() => counter.value++}>
-      <Slot />
-      <Slot name="test" />
-      {counter.value}
-    </button>
+
+    <>
+      <button onClick$={() => counter.value++}>
+        {counter.value}
+      </button>
+    </>
   );
 });
