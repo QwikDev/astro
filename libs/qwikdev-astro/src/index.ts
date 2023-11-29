@@ -1,5 +1,6 @@
 import type { AstroConfig, AstroIntegration } from "astro";
 import ts from "typescript";
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 import { build, createFilter, type FilterPattern } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
@@ -93,6 +94,7 @@ export default function createIntegration(
                     input: "@qwikdev/astro/server",
                   },
                 }),
+                tsconfigPaths()
               ],
             },
           });
