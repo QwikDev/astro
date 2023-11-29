@@ -43,9 +43,6 @@ importers:
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
-      typescript:
-        specifier: ^5.3.2
-        version: 5.3.2
     devDependencies:
       '@builder.io/qwik':
         specifier: ^1.2.19
@@ -59,6 +56,9 @@ importers:
       astro:
         specifier: ^3.6.0
         version: 3.6.0(@types/node@20.10.0)(typescript@5.3.2)
+      typescript:
+        specifier: ^5.3.2
+        version: 5.3.2
       vite:
         specifier: ^4.5.0
         version: 4.5.0(@types/node@20.10.0)
