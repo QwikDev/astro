@@ -1,6 +1,6 @@
 import type { AstroConfig, AstroIntegration } from "astro";
 import ts from "typescript";
-import tsconfigPaths from 'vite-tsconfig-paths'
+import tsconfigPaths from "vite-tsconfig-paths";
 
 import { build, createFilter, type FilterPattern } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
@@ -76,6 +76,14 @@ export default function createIntegration(
               },
               outDir: astroConfig.outDir.pathname,
               plugins: [
+                {
+                  // HACK: override qwikVite's attempt to set `esbuild` to false during dev
+                  enforce: "post",
+                  config(config: any) {
+                    config.esbuild = true;
+                    return config;
+                  },
+                },
                 qwikVite({
                   devSsrServer: false,
                   entryStrategy: {
@@ -94,7 +102,7 @@ export default function createIntegration(
                     input: "@qwikdev/astro/server",
                   },
                 }),
-                tsconfigPaths()
+                tsconfigPaths(),
               ],
             },
           });
