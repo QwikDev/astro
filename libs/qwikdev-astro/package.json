@@ -51,6 +51,7 @@
   "bugs": "https://github.com/thejackshelton/@qwikdev/astro/issues",
   "dependencies": {
     "fs-extra": "^11.1.1",
+    "globby": "^14.0.0",
     "vite-tsconfig-paths": "^4.2.1"
   },
   "devDependencies": {

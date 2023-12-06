@@ -1,6 +1,6 @@
 import type { AstroConfig, AstroIntegration } from "astro";
 import ts from "typescript";
-import tsconfigPaths from 'vite-tsconfig-paths'
+import tsconfigPaths from "vite-tsconfig-paths";
 
 import { build, createFilter, type FilterPattern } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
@@ -8,9 +8,9 @@ import { getQwikLoaderScript } from "@builder.io/qwik/server";
 
 import { join, normalize, relative } from "node:path";
 import fs, { rmSync } from "node:fs";
-import { readdir } from "node:fs/promises";
 import fsExtra from "fs-extra";
 import os from "os";
+import { globby } from "globby";
 
 export type Options = Partial<{
   include: FilterPattern;
@@ -94,7 +94,7 @@ export default function createIntegration(
                     input: "@qwikdev/astro/server",
                   },
                 }),
-                tsconfigPaths()
+                tsconfigPaths(),
               ],
             },
           });
@@ -145,8 +145,17 @@ function hash() {
 async function moveArtifacts(srcDir: string, destDir: string) {
   // Ensure the destination dir exists, create if not
   await fsExtra.ensureDir(destDir);
-  for (const file of await readdir(srcDir)) {
-    // move files from source to destintation, overwrite if they exist
+
+  // Get all .tsx, .ts, .js, and .jsx files in srcDir and its subdirectories
+  const files = await globby([
+    "**/*.{tsx,ts,js,jsx}",
+    "!**/*.astro",
+    "!dist/**",
+    "!node_modules/**",
+    "!**/env.d.ts",
+  ]);
+  for (const file of files) {
+    // move .tsx, .ts, .js, and .jsx files from source to destination, overwrite if they exist
     await fsExtra.move(join(srcDir, file), join(destDir, file), {
       overwrite: true,
     });
@@ -154,17 +163,18 @@ async function moveArtifacts(srcDir: string, destDir: string) {
 }
 
 async function crawlDirectory(dir: string): Promise<string[]> {
-  const entries = await readdir(dir, { withFileTypes: true });
+  // Get all .tsx, .ts, .js, and .jsx files in dir and its subdirectories
+  const files = await globby([
+    "**/*.{tsx,ts,js,jsx}",
+    "!**/*.astro",
+    "!dist/**",
+    "!node_modules/**",
+    "!**/env.d.ts",
+  ]);
 
-  const files = await Promise.all(
-    entries.map((entry) => {
-      const fullPath = join(dir, entry.name);
-      return entry.isDirectory() ? crawlDirectory(fullPath) : fullPath;
-    })
-  );
+  console.log("files: ", files);
 
-  // flatten files array
-  return files.flat();
+  return files;
 }
 
 /**
@@ -185,6 +195,8 @@ async function getQwikEntrypoints(
       continue;
     }
 
+    console.log("FILE: ", file);
+
     const fileContent = fs.readFileSync(file, "utf-8");
     const sourceFile = ts.createSourceFile(
       file,
@@ -192,6 +204,8 @@ async function getQwikEntrypoints(
       ts.ScriptTarget.ESNext,
       true
     );
+
+    console.log("FILE CONTENT ", fileContent);
 
     let qwikImportFound = false;
 
