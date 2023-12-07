@@ -11,13 +11,13 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^6.0.1",
-    "@astrojs/react": "^3.0.4",
+    "@astrojs/node": "^7.0.0",
+    "@astrojs/react": "^3.0.7",
     "@builder.io/qwik": "^1.2.19",
     "@qwikdev/astro": "workspace:*",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
-    "astro": "^3.6",
+    "astro": "^4.0.3",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   }
