@@ -74,16 +74,7 @@ export default function createIntegration(
                   },
                 },
               },
-              outDir: astroConfig.outDir.pathname,
               plugins: [
-                {
-                  // HACK: override qwikVite's attempt to set `esbuild` to false during dev
-                  enforce: "post",
-                  config(config: any) {
-                    config.esbuild = true;
-                    return config;
-                  },
-                },
                 qwikVite({
                   devSsrServer: false,
                   entryStrategy: {
@@ -103,6 +94,14 @@ export default function createIntegration(
                   },
                 }),
                 tsconfigPaths(),
+                {
+                  // HACK: override qwikVite's attempt to set `esbuild` to false during dev
+                  enforce: "post",
+                  config(config: any) {
+                    config.esbuild = true;
+                    return config;
+                  },
+                },
               ],
             },
           });
@@ -114,7 +113,22 @@ export default function createIntegration(
       "astro:build:start": async ({ logger }) => {
         logger.info("astro:build:start");
         if ((await entrypoints).length > 0) {
-          await build({ ...astroConfig?.vite });
+          // make sure vite does not parse .astro files
+          await build({
+            ...astroConfig?.vite,
+            plugins: [
+              ...(astroConfig?.vite.plugins || []),
+              {
+                enforce: "pre",
+                name: "astro-noop",
+                load(id) {
+                  if (id.endsWith(".astro")) {
+                    return "export default function() {}";
+                  }
+                },
+              },
+            ],
+          });
           await moveArtifacts(distDir, tempDir);
         } else {
           logger.info("No entrypoints found. Skipping build.");
