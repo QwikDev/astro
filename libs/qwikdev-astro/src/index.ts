@@ -102,6 +102,17 @@ export default function createIntegration(
                     return config;
                   },
                 },
+                // where we try to get include & exclude with vite for qwik
+                {
+                  enforce: "post",
+                  name: "qwik-transform",
+                  transform(id) {
+                    if (!filter(id)) {
+                      console.log(id);
+                      return null;
+                    }
+                  },
+                },
               ],
             },
           });

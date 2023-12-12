@@ -1,5 +1,6 @@
 import node from "@astrojs/node";
 import qwik from "@qwikdev/astro";
+import react from "@astrojs/react";
 import { defineConfig } from "astro/config";
 
 // https://astro.build/config
@@ -9,8 +10,7 @@ export default defineConfig({
     mode: "standalone",
   }),
   integrations: [
-    qwik({
-      exclude: ["**/react/*", "**/react-*"],
-    }),
+    qwik({ include: "**/qwik/*" }),
+    react({ include: "**/react/*" }),
   ],
 });
