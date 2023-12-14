@@ -37,6 +37,18 @@ The integration needs the following in `tsconfig.json` for typescript to recogni
 }
 ```
 
+#### When Qwik isn't the primary jsxImportSource
+
+If you don't intend to use Qwik as your primary `jsxImportSource`, add:
+
+```
+/** @jsxImportSource @builder.io/qwik */
+```
+
+at the top of each Qwik component file.
+
+This is when you may not have that many Qwik components compared to other JSX frameworks on the page.
+
 If you face any issues, please [post them on Github](https://github.com/QwikDev/astro/issues) and attempt the manual installation below.
 
 ### Manual Installation
