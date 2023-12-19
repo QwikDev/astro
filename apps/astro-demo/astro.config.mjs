@@ -1,6 +1,9 @@
-import node from "@astrojs/node";
-import qwik from "@qwikdev/astro";
 import { defineConfig } from "astro/config";
+import inspect from "vite-plugin-inspect";
+import node from "@astrojs/node";
+
+import qwik from "@qwikdev/astro";
+import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
@@ -8,9 +11,11 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
+  vite: {
+    plugins: [inspect()],
+  },
   integrations: [
-    qwik({
-      exclude: ["**/react/*", "**/react-*"],
-    }),
+    react({ include: ["**/react/*"] }),
+    qwik({ include: ["**/qwik/*"] }),
   ],
 });

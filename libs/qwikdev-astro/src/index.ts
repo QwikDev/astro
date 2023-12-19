@@ -76,6 +76,27 @@ export default function createIntegration(
               },
               plugins: [
                 qwikVite({
+                  fileFilter: (id: string, hook: string) => {
+                    return id.indexOf("react") !== -1 ? false : true;
+
+                    // hook can be "resolveId", "load", or "transform" from inside qwikVite
+
+                    // filter uses the createFilter from vite above, checking qwik's virtual files, symbols, etc.
+                    let filterResult = filter(id);
+                    if (id.indexOf("@builder.io/qwik") !== -1) {
+                      filterResult = true;
+                    } else if (id.indexOf("@qwik-client-manifest") !== -1) {
+                      filterResult = true;
+                    } else if (id.indexOf("_component__") !== -1) {
+                      filterResult = true;
+                    } else if (id.indexOf("s_") !== -1) {
+                      filterResult = true;
+                    }
+                    if (filterResult == false) {
+                      console.log("SKIPING", hook, id, filterResult);
+                    }
+                    return filterResult;
+                  },
                   devSsrServer: false,
                   entryStrategy: {
                     type: "smart",
