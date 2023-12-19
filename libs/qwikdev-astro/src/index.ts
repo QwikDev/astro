@@ -57,12 +57,13 @@ export default function createIntegration(
             name: "@qwikdev/astro",
             serverEntrypoint: "@qwikdev/astro/server",
           });
-          // Update the global dist directory relative
-          // to the current project directory
-          distDir = relative(
-            astroConfig.root.pathname,
-            astroConfig.outDir.pathname
-          );
+
+          // Update the global dist directory
+          distDir =
+            astroConfig.output === "server"
+              ? astroConfig.build.client.pathname
+              : astroConfig.outDir.pathname;
+
           // adds qwikLoader once (instead of per container)
           injectScript("head-inline", getQwikLoaderScript());
           updateConfig({
@@ -136,10 +137,7 @@ export default function createIntegration(
       },
       "astro:build:done": async ({ logger }) => {
         if ((await entrypoints).length > 0 && astroConfig) {
-          const outputPath =
-            astroConfig.output === "server"
-              ? astroConfig.build.client.pathname
-              : astroConfig.outDir.pathname;
+          const outputPath = distDir;
 
           let normalizedPath = normalize(outputPath);
           process.env.Q_BASE = normalizedPath;
