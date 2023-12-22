@@ -64,6 +64,11 @@ export default function createIntegration(
               ? astroConfig.build.client.pathname
               : astroConfig.outDir.pathname;
 
+          // checks all windows platforms and removes drive ex: C:\\
+          if (os.platform() === "win32") {
+            distDir = distDir.substring(3);
+          }
+
           // adds qwikLoader once (instead of per container)
           injectScript("head-inline", getQwikLoaderScript());
           updateConfig({
@@ -141,11 +146,6 @@ export default function createIntegration(
 
           let normalizedPath = normalize(outputPath);
           process.env.Q_BASE = normalizedPath;
-
-          // checks all windows platforms and removes drive ex: C:\\
-          if (os.platform() === "win32") {
-            normalizedPath = normalizedPath.substring(3);
-          }
 
           await moveArtifacts(tempDir, normalizedPath);
           // remove the temp dir folder
