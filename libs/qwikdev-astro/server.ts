@@ -9,6 +9,12 @@ type RendererContext = {
   result: SSRResult;
 };
 
+const qwikLoaderAdded = new WeakMap<SSRResult, boolean>();
+
+function hash() {
+  return Math.random().toString(26).split(".").pop();
+}
+
 async function check(
   this: RendererContext,
   Component: any,
@@ -60,7 +66,7 @@ export async function renderToStaticMarkup(
         dangerouslySetInnerHTML: String(value),
         style: "display: contents",
         ...(key !== "default" && { "q:slot": key }),
-        "q:key": Math.random().toString(26).split(".").pop(),
+        "q:key": hash(),
       });
 
       if (key === "default") {
@@ -84,6 +90,11 @@ export async function renderToStaticMarkup(
 
     const base = props["q:base"] || process.env.Q_BASE;
 
+    const shouldAddQwikLoader = !qwikLoaderAdded.has(this.result);
+    if (shouldAddQwikLoader) {
+      qwikLoaderAdded.set(this.result, true);
+    }
+
     // TODO: `jsx` must correctly be imported.
     // Currently the vite loads `core.mjs` and `core.prod.mjs` at the same time and this causes issues.
     // WORKAROUND: ensure that `npm postinstall` is run to patch the `@builder.io/qwik/package.json` file.
@@ -93,7 +104,9 @@ export async function renderToStaticMarkup(
       containerAttributes: { style: "display: contents" },
       manifest: isDev ? ({} as QwikManifest) : manifest,
       symbolMapper: manifest ? undefined : symbolMapper,
-      qwikLoader: { include: "never" },
+      qwikLoader: shouldAddQwikLoader
+        ? { include: "always" }
+        : { include: "never" },
     });
 
     // In dev mode we use the symbolMapper not the manifest, the empty object prevents a warning of a missing manifest. This should be fixed in Qwik core.

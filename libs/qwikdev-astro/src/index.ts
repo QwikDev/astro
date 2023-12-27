@@ -69,8 +69,6 @@ export default function createIntegration(
             distDir = distDir.substring(3);
           }
 
-          // adds qwikLoader once (instead of per container)
-          injectScript("head-inline", getQwikLoaderScript());
           updateConfig({
             vite: {
               build: {
