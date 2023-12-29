@@ -191,6 +191,24 @@ Instead, we recommend the use of **custom events**, which offer several advantag
 
 ## Using multiple JSX frameworks
 
+Qwik works with other JSX frameworks out of the box. It should not need an `include` or `exclude` property.
+
+We've noticed some slight edge cases with other renderers, and so we suggest adding Qwik to the beginning of your integrations array.
+
+```tsx
+import { defineConfig } from "astro/config";
+import qwik from "@qwikdev/astro";
+import react from "@astrojs/react";
+
+export default defineConfig({
+  integrations: [qwik(), react({ include: ["**/react/*"] })],
+});
+```
+
+> If there is a newer JSX framework integration other than React, Preact, or Solid you may need to add an `include` or `exclude` keyword on the qwik integration.
+
+### jsxImportSource
+
 Unfortunately, TypeScript can only have one `jsxImportSource` default. If you're using React, Solid, or Preact's Astro integration in your Astro app alongside, please override each component's import source.
 
 > If you're using [@astrojs/react](https://www.npmjs.com/package/@astrojs/react), you can use [qwik-react](https://qwik.builder.io/docs/integrations/react/#qwik-react-%EF%B8%8F) instead. The proper configuration will be supported out of the box.

@@ -1,16 +1,13 @@
+import { defineConfig } from "astro/config";
 import node from "@astrojs/node";
 import qwik from "@qwikdev/astro";
-import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
-  output: "server",
+  output: "static",
   adapter: node({
     mode: "standalone",
   }),
-  integrations: [
-    qwik({
-      exclude: ["**/react/*", "**/react-*"],
-    }),
-  ],
+  integrations: [qwik(), react({ include: ["**/react/*"] })],
 });
