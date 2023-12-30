@@ -220,7 +220,10 @@ async function getQwikEntrypoints(
         ts.isImportDeclaration(node) &&
         ts.isStringLiteral(node.moduleSpecifier)
       ) {
-        if (node.moduleSpecifier.text === "@builder.io/qwik") {
+        if (
+          node.moduleSpecifier.text === "@builder.io/qwik" ||
+          node.moduleSpecifier.text === "@builder.io/qwik-react"
+        ) {
           qwikImportFound = true;
         }
       }
