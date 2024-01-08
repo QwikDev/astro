@@ -1,9 +1,16 @@
 import { jsx } from "@builder.io/qwik";
-import { renderToString } from "@builder.io/qwik/server";
+import {
+  getQwikLoaderScript,
+  getQwikPrefetchWorkerScript,
+  renderToString,
+} from "@builder.io/qwik/server";
 import { manifest } from "@qwik-client-manifest";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import type { SSRResult } from "astro";
+import { PrefetchGraph } from "@builder.io/qwik";
+
+const qwikLoaderAdded = new WeakMap<SSRResult, boolean>();
 
 type RendererContext = {
   result: SSRResult;
@@ -82,6 +89,11 @@ export async function renderToStaticMarkup(
       ];
     };
 
+    const shouldAddQwikLoader = !qwikLoaderAdded.has(this.result);
+    if (shouldAddQwikLoader) {
+      qwikLoaderAdded.set(this.result, true);
+    }
+
     const base = props["q:base"] || process.env.Q_BASE;
 
     // TODO: `jsx` must correctly be imported.
@@ -96,9 +108,31 @@ export async function renderToStaticMarkup(
       qwikLoader: { include: "never" },
     });
 
-    // In dev mode we use the symbolMapper not the manifest, the empty object prevents a warning of a missing manifest. This should be fixed in Qwik core.
+    const { html } = result;
+    const htmlWithScripts = `
+    ${html}
+    ${
+      shouldAddQwikLoader
+        ? `
+      <script>
+        HERE IS QWIK LOADER SCRIPT
+        ${getQwikLoaderScript()}
+      </script>
+     `
+        : ""
+    } 
+  `;
 
-    return result;
+    // console.log("-------------");
+    // console.log(htmlWithScripts);
+    // console.log("-------------");
+
+    console.log(this.result);
+
+    return {
+      ...result,
+      html: htmlWithScripts,
+    };
   } catch (error) {
     console.error(
       "Error in renderToStaticMarkup function of @qwikdev/astro: ",

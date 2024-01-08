@@ -13,7 +13,7 @@
   "dependencies": {
     "@astrojs/node": "^7.0.0",
     "@astrojs/react": "^3.0.9",
-    "@builder.io/qwik": "^1.3.0",
+    "@builder.io/qwik": "github:BuilderIO/qwik-build#19f9d5303bcc41916cee56f45a1b7005f482cb0e",
     "@qwikdev/astro": "workspace:*",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",

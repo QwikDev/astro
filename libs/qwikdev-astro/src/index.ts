@@ -34,6 +34,7 @@ export default function createIntegration(
         addRenderer,
         updateConfig,
         injectScript,
+        addWatchFile,
         config,
       }) => {
         // Update the global config
@@ -57,6 +58,9 @@ export default function createIntegration(
             name: "@qwikdev/astro",
             serverEntrypoint: "@qwikdev/astro/server",
           });
+          addWatchFile(
+            new URL("./qwik-prefetch-service-worker.js", config.root)
+          );
 
           // Update the global dist directory
           distDir =
@@ -69,8 +73,6 @@ export default function createIntegration(
             distDir = distDir.substring(3);
           }
 
-          // adds qwikLoader once (instead of per container)
-          injectScript("head-inline", getQwikLoaderScript());
           updateConfig({
             vite: {
               build: {
