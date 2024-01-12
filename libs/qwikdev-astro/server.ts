@@ -1,9 +1,12 @@
 import { jsx } from "@builder.io/qwik";
-import { renderToString } from "@builder.io/qwik/server";
+import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
 import { manifest } from "@qwik-client-manifest";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import type { SSRResult } from "astro";
+import { PrefetchGraph, PrefetchServiceWorker } from "@builder.io/qwik";
+
+const qwikLoaderAdded = new WeakMap<SSRResult, boolean>();
 
 type RendererContext = {
   result: SSRResult;
@@ -22,19 +25,7 @@ async function check(
       return false;
     }
 
-    const result = await renderToStaticMarkup.call(
-      this,
-      Component,
-      props,
-      slotted
-    );
-
-    if (!result) {
-      throw new Error("renderToStaticMarkup returned undefined");
-    }
-
-    const { html } = result;
-    return typeof html === "string";
+    return true;
   } catch (error) {
     console.error("Error in check function of @qwikdev/astro: ", error);
   }
@@ -82,6 +73,11 @@ export async function renderToStaticMarkup(
       ];
     };
 
+    const shouldAddQwikLoader = !qwikLoaderAdded.has(this.result);
+    if (shouldAddQwikLoader) {
+      qwikLoaderAdded.set(this.result, true);
+    }
+
     const base = props["q:base"] || process.env.Q_BASE;
 
     // TODO: `jsx` must correctly be imported.
@@ -96,9 +92,38 @@ export async function renderToStaticMarkup(
       qwikLoader: { include: "never" },
     });
 
-    // In dev mode we use the symbolMapper not the manifest, the empty object prevents a warning of a missing manifest. This should be fixed in Qwik core.
+    /* scripts we need on first component vs. each */
+    const { html } = result;
+    let scripts = `
+      <script>
+        ${PrefetchGraph}
+      </script>
+    `;
 
-    return result;
+    if (shouldAddQwikLoader) {
+      scripts = `
+        <script>
+          ${getQwikLoaderScript()}
+        </script>
+        <script>
+          ${PrefetchServiceWorker}
+        </script>
+      ${scripts}`;
+    }
+
+    // Find the closing tag of the div with the `q:container` attribute
+    const closingContainerTag = html.lastIndexOf("</div>");
+
+    // Insert the scripts before the closing tag
+    const htmlWithScripts = `${html.substring(
+      0,
+      closingContainerTag
+    )}${scripts}${html.substring(closingContainerTag)}`;
+
+    return {
+      ...result,
+      html: htmlWithScripts,
+    };
   } catch (error) {
     console.error(
       "Error in renderToStaticMarkup function of @qwikdev/astro: ",

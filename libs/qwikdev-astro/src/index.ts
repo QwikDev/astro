@@ -4,7 +4,6 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 import { build, createFilter, type FilterPattern } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
-import { getQwikLoaderScript } from "@builder.io/qwik/server";
 
 import { join, normalize, relative } from "node:path";
 import fs, { rmSync } from "node:fs";
@@ -30,12 +29,7 @@ export default function createIntegration(
   return {
     name: "@qwikdev/astro",
     hooks: {
-      "astro:config:setup": async ({
-        addRenderer,
-        updateConfig,
-        injectScript,
-        config,
-      }) => {
+      "astro:config:setup": async ({ addRenderer, updateConfig, config }) => {
         // Update the global config
         astroConfig = config;
         // Retrieve Qwik files
@@ -69,8 +63,6 @@ export default function createIntegration(
             distDir = distDir.substring(3);
           }
 
-          // adds qwikLoader once (instead of per container)
-          injectScript("head-inline", getQwikLoaderScript());
           updateConfig({
             vite: {
               build: {
@@ -123,7 +115,10 @@ export default function createIntegration(
           await build({
             ...astroConfig?.vite,
             plugins: [
+              // TODO: Fix these vite types from Astro 4.1
+              // @ts-ignore
               ...(astroConfig?.vite.plugins || []),
+              // @ts-ignore
               {
                 enforce: "pre",
                 name: "astro-noop",
