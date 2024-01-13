@@ -92,64 +92,58 @@ export async function renderToStaticMarkup(
       qwikLoader: { include: "never" },
     });
 
-    const PREFETCH_GRAPH_CODE = /*#__PURE__*/ ((
-      qc: HTMLElement, // QwikContainer Element
-      q: Array<any[]>, // Queue of messages to send to the service worker.
-      b: string, // Base URL
-      h: string | null, // Manifest hash
-      u: string | null // Manifest URL
-    ) => {
-      q.push([
-        "graph-url",
-        b,
-        u || `q-bundle-graph-${h || qc.getAttribute("q:manifest-hash")}.json`,
+    const PREFETCH_GRAPH_CODE = `((qc, c, q, v, b, h) => {
+      b = qc.getAttribute("q:base");
+      h = qc.getAttribute("q:manifest-hash");
+      c.register("/qwik-prefetch-service-worker.js", {
+        scope: "/"
+      }).then((sw, onReady) => {
+        onReady = () => q.forEach(q.push = (v2) => sw.active.postMessage(v2));
+        sw.installing ? sw.installing.addEventListener("statechange", (e) => e.target.state == "activated" && onReady()) : onReady();
+      });
+      v && q.push([
+        "verbose"
       ]);
-    }).toString();
+      document.addEventListener("qprefetch", (e) => e.detail.bundles && q.push([
+        "prefetch",
+          b,
+          ...e.detail.bundles
+        ]));
+      })(
+    document.currentScript.closest('[q\\\\:container]'),
+    navigator.serviceWorker,
+    window.qwikPrefetchSW||(window.qwikPrefetchSW=[]),
+    true
+    )`;
 
-    const PREFETCH_CODE = /*#__PURE__*/ ((
-      qc: HTMLElement, // QwikContainer Element
-      c: ServiceWorkerContainer, // Service worker container
-      q: Array<any[]>, // Queue of messages to send to the service worker.
-      v: boolean, // Verbose mode
-      b?: string,
-      h?: string
-    ) => {
-      b = qc.getAttribute("q:base")!;
-      h = qc.getAttribute("q:manifest-hash")!;
-      c.register("URL", { scope: "SCOPE" }).then(
-        (sw: ServiceWorkerRegistration, onReady?: () => void) => {
-          onReady = () =>
-            q.forEach((q.push = (v) => sw.active!.postMessage(v) as any));
-          sw.installing
-            ? sw.installing.addEventListener(
-                "statechange",
-                (e: any) => e.target.state == "activated" && onReady!()
-              )
-            : onReady();
-        }
-      );
-      v && q.push(["verbose"]);
-      document.addEventListener(
-        "qprefetch",
-        (e: any) =>
-          e.detail.bundles && q.push(["prefetch", b, ...e.detail.bundles])
-      );
-    }).toString();
+    const PREFETCH_CODE = `((qc, q, b, h, u) => {
+      q.push([
+        "graph-url", 
+        b || qc.getAttribute("q:base"),
+        u || \`q-bundle-graph-\${h || qc.getAttribute("q:manifest-hash")}.json\`
+       ]);
+    })(
+     document.currentScript.closest('[q\\\\:container]'),
+     window.qwikPrefetchSW||(window.qwikPrefetchSW=[]),
+    )`;
 
+    /*
+      TODO: find a way to put this in the HTML Head. Potential tradeoff: use injectScript
+    */
     /* scripts we need on first component vs. each */
     const { html } = result;
     let scripts = `
-      <script>
+      <script qwik-prefetch-service-worker>
       ${PREFETCH_GRAPH_CODE}
       </script>
     `;
 
     if (shouldAddQwikLoader) {
       scripts = `
-        <script>
+        <script qwik-loader>
           ${getQwikLoaderScript()}
         </script>
-        <script>
+        <script qwik-prefetch-bundle-graph>
           ${PREFETCH_CODE}
         </script>
       ${scripts}`;
