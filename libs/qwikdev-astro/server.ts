@@ -112,8 +112,7 @@ export async function renderToStaticMarkup(
       })(
     document.currentScript.closest('[q\\\\:container]'),
     navigator.serviceWorker,
-    window.qwikPrefetchSW||(window.qwikPrefetchSW=[]),
-    true
+    window.qwikPrefetchSW||(window.qwikPrefetchSW=[])
     )`;
 
     const PREFETCH_GRAPH_CODE = `((qc, q, b, h, u) => {
