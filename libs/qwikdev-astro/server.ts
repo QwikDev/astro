@@ -92,7 +92,7 @@ export async function renderToStaticMarkup(
       qwikLoader: { include: "never" },
     });
 
-    const PREFETCH_GRAPH_CODE = `((qc, c, q, v, b, h) => {
+    const PREFETCH_SERVICE_WORKER = `((qc, c, q, v, b, h) => {
       b = qc.getAttribute("q:base");
       h = qc.getAttribute("q:manifest-hash");
       c.register("/qwik-prefetch-service-worker.js", {
@@ -116,7 +116,7 @@ export async function renderToStaticMarkup(
     true
     )`;
 
-    const PREFETCH_CODE = `((qc, q, b, h, u) => {
+    const PREFETCH_GRAPH_CODE = `((qc, q, b, h, u) => {
       q.push([
         "graph-url", 
         b || qc.getAttribute("q:base"),
@@ -133,9 +133,9 @@ export async function renderToStaticMarkup(
     /* scripts we need on first component vs. each */
     const { html } = result;
     let scripts = `
-      <script qwik-prefetch-service-worker>
+    <script qwik-prefetch-bundle-graph>
       ${PREFETCH_GRAPH_CODE}
-      </script>
+    </script>
     `;
 
     if (shouldAddQwikLoader) {
@@ -143,20 +143,22 @@ export async function renderToStaticMarkup(
         <script qwik-loader>
           ${getQwikLoaderScript()}
         </script>
-        <script qwik-prefetch-bundle-graph>
-          ${PREFETCH_CODE}
+        <script qwik-prefetch-service-worker>
+        ${PREFETCH_SERVICE_WORKER}
         </script>
       ${scripts}`;
     }
 
     // Find the closing tag of the div with the `q:container` attribute
-    const closingContainerTag = html.lastIndexOf("</div>");
+    const prefetchBundleScript = html.lastIndexOf(
+      '<script q:type="prefetch-bundles">'
+    );
 
-    // Insert the scripts before the closing tag
+    // Insert the scripts before the prefetch bundle script
     const htmlWithScripts = `${html.substring(
       0,
-      closingContainerTag
-    )}${scripts}${html.substring(closingContainerTag)}`;
+      prefetchBundleScript
+    )}${scripts}${html.substring(prefetchBundleScript)}`;
 
     return {
       ...result,
