@@ -1,6 +1,7 @@
 ---
 import { Counter } from "@components/counter";
 import { SayHi } from "@components/say-hi";
+import Comp from '@components/comp.astro'
 ---
 
 <html lang="en">
@@ -13,8 +14,10 @@ import { SayHi } from "@components/say-hi";
 	</head>
 	<body>
 		<h1>Astro.js - Qwik</h1>
-		<Counter initial={5} />
 		<SayHi />
+		<Comp>
+			<Counter initial={5} />
+		</Comp>
 		<a href="/about">About</a>
 	</body>
 </html>

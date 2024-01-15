@@ -149,15 +149,16 @@ export async function renderToStaticMarkup(
     }
 
     // Find the closing tag of the div with the `q:container` attribute
-    const prefetchBundleScript = html.lastIndexOf(
-      '<script q:type="prefetch-bundles">'
-    );
+    const prefetchBundleLoc =
+      html.indexOf('<script q:type="prefetch-bundles">') !== -1
+        ? html.indexOf('<script q:type="prefetch-bundles">')
+        : html.indexOf('<script type="qwik/json"');
 
     // Insert the scripts before the prefetch bundle script
     const htmlWithScripts = `${html.substring(
       0,
-      prefetchBundleScript
-    )}${scripts}${html.substring(prefetchBundleScript)}`;
+      prefetchBundleLoc
+    )}${scripts}${html.substring(prefetchBundleLoc)}`;
 
     return {
       ...result,
