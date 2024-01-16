@@ -131,14 +131,17 @@ export async function renderToStaticMarkup(
     */
     /* scripts we need on first component vs. each */
     const { html } = result;
-    let scripts = `
-    <script qwik-prefetch-bundle-graph>
-      ${PREFETCH_GRAPH_CODE}
-    </script>
-    `;
+    let scripts = "";
+    if (html.indexOf('<script q:type="prefetch-bundles">') !== -1) {
+      scripts = ` 
+      <script qwik-prefetch-bundle-graph>
+        ${PREFETCH_GRAPH_CODE}
+      </script>
+      `;
+    }
 
     if (shouldAddQwikLoader) {
-      scripts = `
+      scripts += `
         <script qwik-loader>
           ${getQwikLoaderScript()}
         </script>
