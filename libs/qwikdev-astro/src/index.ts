@@ -137,7 +137,10 @@ export default function createIntegration(
       },
       "astro:build:done": async ({ logger }) => {
         if ((await entrypoints).length > 0 && astroConfig) {
-          const outputPath = distDir;
+          const outputPath =
+            astroConfig.output === "server"
+              ? astroConfig.build.client.pathname
+              : astroConfig.outDir.pathname;
 
           let normalizedPath = normalize(outputPath);
           process.env.Q_BASE = normalizedPath;
