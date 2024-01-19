@@ -1,13 +1,11 @@
 import { defineConfig } from "astro/config";
-import node from "@astrojs/node";
 import qwik from "@qwikdev/astro";
 import react from "@astrojs/react";
+import vercel from "@astrojs/vercel/serverless";
 
 // https://astro.build/config
 export default defineConfig({
-  output: "static",
-  adapter: node({
-    mode: "standalone",
-  }),
+  output: "server",
+  adapter: vercel(),
   integrations: [qwik(), react({ include: ["**/react/*"] })],
 });

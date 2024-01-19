@@ -54,7 +54,7 @@ export default function createIntegration(
 
           // Update the global dist directory
           distDir =
-            astroConfig.output === "server"
+            astroConfig.output === "server" || astroConfig.output === "hybrid"
               ? astroConfig.build.client.pathname
               : astroConfig.outDir.pathname;
 
@@ -138,7 +138,7 @@ export default function createIntegration(
       "astro:build:done": async ({ logger }) => {
         if ((await entrypoints).length > 0 && astroConfig) {
           const outputPath =
-            astroConfig.output === "server"
+            astroConfig.output === "server" || astroConfig.output === "hybrid"
               ? astroConfig.build.client.pathname
               : astroConfig.outDir.pathname;
 
