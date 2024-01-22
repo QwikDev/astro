@@ -1,8 +1,6 @@
 ---
 import { Counter } from "@components/counter";
-import { SayHi } from "@components/say-hi";
-import Comp from '@components/comp.astro'
-import { Test } from '@components/test'
+import { ViewTransitions } from "astro:transitions";
 ---
 
 <html lang="en">
@@ -12,14 +10,10 @@ import { Test } from '@components/test'
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro</title>
+		<ViewTransitions />
 	</head>
 	<body>
-		<Test />
-		<h1>Astro.js - Qwik</h1>
-		<SayHi />
-		<Comp>
-			<Counter initial={5} />
-		</Comp>
+		<Counter initial={5} />
 		<a href="/about">About</a>
 	</body>
 </html>

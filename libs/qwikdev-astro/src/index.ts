@@ -53,10 +53,7 @@ export default function createIntegration(
           });
 
           // Update the global dist directory
-          distDir =
-            astroConfig.output === "server" || astroConfig.output === "hybrid"
-              ? astroConfig.build.client.pathname
-              : astroConfig.outDir.pathname;
+          distDir = astroConfig.outDir.pathname;
 
           // checks all windows platforms and removes drive ex: C:\\
           if (os.platform() === "win32") {
@@ -85,7 +82,6 @@ export default function createIntegration(
                       that we can generate the manifest. 
                     */
                     input: await entrypoints,
-                    outDir: distDir,
                   },
                   ssr: {
                     input: "@qwikdev/astro/server",
