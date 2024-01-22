@@ -133,10 +133,15 @@ export default function createIntegration(
       },
       "astro:build:done": async ({ logger }) => {
         if ((await entrypoints).length > 0 && astroConfig) {
-          const outputPath =
+          let outputPath =
             astroConfig.output === "server" || astroConfig.output === "hybrid"
               ? astroConfig.build.client.pathname
               : astroConfig.outDir.pathname;
+
+          // checks all windows platforms and removes drive ex: C:\\
+          if (os.platform() === "win32") {
+            outputPath = outputPath.substring(3);
+          }
 
           let normalizedPath = normalize(outputPath);
           process.env.Q_BASE = normalizedPath;
