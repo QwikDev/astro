@@ -4,7 +4,6 @@ import { manifest } from "@qwik-client-manifest";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import type { SSRResult } from "astro";
-import { PrefetchGraph, PrefetchServiceWorker } from "@builder.io/qwik";
 
 const qwikLoaderAdded = new WeakMap<SSRResult, boolean>();
 
@@ -126,38 +125,43 @@ export async function renderToStaticMarkup(
      window.qwikPrefetchSW||(window.qwikPrefetchSW=[]),
     )`;
 
-    /*
-      TODO: find a way to put this in the HTML Head. Potential tradeoff: use injectScript
-    */
-    /* scripts we need on first component vs. each */
     const { html } = result;
+
+    /* Inlining the necessary Qwik scripts for the Qwikloader & SW */
     let scripts = "";
-    if (html.indexOf('<script q:type="prefetch-bundles">') !== -1) {
-      scripts = ` 
-      <script qwik-prefetch-bundle-graph>
-        ${PREFETCH_GRAPH_CODE}
-      </script>
-      `;
-    }
+
+    const shouldPrefetchBundles =
+      html.indexOf('<script q:type="prefetch-bundles">') !== -1;
 
     if (shouldAddQwikLoader) {
       scripts += `
         <script qwik-loader>
           ${getQwikLoaderScript()}
         </script>
+        ${
+          isDev
+            ? ""
+            : `
         <script qwik-prefetch-service-worker>
         ${PREFETCH_SERVICE_WORKER}
         </script>
+        `
+        }
       ${scripts}`;
     }
 
-    // Find the closing tag of the div with the `q:container` attribute
-    const prefetchBundleLoc =
-      html.indexOf('<script q:type="prefetch-bundles">') !== -1
-        ? html.indexOf('<script q:type="prefetch-bundles">')
-        : html.indexOf('<script type="qwik/json"');
+    if (!isDev && shouldPrefetchBundles) {
+      scripts += `<script qwik-prefetch-bundle-graph>
+      ${PREFETCH_GRAPH_CODE}
+    </script>`;
+    }
 
-    // Insert the scripts before the prefetch bundle script
+    // Find the closing tag of the div with the `q:container` attribute
+    const prefetchBundleLoc = shouldPrefetchBundles
+      ? html.indexOf('<script q:type="prefetch-bundles">')
+      : html.indexOf('<script type="qwik/json"');
+
+    // Insert the scripts before the q:type prefetch bundle script
     const htmlWithScripts = `${html.substring(
       0,
       prefetchBundleLoc
