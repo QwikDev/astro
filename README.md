@@ -154,13 +154,21 @@ Qwik builds on top of Astro's **Zero JS, by defaut** principle and then some. Th
 
 ![Resumability vs. Hydration chart](https://i.gyazo.com/3996e249ae856e12a1918ea389b399e6.webp)
 
-Instead, upon page load, a tiny 1kb minified piece of JavaScript, known as the [Qwikloader](https://qwik.builder.io/docs/advanced/qwikloader/#qwikloader), downloads the rest of the application as needed.
+Instead, upon page load, a tiny 1kb minified piece of JavaScript, known as the [Qwikloader](https://qwik.builder.io/docs/advanced/qwikloader/), downloads the rest of the application as needed.
 
 ### Fine-grained lazy loading
 
 Hydration forces your hand [to eagerly execute code](https://www.builder.io/blog/hydration-sabotages-lazy-loading). It's not a problem with components that are outside of the tree, such as modals, but it must exhaustively check each component in the render tree just in case.
 
 Qwik works exceptionally well in Astro due to Resumability and its ability to lazy load code in a fine-grained manner. Especially for marketing sites, blogs, and content oriented sites with many components.
+
+### Instant interactivity
+
+As of `@qwikdev/astro` v0.4, we have added support for [Speculative Module Fetching](https://qwik.builder.io/docs/advanced/speculative-module-fetching/) in Astro.
+
+This enables instant interactivity for your Qwik components. Speculative module fetching will prefetch the application bundles in the background of a service worker, so that when needed, the code is already present in the browser cache.
+
+> You should be able to use [Qwik insights](https://qwik.builder.io/docs/labs/insights/) out of the box!
 
 ## Containers vs. Islands
 
@@ -178,22 +186,34 @@ One common limitation is trying to pass state into another island or container.
 
 Sharing state is crucial in modern web development. The question is, how can we achieve this when state needs to be shared across different containers or islands?
 
-Other frameworks with Astro address this by using [nano stores](https://github.com/nanostores/nanostores).
+#### Why not use global signals or nanostores?
+
+Other frameworks with Astro address this by using [nano stores](https://github.com/nanostores/nanostores), or [global signals](https://www.solidjs.com/tutorial/stores_nocontext).
+
+While you may see all of your tests passing, and the application working as expected, we do not recommend using nanostores or global signals. They can lead to some unexpected behavior in an SSR context.
+
+For example, in Solid's tutorial the following is mentioned:
+
+> While it is possible to use global state and computations, Context is sometimes a better solution. Additionally, it is important to note that global state should not be used in SSR (server side rendering) solutions, such as Solid Start. On the server, global state is shared across requests, and the lack of data isolation can (and will) lead to bugs, memory leaks and has security implications. It is recommended that application state should always be provided via context instead of relying on global.
+
+#### Custom Events
+
+In Qwik, it was a design decision to not include global signal state.
 
 Instead, we recommend the use of **custom events**, which offer several advantages:
 
+- Performance (avoid unnecessary state synchronization)
+- Does not wake up the framework on page load
 - Micro Frontend (MFE) Support
 - Different versions can exist on the page
-- Survives serialization (unlike nano stores)
-- Performance (avoid unnecessary state synchronization)
 - Event Driven
 - Decoupled
+
+[This example](https://github.com/thejackshelton/astro-qwik-global-state-example/blob/main/src/components/counter.tsx) shows how custom events can be used throughout your application. Pay attention to `counter.tsx`, `random-island.tsx`, and our `index.astro` page.
 
 ## Using multiple JSX frameworks
 
 Qwik works with other JSX frameworks out of the box. It should not need an `include` or `exclude` property.
-
-We've noticed some slight edge cases with other renderers, and so we suggest adding Qwik to the beginning of your integrations array.
 
 ```tsx
 import { defineConfig } from "astro/config";
@@ -205,7 +225,57 @@ export default defineConfig({
 });
 ```
 
+We've noticed some slight edge cases with other Astro renderers, and so we suggest adding Qwik to the beginning of your integrations array.
+
 > If there is a newer JSX framework integration other than React, Preact, or Solid you may need to add an `include` or `exclude` keyword on the qwik integration.
+
+### Qwik React
+
+If you're using React, we suggest using the `@builder.io/qwik-react` integration. It's a drop-in replacement for `@astrojs/react`, and allows a seamless transition to Qwik.
+
+```tsx
+import { defineConfig } from "astro/config";
+
+import qwikdev from "@qwikdev/astro";
+import { qwikReact } from "@builder.io/qwik-react/vite";
+
+// https://astro.build/config
+export default defineConfig({
+  integrations: [qwikdev()],
+  vite: {
+    plugins: [qwikReact()],
+  },
+});
+```
+
+With Qwik-React, we can "qwikify" our React components, and use them in our Qwik application, even nesting Qwik and React components outside of an Astro file!
+
+[Here's an example](https://github.com/thejackshelton/qwik-react-astro-template) of a React component with the `qwik-react` integration.
+
+```tsx
+/** @jsxImportSource react */
+import { qwikify$ } from "@builder.io/qwik-react";
+import { useState } from "react";
+
+const ReactCounter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>React {count}</button>;
+};
+
+// "Qwikified" React component
+export const QReactCounter = qwikify$(ReactCounter);
+```
+
+After creating our counter, it can be consumed in our [index.astro](https://github.com/thejackshelton/qwik-react-astro-template/blob/main/src/pages/index.astro) file.
+
+```tsx
+<QReactCounter qwik:visible />
+```
+
+Notice that in `.astro` files we use a `qwik:` hydration directive prefix, this is to prevent a conflict with Astro's hydration directives that are provided out of the box.
+
+You can also use the `client:*` prefix, but only in tsx files. You can find a list of directives in [Adding Interactivity](https://qwik.builder.io/docs/integrations/react/#adding-interactivity) section of the Qwik docs.
 
 ### jsxImportSource
 
