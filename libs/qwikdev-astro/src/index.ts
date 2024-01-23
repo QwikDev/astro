@@ -29,7 +29,22 @@ export default function createIntegration(
   return {
     name: "@qwikdev/astro",
     hooks: {
-      "astro:config:setup": async ({ addRenderer, updateConfig, config }) => {
+      "astro:config:setup": async ({
+        addRenderer,
+        updateConfig,
+        config,
+        command,
+        injectScript,
+      }) => {
+        const unregisterSW = `navigator.serviceWorker.getRegistration().then((r) => r && r.unregister())`;
+
+        /**
+         * Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
+         */
+        if (command === "dev") {
+          injectScript("head-inline", unregisterSW);
+        }
+
         // Update the global config
         astroConfig = config;
         // Retrieve Qwik files
