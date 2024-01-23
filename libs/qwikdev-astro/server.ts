@@ -1,187 +1,253 @@
-import { jsx } from "@builder.io/qwik";
-import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
-import { manifest } from "@qwik-client-manifest";
-import { isDev } from "@builder.io/qwik/build";
-import type { QwikManifest, SymbolMapperFn } from "@builder.io/qwik/optimizer";
-import type { SSRResult } from "astro";
+import type { AstroConfig, AstroIntegration } from "astro";
+import ts from "typescript";
+import tsconfigPaths from "vite-tsconfig-paths";
 
-const qwikLoaderAdded = new WeakMap<SSRResult, boolean>();
+import { build, createFilter, type FilterPattern } from "vite";
+import { qwikVite } from "@builder.io/qwik/optimizer";
 
-type RendererContext = {
-  result: SSRResult;
-};
+import { join, normalize, relative } from "node:path";
+import fs, { rmSync } from "node:fs";
+import { readdir } from "node:fs/promises";
+import fsExtra from "fs-extra";
+import os from "os";
 
-async function check(
-  this: RendererContext,
-  Component: any,
-  props: Record<string, any>,
-  slotted: any
-) {
-  try {
-    if (typeof Component !== "function") return false;
+export type Options = Partial<{
+  include: FilterPattern;
+  exclude: FilterPattern;
+}>;
 
-    if (Component.name !== "QwikComponent") {
-      return false;
-    }
+export default function createIntegration(
+  options: Options = {}
+): AstroIntegration {
+  let filter = createFilter(options.include, options.exclude);
+  let distDir: string = "";
+  let srcDir: string = "";
+  let astroConfig: AstroConfig | null = null;
+  let tempDir = join(distDir, ".tmp-" + hash());
+  let entrypoints: Promise<string[]>;
 
-    return true;
-  } catch (error) {
-    console.error("Error in check function of @qwikdev/astro: ", error);
-  }
-}
+  return {
+    name: "@qwikdev/astro",
+    hooks: {
+      "astro:config:setup": async ({
+        addRenderer,
+        updateConfig,
+        config,
+        command,
+        injectScript,
+      }) => {
+        const unregisterSW = `navigator.serviceWorker.getRegistration().then((r) => r && r.unregister())`;
 
-export async function renderToStaticMarkup(
-  this: RendererContext,
-  Component: any,
-  props: Record<string, any>,
-  slotted: any
-) {
-  try {
-    if (Component.name !== "QwikComponent") {
-      return;
-    }
-
-    const slots: { [key: string]: any } = {};
-    let defaultSlot;
-
-    // getting functions from index causes a rollup issue.
-    for (const [key, value] of Object.entries(slotted)) {
-      const jsxElement = jsx("span", {
-        dangerouslySetInnerHTML: String(value),
-        style: "display: contents",
-        ...(key !== "default" && { "q:slot": key }),
-        "q:key": Math.random().toString(26).split(".").pop(),
-      });
-
-      if (key === "default") {
-        defaultSlot = jsxElement;
-      } else {
-        slots[key] = jsxElement;
-      }
-    }
-
-    const app = jsx(Component, {
-      ...props,
-      children: [defaultSlot, ...Object.values(slots)],
-    });
-
-    const symbolMapper: SymbolMapperFn = (symbolName: string) => {
-      return [
-        symbolName,
-        `/${process.env.SRC_DIR}/` + symbolName.toLocaleLowerCase() + ".js",
-      ];
-    };
-
-    const shouldAddQwikLoader = !qwikLoaderAdded.has(this.result);
-    if (shouldAddQwikLoader) {
-      qwikLoaderAdded.set(this.result, true);
-    }
-
-    const base = props["q:base"] || process.env.Q_BASE;
-
-    // TODO: `jsx` must correctly be imported.
-    // Currently the vite loads `core.mjs` and `core.prod.mjs` at the same time and this causes issues.
-    // WORKAROUND: ensure that `npm postinstall` is run to patch the `@builder.io/qwik/package.json` file.
-    const result = await renderToString(app, {
-      base,
-      containerTagName: "div",
-      containerAttributes: { style: "display: contents" },
-      manifest: isDev ? ({} as QwikManifest) : manifest,
-      symbolMapper: manifest ? undefined : symbolMapper,
-      qwikLoader: { include: "never" },
-    });
-
-    const PREFETCH_SERVICE_WORKER = `((qc, c, q, v, b, h) => {
-      b = qc.getAttribute("q:base");
-      h = qc.getAttribute("q:manifest-hash");
-      c.register("/qwik-prefetch-service-worker.js", {
-        scope: "/"
-      }).then((sw, onReady) => {
-        onReady = () => q.forEach(q.push = (v2) => sw.active.postMessage(v2));
-        sw.installing ? sw.installing.addEventListener("statechange", (e) => e.target.state == "activated" && onReady()) : onReady();
-      });
-      v && q.push([
-        "verbose"
-      ]);
-      document.addEventListener("qprefetch", (e) => e.detail.bundles && q.push([
-        "prefetch",
-          b,
-          ...e.detail.bundles
-        ]));
-      })(
-    document.currentScript.closest('[q\\\\:container]'),
-    navigator.serviceWorker,
-    window.qwikPrefetchSW||(window.qwikPrefetchSW=[])
-    )`;
-
-    const PREFETCH_GRAPH_CODE = `((qc, q, b, h, u) => {
-      q.push([
-        "graph-url", 
-        b || qc.getAttribute("q:base"),
-        u || \`q-bundle-graph-\${h || qc.getAttribute("q:manifest-hash")}.json\`
-       ]);
-    })(
-     document.currentScript.closest('[q\\\\:container]'),
-     window.qwikPrefetchSW||(window.qwikPrefetchSW=[]),
-    )`;
-
-    const { html } = result;
-
-    /* Inlining the necessary Qwik scripts for the Qwikloader & SW */
-    let scripts = "";
-
-    const shouldPrefetchBundles =
-      html.indexOf('<script q:type="prefetch-bundles">') !== -1;
-
-    if (shouldAddQwikLoader) {
-      scripts += `
-        <script qwik-loader>
-          ${getQwikLoaderScript()}
-        </script>
-        ${
-          isDev
-            ? ""
-            : `
-        <script qwik-prefetch-service-worker>
-        ${PREFETCH_SERVICE_WORKER}
-        </script>
-        `
+        if (command === "dev") {
+          injectScript("head-inline", unregisterSW);
         }
-      ${scripts}`;
-    }
 
-    if (!isDev && shouldPrefetchBundles) {
-      scripts += `<script qwik-prefetch-bundle-graph>
-      ${PREFETCH_GRAPH_CODE}
-    </script>`;
-    }
+        // Update the global config
+        astroConfig = config;
+        // Retrieve Qwik files
+        // from the project source directory
+        srcDir = relative(
+          astroConfig.root.pathname,
+          astroConfig.srcDir.pathname
+        );
 
-    // Find the closing tag of the div with the `q:container` attribute
-    const prefetchBundleLoc = shouldPrefetchBundles
-      ? html.indexOf('<script q:type="prefetch-bundles">')
-      : html.indexOf('<script type="qwik/json"');
+        // used in server.ts for dev mode
+        process.env.SRC_DIR = relative(
+          astroConfig.root.pathname,
+          astroConfig.srcDir.pathname
+        );
 
-    // Insert the scripts before the q:type prefetch bundle script
-    const htmlWithScripts = `${html.substring(
-      0,
-      prefetchBundleLoc
-    )}${scripts}${html.substring(prefetchBundleLoc)}`;
+        entrypoints = getQwikEntrypoints(srcDir, filter);
+        if ((await entrypoints).length !== 0) {
+          addRenderer({
+            name: "@qwikdev/astro",
+            serverEntrypoint: "@qwikdev/astro/server",
+          });
 
-    return {
-      ...result,
-      html: htmlWithScripts,
-    };
-  } catch (error) {
-    console.error(
-      "Error in renderToStaticMarkup function of @qwikdev/astro: ",
-      error
-    );
-    throw error;
+          // Update the global dist directory
+          distDir = astroConfig.outDir.pathname;
+
+          // checks all windows platforms and removes drive ex: C:\\
+          if (os.platform() === "win32") {
+            distDir = distDir.substring(3);
+          }
+
+          updateConfig({
+            vite: {
+              build: {
+                rollupOptions: {
+                  output: {
+                    inlineDynamicImports: false,
+                  },
+                },
+              },
+              plugins: [
+                qwikVite({
+                  devSsrServer: false,
+                  entryStrategy: {
+                    type: "smart",
+                  },
+                  srcDir,
+                  client: {
+                    /* In order to make a client build, we need to know
+                      all of the entry points to the application so
+                      that we can generate the manifest. 
+                    */
+                    input: await entrypoints,
+                  },
+                  ssr: {
+                    input: "@qwikdev/astro/server",
+                  },
+                }),
+                tsconfigPaths(),
+                {
+                  // HACK: override qwikVite's attempt to set `esbuild` to false during dev
+                  enforce: "post",
+                  config(config: any) {
+                    config.esbuild = true;
+                    return config;
+                  },
+                },
+              ],
+            },
+          });
+        }
+      },
+      "astro:config:done": async ({ config }) => {
+        astroConfig = config;
+      },
+      "astro:build:start": async ({ logger }) => {
+        logger.info("astro:build:start");
+        if ((await entrypoints).length > 0) {
+          // make sure vite does not parse .astro files
+          await build({
+            ...astroConfig?.vite,
+            plugins: [
+              // TODO: Fix these vite types from Astro 4.1
+              // @ts-ignore
+              ...(astroConfig?.vite.plugins || []),
+              // @ts-ignore
+              {
+                enforce: "pre",
+                name: "astro-noop",
+                load(id) {
+                  if (id.endsWith(".astro")) {
+                    return "export default function() {}";
+                  }
+                },
+              },
+            ],
+          });
+          await moveArtifacts(distDir, tempDir);
+        } else {
+          logger.info("No entrypoints found. Skipping build.");
+        }
+      },
+      "astro:build:done": async ({ logger }) => {
+        if ((await entrypoints).length > 0 && astroConfig) {
+          let outputPath =
+            astroConfig.output === "server" || astroConfig.output === "hybrid"
+              ? astroConfig.build.client.pathname
+              : astroConfig.outDir.pathname;
+
+          // checks all windows platforms and removes drive ex: C:\\
+          if (os.platform() === "win32") {
+            outputPath = outputPath.substring(3);
+          }
+
+          let normalizedPath = normalize(outputPath);
+          process.env.Q_BASE = normalizedPath;
+
+          await moveArtifacts(tempDir, normalizedPath);
+          // remove the temp dir folder
+          rmSync(tempDir, { recursive: true });
+        } else {
+          logger.info("Build finished. No artifacts moved.");
+        }
+      },
+    },
+  };
+}
+
+function hash() {
+  return Math.random().toString(26).split(".").pop();
+}
+
+async function moveArtifacts(srcDir: string, destDir: string) {
+  // Ensure the destination dir exists, create if not
+  await fsExtra.ensureDir(destDir);
+  for (const file of await readdir(srcDir)) {
+    // move files from source to destintation, overwrite if they exist
+    await fsExtra.move(join(srcDir, file), join(destDir, file), {
+      overwrite: true,
+    });
   }
 }
 
-export default {
-  renderToStaticMarkup,
-  supportsAstroStaticSlot: true,
-  check,
-};
+async function crawlDirectory(dir: string): Promise<string[]> {
+  const entries = await readdir(dir, { withFileTypes: true });
+
+  const files = await Promise.all(
+    entries.map((entry) => {
+      const fullPath = join(dir, entry.name);
+      return entry.isDirectory() ? crawlDirectory(fullPath) : fullPath;
+    })
+  );
+
+  // flatten files array
+  return files.flat();
+}
+
+/**
+ *
+ * We need to find the Qwik entrypoints so that the client build will run successfully.
+ *
+ */
+async function getQwikEntrypoints(
+  dir: string,
+  filter: (id: unknown) => boolean
+): Promise<string[]> {
+  const files = await crawlDirectory(dir);
+  const qwikFiles = [];
+
+  for (const file of files) {
+    // Skip files not matching patterns w/ astro config include & exclude
+    if (!filter(file)) {
+      continue;
+    }
+
+    const fileContent = fs.readFileSync(file, "utf-8");
+    const sourceFile = ts.createSourceFile(
+      file,
+      fileContent,
+      ts.ScriptTarget.ESNext,
+      true
+    );
+
+    let qwikImportFound = false;
+
+    ts.forEachChild(sourceFile, function nodeVisitor(node) {
+      if (
+        ts.isImportDeclaration(node) &&
+        ts.isStringLiteral(node.moduleSpecifier)
+      ) {
+        if (
+          node.moduleSpecifier.text === "@builder.io/qwik" ||
+          node.moduleSpecifier.text === "@builder.io/qwik-react"
+        ) {
+          qwikImportFound = true;
+        }
+      }
+
+      if (!qwikImportFound) {
+        ts.forEachChild(node, nodeVisitor);
+      }
+    });
+
+    if (qwikImportFound) {
+      qwikFiles.push(file);
+    }
+  }
+
+  return qwikFiles;
+}
