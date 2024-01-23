@@ -277,6 +277,8 @@ Notice that in `.astro` files we use a `qwik:` hydration directive prefix, this 
 
 You can also use the `client:*` prefix, but only in tsx files. You can find a list of directives in [Adding Interactivity](https://qwik.builder.io/docs/integrations/react/#adding-interactivity) section of the Qwik docs.
 
+> Qwik React components still have hydration, thus it is recommended to use Qwik-React as a migration strategy to resumable components.
+
 ### jsxImportSource
 
 Unfortunately, TypeScript can only have one `jsxImportSource` default. If you're using React, Solid, or Preact's Astro integration in your Astro app alongside, please override each component's import source.
