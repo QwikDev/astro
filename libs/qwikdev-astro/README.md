@@ -213,7 +213,9 @@ Instead, we recommend the use of **custom events**, which offer several advantag
 
 ## Using multiple JSX frameworks
 
-Qwik works with other JSX frameworks out of the box. It should not need an `include` or `exclude` property.
+To use multiple JSX frameworks like Qwik, React, Preact, or Solid in Astro, you need to set up rules for which files each framework should handle.
+
+For example, you can place all Qwik components in a folder named `qwik`. Then, configure Astro to process any file within this folder using the Qwik integration.
 
 ```tsx
 import { defineConfig } from "astro/config";
@@ -221,13 +223,19 @@ import qwik from "@qwikdev/astro";
 import react from "@astrojs/react";
 
 export default defineConfig({
-  integrations: [qwik(), react({ include: ["**/react/*"] })],
+  integrations: [
+    qwik({ include: "**/qwik/*" }),
+    react({ include: "**/react/*" }),
+    solid({ include: "**/solid/*" }),
+  ],
 });
 ```
 
-We've noticed some slight edge cases with other Astro renderers, and so we suggest adding Qwik to the beginning of your integrations array.
+Above we're using the Qwik, React, and Solid integrations in the same Astro project.
 
-> If there is a newer JSX framework integration other than React, Preact, or Solid you may need to add an `include` or `exclude` keyword on the qwik integration.
+If we look at the first integration, it's going to look for any file in the `qwik` folder and use Qwik for any file in this folder.
+
+For simplicity, consider grouping common framework components in the same folder (like `/components/react/` and `/components/qwik/`). However, this is optional.
 
 ### Qwik React
 
@@ -249,6 +257,8 @@ export default defineConfig({
 ```
 
 With Qwik-React, we can "qwikify" our React components, and use them in our Qwik application, even nesting Qwik and React components outside of an Astro file!
+
+> You do not need to specify an include property with qwikReact.
 
 [Here's an example](https://github.com/thejackshelton/qwik-react-astro-template) of a React component with the `qwik-react` integration.
 

@@ -19,7 +19,7 @@ export type Options = Partial<{
 export default function createIntegration(
   options: Options = {}
 ): AstroIntegration {
-  let filter = createFilter(options.include, options.exclude);
+  const filter = createFilter(options.include, options.exclude);
   let distDir: string = "";
   let srcDir: string = "";
   let astroConfig: AstroConfig | null = null;
@@ -36,12 +36,12 @@ export default function createIntegration(
         command,
         injectScript,
       }) => {
-        const unregisterSW = `navigator.serviceWorker.getRegistration().then((r) => r && r.unregister())`;
-
         /**
          * Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
          */
         if (command === "dev") {
+          const unregisterSW = `navigator.serviceWorker.getRegistration().then((r) => r && r.unregister())`;
+
           injectScript("head-inline", unregisterSW);
         }
 
@@ -86,10 +86,15 @@ export default function createIntegration(
               },
               plugins: [
                 qwikVite({
-                  devSsrServer: false,
-                  entryStrategy: {
-                    type: "smart",
+                  /* user passed include & exclude config (to use multiple JSX frameworks) */
+                  fileFilter: (id: string, hook: string) => {
+                    if (hook === "transform" && !filter(id)) {
+                      return false;
+                    }
+
+                    return true;
                   },
+                  devSsrServer: false,
                   srcDir,
                   client: {
                     /* In order to make a client build, we need to know
