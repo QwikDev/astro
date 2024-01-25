@@ -351,6 +351,14 @@ Default slots work as expected in their Qwik City counterpart.
 
 - [Rishi Raj Jain](https://twitter.com/rishi_raj_jain_) has written an awesome guide on setting up Qwik with Astro's [Vercel SSR Adapter](https://dev.to/reeshee/qwik-look-at-resumability-with-astro-on-vercel-44fj).
 
+- [Paul Scanlon](https://www.paulie.dev/) explores using [Qwik as a React alternative](https://thenewstack.io/take-a-qwik-break-from-react-with-astro/) in Astro.
+
+## Videos
+
+- Watch Jason & Steve [discuss the Qwik Astro integration] on the [LWJ show](https://www.youtube.com/@learnwithjason).
+
+- [Awesome's Qwik + Astro video](https://www.youtube.com/watch?v=wKvkYUNBa5k) goes into how Astro just got even faster.
+
 ## Contributing
 
 We'd love for you to contribute! Start by reading our [Contributing Guide](https://github.com/QwikDev/astro/blob/main/contributing.md). It's got all the info you need to get involved, including an in-depth section on how the integration works under the hood.
