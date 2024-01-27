@@ -14,8 +14,8 @@ type RendererContext = {
 async function check(
   this: RendererContext,
   Component: any,
-  props: Record<string, any>,
-  slotted: any
+  // props: Record<string, any>,
+  // slotted: any,
 ) {
   try {
     if (typeof Component !== "function") return false;
@@ -34,7 +34,7 @@ export async function renderToStaticMarkup(
   this: RendererContext,
   Component: any,
   props: Record<string, any>,
-  slotted: any
+  slotted: any,
 ) {
   try {
     if (Component.name !== "QwikComponent") {
@@ -68,7 +68,7 @@ export async function renderToStaticMarkup(
     const symbolMapper: SymbolMapperFn = (symbolName: string) => {
       return [
         symbolName,
-        `/${process.env.SRC_DIR}/` + symbolName.toLocaleLowerCase() + ".js",
+        `/${process.env.SRC_DIR}/${symbolName.toLocaleLowerCase()}.js`,
       ];
     };
 
@@ -164,7 +164,7 @@ export async function renderToStaticMarkup(
     // Insert the scripts before the q:type prefetch bundle script
     const htmlWithScripts = `${html.substring(
       0,
-      prefetchBundleLoc
+      prefetchBundleLoc,
     )}${scripts}${html.substring(prefetchBundleLoc)}`;
 
     return {
@@ -174,7 +174,7 @@ export async function renderToStaticMarkup(
   } catch (error) {
     console.error(
       "Error in renderToStaticMarkup function of @qwikdev/astro: ",
-      error
+      error,
     );
     throw error;
   }

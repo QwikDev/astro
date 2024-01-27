@@ -17,13 +17,13 @@ export type Options = Partial<{
 }>;
 
 export default function createIntegration(
-  options: Options = {}
+  options: Options = {},
 ): AstroIntegration {
   const filter = createFilter(options.include, options.exclude);
-  let distDir: string = "";
-  let srcDir: string = "";
+  let distDir = "";
+  let srcDir = "";
   let astroConfig: AstroConfig | null = null;
-  let tempDir = join(distDir, ".tmp-" + hash());
+  const tempDir = join(distDir, `.tmp-${hash()}`);
   let entrypoints: Promise<string[]>;
 
   return {
@@ -40,7 +40,8 @@ export default function createIntegration(
          * Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
          */
         if (command === "dev") {
-          const unregisterSW = `navigator.serviceWorker.getRegistration().then((r) => r && r.unregister())`;
+          const unregisterSW =
+            "navigator.serviceWorker.getRegistration().then((r) => r && r.unregister())";
 
           injectScript("head-inline", unregisterSW);
         }
@@ -51,13 +52,13 @@ export default function createIntegration(
         // from the project source directory
         srcDir = relative(
           astroConfig.root.pathname,
-          astroConfig.srcDir.pathname
+          astroConfig.srcDir.pathname,
         );
 
         // used in server.ts for dev mode
         process.env.SRC_DIR = relative(
           astroConfig.root.pathname,
-          astroConfig.srcDir.pathname
+          astroConfig.srcDir.pathname,
         );
 
         entrypoints = getQwikEntrypoints(srcDir, filter);
@@ -163,7 +164,7 @@ export default function createIntegration(
             outputPath = outputPath.substring(3);
           }
 
-          let normalizedPath = normalize(outputPath);
+          const normalizedPath = normalize(outputPath);
           process.env.Q_BASE = normalizedPath;
 
           await moveArtifacts(tempDir, normalizedPath);
@@ -199,7 +200,7 @@ async function crawlDirectory(dir: string): Promise<string[]> {
     entries.map((entry) => {
       const fullPath = join(dir, entry.name);
       return entry.isDirectory() ? crawlDirectory(fullPath) : fullPath;
-    })
+    }),
   );
 
   // flatten files array
@@ -213,7 +214,7 @@ async function crawlDirectory(dir: string): Promise<string[]> {
  */
 async function getQwikEntrypoints(
   dir: string,
-  filter: (id: unknown) => boolean
+  filter: (id: unknown) => boolean,
 ): Promise<string[]> {
   const files = await crawlDirectory(dir);
   const qwikFiles = [];
@@ -229,7 +230,7 @@ async function getQwikEntrypoints(
       file,
       fileContent,
       ts.ScriptTarget.ESNext,
-      true
+      true,
     );
 
     let qwikImportFound = false;

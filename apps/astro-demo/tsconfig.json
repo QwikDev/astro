@@ -3,10 +3,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["./src/components/*"]
+      "@components/*": ["./src/components/*"],
     },
 
     "jsx": "react-jsx",
-    "jsxImportSource": "@builder.io/qwik"
-  }
+    "jsxImportSource": "@builder.io/qwik",
+  },
 }
