@@ -1,11 +1,8 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "@builder.io/qwik",
     "isolatedModules": true,
     "noEmit": true,
-    "types": ["node", "vite/client"],
+    "types": ["Node"],
     "incremental": true,
     "target": "ESNext",
     "module": "ESNext",
