@@ -6,17 +6,21 @@
     "fix": "pnpm fmt && pnpm lint.fix",
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
+    "knip": "knip",
+    "knip.fix": "knip --fix",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx,astro}\"",
     "lint.fix": "eslint --fix \"**/*.{js,jsx,ts,tsx,astro}\"",
     "lint.dry-run": "eslint --fix-dry-run \"**/*.{js,jsx,ts,tsx,astro}\""
   },
   "devDependencies": {
     "@types/eslint": "^8.56.2",
+    "@types/node": "^20.11.8",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
     "eslint": "^8.56.0",
     "eslint-plugin-astro": "^0.31.3",
     "eslint-plugin-qwik": "^1.4.2",
+    "knip": "^4.2.1",
     "prettier": "^3.2.4",
     "prettier-plugin-astro": "^0.13.0",
     "typescript": "5.3.3"
