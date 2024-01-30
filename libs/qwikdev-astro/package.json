@@ -21,7 +21,7 @@
     "url": "https://github.com/QwikDev/astro",
     "directory": "libs/qwikdev/astro"
   },
-  "types": "./types.ts",
+  "types": "./src/index.ts",
   "main": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
@@ -32,7 +32,6 @@
     "src",
     "src/index.ts",
     "server.ts",
-    "types.ts",
     "env.d.ts"
   ],
   "keywords": [
