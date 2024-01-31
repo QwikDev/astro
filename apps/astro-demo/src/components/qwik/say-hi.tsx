@@ -1,5 +1,15 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, sync$ } from "@builder.io/qwik";
 
 export const SayHi = component$(() => {
-  return <button onClick$={() => console.log("hi")}>Say hi!</button>;
+  return (
+    <button
+      onKeyDown$={sync$((e: KeyboardEvent): void => {
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+        }
+      })}
+    >
+      Say hi!
+    </button>
+  );
 });

@@ -65,7 +65,17 @@ export async function renderToStaticMarkup(
       children: [defaultSlot, ...Object.values(slots)],
     });
 
+    /**
+      For a given symbol (QRL such as `onKeydown$`) the server needs to know which bundle the symbol is in. 
+
+      Normally this is provided by Qwik's `q-manifest` . But `q-manifest` only exists after a full client build. 
+
+      This would be a problem in dev mode. So in dev mode the symbol is mapped to the expected URL using the symbolMapper function above. For Vite the given path is fixed for a given symbol.
+    */
     const symbolMapper: SymbolMapperFn = (symbolName: string) => {
+      /* don't want to add a file path for sync$ */
+      if (symbolName === "<sync>") return;
+
       return [
         symbolName,
         `/${process.env.SRC_DIR}/` + symbolName.toLocaleLowerCase() + ".js",

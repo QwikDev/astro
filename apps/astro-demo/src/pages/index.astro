@@ -2,6 +2,7 @@
 import { Counter } from "@components/qwik/counter";
 import { ViewTransitions } from "astro:transitions";
 import { ReactCounter } from "@components/react/react-counter";
+import { SayHi } from "@components/qwik/say-hi";
 ---
 
 <html lang="en">
@@ -14,8 +15,10 @@ import { ReactCounter } from "@components/react/react-counter";
 		<ViewTransitions />
 	</head>
 	<body>
-		<Counter initial={5} />
-		<Counter initial={0} />
+		<div style={{ height: '1000px' }}>
+			<Counter initial={5} />
+			<SayHi />
+		</div>
 	</body>
 </html>
 
