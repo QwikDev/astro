@@ -14,8 +14,6 @@ type RendererContext = {
 async function check(
   this: RendererContext,
   Component: any,
-  props: Record<string, any>,
-  slotted: any
 ) {
   try {
     if (typeof Component !== "function") return false;
@@ -27,6 +25,8 @@ async function check(
     return true;
   } catch (error) {
     console.error("Error in check function of @qwikdev/astro: ", error);
+
+    return false;
   }
 }
 
@@ -97,7 +97,7 @@ export async function renderToStaticMarkup(
       containerTagName: "div",
       containerAttributes: { style: "display: contents" },
       manifest: isDev ? ({} as QwikManifest) : manifest,
-      symbolMapper: manifest ? undefined : symbolMapper,
+      ...(manifest ? undefined : { symbolMapper }),
       qwikLoader: { include: "never" },
     });
 

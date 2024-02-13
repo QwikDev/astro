@@ -2,7 +2,7 @@ import type { AstroConfig, AstroIntegration } from "astro";
 import ts from "typescript";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-import { build, createFilter, type FilterPattern } from "vite";
+import { build, createFilter, type FilterPattern, type InlineConfig } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 
 import { join, normalize, relative } from "node:path";
@@ -131,10 +131,7 @@ export default function createIntegration(
           await build({
             ...astroConfig?.vite,
             plugins: [
-              // TODO: Fix these vite types from Astro 4.1
-              // @ts-ignore
               ...(astroConfig?.vite.plugins || []),
-              // @ts-ignore
               {
                 enforce: "pre",
                 name: "astro-noop",
@@ -142,10 +139,11 @@ export default function createIntegration(
                   if (id.endsWith(".astro")) {
                     return "export default function() {}";
                   }
+                  return null;
                 },
               },
             ],
-          });
+          } as InlineConfig);
           await moveArtifacts(distDir, tempDir);
         } else {
           logger.info("No entrypoints found. Skipping build.");
