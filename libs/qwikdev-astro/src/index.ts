@@ -1,5 +1,9 @@
-import type { AstroConfig, AstroIntegration } from "astro";
+import type { AstroConfig } from "astro";
 import ts from "typescript";
+import {
+  defineIntegration,
+  defineOptions,
+} from "astro-integration-kit";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 import { build, createFilter, type FilterPattern, type InlineConfig } from "vite";
@@ -12,23 +16,25 @@ import fsExtra from "fs-extra";
 import os from "os";
 
 export type Options = Partial<{
-  include: FilterPattern;
-  exclude: FilterPattern;
+  include: FilterPattern | undefined;
+  exclude: FilterPattern | undefined;
 }>;
 
-export default function createIntegration(
-  options: Options = {}
-): AstroIntegration {
-  const filter = createFilter(options.include, options.exclude);
-  let distDir: string = "";
-  let srcDir: string = "";
-  let astroConfig: AstroConfig | null = null;
-  let tempDir = join(distDir, ".tmp-" + hash());
-  let entrypoints: Promise<string[]>;
+export default defineIntegration({
+  name: "@qwikdev/astro",
+  options: defineOptions<Options>({
+    include: '',
+    exclude: '',
+  }),
+  setup({ options }) {
+    const filter = createFilter(options.include, options.exclude);
+    let distDir: string = "";
+    let srcDir: string = "";
+    let astroConfig: AstroConfig | null = null;
+    let tempDir = join(".tmp-" + hash());
+    let entrypoints: Promise<string[]>;
 
-  return {
-    name: "@qwikdev/astro",
-    hooks: {
+    return {
       "astro:config:setup": async ({
         addRenderer,
         updateConfig,
@@ -171,9 +177,9 @@ export default function createIntegration(
           logger.info("Build finished. No artifacts moved.");
         }
       },
-    },
-  };
-}
+    }
+  }
+})
 
 function hash() {
   return Math.random().toString(26).split(".").pop();

@@ -2,8 +2,6 @@ import { defineConfig } from "astro/config";
 import qwik from "@qwikdev/astro";
 import node from "@astrojs/node";
 import react from "@astrojs/react";
-// import vercel from "@astrojs/vercel/serverless";
-// import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,8 +9,6 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
-  // adapter: cloudflare(),
-  // adapter: vercel(),
   integrations: [
     qwik({ include: "**/qwik/*" }),
     react({ include: "**/react/*" }),
