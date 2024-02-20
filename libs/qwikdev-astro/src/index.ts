@@ -1,17 +1,14 @@
 import type { AstroConfig } from "astro";
+import { z } from "astro/zod";
 
 /** 
  this project uses astro integration kit. refer to the docs here: https://astro-integration-kit.netlify.app/ 
 */
-import {
-  createResolver,
-  defineIntegration,
-  defineOptions,
-} from "astro-integration-kit";
+import { createResolver, defineIntegration } from "astro-integration-kit";
 import { watchIntegrationPlugin } from "astro-integration-kit/plugins";
 
 // vite
-import { build, createFilter, type FilterPattern, type InlineConfig } from "vite";
+import { build, createFilter, type InlineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 
@@ -24,17 +21,20 @@ import os from "os";
 import { hash, moveArtifacts } from "../utils";
 import { getQwikEntrypoints } from "../entrypoints";
 
-export type Options = Partial<{
-  include: FilterPattern | undefined;
-  exclude: FilterPattern | undefined;
-}>;
+/* similar to vite's FilterPattern */
+const FilternPatternSchema = z.union([
+  z.string(),
+  z.instanceof(RegExp),
+  z.array(z.union([z.string(), z.instanceof(RegExp)])).readonly(),
+  z.null(),
+]);
 
 export default defineIntegration({
   name: "@qwikdev/astro",
   plugins: [watchIntegrationPlugin],
-  options: defineOptions<Options>({
-    include: undefined,
-    exclude: undefined,
+  optionsSchema: z.object({
+    include: FilternPatternSchema.optional(),
+    exclude: FilternPatternSchema.optional(),
   }),
   setup({ options }) {
     let distDir: string = "";
@@ -53,11 +53,11 @@ export default defineIntegration({
         config,
         command,
         injectScript,
-        watchIntegration
+        watchIntegration,
       }) => {
         // Integration HMR
-        watchIntegration(resolve())
-        
+        watchIntegration(resolve());
+
         /**
          * Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
          */
@@ -86,7 +86,7 @@ export default defineIntegration({
         if ((await entrypoints).length !== 0) {
           addRenderer({
             name: "@qwikdev/astro",
-            serverEntrypoint: resolve('../server.ts'),
+            serverEntrypoint: resolve("../server.ts"),
           });
 
           // Update the global dist directory
@@ -126,7 +126,7 @@ export default defineIntegration({
                     input: await entrypoints,
                   },
                   ssr: {
-                    input: resolve('../server.ts'),
+                    input: resolve("../server.ts"),
                   },
                 }),
                 tsconfigPaths(),
@@ -193,6 +193,6 @@ export default defineIntegration({
           logger.info("Build finished. No artifacts moved.");
         }
       },
-    }
-  }
-})
+    };
+  },
+});
