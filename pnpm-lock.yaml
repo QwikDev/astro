@@ -40,6 +40,9 @@ importers:
 
   libs/qwikdev-astro:
     dependencies:
+      astro-integration-kit:
+        specifier: ^0.2.0
+        version: 0.2.0(astro@4.2.1)
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
@@ -59,9 +62,6 @@ importers:
       astro:
         specifier: ^4.2
         version: 4.2.1(@types/node@20.10.0)(typescript@5.3.2)
-      astro-integration-kit:
-        specifier: ^0.2.0
-        version: 0.2.0(astro@4.2.1)
       typescript:
         specifier: ^5.3.2
         version: 5.3.2
@@ -912,7 +912,7 @@ packages:
     dependencies:
       astro: 4.2.1(@types/node@20.10.0)(typescript@5.3.2)
       pathe: 1.1.2
-    dev: true
+    dev: false
 
   /astro@4.2.1(@types/node@20.10.0)(typescript@5.3.2):
     resolution: {integrity: sha512-TcrveW2/lohmljrbTUgcDxajEdF1yK+zBvb7SXroloGix/d4jkegO6GANFgvyy0zprMyajW7qgJEFyhWUX86Vw==}
@@ -2471,7 +2471,7 @@ packages:
 
   /pathe@1.1.2:
     resolution: {integrity: sha512-whLdWMYL2TwI08hn8/ZqAbrVemu0LNaNNJZX73O6qaIdCTfXutsLhMkjdENX0qhsQ9uIimo4/aQOmXkoon2nDQ==}
-    dev: true
+    dev: false
 
   /picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
