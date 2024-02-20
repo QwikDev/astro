@@ -18,8 +18,8 @@ import { rmSync } from "node:fs";
 import os from "os";
 
 // integration files
-import { hash, moveArtifacts } from "../utils";
-import { getQwikEntrypoints } from "../entrypoints";
+import { hash, moveArtifacts } from "@qwikdev/astro/utils";
+import { getQwikEntrypoints } from "@qwikdev/astro/entrypoints";
 
 /* similar to vite's FilterPattern */
 const FilternPatternSchema = z.union([

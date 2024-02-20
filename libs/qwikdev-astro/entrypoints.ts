@@ -1,6 +1,6 @@
 import ts from "typescript";
 import fs from "node:fs";
-import { crawlDirectory } from "./utils";
+import { crawlDirectory } from "@qwikdev/astro/utils";
 
 /**
  *
