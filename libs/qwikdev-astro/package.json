@@ -1,7 +1,7 @@
 {
   "name": "@qwikdev/astro",
   "description": "Use Qwik components and Resumability within Astro",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "contributors": [
     {
       "name": "Miško Hevery",
@@ -25,9 +25,7 @@
   "main": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./package.json": "./package.json",
-    "./entrypoints": "./entrypoints.ts",
-    "./utils": "./utils.ts"
+    "./package.json": "./package.json"
   },
   "files": [
     "src",
