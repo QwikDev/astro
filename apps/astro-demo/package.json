@@ -11,14 +11,14 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^7.0.0",
-    "@astrojs/react": "^3.0.9",
-    "@builder.io/qwik": "^1.4.2",
+    "@astrojs/node": "^8.2.3",
+    "@astrojs/react": "^3.0.10",
+    "@builder.io/qwik": "^1.5.1",
     "@qwikdev/astro": "workspace:*",
-    "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.6",
-    "astro": "^4.2",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
+    "astro": "^4.4.15",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }

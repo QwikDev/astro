@@ -48,20 +48,20 @@
   },
   "bugs": "https://github.com/thejackshelton/@qwikdev/astro/issues",
   "dependencies": {
+    "astro-integration-kit": "^0.2.0",
     "fs-extra": "^11.1.1",
-    "vite-tsconfig-paths": "^4.2.1",
-    "astro-integration-kit": "^0.2.0"
+    "vite-tsconfig-paths": "^4.2.1"
   },
   "devDependencies": {
-    "@builder.io/qwik": "^1.4.2",
+    "@builder.io/qwik": "^1.5.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.10.0",
-    "astro": "^4.2",
-    "typescript": "^5.3.2",
-    "vite": "^5.0.11"
+    "astro": "^4.4.15",
+    "typescript": "^5.4.2",
+    "vite": "^5.1.5"
   },
   "peerDependencies": {
-    "@builder.io/qwik": "^1.4.2",
-    "typescript": "^5.3.2"
+    "@builder.io/qwik": "^1.5.1",
+    "typescript": "^5.4.2"
   }
 }
