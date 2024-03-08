@@ -13,12 +13,12 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 
 // node
-import { join, normalize, relative } from "node:path";
+import { dirname, join, normalize, relative, resolve } from "node:path";
 import { rmSync } from "node:fs";
 import os from "os";
 import ts from "typescript";
 import fs from "node:fs";
-import { readdir } from "node:fs/promises";
+import { lstat, readdir, readlink } from "node:fs/promises";
 import fsExtra from "fs-extra";
 
 /* similar to vite's FilterPattern */
@@ -267,15 +267,56 @@ export async function moveArtifacts(srcDir: string, destDir: string) {
 }
 
 export async function crawlDirectory(dir: string): Promise<string[]> {
-  const entries = await readdir(dir, { withFileTypes: true });
+  // Absolute path for duplicate-detection
+  dir = resolve(dir);
 
-  const files = await Promise.all(
-    entries.map((entry) => {
-      const fullPath = join(dir, entry.name);
-      return entry.isDirectory() ? crawlDirectory(fullPath) : fullPath;
-    })
-  );
+  /**
+   * Recursively follows a symlink.
+   * 
+   * @param path symlink to follow
+   * @returns `[target, stat]` where `target` is the final target path and `stat` is the {@link fs.Stats} of the target or `undefined` if the target does not exist.
+   */
+  const readLinkRec = async (path: string): Promise<[string, fs.Stats | undefined]> => {
+    const target = resolve(dirname(path), await readlink(path));
+    const stat = await lstat(target).catch(e => { if (e.code === 'ENOENT') return undefined; else throw e; });
+    if (stat !== undefined && stat.isSymbolicLink())
+      return readLinkRec(target);
+    return [target, stat];
+  }
 
-  // flatten files array
-  return files.flat();
+  /**
+   * Recurse on the passed directory. Follows symlinks and stops when a loop is detected (i.e., `dir` has already been visited)
+   * 
+   * @param dir The current directory to recursively list
+   * @param visitedDirs Directories that have already been visited
+   * @returns A recursive list of files in the passed directory
+   */
+  const crawl = async (dir: string, visitedDirs: string[]): Promise<string[]> => {
+    if (visitedDirs.includes(dir))
+      return [];
+
+    visitedDirs.push(dir);
+
+    const entries = await readdir(dir, { withFileTypes: true });
+
+    const files = await Promise.all(
+      entries.map((entry) => {
+        const fullPath = join(dir, entry.name);
+
+        if (entry.isSymbolicLink()) {
+          return readLinkRec(fullPath).then(([target, stat]): string | string[] | Promise<string[]> => {
+            if (stat === undefined) return []; // target does not exist
+            return stat.isDirectory() ? crawl(target, visitedDirs) : target;
+          });
+        } else {
+          return entry.isDirectory() ? crawl(fullPath, visitedDirs) : fullPath;
+        }
+      })
+    );
+
+    // flatten files array
+    return files.flat();
+  };
+
+  return crawl(dir, []);
 }
