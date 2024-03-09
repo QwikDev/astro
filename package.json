@@ -2,6 +2,7 @@
   "name": "qwikdev-astro",
   "version": "0.0.0",
   "scripts": {},
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "@changesets/cli": "^2.27.1"
+  }
 }
