@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true .",
-    "format": "biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true .",
+    "fix": "biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true .",
     "postinstall": "lefthook install"
   },
   "devDependencies": {
