@@ -12,7 +12,9 @@ You can quickly get up and running with the playground by doing the following:
 
 2. Once the dependencies are installed, you can build by running `pnpm build` in `apps/astro-demo`
 
-That's it!
+That's it! 
+
+Note that we only use pnpm. Please don't make any PR's that introduce lock files of other package managers.
 
 **dev:**
 
