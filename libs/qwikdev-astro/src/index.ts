@@ -15,7 +15,7 @@ import { qwikVite } from "@builder.io/qwik/optimizer";
 // node
 import { dirname, join, normalize, relative, resolve } from "node:path";
 import { rmSync } from "node:fs";
-import os from "os";
+import os from "node:os";
 import ts from "typescript";
 import fs from "node:fs";
 import { lstat, readdir, readlink } from "node:fs/promises";
@@ -38,9 +38,9 @@ export default defineIntegration({
     exclude: FilternPatternSchema.optional(),
   }),
   setup({ options }) {
-    let distDir: string = "";
-    let srcDir: string = "";
-    let tempDir = join("tmp-" + hash());
+    let distDir = "";
+    let srcDir = "";
+    let tempDir = join(`tmp-${hash()}`);
     let astroConfig: AstroConfig | null = null;
     let entrypoints: Promise<string[]>;
     const filter = createFilter(options.include, options.exclude);
@@ -63,7 +63,7 @@ export default defineIntegration({
          * Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
          */
         if (command === "dev") {
-          const unregisterSW = `navigator.serviceWorker.getRegistration().then((r) => r && r.unregister())`;
+          const unregisterSW = "navigator.serviceWorker.getRegistration().then((r) => r && r.unregister())";
 
           injectScript("head-inline", unregisterSW);
         }

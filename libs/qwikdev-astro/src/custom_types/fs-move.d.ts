@@ -1,10 +1,10 @@
 declare module 'fs-move' {
 
 	type MoveOptions = {
-		overwrite?: bool,
-		merge?: bool,
-		purge?: bool,
-		filter?: (src: string, dest: string) => bool
+		overwrite?: boolean,
+		merge?: boolean,
+		purge?: boolean,
+		filter?: (src: string, dest: string) => boolean
 	};
 
 	type MoveCallback = (err: any) => unknown;
@@ -14,5 +14,4 @@ declare module 'fs-move' {
 	async function move(src: string, dest: string, options: MoveOptions, callback: MoveCallback);
 
 	export default move;
-
 }

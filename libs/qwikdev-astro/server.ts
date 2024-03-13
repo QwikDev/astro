@@ -1,8 +1,9 @@
-import { jsx } from "@builder.io/qwik";
-import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
-import { manifest } from "@qwik-client-manifest";
+import { jsx, type FunctionComponent, type JSXNode } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
+import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
 import type { QwikManifest, SymbolMapperFn } from "@builder.io/qwik/optimizer";
+
+import { manifest } from "@qwik-client-manifest";
 import type { SSRResult } from "astro";
 
 const qwikLoaderAdded = new WeakMap<SSRResult, boolean>();
@@ -11,38 +12,36 @@ type RendererContext = {
   result: SSRResult;
 };
 
-async function check(
-  this: RendererContext,
-  Component: any,
-) {
+async function check(this: RendererContext, component: unknown) {
   try {
-    if (typeof Component !== "function") return false;
+    if (typeof component !== "function") {
+      return false;
+    }
 
-    if (Component.name !== "QwikComponent") {
+    if (component.name !== "QwikComponent") {
       return false;
     }
 
     return true;
   } catch (error) {
     console.error("Error in check function of @qwikdev/astro: ", error);
-
     return false;
   }
 }
 
-export async function renderToStaticMarkup(
+export async function renderToStaticMarkup<T extends string | FunctionComponent<unknown>>(
   this: RendererContext,
-  Component: any,
-  props: Record<string, any>,
+  component: T,
+  props: Record<string, unknown>,
   slotted: any
 ) {
   try {
-    if (Component.name !== "QwikComponent") {
+    if (typeof component === "function" && component.name !== "QwikComponent") {
       return;
     }
 
-    const slots: { [key: string]: any } = {};
-    let defaultSlot;
+    const slots: { [key: string]: unknown } = {};
+    let defaultSlot: JSXNode<'span'>;
 
     // getting functions from index causes a rollup issue.
     for (const [key, value] of Object.entries(slotted)) {
@@ -50,7 +49,7 @@ export async function renderToStaticMarkup(
         dangerouslySetInnerHTML: String(value),
         style: "display: contents",
         ...(key !== "default" && { "q:slot": key }),
-        "q:key": Math.random().toString(26).split(".").pop(),
+        "q:key": Math.random().toString(26).split(".").pop()
       });
 
       if (key === "default") {
@@ -60,9 +59,9 @@ export async function renderToStaticMarkup(
       }
     }
 
-    const app = jsx(Component, {
+    const app = jsx(component, {
       ...props,
-      children: [defaultSlot, ...Object.values(slots)],
+      children: [defaultSlot, ...Object.values(slots)]
     });
 
     /**
@@ -74,11 +73,13 @@ export async function renderToStaticMarkup(
     */
     const symbolMapper: SymbolMapperFn = (symbolName: string) => {
       /* don't want to add a file path for sync$ */
-      if (symbolName === "<sync>") return;
+      if (symbolName === "<sync>") {
+        return;
+      }
 
       return [
         symbolName,
-        `/${process.env.SRC_DIR}/` + symbolName.toLocaleLowerCase() + ".js",
+        `/${process.env.SRC_DIR}/${symbolName.toLocaleLowerCase()}.js`
       ];
     };
 
@@ -98,10 +99,10 @@ export async function renderToStaticMarkup(
       containerAttributes: { style: "display: contents" },
       manifest: isDev ? ({} as QwikManifest) : manifest,
       ...(manifest ? undefined : { symbolMapper }),
-      qwikLoader: { include: "never" },
+      qwikLoader: { include: "never" }
     });
 
-    const PREFETCH_SERVICE_WORKER = `((qc, c, q, v, b, h) => {
+    const prefetchServiceWorker = `((qc, c, q, v, b, h) => {
       b = qc.getAttribute("q:base");
       h = qc.getAttribute("q:manifest-hash");
       c.register("/qwik-prefetch-service-worker.js", {
@@ -124,7 +125,7 @@ export async function renderToStaticMarkup(
     window.qwikPrefetchSW||(window.qwikPrefetchSW=[])
     )`;
 
-    const PREFETCH_GRAPH_CODE = `((qc, q, b, h, u) => {
+    const prefetchGraphCode = `((qc, q, b, h, u) => {
       q.push([
         "graph-url", 
         b || qc.getAttribute("q:base"),
@@ -153,7 +154,7 @@ export async function renderToStaticMarkup(
             ? ""
             : `
         <script qwik-prefetch-service-worker>
-        ${PREFETCH_SERVICE_WORKER}
+        ${prefetchServiceWorker}
         </script>
         `
         }
@@ -162,7 +163,7 @@ export async function renderToStaticMarkup(
 
     if (!isDev && shouldPrefetchBundles) {
       scripts += `<script qwik-prefetch-bundle-graph>
-      ${PREFETCH_GRAPH_CODE}
+      ${prefetchGraphCode}
     </script>`;
     }
 
@@ -179,13 +180,10 @@ export async function renderToStaticMarkup(
 
     return {
       ...result,
-      html: htmlWithScripts,
+      html: htmlWithScripts
     };
   } catch (error) {
-    console.error(
-      "Error in renderToStaticMarkup function of @qwikdev/astro: ",
-      error
-    );
+    console.error("Error in renderToStaticMarkup function of @qwikdev/astro: ", error);
     throw error;
   }
 }
@@ -193,5 +191,5 @@ export async function renderToStaticMarkup(
 export default {
   renderToStaticMarkup,
   supportsAstroStaticSlot: true,
-  check,
+  check
 };
