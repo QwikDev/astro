@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true .",
-    "format": "biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true ."
+    "format": "biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true .",
+    "postinstall": "lefthook install"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@biomejs/biome": "1.6.1",
     "@changesets/cli": "^2.27.1",
-    "@biomejs/biome": "1.6.1"
+    "lefthook": "^1.6.5"
   }
 }
