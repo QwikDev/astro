@@ -20,6 +20,7 @@ import ts from "typescript";
 import fs from "node:fs";
 import { lstat, readdir, readlink } from "node:fs/promises";
 import fsExtra from "fs-extra";
+import move from "fs-move"
 
 /* similar to vite's FilterPattern */
 const FilternPatternSchema = z.union([
@@ -260,8 +261,12 @@ export async function moveArtifacts(srcDir: string, destDir: string) {
   await fsExtra.ensureDir(destDir);
   for (const file of await readdir(srcDir)) {
     // move files from source to destintation, overwrite if they exist
-    await fsExtra.move(join(srcDir, file), join(destDir, file), {
-      overwrite: true,
+    await move(join(srcDir, file), join(destDir, file), {
+      // Merge directories
+      merge: true,
+      // Don't overwrite any files, as this would overwrite astro-generated files with files from public.
+      // This matches astro's default behavior of replacing files in public with generated pages on naming-conflicts.
+      overwrite: false,
     });
   }
 }
