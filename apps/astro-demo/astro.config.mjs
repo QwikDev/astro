@@ -1,8 +1,8 @@
 import { defineConfig } from "astro/config";
 
-import qwik from "@qwikdev/astro";
 import node from "@astrojs/node";
 import react from "@astrojs/react";
+import qwik from "@qwikdev/astro";
 
 // https://astro.build/config
 export default defineConfig({

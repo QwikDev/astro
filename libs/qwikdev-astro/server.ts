@@ -1,10 +1,11 @@
-import { jsx, type FunctionComponent, type JSXNode } from "@builder.io/qwik";
-import { isDev } from "@builder.io/qwik/build";
-import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
+import type { SSRResult } from "astro";
+
+import { type JSXNode, jsx } from "@builder.io/qwik";
 import type { QwikManifest, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 
+import { isDev } from "@builder.io/qwik/build";
+import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
 import { manifest } from "@qwik-client-manifest";
-import type { SSRResult } from "astro";
 
 const qwikLoaderAdded = new WeakMap<SSRResult, boolean>();
 
@@ -29,19 +30,21 @@ async function check(this: RendererContext, component: unknown) {
   }
 }
 
-export async function renderToStaticMarkup<T extends string | FunctionComponent<unknown>>(
+export async function renderToStaticMarkup(
   this: RendererContext,
-  component: T,
+  // biome-ignore lint/suspicious/noExplicitAny: unknown type of component.
+  component: any,
   props: Record<string, unknown>,
+  // biome-ignore lint/suspicious/noExplicitAny: unknown type of slotted.
   slotted: any
 ) {
   try {
-    if (typeof component === "function" && component.name !== "QwikComponent") {
+    if (component.name !== "QwikComponent") {
       return;
     }
 
     const slots: { [key: string]: unknown } = {};
-    let defaultSlot: JSXNode<'span'>;
+    let defaultSlot: JSXNode<"span"> | undefined = undefined;
 
     // getting functions from index causes a rollup issue.
     for (const [key, value] of Object.entries(slotted)) {
@@ -59,9 +62,10 @@ export async function renderToStaticMarkup<T extends string | FunctionComponent<
       }
     }
 
+    const slotValues = Object.values(slotted);
     const app = jsx(component, {
       ...props,
-      children: [defaultSlot, ...Object.values(slots)]
+      children: defaultSlot ? [defaultSlot, ...slotValues] : [...slotValues]
     });
 
     /**
@@ -77,10 +81,7 @@ export async function renderToStaticMarkup<T extends string | FunctionComponent<
         return;
       }
 
-      return [
-        symbolName,
-        `/${process.env.SRC_DIR}/${symbolName.toLocaleLowerCase()}.js`
-      ];
+      return [symbolName, `/${process.env.SRC_DIR}/${symbolName.toLocaleLowerCase()}.js`];
     };
 
     const shouldAddQwikLoader = !qwikLoaderAdded.has(this.result);
@@ -88,7 +89,7 @@ export async function renderToStaticMarkup<T extends string | FunctionComponent<
       qwikLoaderAdded.set(this.result, true);
     }
 
-    const base = props["q:base"] || process.env.Q_BASE;
+    const base = (props["q:base"] || process.env.Q_BASE) as string;
 
     // TODO: `jsx` must correctly be imported.
     // Currently the vite loads `core.mjs` and `core.prod.mjs` at the same time and this causes issues.

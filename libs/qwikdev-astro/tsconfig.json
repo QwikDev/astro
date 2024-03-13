@@ -3,15 +3,17 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "@builder.io/qwik",
+
     "outDir": "./dist",
+    "module": "ESNext",
     "moduleResolution": "Bundler",
+
     "noEmit": false,
     "allowImportingTsExtensions": false,
+
     "baseUrl": ".",
     "paths": {
-      "@builder.io/qwik/build": [
-        "node_modules/@builder.io/qwik/build/index.d.ts"
-      ]
+      "@builder.io/qwik/build": ["node_modules/@builder.io/qwik/build/index.d.ts"]
     }
   }
 }
