@@ -1,7 +1,7 @@
 {
   "name": "@qwikdev/astro",
   "description": "Use Qwik components and Resumability within Astro",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "contributors": [
     {
       "name": "Miško Hevery",
@@ -57,9 +57,9 @@
     "@builder.io/qwik": "^1.5.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.10.0",
-    "astro": "^4.4.15",
+    "astro": "^4.5",
     "typescript": "^5.4.2",
-    "vite": "^5.1.5"
+    "vite": "^5.1.6"
   },
   "peerDependencies": {
     "@builder.io/qwik": "^1.5.1",

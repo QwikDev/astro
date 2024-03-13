@@ -17,7 +17,7 @@
     "@qwikdev/astro": "workspace:*",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
-    "astro": "^4.4.15",
+    "astro": "^4.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }
