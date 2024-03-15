@@ -46,7 +46,7 @@ export async function renderToStaticMarkup(
     const slots: { [key: string]: unknown } = {};
     let defaultSlot: JSXNode<"span"> | undefined = undefined;
 
-    // getting functions from index causes a rollup issue.
+    // this is how we get slots
     for (const [key, value] of Object.entries(slotted)) {
       const jsxElement = jsx("span", {
         dangerouslySetInnerHTML: String(value),

@@ -12,7 +12,7 @@ You can quickly get up and running with the playground by doing the following:
 
 2. Once the dependencies are installed, you can build by running `pnpm build` in `apps/astro-demo`
 
-That's it! 
+That's it!
 
 Note that we only use pnpm. Please don't make any PR's that introduce lock files of other package managers.
 
@@ -188,16 +188,21 @@ We only use the symbolMapper in dev mode. This is because we already get this in
 
 A full graph of all of the symbols and their corresponding chunks. It also knows the import graph, so if a symbol is prefetched, the service worker will also prefetch all other symbols which are needed as part of the import graph.
 
-
 ### Code style
 
 This project uses [Biome](https://biomejs.dev/) to lint and format all the code. The tool is able to parse many different syntaxes including `ts`, `tsx`, `json` and `astro`, and many more, but these are the ones relevant to our codebase. At the time of writing, [support](https://biomejs.dev/internals/language-support/) for `astro` code is limited but working.
 
 If you use VSCode and install the recommended extensions present under `.vscode/extensions.json` (VSCode should prompt you to install them upon opening the project), you should be able to have a pretty good DX out of the box, with automatic formatting on save and linting errors on the editor.
 
-If for whatever reason you prefer to not install them, you can manually check the code style of your code by running `pnpm run check` (if you are not on the root directory add a `-w` flag to the command). Biome will then start analyzing the entire codebase and notify you if there's any inconsistency within your code (linting or formatting errors). To manually format the code **and** apply ***[safe](https://biomejs.dev/linter/rules/)*** changes you can run `pnpm run fix`.
+If for whatever reason you prefer to not install them, you can manually check the code style by running `pnpm run check` (if you are not on the root directory add a `-w` flag to the command).
 
-Whenever you try to commit some change to the repo, an automatic **[git hook](https://biomejs.dev/recipes/git-hooks/)** should trigger stopping it if it has either linting or formatting errors. You will have to fix them first, otherwise you are not going to be able to commit your changes. This is possible thanks to `lefthook` and the configuration in `lefthook.yaml`. Note that the check which this tool runs applies only to the ***staged files***. It could happen that the **hook** doesn't trigger if you haven't run `lefthook install` on your local repo before commiting. Although this command is automatically executed by your package manager after running `pnpm install`, if it hasn't been executed, you would be bypassing this restriction. 
+Biome will then start analyzing the entire codebase and notify you if there's any inconsistency within your code (linting or formatting errors). To manually format the code **and** apply **_[safe](https://biomejs.dev/linter/rules/)_** changes you can run `pnpm run fix`.
+
+When committing to the repo, there is an automatic **[git hook](https://biomejs.dev/recipes/git-hooks/)** that checks for any linting or formatting errors.
+
+If there is an error, the commit will be aborted and you will have to fix it before you can commit again. This is possible thanks to `lefthook` and the configuration in `lefthook.yaml`.
+
+> Note that the check which this tool runs applies only to the **_staged files_**. It could happen that the **hook** doesn't trigger if you haven't run `lefthook install` on your local repo before commiting. Although this command is automatically executed by your package manager after running `pnpm install`, if it hasn't been executed, you would be bypassing this restriction.
 
 Please, ensure that Biome has analyzed the code before commiting anything.
 
@@ -205,7 +210,6 @@ Please, ensure that Biome has analyzed the code before commiting anything.
 
 That's about it! Some exciting features we would like to add to Qwik + Astro are:
 
-- Similar [prefetching](https://qwik.builder.io/docs/advanced/speculative-module-fetching/#speculative-module-fetching) functionality to Qwik City
-- [Qwik Insights](https://qwik.builder.io/docs/labs/insights/#-insights)
+- Full view transitions support
 - Moving [Qwik Image optimizations](<https://github.com/BuilderIO/qwik/blob/85552d7f381e43e46fb1db79717c0a1e5b44b868/starters/apps/qwikcity-test/src/routes/(common)/index.tsx#L4>) (?jsx) off the Qwik City Vite plugin to Qwik core.
 - Moving [@builder.io/qwik/testing](https://github.com/BuilderIO/qwik/blob/85552d7f381e43e46fb1db79717c0a1e5b44b868/packages/qwik/src/testing/README.md#L1) off the Qwik City Vite plugin.
