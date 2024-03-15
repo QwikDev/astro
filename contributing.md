@@ -194,7 +194,9 @@ This project uses [Biome](https://biomejs.dev/) to lint and format all the code.
 
 If you use VSCode and install the recommended extensions present under `.vscode/extensions.json` (VSCode should prompt you to install them upon opening the project), you should be able to have a pretty good DX out of the box, with automatic formatting on save and linting errors on the editor.
 
-If for whatever reason you prefer to not install them, you can manually check the code style of your code by running `pnpm run check` (if you are not on the root directory add a `-w` flag to the command). Biome will then start analyzing the entire codebase and notify you if there's any inconsistency within your code (linting or formatting errors). To manually format the code **and** apply **_[safe](https://biomejs.dev/linter/rules/)_** changes you can run `pnpm run fix`.
+If for whatever reason you prefer to not install them, you can manually check the code style by running `pnpm run check` (if you are not on the root directory add a `-w` flag to the command).
+
+Biome will then start analyzing the entire codebase and notify you if there's any inconsistency within your code (linting or formatting errors). To manually format the code **and** apply **_[safe](https://biomejs.dev/linter/rules/)_** changes you can run `pnpm run fix`.
 
 When committing to the repo, there is an automatic **[git hook](https://biomejs.dev/recipes/git-hooks/)** that checks for any linting or formatting errors.
 
