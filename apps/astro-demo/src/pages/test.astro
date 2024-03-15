@@ -1,7 +1,6 @@
 ---
 import { ViewTransitions } from "astro:transitions";
 import { Counter } from "@components/qwik/counter";
-import { SayHi } from "@components/qwik/say-hi";
 ---
 
 <html lang="en">
@@ -16,8 +15,7 @@ import { SayHi } from "@components/qwik/say-hi";
 	<body>
 		<div style={{ height: '1000px' }}>
 			<Counter initial={5} />
-			<SayHi />
-			<a href="/test">test</a>
+            <a href="/">Back home</a>
 		</div>
 	</body>
 </html>
