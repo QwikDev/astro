@@ -179,9 +179,15 @@ export async function renderToStaticMarkup(
       prefetchBundleLoc
     )}${scripts}${html.substring(prefetchBundleLoc)}`;
 
+    // With VT, rerun so that signals work
+    const htmlWithRerun = htmlWithScripts.replace(
+      '<script q:func="qwik/json">',
+      '<script q:func="qwik/json" data-astro-rerun>'
+    );
+
     return {
       ...result,
-      html: htmlWithScripts
+      html: htmlWithRerun
     };
   } catch (error) {
     console.error("Error in renderToStaticMarkup function of @qwikdev/astro: ", error);
