@@ -196,7 +196,7 @@ If you use VSCode and install the recommended extensions present under `.vscode/
 
 If for whatever reason you prefer to not install them, you can manually check the code style of your code by running `pnpm run check` (if you are not on the root directory add a `-w` flag to the command). Biome will then start analyzing the entire codebase and notify you if there's any inconsistency within your code (linting or formatting errors). To manually format the code **and** apply **_[safe](https://biomejs.dev/linter/rules/)_** changes you can run `pnpm run fix`.
 
-Whenever committing to the repo, an automatic **[git hook](https://biomejs.dev/recipes/git-hooks/)** checking for any linting or formatting errors.
+When committing to the repo, there is an automatic **[git hook](https://biomejs.dev/recipes/git-hooks/)** that checks for any linting or formatting errors.
 
 If there is an error, the commit will be aborted and you will have to fix it before you can commit again. This is possible thanks to `lefthook` and the configuration in `lefthook.yaml`.
 
