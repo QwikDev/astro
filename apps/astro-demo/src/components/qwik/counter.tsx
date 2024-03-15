@@ -5,7 +5,9 @@ export const Counter = component$<{ initial: number }>((props) => {
 
   return (
     <>
-      <button onClick$={() => counter.value++}>{counter.value}</button>
+      <button type="button" onClick$={() => counter.value++}>
+        {counter.value}
+      </button>
     </>
   );
 });

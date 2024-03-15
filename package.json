@@ -1,8 +1,14 @@
 {
   "name": "qwikdev-astro",
   "version": "0.0.0",
-  "scripts": {},
-  "dependencies": {
-    "@changesets/cli": "^2.27.1"
+  "scripts": {
+    "check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true .",
+    "fix": "biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true .",
+    "postinstall": "lefthook install"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.6.1",
+    "@changesets/cli": "^2.27.1",
+    "lefthook": "^1.6.5"
   }
 }

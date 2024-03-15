@@ -1,0 +1,15 @@
+{
+  "[javascript][typescript][json][jsonc][javascriptreact][typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "quickfix.biome": "explicit",
+    "source.organizeImports.biome": "always"
+  },
+
+  // Prevent conflicts between tools.
+  "eslint.enable": false,
+  "prettier.enable": false
+}

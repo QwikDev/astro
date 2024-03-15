@@ -1,0 +1,94 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.6.1/schema.json",
+  "files": {
+    "ignore": [".git", "build", "dist", "node_modules"]
+  },
+
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "lineEnding": "lf",
+    "lineWidth": 90
+  },
+
+  "javascript": {
+    "formatter": {
+      "arrowParentheses": "always",
+      "bracketSameLine": false,
+      "bracketSpacing": true,
+      "enabled": true,
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "preserve",
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingComma": "none"
+    }
+  },
+
+  "json": {
+    "formatter": {
+      "enabled": true
+    }
+  },
+
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "a11y": {
+        "recommended": true
+      },
+      "complexity": {
+        "recommended": true,
+        "useSimplifiedLogicExpression": "warn"
+      },
+      "correctness": {
+        "noUndeclaredVariables": "error",
+        "recommended": true
+      },
+      "performance": {
+        "recommended": true
+      },
+      "recommended": true,
+      "style": {
+        "recommended": true,
+        "useBlockStatements": "error",
+        "useCollapsedElseIf": "warn",
+        "useNamingConvention": {
+          "level": "error",
+          "options": {
+            "strictCase": false
+          }
+        },
+        "useShorthandArrayType": "error",
+        "useShorthandAssign": "error",
+        "useSingleCaseStatement": "error"
+      },
+      "suspicious": {
+        "noApproximativeNumericConstant": "error",
+        "noMisrefactoredShorthandAssign": "warn",
+        "recommended": true
+      }
+    }
+  },
+
+  "organizeImports": {
+    "enabled": true
+  },
+
+  "overrides": [
+    {
+      "include": [".vscode/**"],
+      "json": {
+        "parser": {
+          "allowComments": true
+        }
+      }
+    }
+  ],
+
+  "vcs": {
+    "clientKind": "git",
+    "enabled": true
+  }
+}
