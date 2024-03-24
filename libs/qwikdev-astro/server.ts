@@ -62,7 +62,7 @@ export async function renderToStaticMarkup(
       }
     }
 
-    const slotValues = Object.values(slotted);
+    const slotValues = Object.values(slots);
     const app = jsx(component, {
       ...props,
       children: defaultSlot ? [defaultSlot, ...slotValues] : [...slotValues]
