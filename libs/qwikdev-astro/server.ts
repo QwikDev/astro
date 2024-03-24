@@ -1,6 +1,11 @@
 import type { SSRResult } from "astro";
 
-import { type JSXNode, jsx } from "@builder.io/qwik";
+import {
+  type JSXNode,
+  PrefetchGraph,
+  PrefetchServiceWorker,
+  jsx
+} from "@builder.io/qwik";
 import type { QwikManifest, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 
 import { isDev } from "@builder.io/qwik/build";
@@ -43,8 +48,28 @@ export async function renderToStaticMarkup(
       return;
     }
 
+    const shouldAddQwikLoader = !qwikLoaderAdded.has(this.result);
+    const qwikLoader =
+      shouldAddQwikLoader &&
+      jsx("script", {
+        "qwik-loader": "",
+        dangerouslySetInnerHTML: getQwikLoaderScript()
+      });
+    // we want to add the sw script only on the first container.
+    const serviceWorkerScript =
+      !isDev && shouldAddQwikLoader && jsx(PrefetchServiceWorker, {});
+
+    // we want a prefetch graph on each container
+    const prefetchGraph = !isDev && jsx(PrefetchGraph, {});
+
     const slots: { [key: string]: unknown } = {};
     let defaultSlot: JSXNode<"span"> | undefined = undefined;
+
+    const qwikScripts = jsx("span", {
+      "q:slot": "qwik-scripts",
+      "qwik-scripts": "",
+      children: [qwikLoader, serviceWorkerScript, prefetchGraph]
+    });
 
     // this is how we get slots
     for (const [key, value] of Object.entries(slotted)) {
@@ -63,9 +88,10 @@ export async function renderToStaticMarkup(
     }
 
     const slotValues = Object.values(slots);
+
     const app = jsx(component, {
       ...props,
-      children: defaultSlot ? [defaultSlot, ...slotValues] : [...slotValues]
+      children: [qwikScripts, ...(defaultSlot ? [defaultSlot] : []), ...slotValues]
     });
 
     /**
@@ -84,7 +110,6 @@ export async function renderToStaticMarkup(
       return [symbolName, `/${process.env.SRC_DIR}/${symbolName.toLocaleLowerCase()}.js`];
     };
 
-    const shouldAddQwikLoader = !qwikLoaderAdded.has(this.result);
     if (shouldAddQwikLoader) {
       qwikLoaderAdded.set(this.result, true);
     }
@@ -103,84 +128,10 @@ export async function renderToStaticMarkup(
       qwikLoader: { include: "never" }
     });
 
-    const prefetchServiceWorker = `((qc, c, q, v, b, h) => {
-      b = qc.getAttribute("q:base");
-      h = qc.getAttribute("q:manifest-hash");
-      c.register("/qwik-prefetch-service-worker.js", {
-        scope: "/"
-      }).then((sw, onReady) => {
-        onReady = () => q.forEach(q.push = (v2) => sw.active.postMessage(v2));
-        sw.installing ? sw.installing.addEventListener("statechange", (e) => e.target.state == "activated" && onReady()) : onReady();
-      });
-      v && q.push([
-        "verbose"
-      ]);
-      document.addEventListener("qprefetch", (e) => e.detail.bundles && q.push([
-        "prefetch",
-          b,
-          ...e.detail.bundles
-        ]));
-      })(
-    document.currentScript.closest('[q\\\\:container]'),
-    navigator.serviceWorker,
-    window.qwikPrefetchSW||(window.qwikPrefetchSW=[])
-    )`;
-
-    const prefetchGraphCode = `((qc, q, b, h, u) => {
-      q.push([
-        "graph-url", 
-        b || qc.getAttribute("q:base"),
-        u || \`q-bundle-graph-\${h || qc.getAttribute("q:manifest-hash")}.json\`
-       ]);
-    })(
-     document.currentScript.closest('[q\\\\:container]'),
-     window.qwikPrefetchSW||(window.qwikPrefetchSW=[]),
-    )`;
-
     const { html } = result;
 
-    /* Inlining the necessary Qwik scripts for the Qwikloader & SW */
-    let scripts = "";
-
-    const shouldPrefetchBundles =
-      html.indexOf('<script q:type="prefetch-bundles">') !== -1;
-
-    if (shouldAddQwikLoader) {
-      scripts += `
-        <script qwik-loader>
-          ${getQwikLoaderScript()}
-        </script>
-        ${
-          isDev
-            ? ""
-            : `
-        <script qwik-prefetch-service-worker>
-        ${prefetchServiceWorker}
-        </script>
-        `
-        }
-      ${scripts}`;
-    }
-
-    if (!isDev && shouldPrefetchBundles) {
-      scripts += `<script qwik-prefetch-bundle-graph>
-      ${prefetchGraphCode}
-    </script>`;
-    }
-
-    // Find the closing tag of the div with the `q:container` attribute
-    const prefetchBundleLoc = shouldPrefetchBundles
-      ? html.indexOf('<script q:type="prefetch-bundles">')
-      : html.indexOf('<script type="qwik/json"');
-
-    // Insert the scripts before the q:type prefetch bundle script
-    const htmlWithScripts = `${html.substring(
-      0,
-      prefetchBundleLoc
-    )}${scripts}${html.substring(prefetchBundleLoc)}`;
-
     // With VT, rerun so that signals work
-    const htmlWithRerun = htmlWithScripts.replace(
+    const htmlWithRerun = html.replace(
       '<script q:func="qwik/json">',
       '<script q:func="qwik/json" data-astro-rerun>'
     );

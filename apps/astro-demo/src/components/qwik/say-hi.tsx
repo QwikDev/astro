@@ -1,4 +1,4 @@
-import { component$, sync$ } from "@builder.io/qwik";
+import { Slot, component$, sync$ } from "@builder.io/qwik";
 
 export const SayHi = component$(() => {
   return (
@@ -10,6 +10,7 @@ export const SayHi = component$(() => {
         }
       })}
     >
+      <Slot />
       Say hi!
     </button>
   );
