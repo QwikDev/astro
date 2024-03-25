@@ -10,6 +10,6 @@ export default defineConfig({
   adapter: node({
     mode: "standalone"
   }),
-
-  integrations: [qwik({ include: "**/qwik/*" }), react({ include: "**/react/*" })]
+  integrations: [qwik({ include: "**/qwik/*" }), react({ include: "**/react/*" })],
+  outDir: "my-project"
 });

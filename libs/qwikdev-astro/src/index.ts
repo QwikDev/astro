@@ -83,18 +83,20 @@ export default defineIntegration({
         entrypoints = getQwikEntrypoints(srcDir, filter);
 
         if ((await entrypoints).length !== 0) {
+          distDir = astroConfig.outDir.pathname;
+          await fsExtra.ensureDir(distDir);
+
           addRenderer({
             name: "@qwikdev/astro",
             serverEntrypoint: resolve("../server.ts")
           });
 
-          // Update the global dist directory
-          distDir = astroConfig.outDir.pathname;
-
           // checks all windows platforms and removes drive ex: C:\\
           if (os.platform() === "win32") {
             distDir = distDir.substring(3);
           }
+
+          console.log("DIST DIR", distDir);
 
           updateConfig({
             vite: {
@@ -124,7 +126,8 @@ export default defineIntegration({
                       all of the entry points to the application so
                       that we can generate the manifest. 
                     */
-                    input: await entrypoints
+                    input: await entrypoints,
+                    outDir: "my-project"
                   },
                   ssr: {
                     input: resolve("../server.ts")
