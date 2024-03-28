@@ -1,0 +1,23 @@
+---
+import { ViewTransitions } from "astro:transitions";
+import { Counter } from "@components/qwik/counter";
+import { SayHi } from "@components/qwik/say-hi";
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+		<ViewTransitions />
+	</head>
+	<body>
+		<div style={{ height: '1000px' }}>
+			<Counter initial={5}>Yo</Counter>
+			<SayHi>John</SayHi>
+			<a href="/test">test</a>
+		</div>
+	</body>
+</html>
