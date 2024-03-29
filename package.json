@@ -2,8 +2,8 @@
   "name": "qwikdev-astro",
   "version": "0.0.0",
   "scripts": {
-    "check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true .",
-    "fix": "biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true .",
+    "check": "biome check .",
+    "fix": "biome check --apply .",
     "postinstall": "lefthook install"
   },
   "devDependencies": {
