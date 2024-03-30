@@ -2,9 +2,16 @@
   "name": "qwikdev-astro",
   "version": "0.0.0",
   "scripts": {
-    "check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true .",
-    "fix": "biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true .",
-    "postinstall": "lefthook install"
+    "check": "biome ci .",
+    "check.format": "biome format .",
+    "check.lint": "biome check .",
+    "fix": "pnpm lint && pnpm format",
+    "format": "biome format --write .",
+    "lint": "biome check --apply-unsafe .",
+    "postinstall": "lefthook install",
+    "dev": "pnpm -C ./apps/node-demo run dev",
+    "build": "pnpm -C ./apps/node-demo run build",
+    "release": "changeset publish"
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.1",
