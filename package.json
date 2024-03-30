@@ -4,7 +4,10 @@
   "scripts": {
     "check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true .",
     "fix": "biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true .",
-    "postinstall": "lefthook install"
+    "postinstall": "lefthook install",
+    "dev": "pnpm -C ./apps/node-demo run dev",
+    "build": "pnpm -C ./apps/node-demo run build",
+    "release": "changeset publish"
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.1",
