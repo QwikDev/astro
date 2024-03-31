@@ -2,6 +2,9 @@
   "name": "qwikdev-astro",
   "version": "0.0.0",
   "scripts": {
+    "dev": "pnpm -C ./apps/node-demo dev",
+    "build": "pnpm -C ./apps/node-demo build",
+    "preview": "pnpm -C ./apps/node-demo preview",
     "check": "biome ci .",
     "check.format": "biome format .",
     "check.lint": "biome check .",
@@ -9,9 +12,11 @@
     "format": "biome format --write .",
     "lint": "biome check --apply-unsafe .",
     "postinstall": "lefthook install",
-    "dev": "pnpm -C ./apps/node-demo run dev",
-    "build": "pnpm -C ./apps/node-demo run build",
-    "release": "changeset publish"
+    "changeset": "changeset",
+    "release": "changeset publish",
+    "deno.dev": "pnpm -C ./apps/deno-demo dev",
+    "deno.build": "pnpm -C ./apps/deno-demo build",
+    "deno.preview": "pnpm -C ./apps/deno-demo preview"
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.1",

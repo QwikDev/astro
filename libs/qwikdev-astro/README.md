@@ -345,6 +345,10 @@ export const MySlotComp = component$<{ initial: number }>((props) => {
 
 Default slots work as expected in their Qwik City counterpart.
 
+## Starter Kits
+
+- [Siguici's](https://github.com/siguici) [@qwikdev/astro + Deno](https://github.com/siguici/qwik-astro-deno) starter kit
+
 ## Community Guides
 
 - [Paul Scanlon](https://www.paulie.dev/) shows a hands-on look at [using Qwik in Astro over React and Vanilla JS](https://thenewstack.io/how-quiks-astro-integration-beats-both-react-and-vanilla-js/).
