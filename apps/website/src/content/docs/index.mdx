@@ -1,36 +1,69 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
+title: Unleash the Power of Resumability in Astro
+description: Leverage the Power of Resumability in Astro with Qwik Components.
 template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
+  tagline: Seamlessly Integrate Qwik Components into Your Astro Project.
   image:
     file: ../../assets/qwik-astro.svg
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Get started
+      link: /guides/
       icon: right-arrow
       variant: primary
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
+    - text: View on GitHub
+      link: https://github.com/QwikDev/astro
       icon: external
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
 
-## Next steps
+## Try @qwikdev/astro
+
+<Tabs>
+  <TabItem label="npm">
+
+  ```sh
+  npx astro @qwikdev/astro
+  ```
+
+  </TabItem>
+  <TabItem label="Yarn">
+
+  ```sh
+  yarn astro add @qwikdev/astro
+  ```
+
+  </TabItem>
+  <TabItem label="pnpm">
+
+  ```sh
+  pnpm astro add @qwikdev/astro
+  ```
+
+  </TabItem>
+  <TabItem label="Bun">
+
+  ```sh
+  bun astro @qwikdev/astro
+  ```
+
+  </TabItem>
+</Tabs>
+
+## Why @QwikDev/Astro?
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+	<Card title="Lightning-fast websites" icon="rocket">
+    Harness the power of lightning-fast websites by seamlessly integrating @qwikdev/astro into your projects, ensuring unparalleled speed and performance.
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	<Card title="Easy integration" icon="add-document">
+		Integrate @QwikDev/Astro seamlessly into your project with our simple installation process. Our clear documentation and intuitive APIs make integration a breeze for developers of all levels.
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
+	<Card title="Optimized performance" icon="setting">
+    Achieve optimized performance for your web applications with @QwikDev/Astro. Our framework prioritizes performance at every level, ensuring that your websites run smoothly and efficiently.
 	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
-	</Card>
+	<Card title="Fine-grained lazy loading" icon="star">
+    Benefit from fine-grained lazy loading capabilities with @QwikDev/Astro. Our integration allows for efficient loading of resources, improving page load times and enhancing user experience.
+  </Card>
 </CardGrid>
