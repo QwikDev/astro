@@ -6,11 +6,11 @@ export default defineConfig({
   compressHTML: true,
   integrations: [
     starlight({
-      title: "Qwik + Astro",
+      title: "Qwik 💜 Astro",
       logo: {
         src: "./src/assets/qwik-astro.svg",
         alt: "Qwik + Astro Logo",
-        replacesTitle: true
+        replacesTitle: false
       },
       social: {
         github: "https://github.com/QwikDev/astro"
