@@ -90,5 +90,7 @@
   "vcs": {
     "clientKind": "git",
     "enabled": true
-  }
+  },
+
+  "extends": ["./apps/website/biome.json"]
 }
