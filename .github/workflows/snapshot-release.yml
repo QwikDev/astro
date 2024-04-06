@@ -61,8 +61,7 @@ jobs:
           ref: ${{ steps.refs.outputs.head_ref }}
           fetch-depth: 0
 
-      - run: git checkout main
-      - run: git checkout ${{ steps.refs.outputs.head_ref }}
+      - run: git fetch origin main:main
 
       - name: Setup PNPM
         uses: pnpm/action-setup@v3
@@ -116,8 +115,8 @@ jobs:
           cat publish.output.txt
         env:
           # Needs access to publish to npm
-          NPM_TOKEN: ${{ secrets.CHANGESETS_RELEASE_PR_WORKFLOW_NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.CHANGESETS_RELEASE_PR_WORKFLOW_NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           # Disable color
           FORCE_COLOR: 0
           NO_COLOR: 1
