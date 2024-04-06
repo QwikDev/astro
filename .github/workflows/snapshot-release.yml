@@ -79,6 +79,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build Packages
+        run: pnpm run build
+
       - name: Bump Package Versions
         id: changesets
         run: |
