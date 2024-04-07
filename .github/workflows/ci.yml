@@ -1,0 +1,42 @@
+name: CI
+
+on: ['push', 'pull_request']
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        node: [lts/*]
+        experimental: [false]
+    name: 👷 CI @QwikDev/astro on Node-${{ matrix.node }} under ${{ matrix.os }}
+
+    timeout-minutes: 60
+
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      - name: 🐳 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: 📦 Install dependencies 
+        run: corepack enable && pnpm install
+
+      - name: ✅ Check code format and lint
+        run: pnpm check
+
+      - name: 🧪 Run E2E tests
+        run: pnpm test
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
