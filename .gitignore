@@ -3,3 +3,7 @@ node_modules/
 .history
 **/.vite-inspect
 **/dist
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
