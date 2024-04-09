@@ -79,9 +79,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build Packages
-        run: pnpm run build
-
       - name: Bump Package Versions
         id: changesets
         run: |
@@ -102,15 +99,9 @@ jobs:
       - name: Publish Release
         id: publish
         run: |
-          GITHUB_ACTIONS=0 pnpm run build > build.output.txt 2>&1
           pnpm exec changeset publish --tag experimental--${{ steps.getSnapshotName.outputs.result }} > publish.output.txt 2>&1
 
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-
-          echo "build<<$EOF" >> $GITHUB_OUTPUT
-          echo "$(cat build.output.txt)" >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
-          cat build.output.txt
 
           echo "publish<<$EOF" >> $GITHUB_OUTPUT
           echo "$(cat publish.output.txt)" >> $GITHUB_OUTPUT
