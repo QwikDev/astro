@@ -1,0 +1,62 @@
+{
+  "name": "@qwikdev/create-astro",
+  "type": "module",
+  "license": "MIT",
+  "version": "0.0.0",
+  "description": "Interactive CLI for create @QwikDev/astro projects.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "contributors": [
+    {
+      "name": "Miško Hevery",
+      "email": "misko@hevery.com",
+      "url": "https://twitter.com/mhevery"
+    },
+    {
+      "name": "Jack Shelton",
+      "email": "me@jackshelton.com",
+      "url": "https://twitter.com/TheJackShelton"
+    },
+    {
+      "name": "Sigui Kessé Emmanuel",
+      "email": "contact@sigui.ci",
+      "url": "https://twitter.com/siguici"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/QwikDev/astro",
+    "directory": "libs/create-qwikdev-astro"
+  },
+  "types": "./src/index.ts",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": ["src", "src/index.ts"],
+  "keywords": [
+    "astro-integration",
+    "astro-component",
+    "cli",
+    "console",
+    "create-qwik-astro",
+    "generator",
+    "optimization",
+    "perf",
+    "performance",
+    "qwik",
+    "qwikdev",
+    "qwik-astro",
+    "renderer",
+    "skeleton",
+    "starter-kit",
+    "template",
+    "withastro"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": "https://github.com/@QwikDev/astro/issues"
+}

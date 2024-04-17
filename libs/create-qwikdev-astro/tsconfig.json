@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "strict": true,
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
+    "stripInternal": true,
+    "outDir": "./dist",
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "baseUrl": "."
+  }
+}
