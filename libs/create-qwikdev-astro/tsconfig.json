@@ -1,9 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
+  "include": ["src"],
+  "exclude": ["node_modules", "dist/**/*"],
   "compilerOptions": {
-    "declaration": true,
-    "emitDeclarationOnly": true,
     "strict": true,
+    "pretty": true,
+    "outDir": "./dist/js",
+    "declaration": true,
+    "declarationDir": "./dist/ts",
+    "emitDeclarationOnly": false,
     "module": "ESNext",
     "target": "ESNext",
     "moduleResolution": "Bundler",
@@ -11,10 +16,7 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "stripInternal": true,
-    "outDir": "./dist/js",
-    "declarationDir": "./dist/ts",
     "noEmit": false,
-    "allowImportingTsExtensions": false,
-    "baseUrl": "."
+    "allowImportingTsExtensions": false
   }
 }
