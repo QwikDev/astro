@@ -11,7 +11,8 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "stripInternal": true,
-    "outDir": "./dist",
+    "outDir": "./dist/js",
+    "declarationDir": "./dist/ts",
     "noEmit": false,
     "allowImportingTsExtensions": false,
     "baseUrl": "."

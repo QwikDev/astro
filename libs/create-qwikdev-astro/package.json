@@ -29,13 +29,18 @@
     "url": "https://github.com/QwikDev/astro",
     "directory": "libs/create-qwikdev-astro"
   },
-  "types": "./src/index.ts",
-  "main": "./src/index.ts",
+  "types": "./dist/ts",
+  "main": "./dist/js/index.js",
   "exports": {
-    ".": "./src/index.ts",
+    ".": "./dist/js/index.js",
     "./package.json": "./package.json"
   },
-  "files": ["src", "src/index.ts"],
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "create-qwikdev-astro": "./dist/js/index.js"
+  },
   "keywords": [
     "astro-integration",
     "astro-component",
@@ -58,5 +63,12 @@
   "publishConfig": {
     "access": "public"
   },
-  "bugs": "https://github.com/@QwikDev/astro/issues"
+  "bugs": "https://github.com/@QwikDev/astro/issues",
+  "devDependencies": {
+    "@clack/prompts": "^0.7.0",
+    "@types/yargs": "^17.0.32",
+    "kleur": "^4.1.5",
+    "which-pm-runs": "^1.1.0",
+    "yargs": "^17.7.2"
+  }
 }
