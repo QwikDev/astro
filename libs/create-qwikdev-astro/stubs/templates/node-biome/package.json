@@ -1,0 +1,32 @@
+{
+  "name": "@qwikdev/astro-node-biome-starter",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "astro": "astro",
+    "sync": "astro sync",
+    "build": "npm run fix && astro build",
+    "check": "biome ci . && astro check",
+    "check.format": "biome format .",
+    "check.lint": "biome check .",
+    "dev": "astro dev",
+    "fix": "npm run lint && npm run format",
+    "format": "biome format --write .",
+    "lint": "biome check --apply-unsafe .",
+    "preview": "npm run build && npm run serve",
+    "prod": "npm run check && astro build",
+    "serve": "node ./dist/server/entry.mjs",
+    "start": "astro dev --open"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.5.10",
+    "@astrojs/node": "^8.2.5",
+    "@builder.io/qwik": "^1.5.2",
+    "@qwikdev/astro": "^0.5.14",
+    "astro": "^4.6.3",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.7.0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "files": ["./.eslintrc.cjs", "./prettier.config.cjs"],
+  "include": ["src", "./*.d.ts", "./*.config.ts"],
+  "exclude": ["**/dist"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["./src/components/*"]
+    },
+
+    "jsx": "react-jsx",
+    "jsxImportSource": "@builder.io/qwik"
+  }
+}
