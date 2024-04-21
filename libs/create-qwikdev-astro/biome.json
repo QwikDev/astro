@@ -1,0 +1,16 @@
+{
+  "organizeImports": {
+    "ignore": ["dist", "stubs"]
+  },
+  "linter": {
+    "ignore": ["dist", "stubs"],
+    "rules": {
+      "style": {
+        "noParameterAssign": "off"
+      }
+    }
+  },
+  "formatter": {
+    "ignore": ["dist", "stubs"]
+  }
+}

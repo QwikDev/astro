@@ -1,0 +1,42 @@
+{
+  "name": "@qwikdev/astro-node-eslint-prettier-starter",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "astro": "astro",
+    "sync": "astro sync",
+    "build": "npm run fix && astro build",
+    "check": "npm run check.fmt && npm run check.lint && astro check",
+    "check.fmt": "prettier --check .",
+    "check.lint": "eslint \"**/*.{js,jsx,ts,tsx,astro}\"",
+    "deploy": "deployctl deploy --project=qwik-astro --no-static --include=./dist ./dist/server/entry.mjs",
+    "dev": "astro dev",
+    "fix": "npm run lint && npm run fmt",
+    "fmt": "prettier --write .",
+    "lint": "eslint --fix \"**/*.{js,jsx,ts,tsx,astro}\"",
+    "lint.dry-run": "eslint --fix-dry-run \"**/*.{js,jsx,ts,tsx,astro}\"",
+    "preview": "npm run build && npm run serve",
+    "prod": "npm run check && astro build",
+    "serve": "deno run -A --unstable ./dist/server/entry.mjs",
+    "start": "astro dev --open"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.5.10",
+    "@astrojs/deno": "^5.0.1",
+    "@builder.io/qwik": "^1.5.2",
+    "@qwikdev/astro": "^0.5.14",
+    "astro": "^4.6.3",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8.56.10",
+    "@types/node": "^20.12.7",
+    "@typescript-eslint/eslint-plugin": "^7.7.0",
+    "@typescript-eslint/parser": "^7.7.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-astro": "^0.34.0",
+    "eslint-plugin-qwik": "^1.5.2",
+    "prettier": "^3.2.5",
+    "prettier-plugin-astro": "^0.13.0"
+  }
+}

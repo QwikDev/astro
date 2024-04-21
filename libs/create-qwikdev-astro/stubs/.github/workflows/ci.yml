@@ -1,0 +1,34 @@
+name: CI
+
+permissions:
+  contents: read
+
+on: ["push", "pull_request"]
+
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        node: [20.11]
+        experimental: [false]
+    name: 👷 CI @qwikdev/astro Node-${{ matrix.node }} under ${{ matrix.os }}
+
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      - name: 🎉 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: ✨ Install dependencies
+        run: |
+          corepack enable
+          pnpm install
+      - name: ✅ Check code style
+        run: pnpm check

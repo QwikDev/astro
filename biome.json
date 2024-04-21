@@ -92,5 +92,5 @@
     "enabled": true
   },
 
-  "extends": ["./apps/website/biome.json"]
+  "extends": ["./apps/website/biome.json", "./libs/create-qwikdev-astro/biome.json"]
 }
