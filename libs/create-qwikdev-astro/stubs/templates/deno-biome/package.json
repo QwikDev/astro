@@ -1,7 +1,7 @@
 {
-  "name": "qwik-astro-deno",
+  "name": "@qwikdev/astro-node-biome-starter",
   "type": "module",
-  "version": "0.0.1",
+  "private": true,
   "scripts": {
     "astro": "astro",
     "sync": "astro sync",
