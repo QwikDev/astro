@@ -35,10 +35,7 @@
     ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist",
-    "stubs"
-  ],
+  "files": ["dist", "stubs"],
   "bin": {
     "create-qwikdev-astro": "./dist/index.js"
   },
