@@ -159,19 +159,18 @@ const createProject = async () => {
       ]
     });
 
+    log.step("Creating project directories and copying files...");
+
     const kit = `${adapter}-${
       favoriteLinterFormatter === "0" ? "eslint+prettier" : "biome"
     }`;
-
     const templatePath = path.join(__dirname, "..", "stubs", "templates", kit);
-
-    log.step("Creating project directories and copying files...");
-    if (!existsSync(projectNameAnswer)) {
-      mkdirSync(projectNameAnswer, { recursive: true });
-    }
-    cpSync(templatePath, projectNameAnswer, { recursive: true });
-
     const outDir: string = resolveRelativeDir(projectNameAnswer.trim());
+
+    if (!existsSync(outDir)) {
+      mkdirSync(outDir, { recursive: true });
+    }
+    cpSync(templatePath, outDir, { recursive: true });
 
     const addCIWorkflow = await confirm({
       message: "Would you like to add CI workflow?",
