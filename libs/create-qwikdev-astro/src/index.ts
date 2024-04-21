@@ -173,6 +173,24 @@ const createProject = async () => {
 
     const outDir: string = resolveRelativeDir(projectNameAnswer.trim());
 
+    const addCIWorkflow = await confirm({
+      message: "Would you like to add CI workflow?",
+      initialValue: true
+    });
+
+    if (addCIWorkflow) {
+      const starterCIPath = join(
+        __dirname,
+        "..",
+        "stubs",
+        ".github",
+        "workflows",
+        "ci.yml"
+      );
+      const projectCIPath = join(outDir, ".github", "workflows", "ci.yml");
+      cpSync(starterCIPath, projectCIPath, { force: true });
+    }
+
     const runDepInstallAnswer = await confirm({
       message: `Would you like to install ${packageManager} dependencies?`,
       initialValue: true
