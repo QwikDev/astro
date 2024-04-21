@@ -1,0 +1,33 @@
+{
+  "name": "qwik-astro-deno",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "astro": "astro",
+    "sync": "astro sync",
+    "build": "npm run fix && astro build",
+    "check": "biome ci . && astro check",
+    "check.format": "biome format .",
+    "check.lint": "biome check .",
+    "deploy": "deployctl deploy --project=qwik-astro --no-static --include=./dist ./dist/server/entry.mjs",
+    "dev": "astro dev",
+    "fix": "npm run lint && npm run format && npm run sync",
+    "format": "biome format --write .",
+    "lint": "biome check --apply-unsafe .",
+    "preview": "npm run build && npm run serve",
+    "prod": "npm run build && npm run deploy",
+    "serve": "deno run -A --unstable ./dist/server/entry.mjs",
+    "start": "astro dev --open"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.5.10",
+    "@astrojs/deno": "^5.0.1",
+    "@builder.io/qwik": "^1.5.1",
+    "@qwikdev/astro": "^0.5.13",
+    "astro": "^4.5.12",
+    "typescript": "^5.4.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.6.3"
+  }
+}

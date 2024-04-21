@@ -130,6 +130,20 @@ const createProject = async () => {
     process.exit(0);
   }
 
+  const adapter = await select({
+    message: "Which adapter do you prefer?",
+    options: [
+      {
+        value: "node",
+        label: "Node"
+      },
+      {
+        value: "deno",
+        label: "Deno"
+      }
+    ]
+  });
+
   const favoriteLinterFormatter = await select({
     message: "What is your favorite linter/formatter?",
     options: [
@@ -144,7 +158,9 @@ const createProject = async () => {
     ]
   });
 
-  const kit = `node-${favoriteLinterFormatter === "0" ? "eslint+prettier" : "biome"}`;
+  const kit = `${adapter}-${
+    favoriteLinterFormatter === "0" ? "eslint+prettier" : "biome"
+  }`;
 
   const templatePath = path.join(__dirname, "..", "..", "stubs", "templates", kit);
 
