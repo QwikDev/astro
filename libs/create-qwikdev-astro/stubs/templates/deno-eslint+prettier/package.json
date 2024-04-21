@@ -1,5 +1,5 @@
 {
-  "name": "@qwikdev/astro-node-eslint-prettier-starter",
+  "name": "@qwikdev/astro-deno-eslint-prettier-starter",
   "type": "module",
   "private": true,
   "scripts": {
