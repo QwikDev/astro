@@ -103,68 +103,68 @@ export const installDependencies = async (cwd: string) => {
 };
 
 const createProject = async () => {
-  intro("QwikDev/astro project creation");
-
-  const packageManager = getPackageManager();
-
-  const defaultProjectName = "./qwik-astro-app";
-  const projectNameAnswer = await text({
-    message: `Where would you like to create your new project? ${gray(
-      `(Use '.' or './' for current directory)`
-    )}`,
-    placeholder: defaultProjectName,
-    validate(value) {
-      if (value.length === 0) {
-        return "Value is required!";
-      }
-    }
-  });
-
-  if (typeof projectNameAnswer === "symbol") {
-    cancel("Operation canceled.");
-    return process.exit(0);
-  }
-
-  if (isCancel([projectNameAnswer, packageManager])) {
-    cancel("Operation canceled.");
-    process.exit(0);
-  }
-
-  const adapter = await select({
-    message: "Which adapter do you prefer?",
-    options: [
-      {
-        value: "node",
-        label: "Node"
-      },
-      {
-        value: "deno",
-        label: "Deno"
-      }
-    ]
-  });
-
-  const favoriteLinterFormatter = await select({
-    message: "What is your favorite linter/formatter?",
-    options: [
-      {
-        value: "0",
-        label: "ESLint/Prettier"
-      },
-      {
-        value: "1",
-        label: "Biome"
-      }
-    ]
-  });
-
-  const kit = `${adapter}-${
-    favoriteLinterFormatter === "0" ? "eslint+prettier" : "biome"
-  }`;
-
-  const templatePath = path.join(__dirname, "..", "stubs", "templates", kit);
-
   try {
+    intro("QwikDev/astro project creation");
+
+    const packageManager = getPackageManager();
+
+    const defaultProjectName = "./qwik-astro-app";
+    const projectNameAnswer = await text({
+      message: `Where would you like to create your new project? ${gray(
+        `(Use '.' or './' for current directory)`
+      )}`,
+      placeholder: defaultProjectName,
+      validate(value) {
+        if (value.length === 0) {
+          return "Value is required!";
+        }
+      }
+    });
+
+    if (typeof projectNameAnswer === "symbol") {
+      cancel("Operation canceled.");
+      return process.exit(0);
+    }
+
+    if (isCancel([projectNameAnswer, packageManager])) {
+      cancel("Operation canceled.");
+      process.exit(0);
+    }
+
+    const adapter = await select({
+      message: "Which adapter do you prefer?",
+      options: [
+        {
+          value: "node",
+          label: "Node"
+        },
+        {
+          value: "deno",
+          label: "Deno"
+        }
+      ]
+    });
+
+    const favoriteLinterFormatter = await select({
+      message: "What is your favorite linter/formatter?",
+      options: [
+        {
+          value: "0",
+          label: "ESLint/Prettier"
+        },
+        {
+          value: "1",
+          label: "Biome"
+        }
+      ]
+    });
+
+    const kit = `${adapter}-${
+      favoriteLinterFormatter === "0" ? "eslint+prettier" : "biome"
+    }`;
+
+    const templatePath = path.join(__dirname, "..", "stubs", "templates", kit);
+
     log.step("Creating project directories and copying files...");
     if (!existsSync(projectNameAnswer)) {
       mkdirSync(projectNameAnswer, { recursive: true });
