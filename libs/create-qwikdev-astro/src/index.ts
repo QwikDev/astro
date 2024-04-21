@@ -162,7 +162,7 @@ const createProject = async () => {
     favoriteLinterFormatter === "0" ? "eslint+prettier" : "biome"
   }`;
 
-  const templatePath = path.join(__dirname, "..", "..", "stubs", "templates", kit);
+  const templatePath = path.join(__dirname, "..", "stubs", "templates", kit);
 
   try {
     log.step("Creating project directories and copying files...");

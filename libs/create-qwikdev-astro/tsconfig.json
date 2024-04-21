@@ -5,9 +5,9 @@
   "compilerOptions": {
     "strict": true,
     "pretty": true,
-    "outDir": "./dist/js",
+    "outDir": "./dist",
     "declaration": true,
-    "declarationDir": "./dist/ts",
+    "declarationDir": "./dist",
     "emitDeclarationOnly": false,
     "module": "ESNext",
     "target": "ESNext",

@@ -29,15 +29,15 @@
     "url": "https://github.com/QwikDev/astro",
     "directory": "libs/create-qwikdev-astro"
   },
-  "types": "./dist/ts",
-  "main": "./dist/js/index.js",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
   "exports": {
-    ".": "./dist/js/index.js",
+    ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
   "files": ["dist", "stubs"],
   "bin": {
-    "create-qwikdev-astro": "./dist/js/index.js"
+    "create-qwikdev-astro": "./dist/index.js"
   },
   "keywords": [
     "astro-integration",
