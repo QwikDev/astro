@@ -27,7 +27,9 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: pnpm install --frozen-lockfile
+        run: |
+          ls
+          pnpm install --frozen-lockfile
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
