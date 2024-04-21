@@ -234,7 +234,7 @@ const createProject = async () => {
       await installDependencies(projectNameAnswer);
     }
 
-    outro("QwikDev/astro project created successfully!");
+    outro("QwikDev/astro project created successfully! 🍻");
   } catch (err) {
     console.error("An error occurred during QwikDev/astro project creation:", err);
     process.exit(1);
