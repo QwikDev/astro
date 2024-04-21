@@ -25,8 +25,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
+      - name: ⚡️ Setup pnpm
+        uses: pnpm/action-setup@v3
         with:
           version: 8
 
