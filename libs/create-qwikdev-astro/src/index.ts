@@ -13,6 +13,7 @@ import {
   isCancel,
   log,
   outro,
+  select,
   spinner,
   text
 } from "@clack/prompts";
@@ -129,14 +130,23 @@ const createProject = async () => {
     process.exit(0);
   }
 
-  const templatePath = path.join(
-    __dirname,
-    "..",
-    "..",
-    "stubs",
-    "templates",
-    "node-eslint+prettier"
-  );
+  const favoriteLinterFormatter = await select({
+    message: "What is your favorite linter/formatter?",
+    options: [
+      {
+        value: "0",
+        label: "ESLint/Prettier"
+      },
+      {
+        value: "1",
+        label: "Biome"
+      }
+    ]
+  });
+
+  const kit = `node-${favoriteLinterFormatter === "0" ? "eslint+prettier" : "biome"}`;
+
+  const templatePath = path.join(__dirname, "..", "..", "stubs", "templates", kit);
 
   try {
     log.step("Creating project directories and copying files...");
