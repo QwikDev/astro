@@ -25,8 +25,13 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      - name: ⚡️ Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
       - name: 📦 Install dependencies 
-        run: corepack enable && pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: ✅ Check code format and lint
         run: pnpm check
