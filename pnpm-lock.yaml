@@ -112,31 +112,32 @@ importers:
         version: 5.4.4
 
   libs/create-qwikdev-astro:
-    devDependencies:
+    dependencies:
       '@clack/prompts':
         specifier: ^0.7.0
         version: 0.7.0
-      '@types/which-pm-runs':
-        specifier: ^1.0.2
-        version: 1.0.2
-      '@types/yargs':
-        specifier: ^17.0.32
-        version: 17.0.32
       kleur:
         specifier: ^4.1.5
         version: 4.1.5
-      rimraf:
-        specifier: ^5.0.5
-        version: 5.0.5
-      typescript:
-        specifier: ^5.4.5
-        version: 5.4.5
       which-pm-runs:
         specifier: ^1.1.0
         version: 1.1.0
       yargs:
         specifier: ^17.7.2
         version: 17.7.2
+    devDependencies:
+      '@types/which-pm-runs':
+        specifier: ^1.0.2
+        version: 1.0.2
+      '@types/yargs':
+        specifier: ^17.0.32
+        version: 17.0.32
+      rimraf:
+        specifier: ^5.0.5
+        version: 5.0.5
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
 
   libs/qwikdev-astro:
     dependencies:
