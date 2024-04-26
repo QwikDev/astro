@@ -4,7 +4,7 @@ import { type ChildProcess, exec, spawn } from "node:child_process";
 import { cpSync, existsSync, mkdirSync } from "node:fs";
 import fs from "node:fs";
 import os from "node:os";
-import path, { join, resolve } from "node:path";
+import path, { join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   cancel,
@@ -17,14 +17,32 @@ import {
   spinner,
   text
 } from "@clack/prompts";
-import { gray, red } from "kleur/colors";
+import {
+  bgMagenta,
+  bold,
+  cyan,
+  gray,
+  green,
+  magenta,
+  red,
+  reset,
+  white
+} from "kleur/colors";
 import detectPackageManager from "which-pm-runs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+export function isHome(dir: string): boolean {
+  return dir.startsWith("~/");
+}
+
+export function resolveAbsoluteDir(dir: string) {
+  return isHome(dir) ? resolve(os.homedir(), dir) : resolve(process.cwd(), dir);
+}
+
 export function resolveRelativeDir(dir: string) {
-  return dir.startsWith("~/") ? resolve(os.homedir(), dir) : resolve(process.cwd(), dir);
+  return isHome(dir) ? relative(os.homedir(), dir) : relative(process.cwd(), dir);
 }
 
 export function $(cmd: string, args: string[], cwd: string) {
@@ -71,6 +89,72 @@ export const isPackageManagerInstalled = (packageManager: string) => {
       resolve(!(error || stderr));
     });
   });
+};
+
+// Used from https://github.com/sindresorhus/is-unicode-supported/blob/main/index.js
+export default function isUnicodeSupported() {
+  if (process.platform !== "win32") {
+    return process.env.TERM !== "linux"; // Linux console (kernel)
+  }
+
+  return (
+    Boolean(process.env.CI) ||
+    Boolean(process.env.WT_SESSION) || // Windows Terminal
+    Boolean(process.env.TERMINUS_SUBLIME) || // Terminus (<0.2.27)
+    process.env.ConEmuTask === "{cmd::Cmder}" || // ConEmu and cmder
+    process.env.TERM_PROGRAM === "Terminus-Sublime" ||
+    process.env.TERM_PROGRAM === "vscode" ||
+    process.env.TERM === "xterm-256color" ||
+    process.env.TERM === "alacritty" ||
+    process.env.TERMINAL_EMULATOR === "JetBrains-JediTerm"
+  );
+}
+
+// Used from https://github.com/natemoo-re/clack/blob/main/packages/prompts/src/index.ts
+const unicode = isUnicodeSupported();
+const s = (c: string, fallback: string) => (unicode ? c : fallback);
+const S_BAR = s("│", "|");
+const S_BAR_H = s("─", "-");
+const S_CORNER_TOP_RIGHT = s("╮", "+");
+const S_CONNECT_LEFT = s("├", "+");
+const S_CORNER_BOTTOM_RIGHT = s("╯", "+");
+const S_STEP_SUBMIT = s("◇", "o");
+
+function ansiRegex() {
+  const pattern = [
+    "[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)",
+    "(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-nq-uy=><~]))"
+  ].join("|");
+
+  return new RegExp(pattern, "g");
+}
+
+// Used from https://github.com/QwikDev/qwik/blob/main/packages/qwik/src/cli/utils/utils.ts
+const strip = (str: string) => str.replace(ansiRegex(), "");
+export const note = (message = "", title = "") => {
+  const lines = `\n${message}\n`.split("\n");
+  const titleLen = strip(title).length;
+  const len =
+    Math.max(
+      lines.reduce((sum, ln) => {
+        ln = strip(ln);
+        return ln.length > sum ? ln.length : sum;
+      }, 0),
+      titleLen
+    ) + 2;
+  const msg = lines
+    .map(
+      (ln) =>
+        `${gray(S_BAR)}  ${white(ln)}${" ".repeat(len - strip(ln).length)}${gray(S_BAR)}`
+    )
+    .join("\n");
+  process.stdout.write(
+    `${gray(S_BAR)}\n${green(S_STEP_SUBMIT)}  ${reset(title)} ${gray(
+      S_BAR_H.repeat(Math.max(len - titleLen - 1, 1)) + S_CORNER_TOP_RIGHT
+    )}\n${msg}\n${gray(
+      S_CONNECT_LEFT + S_BAR_H.repeat(len + 2) + S_CORNER_BOTTOM_RIGHT
+    )}\n`
+  );
 };
 
 export const $pm = async (
@@ -165,7 +249,7 @@ const createProject = async () => {
       favoriteLinterFormatter === "0" ? "eslint+prettier" : "biome"
     }`;
     const templatePath = path.join(__dirname, "..", "stubs", "templates", kit);
-    const outDir: string = resolveRelativeDir(projectNameAnswer.trim());
+    const outDir: string = resolveAbsoluteDir(projectNameAnswer.trim());
 
     if (!existsSync(outDir)) {
       mkdirSync(outDir, { recursive: true });
@@ -190,10 +274,17 @@ const createProject = async () => {
       cpSync(starterCIPath, projectCIPath, { force: true });
     }
 
-    const runDepInstallAnswer = await confirm({
+    const runInstall = await confirm({
       message: `Would you like to install ${packageManager} dependencies?`,
       initialValue: true
     });
+
+    let ranInstall = false;
+    if (typeof runInstall !== "symbol" && runInstall) {
+      log.step("Installing dependencies...");
+      await installDependencies(projectNameAnswer);
+      ranInstall = true;
+    }
 
     const gitInitAnswer = await confirm({
       message: "Initialize a new git repository?",
@@ -228,12 +319,33 @@ const createProject = async () => {
       }
     }
 
-    if (typeof runDepInstallAnswer !== "symbol" && runDepInstallAnswer) {
-      log.step("Installing dependencies...");
-      await installDependencies(projectNameAnswer);
-    }
+    const isCwdDir = process.cwd() === outDir;
+    const relativeProjectPath = resolveRelativeDir(outDir);
+    const outString = [];
 
-    outro("QwikDev/astro project created successfully! 🍻");
+    if (isCwdDir) {
+      outString.push(`🦄 ${bgMagenta(" Success! ")}`);
+    } else {
+      outString.push(
+        `🦄 ${bgMagenta(" Success! ")} ${cyan("Project created in")} ${bold(
+          magenta(relativeProjectPath)
+        )} ${cyan("directory")}`
+      );
+    }
+    outString.push("");
+
+    outString.push(`🐰 ${cyan("Next steps:")}`);
+    if (!isCwdDir) {
+      outString.push(`   cd ${relativeProjectPath}`);
+    }
+    if (!ranInstall) {
+      outString.push(`   ${packageManager} install`);
+    }
+    outString.push(`   ${packageManager} start`);
+
+    note(outString.join("\n"), "Ready to start 🚀");
+
+    outro("Happy coding! 💻🎉");
   } catch (err) {
     console.error("An error occurred during QwikDev/astro project creation:", err);
     process.exit(1);
