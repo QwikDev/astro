@@ -1,5 +1,11 @@
 # @qwikdev/create-astro
 
+## 0.0.3
+
+### Patch Changes
+
+- 162b289: Add next steps to start the project 🚀
+
 ## 0.0.2
 
 ### Patch Changes
