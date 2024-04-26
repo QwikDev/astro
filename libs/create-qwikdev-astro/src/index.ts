@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { type ChildProcess, exec, spawn } from "node:child_process";
 import { cpSync, existsSync, mkdirSync } from "node:fs";
 import fs from "node:fs";
@@ -92,7 +90,7 @@ export const isPackageManagerInstalled = (packageManager: string) => {
 };
 
 // Used from https://github.com/sindresorhus/is-unicode-supported/blob/main/index.js
-export default function isUnicodeSupported() {
+export function isUnicodeSupported() {
   if (process.platform !== "win32") {
     return process.env.TERM !== "linux"; // Linux console (kernel)
   }
@@ -156,6 +154,12 @@ export const note = (message = "", title = "") => {
     )}\n`
   );
 };
+
+// Used from https://github.com/QwikDev/qwik/blob/main/packages/qwik/src/cli/utils/utils.ts
+export function panic(msg: string) {
+  console.error(`\n❌ ${red(msg)}\n`);
+  process.exit(1);
+}
 
 export const $pm = async (
   args: string | string[],
@@ -352,8 +356,10 @@ const createProject = async () => {
   }
 };
 
-async function main() {
-  await createProject();
+export default async function () {
+  try {
+    await createProject();
+  } catch (err: any) {
+    panic(err.message || err);
+  }
 }
-
-main().catch(console.error);

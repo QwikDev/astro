@@ -36,9 +36,7 @@
     "./package.json": "./package.json"
   },
   "files": ["dist", "stubs"],
-  "bin": {
-    "create-qwikdev-astro": "./dist/index.js"
-  },
+  "bin": "./dist/create.js",
   "keywords": [
     "astro-integration",
     "astro-component",
