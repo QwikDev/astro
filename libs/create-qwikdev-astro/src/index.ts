@@ -217,6 +217,7 @@ export type Args = {
   yes: boolean;
   no: boolean;
   it: boolean;
+  dryRun: boolean;
 };
 
 export function parseArgs(args: string[]): Args {
@@ -280,6 +281,11 @@ export function parseArgs(args: string[]): Args {
             type: "boolean",
             desc: "Execute actions interactively"
           })
+          .option("dryRun", {
+            default: false,
+            type: "boolean",
+            desc: "Walk through steps without executing"
+          })
           .usage("npm create @qwikdev/astro@latest node ./my-project <options>");
       }
     ).argv as unknown as Args;
@@ -294,6 +300,8 @@ const createProject = async (args: string[]) => {
     const argv = parseArgs(args.length ? args : [defaultProjectName]);
 
     const it = argv.it || args.length === 0;
+
+    const dryRun = argv.dryRun;
 
     intro(`Let's create a ${bgBlue(" QwikDev/astro App ")} ✨`);
 
@@ -380,7 +388,9 @@ const createProject = async (args: string[]) => {
               initialValue: true
             })));
       if (force) {
-        await clearDir(outDir);
+        if (!dryRun) {
+          await clearDir(outDir);
+        }
       } else {
         log.error(`Directory "${outDir}" already exists.`);
         log.info(
@@ -391,10 +401,12 @@ const createProject = async (args: string[]) => {
       }
     }
 
-    if (!existsSync(outDir)) {
-      mkdirSync(outDir, { recursive: true });
+    if (!dryRun) {
+      if (!existsSync(outDir)) {
+        mkdirSync(outDir, { recursive: true });
+      }
+      cpSync(templatePath, outDir, { recursive: true });
     }
-    cpSync(templatePath, outDir, { recursive: true });
 
     const addCIWorkflow = argv.no
       ? false
@@ -406,7 +418,7 @@ const createProject = async (args: string[]) => {
             initialValue: true
           })));
 
-    if (addCIWorkflow) {
+    if (addCIWorkflow && !dryRun) {
       const starterCIPath = join(
         __dirname,
         "..",
@@ -432,7 +444,9 @@ const createProject = async (args: string[]) => {
     let ranInstall = false;
     if (typeof runInstall !== "symbol" && runInstall) {
       log.step("Installing dependencies...");
-      await installDependencies(projectNameAnswer as string);
+      if (!dryRun) {
+        await installDependencies(projectNameAnswer as string);
+      }
       ranInstall = true;
     }
 
@@ -455,13 +469,17 @@ const createProject = async (args: string[]) => {
         s.start("Git initializing...");
 
         try {
-          const res = [];
-          res.push(await $("git", ["init"], outDir).install);
-          res.push(await $("git", ["add", "-A"], outDir).install);
-          res.push(await $("git", ["commit", "-m", "Initial commit 🎉"], outDir).install);
+          if (!dryRun) {
+            const res = [];
+            res.push(await $("git", ["init"], outDir).install);
+            res.push(await $("git", ["add", "-A"], outDir).install);
+            res.push(
+              await $("git", ["commit", "-m", "Initial commit 🎉"], outDir).install
+            );
 
-          if (res.some((r) => r === false)) {
-            throw "";
+            if (res.some((r) => r === false)) {
+              throw "";
+            }
           }
 
           s.stop("Git initialized 🎲");
