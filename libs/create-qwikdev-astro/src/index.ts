@@ -164,6 +164,15 @@ export function panic(msg: string) {
   process.exit(1);
 }
 
+// Used from https://github.com/QwikDev/qwik/blob/main/packages/create-qwik/src/helpers/clearDir.ts
+export const clearDir = async (dir: string) => {
+  const files = await fs.promises.readdir(dir);
+
+  return await Promise.all(
+    files.map((pathToFile) => fs.promises.rm(join(dir, pathToFile), { recursive: true }))
+  );
+};
+
 export function panicCanceled() {
   panic("Operation canceled.");
 }
@@ -332,6 +341,27 @@ const createProject = async (args: string[]) => {
     const outDir: string = resolveAbsoluteDir((projectNameAnswer as string).trim());
 
     log.step(`Creating new project in ${bgBlue(` ${outDir} `)} ... 🐇`);
+
+    if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
+      const force =
+        argv.force ||
+        (await confirm({
+          message: `Directory "./${resolveRelativeDir(
+            outDir
+          )}" already exists and is not empty. What would you like to overwrite it?`,
+          initialValue: true
+        }));
+      if (force) {
+        await clearDir(outDir);
+      } else {
+        log.error(`Directory "${outDir}" already exists.`);
+        log.info(
+          `Please either remove this directory, choose another location or run the command again with '--force | -f' flag.`
+        );
+        cancel();
+        process.exit(1);
+      }
+    }
 
     if (!existsSync(outDir)) {
       mkdirSync(outDir, { recursive: true });
