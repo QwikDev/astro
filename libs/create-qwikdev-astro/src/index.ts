@@ -214,6 +214,8 @@ export type Args = {
   biome: boolean;
   git: boolean;
   ci: boolean;
+  yes: boolean;
+  no: boolean;
 };
 
 export function parseArgs(args: string[]): Args {
@@ -260,6 +262,18 @@ export function parseArgs(args: string[]): Args {
             type: "boolean",
             desc: "Add CI workflow"
           })
+          .option("yes", {
+            alias: "y",
+            default: false,
+            type: "boolean",
+            desc: "Skip all prompts by accepting defaults"
+          })
+          .option("no", {
+            alias: "n",
+            default: false,
+            type: "boolean",
+            desc: "Skip all prompts by declining defaults"
+          })
           .usage("npm create @qwikdev/astro@latest node ./my-project <options>");
       }
     ).argv as unknown as Args;
@@ -278,7 +292,7 @@ const createProject = async (args: string[]) => {
     const packageManager = getPackageManager();
 
     const projectNameAnswer =
-      argv.outDir !== defaultProjectName
+      argv.outDir !== defaultProjectName || argv.yes
         ? argv.outDir
         : (await text({
             message: `Where would you like to create your new project? ${gray(
@@ -295,7 +309,7 @@ const createProject = async (args: string[]) => {
     }
 
     const adapter =
-      argv.adapter ||
+      (argv.yes ? "node" : argv.no ? "deno" : argv.adapter) ||
       (await select({
         message: "Which adapter do you prefer?",
         options: [
@@ -314,21 +328,24 @@ const createProject = async (args: string[]) => {
       panicCanceled();
     }
 
-    const preferBiome = argv.biome
-      ? "1"
-      : await select({
-          message: "What is your favorite linter/formatter?",
-          options: [
-            {
-              value: "0",
-              label: "ESLint/Prettier"
-            },
-            {
-              value: "1",
-              label: "Biome"
-            }
-          ]
-        });
+    const preferBiome =
+      argv.biome || argv.no
+        ? "1"
+        : argv.yes
+          ? "0"
+          : await select({
+              message: "What is your favorite linter/formatter?",
+              options: [
+                {
+                  value: "0",
+                  label: "ESLint/Prettier"
+                },
+                {
+                  value: "1",
+                  label: "Biome"
+                }
+              ]
+            });
 
     if (typeof preferBiome === "symbol" || isCancel(preferBiome)) {
       panicCanceled();
@@ -343,14 +360,16 @@ const createProject = async (args: string[]) => {
     log.step(`Creating new project in ${bgBlue(` ${outDir} `)} ... 🐇`);
 
     if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
-      const force =
-        argv.force ||
-        (await confirm({
-          message: `Directory "./${resolveRelativeDir(
-            outDir
-          )}" already exists and is not empty. What would you like to overwrite it?`,
-          initialValue: true
-        }));
+      const force = argv.no
+        ? false
+        : argv.force ||
+          argv.yes ||
+          (await confirm({
+            message: `Directory "./${resolveRelativeDir(
+              outDir
+            )}" already exists and is not empty. What would you like to overwrite it?`,
+            initialValue: true
+          }));
       if (force) {
         await clearDir(outDir);
       } else {
@@ -368,12 +387,14 @@ const createProject = async (args: string[]) => {
     }
     cpSync(templatePath, outDir, { recursive: true });
 
-    const addCIWorkflow =
-      argv.ci ||
-      (await confirm({
-        message: "Would you like to add CI workflow?",
-        initialValue: true
-      }));
+    const addCIWorkflow = argv.no
+      ? false
+      : argv.ci ||
+        argv.yes ||
+        (await confirm({
+          message: "Would you like to add CI workflow?",
+          initialValue: true
+        }));
 
     if (addCIWorkflow) {
       const starterCIPath = join(
@@ -388,12 +409,14 @@ const createProject = async (args: string[]) => {
       cpSync(starterCIPath, projectCIPath, { force: true });
     }
 
-    const runInstall =
-      argv.install ||
-      (await confirm({
-        message: `Would you like to install ${packageManager} dependencies?`,
-        initialValue: true
-      }));
+    const runInstall = argv.no
+      ? false
+      : argv.install ||
+        argv.yes ||
+        (await confirm({
+          message: `Would you like to install ${packageManager} dependencies?`,
+          initialValue: true
+        }));
 
     let ranInstall = false;
     if (typeof runInstall !== "symbol" && runInstall) {
@@ -402,12 +425,14 @@ const createProject = async (args: string[]) => {
       ranInstall = true;
     }
 
-    const initGit =
-      argv.git ||
-      (await confirm({
-        message: "Initialize a new git repository?",
-        initialValue: true
-      }));
+    const initGit = argv.no
+      ? false
+      : argv.git ||
+        argv.yes ||
+        (await confirm({
+          message: "Initialize a new git repository?",
+          initialValue: true
+        }));
 
     if (initGit) {
       const s = spinner();
