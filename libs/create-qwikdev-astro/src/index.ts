@@ -3,6 +3,7 @@ import { cpSync, existsSync, mkdirSync } from "node:fs";
 import fs from "node:fs";
 import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
+import process from "node:process";
 import { fileURLToPath } from "node:url";
 import {
   cancel,
