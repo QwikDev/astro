@@ -317,20 +317,25 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
     }
 
     const adapter =
-      (config.no ? "deno" : config.yes || !it ? "node" : config.adapter) ||
-      (await select({
-        message: "Which adapter do you prefer?",
-        options: [
-          {
-            value: "node",
-            label: "Node"
-          },
-          {
-            value: "deno",
-            label: "Deno"
-          }
-        ]
-      }));
+      (config.no && !config.adapter
+        ? "deno"
+        : config.yes && !config.adapter
+          ? "node"
+          : config.adapter) ||
+      (it &&
+        (await select({
+          message: "Which adapter do you prefer?",
+          options: [
+            {
+              value: "node",
+              label: "Node"
+            },
+            {
+              value: "deno",
+              label: "Deno"
+            }
+          ]
+        })));
 
     if (typeof adapter === "symbol" || isCancel(adapter)) {
       panicCanceled();
@@ -368,17 +373,18 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
     log.step(`Creating new project in ${bgBlue(` ${outDir} `)} ... 🐇`);
 
     if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
-      const force = config.no
-        ? false
-        : config.force ||
-          config.yes ||
-          (it &&
-            (await confirm({
-              message: `Directory "./${resolveRelativeDir(
-                outDir
-              )}" already exists and is not empty. What would you like to overwrite it?`,
-              initialValue: true
-            })));
+      const force =
+        config.no && !config.force
+          ? false
+          : config.force ||
+            config.yes ||
+            (it &&
+              (await confirm({
+                message: `Directory "./${resolveRelativeDir(
+                  outDir
+                )}" already exists and is not empty. What would you like to overwrite it?`,
+                initialValue: true
+              })));
       if (force) {
         if (!dryRun) {
           await clearDir(outDir);
@@ -400,15 +406,16 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
       cpSync(templatePath, outDir, { recursive: true });
     }
 
-    const addCIWorkflow = config.no
-      ? false
-      : config.ci ||
-        config.yes ||
-        (it &&
-          (await confirm({
-            message: "Would you like to add CI workflow?",
-            initialValue: true
-          })));
+    const addCIWorkflow =
+      config.no && !config.ci
+        ? false
+        : config.ci ||
+          config.yes ||
+          (it &&
+            (await confirm({
+              message: "Would you like to add CI workflow?",
+              initialValue: true
+            })));
 
     if (addCIWorkflow && !dryRun) {
       const starterCIPath = join(
@@ -423,15 +430,16 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
       cpSync(starterCIPath, projectCIPath, { force: true });
     }
 
-    const runInstall = config.no
-      ? false
-      : config.install ||
-        config.yes ||
-        (it &&
-          (await confirm({
-            message: `Would you like to install ${packageManager} dependencies?`,
-            initialValue: true
-          })));
+    const runInstall =
+      config.no && !config.install
+        ? false
+        : config.install ||
+          config.yes ||
+          (it &&
+            (await confirm({
+              message: `Would you like to install ${packageManager} dependencies?`,
+              initialValue: true
+            })));
 
     let ranInstall = false;
     if (typeof runInstall !== "symbol" && runInstall) {
@@ -442,15 +450,16 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
       ranInstall = true;
     }
 
-    const initGit = config.no
-      ? false
-      : config.git ||
-        config.yes ||
-        (it &&
-          (await confirm({
-            message: "Initialize a new git repository?",
-            initialValue: true
-          })));
+    const initGit =
+      config.no && !config.git
+        ? false
+        : config.git ||
+          config.yes ||
+          (it &&
+            (await confirm({
+              message: "Initialize a new git repository?",
+              initialValue: true
+            })));
 
     if (initGit) {
       const s = spinner();
