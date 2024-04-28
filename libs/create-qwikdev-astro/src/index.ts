@@ -288,7 +288,8 @@ export function parseArgs(args: string[]): ProjectConfig {
           })
           .usage("npm create @qwikdev/astro@latest node ./my-project <options>");
       }
-    ).argv as unknown as ProjectConfig;
+    )
+    .alias("h", "help").argv as unknown as ProjectConfig;
 
   return parsedArgs;
 }
