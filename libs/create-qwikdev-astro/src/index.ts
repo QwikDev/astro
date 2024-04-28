@@ -206,8 +206,8 @@ export const installDependencies = async (cwd: string) => {
   await $pm("install", cwd);
 };
 
-export type Args = {
-  outDir: string;
+export type ProjectConfig = {
+  project: string;
   adapter?: "deno" | "node";
   install: boolean;
   force: boolean;
@@ -220,22 +220,22 @@ export type Args = {
   dryRun: boolean;
 };
 
-export function parseArgs(args: string[]): Args {
+export function parseArgs(args: string[]): ProjectConfig {
   const parsedArgs = yargs(args)
     .strict()
     .command(
-      "* <outDir> [adapter]",
+      "* <project> [adapter]",
       "Create a new project powered by QwikDev/astro",
       (yargs) => {
         return yargs
+          .positional("project", {
+            type: "string",
+            desc: "Directory of the project"
+          })
           .positional("adapter", {
             type: "string",
             desc: "Server adapter",
             choices: ["deno", "node"]
-          })
-          .positional("outDir", {
-            type: "string",
-            desc: "Directory of the project"
           })
           .option("force", {
             alias: "f",
@@ -288,44 +288,35 @@ export function parseArgs(args: string[]): Args {
           })
           .usage("npm create @qwikdev/astro@latest node ./my-project <options>");
       }
-    ).argv as unknown as Args;
+    ).argv as unknown as ProjectConfig;
 
   return parsedArgs;
 }
 
-const createProject = async (args: string[]) => {
+export async function $createProject(config: ProjectConfig, defaultProject: string) {
   try {
-    const defaultProjectName = "./qwik-astro-app";
-
-    const argv = parseArgs(args.length ? args : [defaultProjectName]);
-
-    const it = argv.it || args.length === 0;
-
-    const dryRun = argv.dryRun;
+    const { it, dryRun } = config;
 
     intro(`Let's create a ${bgBlue(" QwikDev/astro App ")} ✨`);
 
     const packageManager = getPackageManager();
 
-    const projectNameAnswer =
-      argv.outDir !== defaultProjectName || argv.yes || !it
-        ? argv.outDir
+    const projectAnswer =
+      config.project !== defaultProject || config.yes || !it
+        ? config.project
         : (await text({
             message: `Where would you like to create your new project? ${gray(
               `(Use '.' or './' for current directory)`
             )}`,
-            placeholder: defaultProjectName
-          })) || defaultProjectName;
+            placeholder: defaultProject
+          })) || defaultProject;
 
-    if (
-      typeof projectNameAnswer === "symbol" ||
-      isCancel([projectNameAnswer, packageManager])
-    ) {
+    if (typeof projectAnswer === "symbol" || isCancel([projectAnswer, packageManager])) {
       panicCanceled();
     }
 
     const adapter =
-      (argv.no ? "deno" : argv.yes || !it ? "node" : argv.adapter) ||
+      (config.no ? "deno" : config.yes || !it ? "node" : config.adapter) ||
       (await select({
         message: "Which adapter do you prefer?",
         options: [
@@ -345,9 +336,9 @@ const createProject = async (args: string[]) => {
     }
 
     const preferBiome =
-      argv.biome || argv.no
+      config.biome || config.no
         ? "1"
-        : argv.yes || !it
+        : config.yes || !it
           ? "0"
           : await select({
               message: "What is your favorite linter/formatter?",
@@ -371,15 +362,15 @@ const createProject = async (args: string[]) => {
       preferBiome === "0" ? "eslint+prettier" : "biome"
     }`;
     const templatePath = path.join(__dirname, "..", "stubs", "templates", kit);
-    const outDir: string = resolveAbsoluteDir((projectNameAnswer as string).trim());
+    const outDir: string = resolveAbsoluteDir((projectAnswer as string).trim());
 
     log.step(`Creating new project in ${bgBlue(` ${outDir} `)} ... 🐇`);
 
     if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
-      const force = argv.no
+      const force = config.no
         ? false
-        : argv.force ||
-          argv.yes ||
+        : config.force ||
+          config.yes ||
           (it &&
             (await confirm({
               message: `Directory "./${resolveRelativeDir(
@@ -408,10 +399,10 @@ const createProject = async (args: string[]) => {
       cpSync(templatePath, outDir, { recursive: true });
     }
 
-    const addCIWorkflow = argv.no
+    const addCIWorkflow = config.no
       ? false
-      : argv.ci ||
-        argv.yes ||
+      : config.ci ||
+        config.yes ||
         (it &&
           (await confirm({
             message: "Would you like to add CI workflow?",
@@ -431,10 +422,10 @@ const createProject = async (args: string[]) => {
       cpSync(starterCIPath, projectCIPath, { force: true });
     }
 
-    const runInstall = argv.no
+    const runInstall = config.no
       ? false
-      : argv.install ||
-        argv.yes ||
+      : config.install ||
+        config.yes ||
         (it &&
           (await confirm({
             message: `Would you like to install ${packageManager} dependencies?`,
@@ -445,15 +436,15 @@ const createProject = async (args: string[]) => {
     if (typeof runInstall !== "symbol" && runInstall) {
       log.step("Installing dependencies...");
       if (!dryRun) {
-        await installDependencies(projectNameAnswer as string);
+        await installDependencies(projectAnswer as string);
       }
       ranInstall = true;
     }
 
-    const initGit = argv.no
+    const initGit = config.no
       ? false
-      : argv.git ||
-        argv.yes ||
+      : config.git ||
+        config.yes ||
         (it &&
           (await confirm({
             message: "Initialize a new git repository?",
@@ -523,12 +514,20 @@ const createProject = async (args: string[]) => {
     console.error("An error occurred during QwikDev/astro project creation:", err);
     process.exit(1);
   }
-};
+}
+
+/** @param args Pass here process.argv.slice(2) */
+export async function $create(...args: string[]) {
+  const defaultProject = "./qwik-astro-app";
+  const projectConfig = parseArgs(args.length ? args : [defaultProject]);
+  projectConfig.it = projectConfig.it || args.length === 0;
+
+  $createProject(projectConfig, defaultProject);
+}
 
 export default async function () {
   try {
-    const args = process.argv.slice(2);
-    await createProject(args);
+    await $create(...process.argv.slice(2));
   } catch (err: any) {
     panic(err.message || err);
   }
