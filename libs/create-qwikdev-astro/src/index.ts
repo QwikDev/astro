@@ -331,31 +331,18 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
       panicCanceled();
     }
 
-    const preferBiome = config.biome
-      ? "1"
-      : !config.it
-        ? "0"
-        : await select({
-            message: "What is your favorite linter/formatter?",
-            options: [
-              {
-                value: "0",
-                label: "ESLint/Prettier"
-              },
-              {
-                value: "1",
-                label: "Biome"
-              }
-            ]
-          });
+    const preferBiome =
+      config.no && !config.biome
+        ? false
+        : (config.yes && config.biome !== false) ||
+          config.biome ||
+          (config.it &&
+            (await confirm({
+              message: "Would you prefer Biome over ESLint/Prettier?",
+              initialValue: true
+            })));
 
-    if (typeof preferBiome === "symbol" || isCancel(preferBiome)) {
-      panicCanceled();
-    }
-
-    const kit = `${adapter as string}-${
-      preferBiome === "0" ? "eslint+prettier" : "biome"
-    }`;
+    const kit = `${adapter as string}-${preferBiome ? "biome" : "eslint+prettier"}`;
     const templatePath = path.join(__dirname, "..", "stubs", "templates", kit);
     const outDir: string = resolveAbsoluteDir((projectAnswer as string).trim());
 
