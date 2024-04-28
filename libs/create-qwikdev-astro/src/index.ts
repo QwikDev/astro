@@ -331,6 +331,8 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
       panicCanceled();
     }
 
+    let starterKit = adapter as string;
+
     const preferBiome =
       config.no && !config.biome
         ? false
@@ -342,8 +344,11 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
               initialValue: true
             })));
 
-    const kit = `${adapter as string}-${preferBiome ? "biome" : "eslint+prettier"}`;
-    const templatePath = path.join(__dirname, "..", "stubs", "templates", kit);
+    if (preferBiome) {
+      starterKit += "-biome";
+    }
+
+    const templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
     const outDir: string = resolveAbsoluteDir((projectAnswer as string).trim());
 
     log.step(`Creating new project in ${bgBlue(` ${outDir} `)} ... 🐇`);
