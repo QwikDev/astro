@@ -296,14 +296,12 @@ export function parseArgs(args: string[]): ProjectConfig {
 
 export async function $createProject(config: ProjectConfig, defaultProject: string) {
   try {
-    const { it, dryRun } = config;
-
     intro(`Let's create a ${bgBlue(" QwikDev/astro App ")} ✨`);
 
     const packageManager = getPackageManager();
 
     const projectAnswer =
-      config.project !== defaultProject || config.yes || !it
+      config.project !== defaultProject || config.yes || !config.it
         ? config.project
         : (await text({
             message: `Where would you like to create your new project? ${gray(
@@ -322,7 +320,7 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
         : config.yes && !config.adapter
           ? "node"
           : config.adapter) ||
-      (it &&
+      (config.it &&
         (await select({
           message: "Which adapter do you prefer?",
           options: [
@@ -344,7 +342,7 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
     const preferBiome =
       config.biome || config.no
         ? "1"
-        : config.yes || !it
+        : config.yes || !config.it
           ? "0"
           : await select({
               message: "What is your favorite linter/formatter?",
@@ -378,7 +376,7 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
           ? false
           : config.force ||
             config.yes ||
-            (it &&
+            (config.it &&
               (await confirm({
                 message: `Directory "./${resolveRelativeDir(
                   outDir
@@ -386,7 +384,7 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
                 initialValue: true
               })));
       if (force) {
-        if (!dryRun) {
+        if (!config.dryRun) {
           await clearDir(outDir);
         }
       } else {
@@ -399,7 +397,7 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
       }
     }
 
-    if (!dryRun) {
+    if (!config.dryRun) {
       if (!existsSync(outDir)) {
         mkdirSync(outDir, { recursive: true });
       }
@@ -411,13 +409,13 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
         ? false
         : config.ci ||
           config.yes ||
-          (it &&
+          (config.it &&
             (await confirm({
               message: "Would you like to add CI workflow?",
               initialValue: true
             })));
 
-    if (addCIWorkflow && !dryRun) {
+    if (addCIWorkflow && !config.dryRun) {
       const starterCIPath = join(
         __dirname,
         "..",
@@ -435,7 +433,7 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
         ? false
         : config.install ||
           config.yes ||
-          (it &&
+          (config.it &&
             (await confirm({
               message: `Would you like to install ${packageManager} dependencies?`,
               initialValue: true
@@ -444,7 +442,7 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
     let ranInstall = false;
     if (typeof runInstall !== "symbol" && runInstall) {
       log.step("Installing dependencies...");
-      if (!dryRun) {
+      if (!config.dryRun) {
         await installDependencies(projectAnswer as string);
       }
       ranInstall = true;
@@ -455,7 +453,7 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
         ? false
         : config.git ||
           config.yes ||
-          (it &&
+          (config.it &&
             (await confirm({
               message: "Initialize a new git repository?",
               initialValue: true
@@ -470,7 +468,7 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
         s.start("Git initializing...");
 
         try {
-          if (!dryRun) {
+          if (!config.dryRun) {
             const res = [];
             res.push(await $("git", ["init"], outDir).install);
             res.push(await $("git", ["add", "-A"], outDir).install);
