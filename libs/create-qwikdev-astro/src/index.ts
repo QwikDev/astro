@@ -209,11 +209,11 @@ export const installDependencies = async (cwd: string) => {
 export type ProjectConfig = {
   project: string;
   adapter?: "deno" | "node";
-  install: boolean;
-  force: boolean;
-  biome: boolean;
-  git: boolean;
-  ci: boolean;
+  force?: boolean;
+  install?: boolean;
+  biome?: boolean;
+  git?: boolean;
+  ci?: boolean;
   yes: boolean;
   no: boolean;
   it: boolean;
@@ -240,27 +240,22 @@ export function parseArgs(args: string[]): ProjectConfig {
           .option("force", {
             alias: "f",
             type: "boolean",
-            default: false,
             desc: "Overwrite target directory if it exists"
           })
           .option("install", {
             alias: "i",
-            default: false,
             type: "boolean",
             desc: "Install dependencies"
           })
           .option("biome", {
-            default: false,
             type: "boolean",
             desc: "Prefer Biome to ESLint/Prettier"
           })
           .option("git", {
-            default: false,
             type: "boolean",
             desc: "Initialize Git repository"
           })
           .option("ci", {
-            default: false,
             type: "boolean",
             desc: "Add CI workflow"
           })
@@ -301,7 +296,7 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
     const packageManager = getPackageManager();
 
     const projectAnswer =
-      config.project !== defaultProject || config.yes || !config.it
+      config.project !== defaultProject || !config.it
         ? config.project
         : (await text({
             message: `Where would you like to create your new project? ${gray(
@@ -315,11 +310,7 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
     }
 
     const adapter =
-      (config.no && !config.adapter
-        ? "deno"
-        : config.yes && !config.adapter
-          ? "node"
-          : config.adapter) ||
+      config.adapter ||
       (config.it &&
         (await select({
           message: "Which adapter do you prefer?",
@@ -333,30 +324,30 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
               label: "Deno"
             }
           ]
-        })));
+        }))) ||
+      "node";
 
     if (typeof adapter === "symbol" || isCancel(adapter)) {
       panicCanceled();
     }
 
-    const preferBiome =
-      config.biome || config.no
-        ? "1"
-        : config.yes || !config.it
-          ? "0"
-          : await select({
-              message: "What is your favorite linter/formatter?",
-              options: [
-                {
-                  value: "0",
-                  label: "ESLint/Prettier"
-                },
-                {
-                  value: "1",
-                  label: "Biome"
-                }
-              ]
-            });
+    const preferBiome = config.biome
+      ? "1"
+      : !config.it
+        ? "0"
+        : await select({
+            message: "What is your favorite linter/formatter?",
+            options: [
+              {
+                value: "0",
+                label: "ESLint/Prettier"
+              },
+              {
+                value: "1",
+                label: "Biome"
+              }
+            ]
+          });
 
     if (typeof preferBiome === "symbol" || isCancel(preferBiome)) {
       panicCanceled();
@@ -374,8 +365,8 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
       const force =
         config.no && !config.force
           ? false
-          : config.force ||
-            config.yes ||
+          : (config.yes && config.force !== false) ||
+            config.force ||
             (config.it &&
               (await confirm({
                 message: `Directory "./${resolveRelativeDir(
@@ -407,8 +398,8 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
     const addCIWorkflow =
       config.no && !config.ci
         ? false
-        : config.ci ||
-          config.yes ||
+        : (config.yes && config.ci !== false) ||
+          config.ci ||
           (config.it &&
             (await confirm({
               message: "Would you like to add CI workflow?",
@@ -431,8 +422,8 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
     const runInstall =
       config.no && !config.install
         ? false
-        : config.install ||
-          config.yes ||
+        : (config.yes && config.install !== false) ||
+          config.install ||
           (config.it &&
             (await confirm({
               message: `Would you like to install ${packageManager} dependencies?`,
@@ -451,8 +442,8 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
     const initGit =
       config.no && !config.git
         ? false
-        : config.git ||
-          config.yes ||
+        : (config.yes && config.git !== false) ||
+          config.git ||
           (config.it &&
             (await confirm({
               message: "Initialize a new git repository?",
