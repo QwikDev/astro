@@ -289,7 +289,7 @@ export function parseArgs(args: string[]): ProjectConfig {
   return parsedArgs;
 }
 
-export async function $createProject(config: ProjectConfig, defaultProject: string) {
+export async function createProject(config: ProjectConfig, defaultProject: string) {
   try {
     intro(`Let's create a ${bgBlue(" QwikDev/astro App ")} ✨`);
 
@@ -503,17 +503,17 @@ export async function $createProject(config: ProjectConfig, defaultProject: stri
 }
 
 /** @param args Pass here process.argv.slice(2) */
-export async function $create(...args: string[]) {
+export async function runCreate(...args: string[]) {
   const defaultProject = "./qwik-astro-app";
   const projectConfig = parseArgs(args.length ? args : [defaultProject]);
   projectConfig.it = projectConfig.it || args.length === 0;
 
-  $createProject(projectConfig, defaultProject);
+  createProject(projectConfig, defaultProject);
 }
 
 export default async function () {
   try {
-    await $create(...process.argv.slice(2));
+    await runCreate(...process.argv.slice(2));
   } catch (err: any) {
     panic(err.message || err);
   }
