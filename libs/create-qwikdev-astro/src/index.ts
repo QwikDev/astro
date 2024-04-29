@@ -453,7 +453,6 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
         __dirname,
         "..",
         "stubs",
-        ".github",
         "workflows",
         `${
           ["npm", "yarn", "pnpm", "bun"].includes(packageManager) ? packageManager : "npm"
