@@ -80,18 +80,6 @@ export function $(cmd: string, args: string[], cwd: string) {
   return { abort, install };
 }
 
-export function getPackageManager() {
-  return detectPackageManager()?.name || "npm";
-}
-
-export const isPackageManagerInstalled = (packageManager: string) => {
-  return new Promise((resolve) => {
-    exec(`${packageManager} --version`, (error, _, stderr) => {
-      resolve(!(error || stderr));
-    });
-  });
-};
-
 // Used from https://github.com/sindresorhus/is-unicode-supported/blob/main/index.js
 export function isUnicodeSupported() {
   if (process.platform !== "win32") {
@@ -172,6 +160,51 @@ export const clearDir = async (dir: string) => {
     files.map((pathToFile) => fs.promises.rm(join(dir, pathToFile), { recursive: true }))
   );
 };
+
+export function fileGetContents(file: string): string {
+  if (!fs.existsSync(file)) {
+    throw new Error(`File ${file} not found`);
+  }
+  return fs.readFileSync(file, { encoding: "utf8" }).toString();
+}
+
+export function filePutContents(file: string, contents: string) {
+  return fs.writeFileSync(file, contents, { encoding: "utf8" });
+}
+
+export function fileReplaceContents(
+  file: string,
+  search: string | RegExp,
+  replace: string
+) {
+  let contents = fileGetContents(file);
+  contents = contents.replace(search, replace);
+  filePutContents(file, contents);
+}
+
+export function getPackageManager() {
+  return detectPackageManager()?.name || "npm";
+}
+
+export const isPackageManagerInstalled = (packageManager: string) => {
+  return new Promise((resolve) => {
+    exec(`${packageManager} --version`, (error, _, stderr) => {
+      resolve(!(error || stderr));
+    });
+  });
+};
+
+export function pmRunCommand(): string {
+  const pm = getPackageManager();
+  if (pm === "npm" || pm === "bun") {
+    return `${pm} run`;
+  }
+  return pm;
+}
+
+export function replacePackageJsonRunCommand(dir: string) {
+  fileReplaceContents(join(dir, "package.json"), /npm run/g, pmRunCommand());
+}
 
 export function panicCanceled() {
   panic("Operation canceled.");
@@ -399,6 +432,11 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
       cpSync(templatePath, outDir, { recursive: true });
     }
 
+    if (packageManager !== "npm") {
+      log.info(`Replacing 'npm run' by '${pmRunCommand()}' in package.json...`);
+      replacePackageJsonRunCommand(outDir);
+    }
+
     const addCIWorkflow =
       config.no && !config.ci
         ? false
@@ -415,9 +453,10 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
         __dirname,
         "..",
         "stubs",
-        ".github",
         "workflows",
-        "ci.yml"
+        `${
+          ["npm", "yarn", "pnpm", "bun"].includes(packageManager) ? packageManager : "npm"
+        }-ci.yml`
       );
       const projectCIPath = join(outDir, ".github", "workflows", "ci.yml");
       cpSync(starterCIPath, projectCIPath, { force: true });

@@ -1,0 +1,33 @@
+name: CI
+
+permissions:
+  contents: read
+
+on: ["push", "pull_request"]
+
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        bun: [1.1]
+        experimental: [false]
+    name: 👷 CI @qwikdev/astro Bun-${{ matrix.bun }} under ${{ matrix.os }}
+
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      - name: 🎉 Setup Bun.sh
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ matrix.bun }}
+
+      - name: ✨ Install dependencies
+        run: bun install
+
+      - name: ✅ Check code style
+        run: bun check
