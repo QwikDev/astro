@@ -2,7 +2,7 @@
   "name": "@qwikdev/create-astro",
   "type": "module",
   "license": "MIT",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Interactive CLI for create @QwikDev/astro projects.",
   "scripts": {
     "build": "rimraf dist && tsc --build"
@@ -35,7 +35,10 @@
     ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
-  "files": ["dist", "stubs"],
+  "files": [
+    "dist",
+    "stubs"
+  ],
   "bin": "./dist/cli.js",
   "keywords": [
     "astro-integration",
