@@ -1,5 +1,11 @@
 # @qwikdev/create-astro
 
+## 0.0.4
+
+### Patch Changes
+
+- cbca1d3: 🚸 Improve user experience
+
 ## 0.0.3
 
 ### Patch Changes
