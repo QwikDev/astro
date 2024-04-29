@@ -1,10 +1,9 @@
-#!/usr/bin/env node
-
 import { type ChildProcess, exec, spawn } from "node:child_process";
 import { cpSync, existsSync, mkdirSync } from "node:fs";
 import fs from "node:fs";
 import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
+import process from "node:process";
 import { fileURLToPath } from "node:url";
 import {
   cancel,
@@ -18,6 +17,7 @@ import {
   text
 } from "@clack/prompts";
 import {
+  bgBlue,
   bgMagenta,
   bold,
   cyan,
@@ -29,6 +29,7 @@ import {
   white
 } from "kleur/colors";
 import detectPackageManager from "which-pm-runs";
+import yargs from "yargs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -92,7 +93,7 @@ export const isPackageManagerInstalled = (packageManager: string) => {
 };
 
 // Used from https://github.com/sindresorhus/is-unicode-supported/blob/main/index.js
-export default function isUnicodeSupported() {
+export function isUnicodeSupported() {
   if (process.platform !== "win32") {
     return process.env.TERM !== "linux"; // Linux console (kernel)
   }
@@ -157,6 +158,25 @@ export const note = (message = "", title = "") => {
   );
 };
 
+// Used from https://github.com/QwikDev/qwik/blob/main/packages/qwik/src/cli/utils/utils.ts
+export function panic(msg: string) {
+  console.error(`\n❌ ${red(msg)}\n`);
+  process.exit(1);
+}
+
+// Used from https://github.com/QwikDev/qwik/blob/main/packages/create-qwik/src/helpers/clearDir.ts
+export const clearDir = async (dir: string) => {
+  const files = await fs.promises.readdir(dir);
+
+  return await Promise.all(
+    files.map((pathToFile) => fs.promises.rm(join(dir, pathToFile), { recursive: true }))
+  );
+};
+
+export function panicCanceled() {
+  panic("Operation canceled.");
+}
+
 export const $pm = async (
   args: string | string[],
   cwd = process.cwd(),
@@ -186,82 +206,211 @@ export const installDependencies = async (cwd: string) => {
   await $pm("install", cwd);
 };
 
-const createProject = async () => {
+export type ProjectConfig = {
+  project: string;
+  adapter?: "deno" | "node";
+  force?: boolean;
+  install?: boolean;
+  biome?: boolean;
+  git?: boolean;
+  ci?: boolean;
+  yes: boolean;
+  no: boolean;
+  it: boolean;
+  dryRun: boolean;
+};
+
+export function parseArgs(args: string[]): ProjectConfig {
+  const parsedArgs = yargs(args)
+    .strict()
+    .command(
+      "* <project> [adapter]",
+      "Create a new project powered by QwikDev/astro",
+      (yargs) => {
+        return yargs
+          .positional("project", {
+            type: "string",
+            desc: "Directory of the project"
+          })
+          .positional("adapter", {
+            type: "string",
+            desc: "Server adapter",
+            choices: ["deno", "node"]
+          })
+          .option("force", {
+            alias: "f",
+            type: "boolean",
+            desc: "Overwrite target directory if it exists"
+          })
+          .option("install", {
+            alias: "i",
+            type: "boolean",
+            desc: "Install dependencies"
+          })
+          .option("biome", {
+            type: "boolean",
+            desc: "Prefer Biome to ESLint/Prettier"
+          })
+          .option("git", {
+            type: "boolean",
+            desc: "Initialize Git repository"
+          })
+          .option("ci", {
+            type: "boolean",
+            desc: "Add CI workflow"
+          })
+          .option("yes", {
+            alias: "y",
+            default: false,
+            type: "boolean",
+            desc: "Skip all prompts by accepting defaults"
+          })
+          .option("no", {
+            alias: "n",
+            default: false,
+            type: "boolean",
+            desc: "Skip all prompts by declining defaults"
+          })
+          .option("it", {
+            default: false,
+            type: "boolean",
+            desc: "Execute actions interactively"
+          })
+          .option("dryRun", {
+            default: false,
+            type: "boolean",
+            desc: "Walk through steps without executing"
+          })
+          .example(
+            "npm create @qwikdev/astro@latest",
+            "Create a project in interactive mode"
+          )
+          .example(
+            "npm create @qwikdev/astro@latest ./qwik-astro-app node",
+            "Create a project in commande mode"
+          )
+          .example(
+            "npm create @qwikdev/astro@latest ./qwik-astro-app node --it",
+            "Create a project in interactive command mode"
+          )
+          .usage("npm create @qwikdev/astro [project] [adapter] [...options]");
+      }
+    )
+    .alias("h", "help").argv as unknown as ProjectConfig;
+
+  return parsedArgs;
+}
+
+export async function createProject(config: ProjectConfig, defaultProject: string) {
   try {
-    intro("QwikDev/astro project creation");
+    intro(`Let's create a ${bgBlue(" QwikDev/astro App ")} ✨`);
 
     const packageManager = getPackageManager();
 
-    const defaultProjectName = "./qwik-astro-app";
-    const projectNameAnswer = await text({
-      message: `Where would you like to create your new project? ${gray(
-        `(Use '.' or './' for current directory)`
-      )}`,
-      placeholder: defaultProjectName,
-      validate(value) {
-        if (value.length === 0) {
-          return "Value is required!";
+    const projectAnswer =
+      config.project !== defaultProject || !config.it
+        ? config.project
+        : (await text({
+            message: `Where would you like to create your new project? ${gray(
+              `(Use '.' or './' for current directory)`
+            )}`,
+            placeholder: defaultProject
+          })) || defaultProject;
+
+    if (typeof projectAnswer === "symbol" || isCancel([projectAnswer, packageManager])) {
+      panicCanceled();
+    }
+
+    const adapter =
+      config.adapter ||
+      (config.it &&
+        (await select({
+          message: "Which adapter do you prefer?",
+          options: [
+            {
+              value: "node",
+              label: "Node"
+            },
+            {
+              value: "deno",
+              label: "Deno"
+            }
+          ]
+        }))) ||
+      "node";
+
+    if (typeof adapter === "symbol" || isCancel(adapter)) {
+      panicCanceled();
+    }
+
+    let starterKit = adapter as string;
+
+    const preferBiome =
+      config.no && !config.biome
+        ? false
+        : (config.yes && config.biome !== false) ||
+          config.biome ||
+          (config.it &&
+            (await confirm({
+              message: "Would you prefer Biome over ESLint/Prettier?",
+              initialValue: true
+            })));
+
+    if (preferBiome) {
+      starterKit += "-biome";
+    }
+
+    const templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
+    const outDir: string = resolveAbsoluteDir((projectAnswer as string).trim());
+
+    log.step(`Creating new project in ${bgBlue(` ${outDir} `)} ... 🐇`);
+
+    if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
+      const force =
+        config.no && !config.force
+          ? false
+          : (config.yes && config.force !== false) ||
+            config.force ||
+            (config.it &&
+              (await confirm({
+                message: `Directory "./${resolveRelativeDir(
+                  outDir
+                )}" already exists and is not empty. What would you like to overwrite it?`,
+                initialValue: true
+              })));
+      if (force) {
+        if (!config.dryRun) {
+          await clearDir(outDir);
         }
+      } else {
+        log.error(`Directory "${outDir}" already exists.`);
+        log.info(
+          `Please either remove this directory, choose another location or run the command again with '--force | -f' flag.`
+        );
+        cancel();
+        process.exit(1);
       }
-    });
-
-    if (typeof projectNameAnswer === "symbol") {
-      cancel("Operation canceled.");
-      return process.exit(0);
     }
 
-    if (isCancel([projectNameAnswer, packageManager])) {
-      cancel("Operation canceled.");
-      process.exit(0);
+    if (!config.dryRun) {
+      if (!existsSync(outDir)) {
+        mkdirSync(outDir, { recursive: true });
+      }
+      cpSync(templatePath, outDir, { recursive: true });
     }
 
-    const adapter = await select({
-      message: "Which adapter do you prefer?",
-      options: [
-        {
-          value: "node",
-          label: "Node"
-        },
-        {
-          value: "deno",
-          label: "Deno"
-        }
-      ]
-    });
+    const addCIWorkflow =
+      config.no && !config.ci
+        ? false
+        : (config.yes && config.ci !== false) ||
+          config.ci ||
+          (config.it &&
+            (await confirm({
+              message: "Would you like to add CI workflow?",
+              initialValue: true
+            })));
 
-    const favoriteLinterFormatter = await select({
-      message: "What is your favorite linter/formatter?",
-      options: [
-        {
-          value: "0",
-          label: "ESLint/Prettier"
-        },
-        {
-          value: "1",
-          label: "Biome"
-        }
-      ]
-    });
-
-    log.step("Creating project directories and copying files...");
-
-    const kit = `${adapter}-${
-      favoriteLinterFormatter === "0" ? "eslint+prettier" : "biome"
-    }`;
-    const templatePath = path.join(__dirname, "..", "stubs", "templates", kit);
-    const outDir: string = resolveAbsoluteDir(projectNameAnswer.trim());
-
-    if (!existsSync(outDir)) {
-      mkdirSync(outDir, { recursive: true });
-    }
-    cpSync(templatePath, outDir, { recursive: true });
-
-    const addCIWorkflow = await confirm({
-      message: "Would you like to add CI workflow?",
-      initialValue: true
-    });
-
-    if (addCIWorkflow) {
+    if (addCIWorkflow && !config.dryRun) {
       const starterCIPath = join(
         __dirname,
         "..",
@@ -274,24 +423,38 @@ const createProject = async () => {
       cpSync(starterCIPath, projectCIPath, { force: true });
     }
 
-    const runInstall = await confirm({
-      message: `Would you like to install ${packageManager} dependencies?`,
-      initialValue: true
-    });
+    const runInstall =
+      config.no && !config.install
+        ? false
+        : (config.yes && config.install !== false) ||
+          config.install ||
+          (config.it &&
+            (await confirm({
+              message: `Would you like to install ${packageManager} dependencies?`,
+              initialValue: true
+            })));
 
     let ranInstall = false;
     if (typeof runInstall !== "symbol" && runInstall) {
       log.step("Installing dependencies...");
-      await installDependencies(projectNameAnswer);
+      if (!config.dryRun) {
+        await installDependencies(projectAnswer as string);
+      }
       ranInstall = true;
     }
 
-    const gitInitAnswer = await confirm({
-      message: "Initialize a new git repository?",
-      initialValue: true
-    });
+    const initGit =
+      config.no && !config.git
+        ? false
+        : (config.yes && config.git !== false) ||
+          config.git ||
+          (config.it &&
+            (await confirm({
+              message: "Initialize a new git repository?",
+              initialValue: true
+            })));
 
-    if (gitInitAnswer) {
+    if (initGit) {
       const s = spinner();
 
       if (fs.existsSync(join(outDir, ".git"))) {
@@ -300,16 +463,20 @@ const createProject = async () => {
         s.start("Git initializing...");
 
         try {
-          const res = [];
-          res.push(await $("git", ["init"], outDir).install);
-          res.push(await $("git", ["add", "-A"], outDir).install);
-          res.push(await $("git", ["commit", "-m", "Initial commit 🎉"], outDir).install);
+          if (!config.dryRun) {
+            const res = [];
+            res.push(await $("git", ["init"], outDir).install);
+            res.push(await $("git", ["add", "-A"], outDir).install);
+            res.push(
+              await $("git", ["commit", "-m", "Initial commit 🎉"], outDir).install
+            );
 
-          if (res.some((r) => r === false)) {
-            throw "";
+            if (res.some((r) => r === false)) {
+              throw "";
+            }
           }
 
-          s.stop("Git initialized ✨");
+          s.stop("Git initialized 🎲");
         } catch (e) {
           s.stop("Git failed to initialize");
           log.error(
@@ -350,10 +517,21 @@ const createProject = async () => {
     console.error("An error occurred during QwikDev/astro project creation:", err);
     process.exit(1);
   }
-};
-
-async function main() {
-  await createProject();
 }
 
-main().catch(console.error);
+/** @param args Pass here process.argv.slice(2) */
+export async function runCreate(...args: string[]) {
+  const defaultProject = "./qwik-astro-app";
+  const projectConfig = parseArgs(args.length ? args : [defaultProject]);
+  projectConfig.it = projectConfig.it || args.length === 0;
+
+  createProject(projectConfig, defaultProject);
+}
+
+export default async function () {
+  try {
+    await runCreate(...process.argv.slice(2));
+  } catch (err: any) {
+    panic(err.message || err);
+  }
+}
