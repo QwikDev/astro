@@ -1,5 +1,11 @@
 # @qwikdev/create-astro
 
+## 0.0.5
+
+### Patch Changes
+
+- efff9da: 🚸 Adapt the CI and the package.json file to the dependency manager used
+
 ## 0.0.4
 
 ### Patch Changes
