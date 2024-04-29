@@ -281,7 +281,19 @@ export function parseArgs(args: string[]): ProjectConfig {
             type: "boolean",
             desc: "Walk through steps without executing"
           })
-          .usage("npm create @qwikdev/astro@latest node ./my-project <options>");
+          .example(
+            "npm create @qwikdev/astro@latest",
+            "Create a project in interactive mode"
+          )
+          .example(
+            "npm create @qwikdev/astro@latest ./qwik-astro-app node",
+            "Create a project in commande mode"
+          )
+          .example(
+            "npm create @qwikdev/astro@latest ./qwik-astro-app node --it",
+            "Create a project in interactive command mode"
+          )
+          .usage("npm create @qwikdev/astro [project] [adapter] [...options]");
       }
     )
     .alias("h", "help").argv as unknown as ProjectConfig;
