@@ -29,6 +29,7 @@ jobs:
       - name: ✨ Install dependencies
         run: |
           corepack enable
-          pnpm install
+          yarn install
+
       - name: ✅ Check code style
-        run: pnpm check
+        run: yarn check

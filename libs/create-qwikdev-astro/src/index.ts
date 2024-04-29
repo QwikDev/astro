@@ -455,7 +455,9 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
         "stubs",
         ".github",
         "workflows",
-        "ci.yml"
+        `${
+          ["npm", "yarn", "pnpm", "bun"].includes(packageManager) ? packageManager : "npm"
+        }-ci.yml`
       );
       const projectCIPath = join(outDir, ".github", "workflows", "ci.yml");
       cpSync(starterCIPath, projectCIPath, { force: true });
