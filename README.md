@@ -401,7 +401,7 @@ There's also a `qwik-astro` channel in the builder.io discord to discuss API cha
 ### Maintainers
 
 - [Jack Shelton](https://twitter.com/TheJackShelton)
-- [Sigui](https://twitter.com/siguici)
+- [Sigui Kessé Emmanuel](https://twitter.com/siguici)
 
 ### Astro Core Team
 
