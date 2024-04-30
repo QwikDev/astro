@@ -1,19 +1,46 @@
 # @qwikdev/astro 💜
 
-Leverage the power of [Resumability](https://qwik.builder.io/docs/concepts/resumable/) inside of Astro, using Qwik components.
+The Qwik Astro integration automatically optimizes your project thanks to [JavaScript Streaming](https://github.com/QwikDev/astro/blob/main/README.md#what-is-javascript-streaming).
+
+This project is a result of a year-long effort by some [dedicated Astronauts](https://github.com/QwikDev/astro/issues/82) so that you can focus on the thing that matters: building your amazing website or app.
 
 ## Installation
 
-There are two methods to add the integration. Let's begin with the easiest one!
+### The `@qwikdev/astro` CLI 🦾
 
-### The Astro CLI
+To start a new Qwik Astro project, you can run the following command:
 
-Astro comes with a command-line tool for incorporating built-in integrations: `astro add`. This command will:
+  - **With `NPM`**:
 
-1. Optionally install all required dependencies and peer dependencies
-2. Optionally modify your `astro.config.*` file to apply the integration
+    ```bash
+    npm create @qwikdev/astro
+    ```
 
-To install `@qwikdev/astro`, run the following from your project directory and follow the prompts:
+  - **With `Yarn`**:
+
+    ```bash
+    yarn create @qwikdev/astro
+    ```
+
+  - **With `PNPM`**:
+
+    ```bash
+    pnpm create @qwikdev/astro
+    ```
+
+  - **With `Bun`**:
+
+    ```bash
+    bun create @qwikdev/astro
+    ```
+
+  For more advanced CLI configuration options, see the [@qwikdev/astro CLI documentation](https://github.com/QwikDev/astro/blob/main/libs/create-qwikdev-astro/README.md).
+
+  > The CLI is still in beta, if you encounter any problems, please [open an issue](https://github.com/QwikDev/astro/issues) and try one of the other methods below.
+
+### Have an existing project?
+
+To install `@qwikdev/astro` in an existing project, run the following from your project directory and follow the prompts:
 
 ```sh
 # Using NPM
@@ -26,7 +53,7 @@ yarn astro add @qwikdev/astro
 pnpm astro add @qwikdev/astro
 ```
 
-### Setting up the TypeScript Config
+### Setting up the TypeScript Config (Existing or Manual)
 
 The integration needs the following in `tsconfig.json` for typescript to recognize Qwik's JSX types.
 
@@ -371,9 +398,56 @@ There's also a `qwik-astro` channel in the builder.io discord to discuss API cha
 
 ## Credits
 
+### Maintainers
+
+- [Jack Shelton](https://twitter.com/TheJackShelton)
+- [Sigui](https://twitter.com/siguici)
+
+### Astro Core Team
+
 Special thanks to Matthew and Nate from the Astro core team! This integration would not be possible without their help.
 
 Nate's handles:
 
 - [Twitter](https://twitter.com/n_moore)
 - [GitHub](https://github.com/natemoo-re)
+
+## FAQ 
+
+### What is resumability?
+
+Resumability is "Lazy execution", it's the ability to build the "framework state" (component boundaries, etc) on the server, and have it exist on the client without re-executing the framework again. 
+
+> This is in contrast to most frameworks, which will run the framework twice. Once on the server, and once on the client. (Hydration)
+
+### What is JavaScript Streaming?
+
+JavaScript streaming is Resumability plus the ability to stream the functions into the browser and to buffer them in the cache.
+
+Functions and Closures are automatically extracted by the Qwik Optimizer. You can think of it like uploading a video to Youtube. They are in charge of the video streaming and chunking that video into tiny packets for you automatically.
+
+### Where can I find Qwik UI components?
+
+[Jack](https://twitter.com/thejackshelton) also works on a UI library called [Qwik UI](https://github.com/Qwikifiers/qwik-ui).
+
+#### Headless
+
+It has a headless library - similar to Radix UI, React Aria, Kobalte, Melt UI.
+
+#### Styled
+
+It has a styled library using Tailwind CSS - which is inspired by Shadcn UI.
+
+The philosophy is simple, the components are html until your users decide it's not, building on top of Astro's opt-in design principle.
+
+### Can I use it with React?
+
+Yes! You can use it with React, but keep in mind those components will not get the benefits of JavaScript Streaming.
+
+### Can I use it with Qwik City?
+
+No, Qwik City is an alternative meta-framework for Qwik.
+
+
+
+
