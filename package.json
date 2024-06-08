@@ -27,6 +27,7 @@
     "@changesets/cli": "^2.27.1",
     "@playwright/test": "^1.43.0",
     "@types/node": "^20.10.0",
-    "lefthook": "^1.6.5"
+    "lefthook": "^1.6.5",
+    "pkg-pr-new": "^0.0.8"
   }
 }
