@@ -26,4 +26,4 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - run: pnpx pkg-pr-new publish ./libs/qwikdev-astro
+      - run: pnpx pkg-pr-new publish ./libs/*
