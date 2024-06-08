@@ -76,7 +76,7 @@ at the top of each Qwik component file.
 
 This is when you may not have that many Qwik components compared to other JSX frameworks on the page.
 
-If you face any issues, please [post them on Github](https://github.com/QwikDev/astro/issues) and attempt the manual installation below.
+If you face any issues, [post them on Github](https://github.com/QwikDev/astro/issues) and attempt the manual installation below.
 
 ### Manual Installation
 
@@ -108,13 +108,11 @@ Now, add the integration to your `astro.config.*` file using the `integrations` 
 
 ## Key differences
 
-Hooray! We now have our integration installed. Before deep diving in, there are quite a few differences than other UI frameworks.
+Before deep diving in, there are quite a few differences than other UI frameworks.
 
 ## Qwik does not hydrate, it is **fundamentally different**
 
 Astro is popular for its partial hydration approach, whereas Qwik [does not require hydration](https://www.builder.io/blog/hydration-tree-resumability-map#resumability-is-fundamentally-a-different-algorithm).
-
-What does this mean?
 
 ### Qwik components **do not need hydration directives**
 
@@ -122,7 +120,7 @@ In other UI frameworks, a hydration directive would be needed for interactivity,
 
 When using Qwik inside a meta framework like Astro or Qwik City, components are loaded on the server, prefetched in a separate thread, and "resumed" on the client.
 
-For example here's how we create a counter component in Qwik (e.g. at `src/components/counter.tsx`).
+For example here's how to create a counter component in Qwik (e.g. at `src/components/counter.tsx`).
 
 ```tsx
 import { component$, useSignal } from "@builder.io/qwik";
@@ -134,7 +132,7 @@ export const Counter = component$(() => {
 });
 ```
 
-It can be consumed in our `index.astro` page like so:
+It can be consumed in an `index.astro` page like so:
 
 ```astro
     ---
@@ -157,23 +155,21 @@ It can be consumed in our `index.astro` page like so:
     </html>
 ```
 
-Let's take a look at this in the wild.
-
 ![A gif showing a button clicked and the onClick$ resumed](https://i.imgur.com/unp1MRN.gif)
 
-Here we are refreshing the page, and you'll notice nothing was executed until the button was clicked. Without resumability, our `<Counter />` would have been executed on page load.
+The above example refreshes the page, and notice nothing was executed until the button was clicked. Without resumability, the `<Counter />` would have been executed on page load.
 
 The 402 byte q-chunk is our Counter's `onClick$` handler.
 
 #### What's in that 17.61kb chunk?
 
-The framework! We do not execute it until it is needed. In this case it is gzipped using SSG.
+The framework! It is not executed until needed. In this case it is gzipped using SSG.
 
 ## Starts fast, stays fast
 
 One of Astro's key features is **Zero JS, by default**. Unfortunately, after adding a JavaScript framework, and any subsequent components this is usually not the case.
 
-If we want to introduce interactivity with a framework such as React, Vue, Svelte, etc., the framework runtime is then introduced. The number of components added to the page also increases linearly O(n) with the amount of JavaScript.
+When introducing interactivity with a framework such as React, Vue, Svelte, etc., the framework runtime is then introduced. The number of components added to the page also increases linearly O(n) with the amount of JavaScript.
 
 ### Astro + Qwik
 
@@ -187,11 +183,11 @@ Instead, upon page load, a tiny 1kb minified piece of JavaScript, known as the [
 
 Hydration forces your hand [to eagerly execute code](https://www.builder.io/blog/hydration-sabotages-lazy-loading). It's not a problem with components that are outside of the tree, such as modals, but it must exhaustively check each component in the render tree just in case.
 
-Qwik works exceptionally well in Astro due to Resumability and its ability to lazy load code in a fine-grained manner. Especially for marketing sites, blogs, and content oriented sites with many components.
+Qwik works well in Astro due to Resumability and its ability to lazy load code in a fine-grained manner. The moment JavaScript interactivity is involved, use Qwik. Some examples include marketing sites, blogs, content oriented sites, e-commerce applications, and even full-blown web-apps at scale.
 
 ### Instant interactivity
 
-As of `@qwikdev/astro` v0.4, we have added support for [Speculative Module Fetching](https://qwik.builder.io/docs/advanced/speculative-module-fetching/) in Astro.
+As of `@qwikdev/astro` v0.4, there is support for [Speculative Module Fetching](https://qwik.builder.io/docs/advanced/speculative-module-fetching/) in Astro.
 
 This enables instant interactivity for your Qwik components. Speculative module fetching will prefetch the application bundles in the background of a service worker, so that when needed, the code is already present in the browser cache.
 
@@ -203,9 +199,9 @@ While Astro generally adopts an islands architecture with other frameworks, Qwik
 
 ![An example of a Qwik container](https://i.imgur.com/hJJtRHj.jpeg)
 
-In the DOM, you'll notice there aren't any `<astro-island>` custom elements, this is because to Astro, Qwik looks like static data.
+In the DOM, notice there aren't any `<astro-island>` custom elements, this is because to Astro, Qwik looks like static data.
 
-> This is because in Qwik, the handlers themselves are the roots / entrypoints of the application.
+> In Qwik, the handlers themselves are the roots / entrypoints of the application.
 
 ### Communicating across containers
 
@@ -227,7 +223,7 @@ For example, in Solid's tutorial the following is mentioned:
 
 In Qwik, it was a design decision to not include global signal state.
 
-Instead, we recommend the use of **custom events**, which offer several advantages:
+Instead, use **custom events**, which offer several advantages:
 
 - Performance (avoid unnecessary state synchronization)
 - Does not wake up the framework on page load
@@ -236,7 +232,7 @@ Instead, we recommend the use of **custom events**, which offer several advantag
 - Event Driven
 - Decoupled
 
-[This example](https://github.com/thejackshelton/astro-qwik-global-state-example/blob/main/src/components/counter.tsx) shows how custom events can be used throughout your application. Pay attention to `counter.tsx`, `random-island.tsx`, and our `index.astro` page.
+[This example](https://github.com/thejackshelton/astro-qwik-global-state-example/blob/main/src/components/counter.tsx) shows how custom events can be used throughout your application. Pay attention to `counter.tsx`, `random-island.tsx`, and the `index.astro` page.
 
 ## Using multiple JSX frameworks
 
@@ -258,15 +254,15 @@ export default defineConfig({
 });
 ```
 
-Above we're using the Qwik, React, and Solid integrations in the same Astro project.
+Above the code snippet uses the Qwik, React, and Solid integrations in the same Astro project.
 
-If we look at the first integration, it's going to look for any file in the `qwik` folder and use Qwik for any file in this folder.
+The first integration in the snippet above, looks for any file in the `qwik` folder and uses Qwik for any file in this folder.
 
 For simplicity, consider grouping common framework components in the same folder (like `/components/react/` and `/components/qwik/`). However, this is optional.
 
 ### Qwik React
 
-If you're using React, we suggest using the `@builder.io/qwik-react` integration. It's a drop-in replacement for `@astrojs/react`, and allows a seamless transition to Qwik.
+If you're using React, use the [Qwik-React integration](https://qwik.dev/docs/integrations/react/). It's a drop-in replacement for `@astrojs/react`, and allows a seamless transition to Qwik.
 
 ```tsx
 import { defineConfig } from "astro/config";
@@ -283,9 +279,9 @@ export default defineConfig({
 });
 ```
 
-With Qwik-React, we can "qwikify" our React components, and use them in our Qwik application, even nesting Qwik and React components outside of an Astro file!
+The Qwik-React integration allows you to use React components directly in Qwik.
 
-> You do not need to specify an include property with qwikReact.
+> You do not need to specify an include property with Qwik-React.
 
 [Here's an example](https://github.com/thejackshelton/qwik-react-astro-template) of a React component with the `qwik-react` integration.
 
@@ -304,17 +300,17 @@ const ReactCounter = () => {
 export const QReactCounter = qwikify$(ReactCounter);
 ```
 
-After creating our counter, it can be consumed in our [index.astro](https://github.com/thejackshelton/qwik-react-astro-template/blob/main/src/pages/index.astro) file.
+After creating our counter, it can be consumed in the [index.astro](https://github.com/thejackshelton/qwik-react-astro-template/blob/main/src/pages/index.astro) file.
 
 ```tsx
 <QReactCounter qwik:visible />
 ```
 
-Notice that in `.astro` files we use a `qwik:` hydration directive prefix, this is to prevent a conflict with Astro's hydration directives that are provided out of the box.
+Notice that in `.astro` files there is a `qwik:` hydration directive prefix, this is to prevent a conflict with Astro's hydration directives that are provided out of the box.
 
-You can also use the `client:*` prefix, but only in tsx files. You can find a list of directives in [Adding Interactivity](https://qwik.builder.io/docs/integrations/react/#adding-interactivity) section of the Qwik docs.
+You can also use the `client:*` prefix, but only in tsx files. You can find a list of directives in the Qwik-React [Adding Interactivity](https://qwik.builder.io/docs/integrations/react/#adding-interactivity) section of the Qwik docs.
 
-> Qwik React components still have hydration, thus it is recommended to use Qwik-React as a migration strategy to resumable components.
+> Qwik React components still have hydration. It is recommended to use Qwik-React as a migration strategy to resumable components.
 
 ### jsxImportSource
 
@@ -370,8 +366,6 @@ export const MySlotComp = component$<{ initial: number }>((props) => {
   </MySlotComp>
 ```
 
-Default slots work as expected in their Qwik City counterpart.
-
 ## Community Guides
 
 - [Embed Stackblitz in a performant way](https://thenewstack.io/how-to-build-embed-components-with-astro-qwik-and-stackblitz/)
@@ -405,9 +399,11 @@ Default slots work as expected in their Qwik City counterpart.
 
 ## Contributing
 
-We'd love for you to contribute! Start by reading our [Contributing Guide](https://github.com/QwikDev/astro/blob/main/contributing.md). It's got all the info you need to get involved, including an in-depth section on how the integration works under the hood.
+Start by reading our [Contributing Guide](https://github.com/QwikDev/astro/blob/main/contributing.md). It includes how to get involved, and an in-depth section on how the integration works under the hood.
 
-There's also a `qwik-astro` channel in the builder.io discord to discuss API changes, possible ideas to the integration, and other cool stuff. 😊
+## Help
+
+If you're stuck, reach out in the Astro discord or the [Qwik discord](https://discord.gg/p7E6mgXGgF), which has a dedicated [qwik-astro](https://discord.com/channels/842438759945601056/1150941080355881080) channel. Problems directly related to the integration can be created [as an issue](https://github.com/QwikDev/astro/issues).
 
 ## Credits
 
