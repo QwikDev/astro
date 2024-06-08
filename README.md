@@ -372,23 +372,36 @@ export const MySlotComp = component$<{ initial: number }>((props) => {
 
 Default slots work as expected in their Qwik City counterpart.
 
-## Starter Kits
-
-- [Siguici's](https://github.com/siguici) [@qwikdev/astro + Deno](https://github.com/siguici/qwik-astro-deno) starter kit
-
 ## Community Guides
 
-- [Paul Scanlon](https://www.paulie.dev/) shows a hands-on look at [using Qwik in Astro over React and Vanilla JS](https://thenewstack.io/how-quiks-astro-integration-beats-both-react-and-vanilla-js/).
+- [Embed Stackblitz in a performant way](https://thenewstack.io/how-to-build-embed-components-with-astro-qwik-and-stackblitz/)
 
-- [Rishi Raj Jain](https://twitter.com/rishi_raj_jain_) has written an awesome guide on setting up Qwik with Astro's [Vercel SSR Adapter](https://dev.to/reeshee/qwik-look-at-resumability-with-astro-on-vercel-44fj).
+- [Build a Site Search with Astro, Qwik and Fuse.js](https://thenewstack.io/how-to-build-site-search-with-astro-qwik-and-fuse-js/)
 
-- [Paul Scanlon](https://www.paulie.dev/) explores using [Qwik as a React alternative](https://thenewstack.io/take-a-qwik-break-from-react-with-astro/) in Astro.
+- [Qwik as a React alternative](https://thenewstack.io/take-a-qwik-break-from-react-with-astro/) in Astro.
+
+- [Deploy Qwik Astro with the Vercel SSR Adapter](https://dev.to/reeshee/qwik-look-at-resumability-with-astro-on-vercel-44fj).
+
+- [Netlify's Guide to starting a Qwik Astro project](https://developers.netlify.com/guides/adding-resumability-to-astro-with-qwik/)
+
+- [Using Qwik in Astro over React and Vanilla JS](https://thenewstack.io/how-quiks-astro-integration-beats-both-react-and-vanilla-js/).
+
+- [Initial @qwikdev/astro Alpha Post](https://www.builder.io/blog/astro-qwik)
 
 ## Videos
 
-- Watch Jason & Steve [discuss the Qwik Astro integration](https://www.youtube.com/watch?v=W-j2HH1GdjU&t=0s) on the [LWJ show](https://www.youtube.com/@learnwithjason).
+- Steve's [Qwik Astro announcement video](https://www.youtube.com/watch?v=LIKxkSzHqeo)
 
 - [Awesome's Qwik + Astro video](https://www.youtube.com/watch?v=wKvkYUNBa5k) goes into how Astro just got even faster.
+
+- Watch Jason & Steve [discuss the Qwik Astro integration](https://www.youtube.com/watch?v=W-j2HH1GdjU&t=0s) on the [LWJ show](https://www.youtube.com/@learnwithjason).
+
+- [JLarky's insights on Qwik and potentially RSC in Astro](https://www.youtube.com/shorts/aaJuBrgQQDk)
+
+## Talks
+
+- [Astro and Qwik - a match made in performance heaven! - DevWorld 2024](https://www.youtube.com/watch?v=OSIjoqVK51o)
+- [Astro: A New Era of Effective Lazy Loading (fr)](https://www.youtube.com/watch?v=OgRfNfCMvvQ)
 
 ## Contributing
 
