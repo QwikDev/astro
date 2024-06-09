@@ -416,6 +416,10 @@ If you're stuck, reach out in the Astro discord or the [Qwik discord](https://di
 
 Special thanks to Matthew and Nate from the Astro core team! This integration would not be possible without their help.
 
+Matthew's handles:
+- [Twitter](https://x.com/matthewcp)
+- [GitHub](https://github.com/matthewp)
+
 Nate's handles:
 
 - [Twitter](https://twitter.com/n_moore)
