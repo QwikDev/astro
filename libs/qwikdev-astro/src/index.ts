@@ -83,13 +83,14 @@ export default defineIntegration({
         entrypoints = getQwikEntrypoints(srcDir, filter);
 
         if ((await entrypoints).length !== 0) {
+          // Update the global dist directory
+          distDir = astroConfig.outDir.pathname;
+          await fsExtra.ensureDir(distDir);
+
           addRenderer({
             name: "@qwikdev/astro",
             serverEntrypoint: resolve("../server.ts")
           });
-
-          // Update the global dist directory
-          distDir = astroConfig.outDir.pathname;
 
           // checks all windows platforms and removes drive ex: C:\\
           if (os.platform() === "win32") {
