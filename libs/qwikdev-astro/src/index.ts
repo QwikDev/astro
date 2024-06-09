@@ -130,7 +130,7 @@ export default defineIntegration({
                     outDir: "test"
                   },
                   ssr: {
-                    input: resolve("../server.ts"),
+                    input: resolve("../server.ts")
                   }
                 }),
                 tsconfigPaths(),
