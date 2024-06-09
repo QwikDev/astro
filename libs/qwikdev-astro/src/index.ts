@@ -160,6 +160,9 @@ export default defineIntegration({
           // make sure vite does not parse .astro files
           await build({
             ...astroConfig?.vite,
+            build: {
+              outDir: distDir
+            },
             plugins: [
               ...(astroConfig?.vite.plugins || []),
               {
