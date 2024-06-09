@@ -85,6 +85,7 @@ export default defineIntegration({
         if ((await entrypoints).length !== 0) {
           // Update the global dist directory
           distDir = astroConfig.outDir.pathname;
+          console.log("distDir", distDir);
           await fsExtra.ensureDir(distDir);
 
           addRenderer({
@@ -129,7 +130,7 @@ export default defineIntegration({
                     outDir: "test"
                   },
                   ssr: {
-                    input: resolve("../server.ts")
+                    input: resolve("../server.ts"),
                   }
                 }),
                 tsconfigPaths(),
