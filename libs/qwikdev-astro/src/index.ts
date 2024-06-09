@@ -125,7 +125,8 @@ export default defineIntegration({
                       all of the entry points to the application so
                       that we can generate the manifest. 
                     */
-                    input: await entrypoints
+                    input: await entrypoints,
+                    outDir: 'test'
                   },
                   ssr: {
                     input: resolve("../server.ts")
