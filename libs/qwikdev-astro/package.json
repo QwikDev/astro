@@ -49,15 +49,15 @@
     "vite-tsconfig-paths": "^4.2.1"
   },
   "devDependencies": {
-    "@builder.io/qwik": "^1.5.1",
+    "@builder.io/qwik": "https://pkg.pr.new/@builder.io/qwik@604e1ae",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.10.0",
-    "astro": "^4.5",
+    "astro": "^4.10.2",
     "typescript": "^5.4.2",
-    "vite": "^5.2.6"
+    "vite": "^5.2.13"
   },
   "peerDependencies": {
-    "@builder.io/qwik": "^1.5.1",
+    "@builder.io/qwik": "^1.5.7",
     "typescript": "^5.4.2"
   }
 }
