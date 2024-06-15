@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.5.16
+
+### Patch Changes
+
+- 26889d2: fix: downgrade qwik version atm
+
 ## 0.5.15
 
 ### Patch Changes
