@@ -1,5 +1,11 @@
 # @qwikdev/create-astro
 
+## 0.0.6
+
+### Patch Changes
+
+- 6d6fc95: fix: downgrade to 1.5.6
+
 ## 0.0.5
 
 ### Patch Changes
