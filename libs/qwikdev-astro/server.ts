@@ -6,7 +6,8 @@ import {
   PrefetchServiceWorker,
   jsx
 } from "@builder.io/qwik";
-import type { QwikManifest, SymbolMapperFn } from "@builder.io/qwik/optimizer";
+import type { QwikManifest } from "@builder.io/qwik/optimizer";
+import { symbolMapper } from '@builder.io/qwik/optimizer';
 
 import { isDev } from "@builder.io/qwik/build";
 import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
@@ -94,22 +95,6 @@ export async function renderToStaticMarkup(
       children: [qwikScripts, ...(defaultSlot ? [defaultSlot] : []), ...slotValues]
     });
 
-    /**
-      For a given symbol (QRL such as `onKeydown$`) the server needs to know which bundle the symbol is in. 
-
-      Normally this is provided by Qwik's `q-manifest` . But `q-manifest` only exists after a full client build. 
-
-      This would be a problem in dev mode. So in dev mode the symbol is mapped to the expected URL using the symbolMapper function above. For Vite the given path is fixed for a given symbol.
-    */
-    const symbolMapper: SymbolMapperFn = (symbolName: string) => {
-      /* don't want to add a file path for sync$ */
-      if (symbolName === "<sync>") {
-        return;
-      }
-
-      return [symbolName, `/${process.env.SRC_DIR}/${symbolName.toLocaleLowerCase()}.js`];
-    };
-
     if (shouldAddQwikLoader) {
       qwikLoaderAdded.set(this.result, true);
     }
@@ -124,7 +109,7 @@ export async function renderToStaticMarkup(
       containerTagName: "div",
       containerAttributes: { style: "display: contents" },
       manifest: isDev ? ({} as QwikManifest) : manifest,
-      ...(manifest ? undefined : { symbolMapper }),
+      ...(manifest ? undefined : symbolMapper),
       qwikLoader: { include: "never" }
     });
 
