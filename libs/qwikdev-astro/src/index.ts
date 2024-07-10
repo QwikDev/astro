@@ -12,8 +12,9 @@ import { z } from "astro/zod";
 import ts from "typescript";
 
 import { qwikVite } from "@builder.io/qwik/optimizer";
-import { createResolver, defineIntegration } from "astro-integration-kit";
+import { defineIntegration } from "astro-integration-kit";
 import { watchIntegrationPlugin } from "astro-integration-kit/plugins";
+import { symbolMapper, type QwikManifest } from '@builder.io/qwik/optimizer';
 
 import { type InlineConfig, build, createFilter } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -47,7 +48,6 @@ export default defineIntegration({
 
     const tempDir = join(`tmp-${hash()}`);
     const filter = createFilter(options.include, options.exclude);
-    const { resolve } = createResolver(import.meta.url);
 
     return {
       "astro:config:setup": async ({
@@ -56,10 +56,9 @@ export default defineIntegration({
         config,
         command,
         injectScript,
-        watchIntegration
       }) => {
-        // Integration HMR
-        watchIntegration(resolve());
+        // // Integration HMR
+        // watchIntegration(resolve());
 
         // Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
         if (command === "dev") {
@@ -80,12 +79,14 @@ export default defineIntegration({
           astroConfig.srcDir.pathname
         );
 
+
+
         entrypoints = getQwikEntrypoints(srcDir, filter);
 
         if ((await entrypoints).length !== 0) {
           addRenderer({
             name: "@qwikdev/astro",
-            serverEntrypoint: resolve("../server.ts")
+            serverEntrypoint: "@qwikdev/astro/server"
           });
 
           // Update the global dist directory
@@ -107,8 +108,10 @@ export default defineIntegration({
               },
 
               plugins: [
+                {name:"grabSymbolMapper", configResolved() { globalThis._mymapper = symbolMapper }},
                 qwikVite({
                   /* user passed include & exclude config (to use multiple JSX frameworks) */
+                  debug: true,
                   fileFilter: (id: string, hook: string) => {
                     if (hook === "transform" && !filter(id)) {
                       return false;
@@ -127,7 +130,7 @@ export default defineIntegration({
                     input: await entrypoints
                   },
                   ssr: {
-                    input: resolve("../server.ts")
+                    input: "@qwikdev/astro/server"
                   }
                 }),
                 tsconfigPaths(),
