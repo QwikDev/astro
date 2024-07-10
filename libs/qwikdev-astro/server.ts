@@ -6,9 +6,7 @@ import {
   PrefetchServiceWorker,
   jsx
 } from "@builder.io/qwik";
-import type { QwikManifest } from "@builder.io/qwik/optimizer";
-import { symbolMapper } from '@builder.io/qwik/optimizer';
-
+import { symbolMapper, type QwikManifest } from '@builder.io/qwik/optimizer';
 import { isDev } from "@builder.io/qwik/build";
 import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
 import { manifest } from "@qwik-client-manifest";
@@ -108,8 +106,9 @@ export async function renderToStaticMarkup(
       base,
       containerTagName: "div",
       containerAttributes: { style: "display: contents" },
-      manifest: isDev ? ({} as QwikManifest) : manifest,
-      ...(manifest ? undefined : symbolMapper),
+      ...(isDev
+        ? { manifest: {} as QwikManifest, symbolMapper }
+        : { manifest }),
       qwikLoader: { include: "never" }
     });
 
