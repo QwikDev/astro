@@ -9,6 +9,7 @@ import {
 import { isDev } from "@builder.io/qwik/build";
 import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
 import { manifest } from "@qwik-client-manifest";
+import { type QwikManifest } from "@builder.io/qwik/optimizer";
 
 const qwikLoaderAdded = new WeakMap<SSRResult, boolean>();
 
@@ -107,7 +108,7 @@ export async function renderToStaticMarkup(
       containerTagName: "div",
       containerAttributes: { style: "display: contents" },
       ...(isDev
-        ? { manifest: {} as QwikManifest, symbolMapper: globalThis._mymapper }
+        ? { manifest: {} as QwikManifest, symbolMapper: globalThis.symbolMapper }
         : { manifest }),
       qwikLoader: { include: "never" }
     });

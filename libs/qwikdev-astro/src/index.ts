@@ -11,13 +11,17 @@ import type { AstroConfig } from "astro";
 import { z } from "astro/zod";
 import ts from "typescript";
 
-import { qwikVite } from "@builder.io/qwik/optimizer";
+import { qwikVite, type SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import { defineIntegration } from "astro-integration-kit";
 import { watchIntegrationPlugin } from "astro-integration-kit/plugins";
-import { symbolMapper, type QwikManifest } from '@builder.io/qwik/optimizer';
+import { symbolMapper } from '@builder.io/qwik/optimizer';
 
 import { type InlineConfig, build, createFilter } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+
+declare global {
+  var symbolMapper: SymbolMapperFn;
+}
 
 /* Similar to vite's FilterPattern */
 const FilternPatternSchema = z.union([
@@ -108,10 +112,18 @@ export default defineIntegration({
               },
 
               plugins: [
-                {name:"grabSymbolMapper", configResolved() { globalThis._mymapper = symbolMapper }},
+                {
+                  name: "grabSymbolMapper",
+                  configResolved() {
+                    /** We need to get the symbolMapper straight from qwikVite here. You can think of it as the "manifest" for dev mode. */
+                    globalThis.symbolMapper = symbolMapper;
+                    setTimeout(() => {
+                      console.log("\x1b[32m[Qwik Astro]: Ignore the Vite emitFile warning, as it's not an issue and this error message will be resolved in the next Qwik version.\x1b[0m");
+                    }, 5000)
+                  }
+                },
                 qwikVite({
                   /* user passed include & exclude config (to use multiple JSX frameworks) */
-                  debug: true,
                   fileFilter: (id: string, hook: string) => {
                     if (hook === "transform" && !filter(id)) {
                       return false;
@@ -131,7 +143,7 @@ export default defineIntegration({
                   },
                   ssr: {
                     input: "@qwikdev/astro/server"
-                  }
+                  },
                 }),
                 tsconfigPaths(),
                 {
@@ -166,7 +178,7 @@ export default defineIntegration({
                 enforce: "pre",
                 name: "astro-noop",
 
-                load(id) {
+                load(id: string) {
                   if (id.endsWith(".astro")) {
                     return "export default function() {}";
                   }
@@ -174,7 +186,7 @@ export default defineIntegration({
                 }
               }
             ]
-          } as InlineConfig);
+          } as unknown as InlineConfig);
 
           await moveArtifacts(distDir, tempDir);
         } else {
