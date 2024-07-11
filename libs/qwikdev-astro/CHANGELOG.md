@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.6.0
+
+### Minor Changes
+
+- 9aa38bb: refactor: major performance improvements
+
 ## 0.5.16
 
 ### Patch Changes

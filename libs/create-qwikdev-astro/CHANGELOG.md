@@ -1,5 +1,11 @@
 # @qwikdev/create-astro
 
+## 0.1.0
+
+### Minor Changes
+
+- 9aa38bb: refactor: major performance improvements
+
 ## 0.0.6
 
 ### Patch Changes
