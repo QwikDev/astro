@@ -1,5 +1,11 @@
 # @qwikdev/create-astro
 
+## 0.1.1
+
+### Patch Changes
+
+- 736a04c: update versions
+
 ## 0.1.0
 
 ### Minor Changes
