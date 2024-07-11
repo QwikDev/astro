@@ -25,7 +25,8 @@
   "main": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./server": "./server.ts"
   },
   "files": ["src", "src/index.ts", "server.ts", "env.d.ts"],
   "keywords": [
@@ -49,15 +50,15 @@
     "vite-tsconfig-paths": "^4.2.1"
   },
   "devDependencies": {
-    "@builder.io/qwik": "1.5.6",
+    "@builder.io/qwik": "^1.7.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.10.0",
     "astro": "^4.5",
     "typescript": "^5.4.2",
-    "vite": "^5.2.6"
+    "vite": "^5.3"
   },
   "peerDependencies": {
-    "@builder.io/qwik": "1.5.6",
+    "@builder.io/qwik": "^1.7.1",
     "typescript": "^5.4.2"
   }
 }

@@ -11,12 +11,17 @@ import type { AstroConfig } from "astro";
 import { z } from "astro/zod";
 import ts from "typescript";
 
-import { qwikVite } from "@builder.io/qwik/optimizer";
-import { createResolver, defineIntegration } from "astro-integration-kit";
+import { type SymbolMapperFn, qwikVite } from "@builder.io/qwik/optimizer";
+import { symbolMapper } from "@builder.io/qwik/optimizer";
+import { defineIntegration } from "astro-integration-kit";
 import { watchIntegrationPlugin } from "astro-integration-kit/plugins";
 
 import { type InlineConfig, build, createFilter } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+
+declare global {
+  var symbolMapperGlobal: SymbolMapperFn;
+}
 
 /* Similar to vite's FilterPattern */
 const FilternPatternSchema = z.union([
@@ -47,7 +52,6 @@ export default defineIntegration({
 
     const tempDir = join(`tmp-${hash()}`);
     const filter = createFilter(options.include, options.exclude);
-    const { resolve } = createResolver(import.meta.url);
 
     return {
       "astro:config:setup": async ({
@@ -55,11 +59,10 @@ export default defineIntegration({
         updateConfig,
         config,
         command,
-        injectScript,
-        watchIntegration
+        injectScript
       }) => {
-        // Integration HMR
-        watchIntegration(resolve());
+        // // Integration HMR
+        // watchIntegration(resolve());
 
         // Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
         if (command === "dev") {
@@ -85,7 +88,7 @@ export default defineIntegration({
         if ((await entrypoints).length !== 0) {
           addRenderer({
             name: "@qwikdev/astro",
-            serverEntrypoint: resolve("../server.ts")
+            serverEntrypoint: "@qwikdev/astro/server"
           });
 
           // Update the global dist directory
@@ -107,6 +110,18 @@ export default defineIntegration({
               },
 
               plugins: [
+                {
+                  name: "grabSymbolMapper",
+                  configResolved() {
+                    /** We need to get the symbolMapper straight from qwikVite here. You can think of it as the "manifest" for dev mode. */
+                    globalThis.symbolMapperGlobal = symbolMapper;
+                    setTimeout(() => {
+                      console.log(
+                        "\x1b[32m[Qwik Astro]: Ignore the Vite emitFile warning, as it's not an issue and this error message will be resolved in the next Qwik version.\x1b[0m"
+                      );
+                    }, 5000);
+                  }
+                },
                 qwikVite({
                   /* user passed include & exclude config (to use multiple JSX frameworks) */
                   fileFilter: (id: string, hook: string) => {
@@ -127,7 +142,7 @@ export default defineIntegration({
                     input: await entrypoints
                   },
                   ssr: {
-                    input: resolve("../server.ts")
+                    input: "@qwikdev/astro/server"
                   }
                 }),
                 tsconfigPaths(),
@@ -163,7 +178,7 @@ export default defineIntegration({
                 enforce: "pre",
                 name: "astro-noop",
 
-                load(id) {
+                load(id: string) {
                   if (id.endsWith(".astro")) {
                     return "export default function() {}";
                   }
@@ -171,7 +186,7 @@ export default defineIntegration({
                 }
               }
             ]
-          } as InlineConfig);
+          } as unknown as InlineConfig);
 
           await moveArtifacts(distDir, tempDir);
         } else {
