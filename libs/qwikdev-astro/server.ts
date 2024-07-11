@@ -7,9 +7,9 @@ import {
   jsx
 } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
+import { type QwikManifest } from "@builder.io/qwik/optimizer";
 import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
 import { manifest } from "@qwik-client-manifest";
-import { type QwikManifest } from "@builder.io/qwik/optimizer";
 
 const qwikLoaderAdded = new WeakMap<SSRResult, boolean>();
 
@@ -99,7 +99,6 @@ export async function renderToStaticMarkup(
 
     const base = (props["q:base"] || process.env.Q_BASE) as string;
 
-
     // TODO: `jsx` must correctly be imported.
     // Currently the vite loads `core.mjs` and `core.prod.mjs` at the same time and this causes issues.
     // WORKAROUND: ensure that `npm postinstall` is run to patch the `@builder.io/qwik/package.json` file.
@@ -108,7 +107,7 @@ export async function renderToStaticMarkup(
       containerTagName: "div",
       containerAttributes: { style: "display: contents" },
       ...(isDev
-        ? { manifest: {} as QwikManifest, symbolMapper: globalThis.symbolMapper }
+        ? { manifest: {} as QwikManifest, symbolMapper: globalThis.symbolMapperGlobal }
         : { manifest }),
       qwikLoader: { include: "never" }
     });

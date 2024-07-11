@@ -11,16 +11,16 @@ import type { AstroConfig } from "astro";
 import { z } from "astro/zod";
 import ts from "typescript";
 
-import { qwikVite, type SymbolMapperFn } from "@builder.io/qwik/optimizer";
+import { type SymbolMapperFn, qwikVite } from "@builder.io/qwik/optimizer";
+import { symbolMapper } from "@builder.io/qwik/optimizer";
 import { defineIntegration } from "astro-integration-kit";
 import { watchIntegrationPlugin } from "astro-integration-kit/plugins";
-import { symbolMapper } from '@builder.io/qwik/optimizer';
 
 import { type InlineConfig, build, createFilter } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 declare global {
-  var symbolMapper: SymbolMapperFn;
+  var symbolMapperGlobal: SymbolMapperFn;
 }
 
 /* Similar to vite's FilterPattern */
@@ -59,7 +59,7 @@ export default defineIntegration({
         updateConfig,
         config,
         command,
-        injectScript,
+        injectScript
       }) => {
         // // Integration HMR
         // watchIntegration(resolve());
@@ -82,8 +82,6 @@ export default defineIntegration({
           astroConfig.root.pathname,
           astroConfig.srcDir.pathname
         );
-
-
 
         entrypoints = getQwikEntrypoints(srcDir, filter);
 
@@ -116,10 +114,12 @@ export default defineIntegration({
                   name: "grabSymbolMapper",
                   configResolved() {
                     /** We need to get the symbolMapper straight from qwikVite here. You can think of it as the "manifest" for dev mode. */
-                    globalThis.symbolMapper = symbolMapper;
+                    globalThis.symbolMapperGlobal = symbolMapper;
                     setTimeout(() => {
-                      console.log("\x1b[32m[Qwik Astro]: Ignore the Vite emitFile warning, as it's not an issue and this error message will be resolved in the next Qwik version.\x1b[0m");
-                    }, 5000)
+                      console.log(
+                        "\x1b[32m[Qwik Astro]: Ignore the Vite emitFile warning, as it's not an issue and this error message will be resolved in the next Qwik version.\x1b[0m"
+                      );
+                    }, 5000);
                   }
                 },
                 qwikVite({
@@ -143,7 +143,7 @@ export default defineIntegration({
                   },
                   ssr: {
                     input: "@qwikdev/astro/server"
-                  },
+                  }
                 }),
                 tsconfigPaths(),
                 {
