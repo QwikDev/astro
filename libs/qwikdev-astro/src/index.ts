@@ -226,45 +226,69 @@ export async function getQwikEntrypoints(
   filter: (id: unknown) => boolean
 ): Promise<string[]> {
   const files = await crawlDirectory(dir);
-  const qwikFiles = [];
+  const qwikFiles = new Set<string>();
 
   for (const file of files) {
-    // Skip files not matching patterns w/ astro config include & exclude
-    if (!filter(file)) {
+    // Ensure .astro files are not filtered out
+    if (!file.endsWith('.astro') && !filter(file)) {
       continue;
     }
 
     const fileContent = fs.readFileSync(file, "utf-8");
-    const sourceFile = ts.createSourceFile(
-      file,
-      fileContent,
-      ts.ScriptTarget.ESNext,
-      true
-    );
-
     let qwikImportFound = false;
 
-    ts.forEachChild(sourceFile, function nodeVisitor(node) {
-      if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
-        if (
-          node.moduleSpecifier.text === "@builder.io/qwik" ||
-          node.moduleSpecifier.text === "@builder.io/qwik-react"
-        ) {
-          qwikImportFound = true;
+    if (file.endsWith('.astro')) {
+      // Check for Qwik imports in .astro files
+      const importRegex = /import\s+.*\s+from\s+['"]([^'"]*)['"]/g;
+      const imports = fileContent.match(importRegex);
+
+      if (imports) {
+        console.log(`Imports in ${file}:`, imports);
+        qwikImportFound = imports.some((imp) => imp.includes('qwik'));
+
+        // Check the imported modules for Qwik imports
+        for (const imp of imports) {
+          const importPathMatch = imp.match(/from\s+['"]([^'"]*)['"]/);
+          if (importPathMatch) {
+            const importPath = importPathMatch[1];
+            const resolvedPath = resolve(dirname(file), importPath);
+            if (await hasQwikImports(resolvedPath)) {
+              qwikImportFound = true;
+              console.log('RESOLVED PATH', resolvedPath);
+              qwikFiles.add(resolvedPath);
+            }
+          }
         }
       }
+    } else {
+      // Parse other files (e.g., .ts, .js) for Qwik imports
+      const sourceFile = ts.createSourceFile(
+        file,
+        fileContent,
+        ts.ScriptTarget.ESNext,
+        true
+      );
 
-      if (!qwikImportFound) {
-        ts.forEachChild(node, nodeVisitor);
-      }
-    });
+      ts.forEachChild(sourceFile, function nodeVisitor(node) {
+        if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
+          if (node.moduleSpecifier.text.includes("qwik")) {
+            qwikImportFound = true;
+            qwikFiles.add(file);
+          }
+        }
+
+        if (!qwikImportFound) {
+          ts.forEachChild(node, nodeVisitor);
+        }
+      });
+    }
 
     if (qwikImportFound) {
-      qwikFiles.push(file);
+      qwikFiles.add(file);
     }
   }
 
-  return qwikFiles;
+  return Array.from(qwikFiles);
 }
 
 export function hash() {
@@ -353,4 +377,41 @@ export async function crawlDirectory(dir: string): Promise<string[]> {
   // Absolute path for duplicate-detection
   const absoluteDir = resolve(dir);
   return crawl(absoluteDir, []);
+}
+
+async function hasQwikImports(filePath: string): Promise<boolean> {
+  if (!fs.existsSync(filePath)) {
+    return false;
+  }
+
+  const fileContent = fs.readFileSync(filePath, "utf-8");
+  const importRegex = /import\s+.*\s+from\s+['"]([^'"]*qwik[^'"]*)['"]/g;
+  const imports = fileContent.match(importRegex);
+
+  if (imports) {
+    console.log(`Imports in ${filePath}:`, imports);
+    return imports.some((imp) => imp.includes('qwik'));
+  }
+
+  const sourceFile = ts.createSourceFile(
+    filePath,
+    fileContent,
+    ts.ScriptTarget.ESNext,
+    true
+  );
+
+  let qwikImportFound = false;
+  ts.forEachChild(sourceFile, function nodeVisitor(node) {
+    if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
+      if (node.moduleSpecifier.text.includes("qwik")) {
+        qwikImportFound = true;
+      }
+    }
+
+    if (!qwikImportFound) {
+      ts.forEachChild(node, nodeVisitor);
+    }
+  });
+
+  return qwikImportFound;
 }
