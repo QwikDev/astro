@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.6.1
+
+### Patch Changes
+
+- 736a04c: update versions
+
 ## 0.6.0
 
 ### Minor Changes
