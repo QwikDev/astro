@@ -115,11 +115,6 @@ export default defineIntegration({
                   configResolved() {
                     /** We need to get the symbolMapper straight from qwikVite here. You can think of it as the "manifest" for dev mode. */
                     globalThis.symbolMapperGlobal = symbolMapper;
-                    setTimeout(() => {
-                      console.log(
-                        "\x1b[32m[Qwik Astro]: Ignore the Vite emitFile warning, as it's not an issue and this error message will be resolved in the next Qwik version.\x1b[0m"
-                      );
-                    }, 5000);
                   }
                 },
                 qwikVite({

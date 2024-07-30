@@ -28,7 +28,12 @@
     "./package.json": "./package.json",
     "./server": "./server.ts"
   },
-  "files": ["src", "src/index.ts", "server.ts", "env.d.ts"],
+  "files": [
+    "src",
+    "src/index.ts",
+    "server.ts",
+    "env.d.ts"
+  ],
   "keywords": [
     "astro-integration",
     "astro-component",
@@ -50,15 +55,15 @@
     "vite-tsconfig-paths": "^4.2.1"
   },
   "devDependencies": {
-    "@builder.io/qwik": "^1.7.1",
+    "@builder.io/qwik": "^1.7.2",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.10.0",
-    "astro": "^4.5",
+    "astro": "^4.12.2",
     "typescript": "^5.4.2",
     "vite": "^5.3"
   },
   "peerDependencies": {
-    "@builder.io/qwik": "^1.7.1",
+    "@builder.io/qwik": "^1.7.2",
     "typescript": "^5.4.2"
   }
 }
