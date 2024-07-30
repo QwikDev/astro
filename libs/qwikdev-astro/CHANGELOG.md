@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.6.2
+
+### Patch Changes
+
+- b531a03: update deps
+
 ## 0.6.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @qwikdev/create-astro
 
+## 0.1.2
+
+### Patch Changes
+
+- b531a03: update deps
+
 ## 0.1.1
 
 ### Patch Changes
