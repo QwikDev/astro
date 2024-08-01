@@ -1,12 +1,12 @@
+import qwik from "@qwikdev/astro";
 import starlight from "@astrojs/starlight";
-import { defineConfig } from "astro/config";
-
 import tailwind from "@astrojs/tailwind";
+import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
   compressHTML: true,
-  integrations: [starlight({
+  integrations: [qwik(), starlight({
     title: "Qwik 💜 Astro",
     customCss: ['./src/tailwind.css'],
     logo: {
@@ -22,6 +22,8 @@ export default defineConfig({
     },
     components: {
       Sidebar: './src/components/sidebar/sidebar.astro'
-    },
-  }), tailwind({ applyBaseStyles: false })]
+    }
+  }), tailwind({
+    applyBaseStyles: false
+  })]
 });

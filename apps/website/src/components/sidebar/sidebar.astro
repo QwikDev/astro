@@ -1,26 +1,28 @@
 ---
 import type { Props } from '@astrojs/starlight/props';
+import { SidebarAccordion } from '../accordion/accordion';
 
 const { sidebar } = Astro.props;
 ---
 
 <nav>
-    {sidebar.map((entry) => (
-      <>
-        {entry.type === 'group' && (
-          <>
-            <h2>{entry.label}</h2>
-            <ul>
-              {entry.entries.map((item) => (
-                <li>
-                  {item.type === 'link' && (
-                    <a href={item.href}>{item.label}</a>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </>
-    ))}
+  <SidebarAccordion />
+  {sidebar.map((entry) => (
+    <>
+      {entry.type === 'group' && (
+        <>
+          <h2>{entry.label}</h2>
+          <ul>
+            {entry.entries.map((item) => (
+              <li>
+                {item.type === 'link' && (
+                  <a href={item.href}>{item.label}</a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </>
+  ))}
 </nav>
