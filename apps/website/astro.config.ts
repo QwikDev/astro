@@ -20,20 +20,8 @@ export default defineConfig({
     editLink: {
       baseUrl: "https://github.com/QwikDev/astro/edit/main/apps/website/"
     },
-    sidebar: [{
-      label: "Home",
-      link: "/"
-    }, {
-      label: "Guides",
-      items: [{
-        label: "Getting Started",
-        link: "/guides/"
-      }]
-    }, {
-      label: "Reference",
-      autogenerate: {
-        directory: "reference"
-      }
-    }]
+    components: {
+      Sidebar: './src/components/sidebar/sidebar.astro'
+    },
   }), tailwind({ applyBaseStyles: false })]
 });
