@@ -20,7 +20,8 @@
     "deno.preview": "pnpm -C ./apps/deno-demo preview",
     "test": "playwright test",
     "test.ui": "playwright test --ui",
-    "test.report": "playwright show-report"
+    "test.report": "playwright show-report",
+    "docs.dev": "pnpm -C ./apps/website dev"
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.1",
