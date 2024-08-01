@@ -28,12 +28,7 @@
     "./package.json": "./package.json",
     "./server": "./server.ts"
   },
-  "files": [
-    "src",
-    "src/index.ts",
-    "server.ts",
-    "env.d.ts"
-  ],
+  "files": ["src", "src/index.ts", "server.ts", "env.d.ts"],
   "keywords": [
     "astro-integration",
     "astro-component",

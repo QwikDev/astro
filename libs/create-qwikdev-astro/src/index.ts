@@ -357,6 +357,10 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
     const adapter =
       config.adapter ||
       (config.it &&
+        (await confirm({
+          message: "Would you like to use a server adapter?",
+          initialValue: false
+        })) &&
         (await select({
           message: "Which adapter do you prefer?",
           options: [
@@ -370,7 +374,7 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
             }
           ]
         }))) ||
-      "node";
+      "default";
 
     if (typeof adapter === "symbol" || isCancel(adapter)) {
       panicCanceled();
