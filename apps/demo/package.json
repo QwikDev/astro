@@ -1,18 +1,17 @@
 {
-  "name": "astro-node-demo",
+  "name": "astro-demo",
   "private": true,
   "type": "module",
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
     "dev.debug": "node --inspect ./node_modules/astro/astro.js dev",
-    "start": "astro dev",
+    "start": "astro dev --open",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^8.3.2",
     "@astrojs/react": "^3.6.0",
     "@builder.io/qwik": "^1.7.2",
     "@qwikdev/astro": "workspace:*",
