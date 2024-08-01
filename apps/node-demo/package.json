@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "dev.debug": "node --inspect ./node_modules/astro/astro.js dev",
-    "start": "astro dev",
+    "start": "astro dev --open",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
