@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.6.3
+
+### Patch Changes
+
+- b2c242d: feat: support for inline components
+
 ## 0.6.2
 
 ### Patch Changes
