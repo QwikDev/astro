@@ -7,7 +7,7 @@ import {
   jsx
 } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
-import { type QwikManifest } from "@builder.io/qwik/optimizer";
+import type { QwikManifest } from "@builder.io/qwik/optimizer";
 import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
 import { manifest } from "@qwik-client-manifest";
 
@@ -17,17 +17,21 @@ type RendererContext = {
   result: SSRResult;
 };
 
+function isInlineComponent(component: unknown): boolean {
+  return component!.toString().toLowerCase().includes("_jsxq");
+}
+
+function isQwikComponent(component: unknown) {
+  if (typeof component !== "function") return false;
+  if (isInlineComponent(component)) return true;
+  if (component.name !== "QwikComponent") return false;
+
+  return true;
+}
+
 async function check(this: RendererContext, component: unknown) {
   try {
-    if (typeof component !== "function") {
-      return false;
-    }
-
-    if (component.name !== "QwikComponent") {
-      return false;
-    }
-
-    return true;
+    return isQwikComponent(component);
   } catch (error) {
     console.error("Error in check function of @qwikdev/astro: ", error);
     return false;
@@ -43,8 +47,34 @@ export async function renderToStaticMarkup(
   slotted: any
 ) {
   try {
-    if (component.name !== "QwikComponent") {
+    if (!isQwikComponent(component)) {
       return;
+    }
+
+    const isInline = isInlineComponent(component);
+    const base = (props["q:base"] || process.env.Q_BASE) as string;
+    const renderConfig = {
+      base,
+      containerTagName: "div",
+      containerAttributes: { style: "display: contents" },
+      ...(isDev
+        ? {
+            manifest: {} as QwikManifest,
+            symbolMapper: (globalThis as any).symbolMapperGlobal
+          }
+        : { manifest }),
+      qwikLoader: { include: "never" }
+    } as const;
+
+    // Handle inline components
+    if (isInline) {
+      const inlineComponentJSX = component(props);
+
+      const result = await renderToString(inlineComponentJSX, renderConfig);
+
+      return {
+        html: result.html
+      };
     }
 
     const shouldAddQwikLoader = !qwikLoaderAdded.has(this.result);
@@ -54,6 +84,7 @@ export async function renderToStaticMarkup(
         "qwik-loader": "",
         dangerouslySetInnerHTML: getQwikLoaderScript()
       });
+
     // we want to add the sw script only on the first container.
     const serviceWorkerScript =
       !isDev && shouldAddQwikLoader && jsx(PrefetchServiceWorker, {});
@@ -97,20 +128,10 @@ export async function renderToStaticMarkup(
       qwikLoaderAdded.set(this.result, true);
     }
 
-    const base = (props["q:base"] || process.env.Q_BASE) as string;
-
     // TODO: `jsx` must correctly be imported.
     // Currently the vite loads `core.mjs` and `core.prod.mjs` at the same time and this causes issues.
     // WORKAROUND: ensure that `npm postinstall` is run to patch the `@builder.io/qwik/package.json` file.
-    const result = await renderToString(app, {
-      base,
-      containerTagName: "div",
-      containerAttributes: { style: "display: contents" },
-      ...(isDev
-        ? { manifest: {} as QwikManifest, symbolMapper: globalThis.symbolMapperGlobal }
-        : { manifest }),
-      qwikLoader: { include: "never" }
-    });
+    const result = await renderToString(app, renderConfig);
 
     const { html } = result;
 
