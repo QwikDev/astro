@@ -38,6 +38,9 @@ importers:
       '@qwikdev/astro':
         specifier: workspace:*
         version: link:../../libs/qwikdev-astro
+      '@qwikest/icons':
+        specifier: ^0.0.13
+        version: 0.0.13(@builder.io/qwik@1.7.3(@types/node@20.12.7))
       '@types/react':
         specifier: ^18.2.64
         version: 18.2.79
@@ -1285,6 +1288,12 @@ packages:
     resolution: {integrity: sha512-HgtQzFgNEEo4TE22K/X7sYTYNqEMMTZmFS8kTq6m8hXj+m1D8TgwgIbumHddJa9h4yl4GkKb8/bgAl2+g7eDgA==}
     engines: {node: '>=16'}
     hasBin: true
+
+  '@qwikest/icons@0.0.13':
+    resolution: {integrity: sha512-e0wY8vmx0nDSUiuCATlk+ojTvdBV4txIGHHWjZW5SRkv4XB8H9+3WSDcLPz0ItUdRyzcrohE9k2jtQI/98aRPA==}
+    engines: {node: '>=15.0.0'}
+    peerDependencies:
+      '@builder.io/qwik': '>=1.0.0'
 
   '@rollup/rollup-android-arm-eabi@4.16.1':
     resolution: {integrity: sha512-92/y0TqNLRYOTXpm6Z7mnpvKAG9P7qmK7yJeRJSdzElNCUnsgbpAsGqerUboYRIQKzgfq4pWu9xVkgpWLfmNsw==}
@@ -5644,6 +5653,10 @@ snapshots:
   '@playwright/test@1.43.1':
     dependencies:
       playwright: 1.43.1
+
+  '@qwikest/icons@0.0.13(@builder.io/qwik@1.7.3(@types/node@20.12.7))':
+    dependencies:
+      '@builder.io/qwik': 1.7.3(@types/node@20.12.7)
 
   '@rollup/rollup-android-arm-eabi@4.16.1':
     optional: true
