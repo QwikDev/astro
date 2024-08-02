@@ -18,7 +18,9 @@ type RendererContext = {
 };
 
 function isInlineComponent(component: unknown): boolean {
-  return component!.toString().toLowerCase().includes("_jsxq");
+  const codeStr = component!.toString().toLowerCase();
+
+  return codeStr.includes("_jsxq") || codeStr.includes("jsxSplit");
 }
 
 function isQwikComponent(component: unknown) {
