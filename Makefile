@@ -1,4 +1,4 @@
-.PHONY: install dev start check fix test build release pr-release
+.PHONY: install dev start check fix test build release
 
 install: node_modules pnpm-lock.yaml
 
@@ -26,9 +26,6 @@ fix: install
 
 build: fix
 	pnpm build
-
-pr-release: test
-	pnpx pkg-pr-new publish ./libs/* --template ./libs/create-qwikdev-astro/stubs/templates/default/*
 
 release: test
 	pnpm release

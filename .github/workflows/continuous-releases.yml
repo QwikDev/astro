@@ -20,4 +20,10 @@ jobs:
           node-version: 20
           cache: "pnpm"
 
-      - run: make pr-release
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+
+      - run: pnpx pkg-pr-new publish ./libs/* --template ./libs/create-qwikdev-astro/stubs/templates/default/*
