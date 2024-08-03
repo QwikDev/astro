@@ -20,7 +20,8 @@ import { type InlineConfig, build, createFilter } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 declare global {
-  var symbolMapperGlobal: SymbolMapperFn;
+  var symbolMapperFn: SymbolMapperFn;
+  var hash: string | undefined;
 }
 
 /* Similar to vite's FilterPattern */
@@ -45,12 +46,12 @@ export default defineIntegration({
   }),
 
   setup({ options }) {
-    let distDir = "";
+    let outDir = "";
     let srcDir = "";
     let astroConfig: AstroConfig | null = null;
     let entrypoints: Promise<string[]>;
 
-    const tempDir = join(`tmp-${hash()}`);
+    const tempDir = join(`tmp-${newHash()}`);
     const filter = createFilter(options.include, options.exclude);
 
     return {
@@ -92,11 +93,11 @@ export default defineIntegration({
           });
 
           // Update the global dist directory
-          distDir = astroConfig.outDir.pathname;
+          outDir = astroConfig.outDir.pathname;
 
           // checks all windows platforms and removes drive ex: C:\\
           if (os.platform() === "win32") {
-            distDir = distDir.substring(3);
+            outDir = outDir.substring(3);
           }
 
           updateConfig({
@@ -114,7 +115,7 @@ export default defineIntegration({
                   name: "grabSymbolMapper",
                   configResolved() {
                     /** We need to get the symbolMapper straight from qwikVite here. You can think of it as the "manifest" for dev mode. */
-                    globalThis.symbolMapperGlobal = symbolMapper;
+                    globalThis.symbolMapperFn = symbolMapper;
                   }
                 },
                 qwikVite({
@@ -193,7 +194,7 @@ export default defineIntegration({
             ]
           } as unknown as InlineConfig);
 
-          await moveArtifacts(distDir, tempDir);
+          await moveArtifacts(outDir, tempDir);
         } else {
           logger.info("No entrypoints found. Skipping build.");
         }
@@ -272,8 +273,10 @@ export async function getQwikEntrypoints(
   return qwikFiles;
 }
 
-export function hash() {
-  return Math.random().toString(26).split(".").pop();
+export function newHash() {
+  const hash = Math.random().toString(26).split(".").pop();
+  globalThis.hash = hash;
+  return hash;
 }
 
 export async function moveArtifacts(srcDir: string, destDir: string) {
