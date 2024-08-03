@@ -120,6 +120,16 @@ export default defineIntegration({
                 qwikVite({
                   /* user passed include & exclude config (to use multiple JSX frameworks) */
                   fileFilter: (id: string, hook: string) => {
+                    try {
+                      const content = fs.readFileSync(id, "utf-8");
+
+                      if (content.includes("@builder.io/qwik")) {
+                        return true;
+                      }
+                    } catch (error) {
+                      // File can't be read, silently continue
+                    }
+
                     if (hook === "transform" && !filter(id)) {
                       return false;
                     }

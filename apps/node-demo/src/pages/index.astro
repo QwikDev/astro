@@ -1,6 +1,5 @@
 ---
-import { Counter } from "@components/qwik/counter";
-import { SayHi } from "@components/qwik/say-hi";
+import { Counter } from 'demo-lib';
 ---
 
 <html lang="en">
@@ -13,9 +12,7 @@ import { SayHi } from "@components/qwik/say-hi";
 	</head>
 	<body>
 		<div style={{ height: '1000px' }}>
-			<Counter initial={5}>Yo</Counter>
-			<SayHi>John</SayHi>
-			<a href="/test">test</a>
+			<Counter />
 		</div>
 	</body>
 </html>
