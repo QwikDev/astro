@@ -8,7 +8,11 @@ import {
 } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
-import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
+import {
+  type RenderToStreamOptions,
+  getQwikLoaderScript,
+  renderToStream
+} from "@builder.io/qwik/server";
 import { manifest } from "@qwik-client-manifest";
 
 const qwikLoaderAdded = new WeakMap<SSRResult, boolean>();
@@ -55,27 +59,31 @@ export async function renderToStaticMarkup(
 
     const isInline = isInlineComponent(component);
     const base = (props["q:base"] || process.env.Q_BASE) as string;
-    const renderConfig = {
+    let html = "";
+    const renderOpts: RenderToStreamOptions = {
       base,
-      containerTagName: "div",
       containerAttributes: { style: "display: contents" },
+      containerTagName: "div",
       ...(isDev
         ? {
             manifest: {} as QwikManifest,
             symbolMapper: (globalThis as any).symbolMapperGlobal
           }
         : { manifest }),
-      qwikLoader: { include: "never" }
-    } as const;
+      serverData: props,
+      stream: {
+        write: (chunk) => {
+          html += chunk;
+        }
+      }
+    };
 
     // Handle inline components
     if (isInline) {
       const inlineComponentJSX = component(props);
-
-      const result = await renderToString(inlineComponentJSX, renderConfig);
-
+      await renderToStream(inlineComponentJSX, renderOpts);
       return {
-        html: result.html
+        html
       };
     }
 
@@ -130,21 +138,15 @@ export async function renderToStaticMarkup(
       qwikLoaderAdded.set(this.result, true);
     }
 
-    // TODO: `jsx` must correctly be imported.
-    // Currently the vite loads `core.mjs` and `core.prod.mjs` at the same time and this causes issues.
-    // WORKAROUND: ensure that `npm postinstall` is run to patch the `@builder.io/qwik/package.json` file.
-    const result = await renderToString(app, renderConfig);
+    await renderToStream(app, renderOpts);
 
-    const { html } = result;
-
-    // With VT, rerun so that signals work
+    // With View Transitions, rerun so that signals work
     const htmlWithRerun = html.replace(
       '<script q:func="qwik/json">',
       '<script q:func="qwik/json" data-astro-rerun>'
     );
 
     return {
-      ...result,
       html: htmlWithRerun
     };
   } catch (error) {
