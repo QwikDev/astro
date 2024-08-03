@@ -1,5 +1,5 @@
 {
-  "name": "yooo-demo-lib",
+  "name": "demo-lib",
   "version": "0.0.1",
   "description": "Create a Qwik library",
   "main": "./lib/index.qwik.mjs",

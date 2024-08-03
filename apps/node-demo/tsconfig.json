@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "@components/*": ["./src/components/*"],
-      "demo-lib": ["../libs/demo-lib/src/index.ts"]
+      "demo-lib": ["../../libs/demo-lib"]
     },
 
     "jsx": "react-jsx",
