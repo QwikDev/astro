@@ -78,12 +78,6 @@ export default defineIntegration({
         // Retrieve Qwik files from the project source directory
         srcDir = relative(astroConfig.root.pathname, astroConfig.srcDir.pathname);
 
-        // used in server.ts for dev mode
-        process.env.SRC_DIR = relative(
-          astroConfig.root.pathname,
-          astroConfig.srcDir.pathname
-        );
-
         entrypoints = getQwikEntrypoints(srcDir, filter);
 
         if ((await entrypoints).length !== 0) {
@@ -120,23 +114,6 @@ export default defineIntegration({
                 },
                 qwikVite({
                   /* user passed include & exclude config (to use multiple JSX frameworks) */
-                  fileFilter: (id: string, hook: string) => {
-                    try {
-                      const content = fs.readFileSync(id, "utf-8");
-
-                      if (content.includes("@builder.io/qwik")) {
-                        return true;
-                      }
-                    } catch (error) {
-                      // File can't be read, silently continue
-                    }
-
-                    if (hook === "transform" && !filter(id)) {
-                      return false;
-                    }
-
-                    return true;
-                  },
                   devSsrServer: false,
                   srcDir,
                   client: {
