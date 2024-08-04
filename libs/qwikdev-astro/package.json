@@ -12,6 +12,11 @@
       "name": "Jack Shelton",
       "email": "me@jackshelton.com",
       "url": "https://twitter.com/TheJackShelton"
+    },
+    {
+      "name": "Sigui Kessé Emmanuel",
+      "email": "dev@sikessem.com",
+      "url": "https://twitter.com/siguici"
     }
   ],
   "type": "module",
