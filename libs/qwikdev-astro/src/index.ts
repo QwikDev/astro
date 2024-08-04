@@ -11,12 +11,16 @@ import type { AstroConfig } from "astro";
 import { z } from "astro/zod";
 import ts from "typescript";
 
-import { type SymbolMapperFn, qwikVite } from "@builder.io/qwik/optimizer";
+import {
+  type QwikVitePluginOptions,
+  type SymbolMapperFn,
+  qwikVite
+} from "@builder.io/qwik/optimizer";
 import { symbolMapper } from "@builder.io/qwik/optimizer";
 import { defineIntegration } from "astro-integration-kit";
 import { watchIntegrationPlugin } from "astro-integration-kit/plugins";
 
-import { type InlineConfig, build, createFilter } from "vite";
+import { type InlineConfig, type PluginOption, build, createFilter } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 declare global {
@@ -31,6 +35,14 @@ const FilternPatternSchema = z.union([
   z.array(z.union([z.string(), z.instanceof(RegExp)])).readonly(),
   z.null()
 ]);
+
+// previous & current versions of qwik & qwik-react
+const qwikModules = [
+  "@builder.io/qwik",
+  "@builder.io/qwik-react",
+  "@qwikdev/core",
+  "@qwikdev/qwik-react"
+];
 
 /**
  * This project uses Astro Integration Kit.
@@ -94,6 +106,54 @@ export default defineIntegration({
             outDir = outDir.substring(3);
           }
 
+          /** We need to get the symbolMapper straight from qwikVite here. You can think of it as the "manifest" for dev mode. */
+          const symbolMapperPlugin: PluginOption = {
+            name: "grabSymbolMapper",
+            configResolved() {
+              globalThis.symbolMapperFn = symbolMapper;
+            }
+          };
+
+          /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
+          const fileFilter = (id: string, hook: string) => {
+            try {
+              const content = fs.readFileSync(id, "utf-8");
+              if (qwikModules.some((module) => content.includes(module))) {
+                return true;
+              }
+            } catch (error) {
+              // file can't be read, silently continue
+            }
+
+            if (hook === "transform" && !filter(id)) {
+              return false;
+            }
+
+            return true;
+          };
+
+          const qwikViteConfig: QwikVitePluginOptions = {
+            fileFilter,
+            devSsrServer: false,
+            srcDir,
+            client: {
+              input: await entrypoints
+            },
+            ssr: {
+              input: "@qwikdev/astro/server"
+            }
+          };
+
+          const overrideEsbuildPlugin: PluginOption = {
+            // override qwikVite's attempt to set `esbuild` to false during dev
+            name: "overrideEsbuild",
+            enforce: "post",
+            config(config) {
+              config.esbuild = {};
+              return config;
+            }
+          };
+
           updateConfig({
             vite: {
               build: {
@@ -103,41 +163,11 @@ export default defineIntegration({
                   }
                 }
               },
-
               plugins: [
-                {
-                  name: "grabSymbolMapper",
-                  configResolved() {
-                    /** We need to get the symbolMapper straight from qwikVite here. You can think of it as the "manifest" for dev mode. */
-                    globalThis.symbolMapperFn = symbolMapper;
-                  }
-                },
-                qwikVite({
-                  /* user passed include & exclude config (to use multiple JSX frameworks) */
-                  devSsrServer: false,
-                  srcDir,
-                  client: {
-                    /* 
-                      In order to make a client build, we need to know
-                      all of the entry points to the application so
-                      that we can generate the manifest. 
-                    */
-                    input: await entrypoints
-                  },
-                  ssr: {
-                    input: "@qwikdev/astro/server"
-                  }
-                }),
+                symbolMapperPlugin,
+                qwikVite(qwikViteConfig),
                 tsconfigPaths(),
-                {
-                  // HACK: override qwikVite's attempt to set `esbuild` to false during dev
-                  enforce: "post",
-                  config(config) {
-                    // @ts-expect-error - true is assigned, but it's not a valid value, this should be reviewed.
-                    config.esbuild = true;
-                    return config;
-                  }
-                }
+                overrideEsbuildPlugin
               ]
             }
           });
@@ -152,24 +182,24 @@ export default defineIntegration({
         logger.info("astro:build:start");
 
         if ((await entrypoints).length > 0) {
-          // make sure vite does not parse .astro files
+          // make sure vite does not parse .astro files in the qwik integration
+          const astroNoopPlugin: PluginOption = {
+            enforce: "pre",
+            name: "astro-noop",
+
+            load(id: string) {
+              if (id.endsWith(".astro")) {
+                return "export default function() {}";
+              }
+              return null;
+            }
+          };
+
+          // client build that we pass back to the server build
           await build({
             ...astroConfig?.vite,
-            plugins: [
-              ...(astroConfig?.vite.plugins || []),
-              {
-                enforce: "pre",
-                name: "astro-noop",
-
-                load(id: string) {
-                  if (id.endsWith(".astro")) {
-                    return "export default function() {}";
-                  }
-                  return null;
-                }
-              }
-            ]
-          } as unknown as InlineConfig);
+            plugins: [...(astroConfig?.vite.plugins || []), astroNoopPlugin]
+          } as InlineConfig);
 
           await moveArtifacts(outDir, tempDir);
         } else {
@@ -179,10 +209,12 @@ export default defineIntegration({
 
       "astro:build:done": async ({ logger }) => {
         if ((await entrypoints).length > 0 && astroConfig) {
-          let outputPath =
-            astroConfig.output === "server" || astroConfig.output === "hybrid"
-              ? astroConfig.build.client.pathname
-              : astroConfig.outDir.pathname;
+          let outputPath: string;
+          if (astroConfig.output === "server" || astroConfig.output === "hybrid") {
+            outputPath = astroConfig.build.client.pathname;
+          } else {
+            outputPath = astroConfig.outDir.pathname;
+          }
 
           // checks all windows platforms and removes drive ex: C:\\
           if (os.platform() === "win32") {
@@ -229,13 +261,6 @@ export async function getQwikEntrypoints(
 
     ts.forEachChild(sourceFile, function nodeVisitor(node) {
       if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
-        const qwikModules = [
-          "@builder.io/qwik",
-          "@builder.io/qwik-react",
-          "@qwikdev/core",
-          "@qwikdev/qwik-react"
-        ];
-
         if (qwikModules.includes(node.moduleSpecifier.text)) {
           qwikImportFound = true;
         }
