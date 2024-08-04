@@ -17,7 +17,7 @@ import {
   qwikVite
 } from "@builder.io/qwik/optimizer";
 import { symbolMapper } from "@builder.io/qwik/optimizer";
-import { defineIntegration } from "astro-integration-kit";
+import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { type InlineConfig, type PluginOption, build, createFilter } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -55,22 +55,23 @@ export default defineIntegration({
   }),
 
   setup({ options }) {
-    let outDir = "";
     let srcDir = "";
+    let outDir = "";
+    const tempDir = `tmp-${newHash()}`;
+
     let astroConfig: AstroConfig | null = null;
     let entrypoints: Promise<string[]>;
 
-    const tempDir = join(`tmp-${newHash()}`);
+    const { resolve: resolver } = createResolver(import.meta.url);
     const filter = createFilter(options.include, options.exclude);
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
-      "astro:config:setup": async ({
-        addRenderer,
-        updateConfig,
-        config,
-        command,
-        injectScript
-      }) => {
+      "astro:config:setup": async (setupProps) => {
+        const { addRenderer, updateConfig, config, command, injectScript } = setupProps;
+
+        // integration HMR support
+        watchDirectory(setupProps, resolver());
+
         // Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
         if (command === "dev") {
           const unregisterSW =
