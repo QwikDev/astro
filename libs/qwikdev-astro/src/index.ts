@@ -49,10 +49,12 @@ const qwikModules = [
 
 export default defineIntegration({
   name: "@qwikdev/astro",
-  optionsSchema: z.object({
-    include: FilterPatternSchema.optional(),
-    exclude: FilterPatternSchema.optional()
-  }),
+  optionsSchema: z
+    .object({
+      include: FilterPatternSchema.optional(),
+      exclude: FilterPatternSchema.optional()
+    })
+    .optional(),
 
   setup({ options }) {
     let srcDir = "";
@@ -63,7 +65,7 @@ export default defineIntegration({
     let entrypoints: Promise<string[]>;
 
     const { resolve: resolver } = createResolver(import.meta.url);
-    const filter = createFilter(options.include, options.exclude);
+    const filter = createFilter(options?.include, options?.exclude);
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
@@ -128,6 +130,7 @@ export default defineIntegration({
           };
 
           const qwikViteConfig: QwikVitePluginOptions = {
+            debug: true,
             fileFilter,
             devSsrServer: false,
             srcDir,
