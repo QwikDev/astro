@@ -7,7 +7,7 @@ import { rmSync } from "node:fs";
 import { lstat, readdir, readlink } from "node:fs/promises";
 import { dirname, join, normalize, relative, resolve } from "node:path";
 
-import type { AstroConfig } from "astro";
+import type { AstroConfig, AstroIntegration } from "astro";
 import { z } from "astro/zod";
 import ts from "typescript";
 
@@ -18,8 +18,6 @@ import {
 } from "@builder.io/qwik/optimizer";
 import { symbolMapper } from "@builder.io/qwik/optimizer";
 import { defineIntegration } from "astro-integration-kit";
-import { watchIntegrationPlugin } from "astro-integration-kit/plugins";
-
 import { type InlineConfig, type PluginOption, build, createFilter } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -29,7 +27,7 @@ declare global {
 }
 
 /* Similar to vite's FilterPattern */
-const FilternPatternSchema = z.union([
+const FilterPatternSchema = z.union([
   z.string(),
   z.instanceof(RegExp),
   z.array(z.union([z.string(), z.instanceof(RegExp)])).readonly(),
@@ -51,10 +49,9 @@ const qwikModules = [
 
 export default defineIntegration({
   name: "@qwikdev/astro",
-  plugins: [watchIntegrationPlugin],
   optionsSchema: z.object({
-    include: FilternPatternSchema.optional(),
-    exclude: FilternPatternSchema.optional()
+    include: FilterPatternSchema.optional(),
+    exclude: FilterPatternSchema.optional()
   }),
 
   setup({ options }) {
@@ -66,7 +63,7 @@ export default defineIntegration({
     const tempDir = join(`tmp-${newHash()}`);
     const filter = createFilter(options.include, options.exclude);
 
-    return {
+    const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async ({
         addRenderer,
         updateConfig,
@@ -74,9 +71,6 @@ export default defineIntegration({
         command,
         injectScript
       }) => {
-        // // Integration HMR
-        // watchIntegration(resolve());
-
         // Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
         if (command === "dev") {
           const unregisterSW =
@@ -231,6 +225,10 @@ export default defineIntegration({
           logger.info("Build finished. No artifacts moved.");
         }
       }
+    };
+
+    return {
+      hooks: lifecycleHooks
     };
   }
 });
