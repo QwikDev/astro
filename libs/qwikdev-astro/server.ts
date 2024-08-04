@@ -22,9 +22,12 @@ type RendererContext = {
 };
 
 function isInlineComponent(component: unknown): boolean {
+  if (typeof component !== "function") return false;
   const codeStr = component!.toString().toLowerCase();
-
-  return codeStr.includes("_jsxq");
+  return (
+    (codeStr.includes("_jsxq") || codeStr.includes("jsxsplit")) &&
+    component.name !== "QwikComponent"
+  );
 }
 
 function isQwikComponent(component: unknown) {

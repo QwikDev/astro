@@ -229,10 +229,14 @@ export async function getQwikEntrypoints(
 
     ts.forEachChild(sourceFile, function nodeVisitor(node) {
       if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
-        if (
-          node.moduleSpecifier.text === "@builder.io/qwik" ||
-          node.moduleSpecifier.text === "@builder.io/qwik-react"
-        ) {
+        const qwikModules = [
+          "@builder.io/qwik",
+          "@builder.io/qwik-react",
+          "@qwikdev/core",
+          "@qwikdev/qwik-react"
+        ];
+
+        if (qwikModules.includes(node.moduleSpecifier.text)) {
           qwikImportFound = true;
         }
       }
