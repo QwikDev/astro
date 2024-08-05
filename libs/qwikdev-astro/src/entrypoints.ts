@@ -1,8 +1,8 @@
 import fs from "node:fs";
+import path from "node:path";
 import ts from "typescript";
 import { crawlDirectory } from "./utils";
 
-// previous & current versions of qwik & qwik-react
 export const qwikModules = [
   "@builder.io/qwik",
   "@builder.io/qwik-react",
@@ -10,7 +10,6 @@ export const qwikModules = [
   "@qwikdev/qwik-react"
 ];
 
-/** We need to find the Qwik entrypoints so that the client build will run successfully. */
 export async function getQwikEntrypoints(
   dir: string,
   filter: (id: unknown) => boolean
@@ -18,12 +17,11 @@ export async function getQwikEntrypoints(
   const files = await crawlDirectory(dir);
   const qwikFiles = [];
 
+  // Find project entrypoints
   for (const file of files) {
-    // Skip files not matching patterns w/ astro config include & exclude
     if (!filter(file)) {
       continue;
     }
-
     const fileContent = fs.readFileSync(file, "utf-8");
     const sourceFile = ts.createSourceFile(
       file,
@@ -51,5 +49,26 @@ export async function getQwikEntrypoints(
     }
   }
 
-  return qwikFiles;
+  // Find library entrypoints
+  const nodeModulesPath = path.resolve(dir, "..", "node_modules");
+  const libraryEntrypoints = findQwikLibraryEntrypoints(nodeModulesPath);
+
+  return [...qwikFiles, ...libraryEntrypoints];
+}
+
+function findQwikLibraryEntrypoints(nodeModulesPath: string): string[] {
+  const entrypoints = [];
+  const packages = fs.readdirSync(nodeModulesPath);
+
+  for (const pkg of packages) {
+    const pkgPath = path.join(nodeModulesPath, pkg);
+    const libPath = path.join(pkgPath, "lib");
+    const entrypointPath = path.join(libPath, "index.qwik.mjs");
+
+    if (fs.existsSync(entrypointPath)) {
+      entrypoints.push(entrypointPath);
+    }
+  }
+
+  return entrypoints;
 }
