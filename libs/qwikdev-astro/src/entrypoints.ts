@@ -11,7 +11,6 @@ import type { Plugin } from "vite";
 
 export function qwikTransformPlugin(filter: (id: unknown) => boolean): Plugin {
   const entrypoints: Set<string> = new Set();
-  const processedModules: Set<string> = new Set();
 
   return {
     name: "qwik-transform-plugin",
@@ -19,41 +18,21 @@ export function qwikTransformPlugin(filter: (id: unknown) => boolean): Plugin {
 
     async transform(code, id) {
       if (filter(id) || entrypoints.has(id)) {
-        if (!processedModules.has(id)) {
-          processedModules.add(id);
-          const sourceFile = ts.createSourceFile(id, code, ts.ScriptTarget.Latest, true);
-          let hasQwikImport = false;
+        const sourceFile = ts.createSourceFile(id, code, ts.ScriptTarget.Latest, true);
 
-          const importedModules: string[] = [];
+        const hasQwikImport = ts.forEachChild(sourceFile, (node) => {
+          return (
+            ts.isImportDeclaration(node) &&
+            ts.isStringLiteral(node.moduleSpecifier) &&
+            qwikModules.includes(node.moduleSpecifier.text)
+          );
+        });
 
-          ts.forEachChild(sourceFile, (node) => {
-            if (
-              ts.isImportDeclaration(node) &&
-              ts.isStringLiteral(node.moduleSpecifier)
-            ) {
-              const importPath = node.moduleSpecifier.text;
-              if (qwikModules.includes(importPath)) {
-                hasQwikImport = true;
-              }
-              importedModules.push(importPath);
-            }
-          });
-
-          if (hasQwikImport) {
-            entrypoints.add(id);
-            console.log("New Qwik entrypoint found:", id);
-
-            // Process transitive dependencies
-            for (const importedModule of importedModules) {
-              const resolvedModule = await this.resolve(importedModule, id);
-              if (resolvedModule) {
-                await this.load({ id: resolvedModule.id });
-              }
-            }
-          }
+        if (hasQwikImport) {
+          entrypoints.add(id);
+          console.log("New Qwik entrypoint found:", id);
         }
       }
-
       return null;
     },
 
