@@ -78,6 +78,14 @@ function findQwikLibraryEntrypoints(nodeModulesPath: string): string[] {
     }
   }
 
-  searchDirectory(nodeModulesPath);
+  // Start the search from each immediate subdirectory of node_modules
+  const packages = fs.readdirSync(nodeModulesPath);
+  for (const pkg of packages) {
+    const pkgPath = path.join(nodeModulesPath, pkg);
+    if (fs.statSync(pkgPath).isDirectory()) {
+      searchDirectory(pkgPath);
+    }
+  }
+
   return entrypoints;
 }
