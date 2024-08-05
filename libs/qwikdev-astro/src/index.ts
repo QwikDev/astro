@@ -42,19 +42,16 @@ export default defineIntegration({
     .object({
       /**
        * Tell Qwik which files to process.
-       * @type {string | RegExp | (string | RegExp)[] | null}
        */
       include: FilterPatternSchema.optional(),
 
       /**
        * Tell Qwik which files to ignore.
-       * @type {string | RegExp | (string | RegExp)[] | null}
        */
       exclude: FilterPatternSchema.optional(),
 
       /**
        * Enable debug mode with the qwikVite plugin.
-       * @type {boolean}
        */
       debug: z.boolean().optional()
     })
