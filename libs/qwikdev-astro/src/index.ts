@@ -40,8 +40,23 @@ export default defineIntegration({
   name: "@qwikdev/astro",
   optionsSchema: z
     .object({
+      /**
+       * Tell Qwik which files to process.
+       * @type {string | RegExp | (string | RegExp)[] | null}
+       */
       include: FilterPatternSchema.optional(),
-      exclude: FilterPatternSchema.optional()
+
+      /**
+       * Tell Qwik which files to ignore.
+       * @type {string | RegExp | (string | RegExp)[] | null}
+       */
+      exclude: FilterPatternSchema.optional(),
+
+      /**
+       * Enable debug mode with the qwikVite plugin.
+       * @type {boolean}
+       */
+      debug: z.boolean().optional()
     })
     .optional(),
 
@@ -119,7 +134,6 @@ export default defineIntegration({
           };
 
           const qwikViteConfig: QwikVitePluginOptions = {
-            debug: true,
             fileFilter,
             devSsrServer: false,
             srcDir,
@@ -128,7 +142,8 @@ export default defineIntegration({
             },
             ssr: {
               input: "@qwikdev/astro/server"
-            }
+            },
+            debug: options?.debug ?? false
           };
 
           const overrideEsbuildPlugin: PluginOption = {
