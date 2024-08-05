@@ -49,43 +49,45 @@ export async function getQwikEntrypoints(
     }
   }
 
-  // Find library entrypoints
-  const nodeModulesPath = path.resolve(dir, "..", "node_modules");
-  const libraryEntrypoints = findQwikLibraryEntrypoints(nodeModulesPath);
+  return qwikFiles;
 
-  return [...qwikFiles, ...libraryEntrypoints];
+  // Find library entrypoints here
+  // const nodeModulesPath = path.resolve(dir, "..", "node_modules");
+  // const libraryEntrypoints = findQwikLibraryEntrypoints(nodeModulesPath);
+
+  // return [...qwikFiles, ...libraryEntrypoints];
 }
 
-function findQwikLibraryEntrypoints(nodeModulesPath: string): string[] {
-  const entrypoints: string[] = [];
+// function findQwikLibraryEntrypoints(nodeModulesPath: string): string[] {
+//   const entrypoints: string[] = [];
 
-  function searchDirectory(dirPath: string) {
-    const items = fs.readdirSync(dirPath);
+//   function searchDirectory(dirPath: string) {
+//     const items = fs.readdirSync(dirPath);
 
-    for (const item of items) {
-      const fullPath = path.join(dirPath, item);
-      const stat = fs.statSync(fullPath);
+//     for (const item of items) {
+//       const fullPath = path.join(dirPath, item);
+//       const stat = fs.statSync(fullPath);
 
-      if (stat.isDirectory()) {
-        // Skip nested node_modules to avoid redundant searches
-        if (item === "node_modules") {
-          continue;
-        }
-        searchDirectory(fullPath);
-      } else if (stat.isFile() && item.includes(".qwik.")) {
-        entrypoints.push(fullPath);
-      }
-    }
-  }
+//       if (stat.isDirectory()) {
+//         // Skip nested node_modules to avoid redundant searches
+//         if (item === "node_modules") {
+//           continue;
+//         }
+//         searchDirectory(fullPath);
+//       } else if (stat.isFile() && item.includes(".qwik.")) {
+//         entrypoints.push(fullPath);
+//       }
+//     }
+//   }
 
-  // Start the search from each immediate subdirectory of node_modules
-  const packages = fs.readdirSync(nodeModulesPath);
-  for (const pkg of packages) {
-    const pkgPath = path.join(nodeModulesPath, pkg);
-    if (fs.statSync(pkgPath).isDirectory()) {
-      searchDirectory(pkgPath);
-    }
-  }
+//   // Start the search from each immediate subdirectory of node_modules
+//   const packages = fs.readdirSync(nodeModulesPath);
+//   for (const pkg of packages) {
+//     const pkgPath = path.join(nodeModulesPath, pkg);
+//     if (fs.statSync(pkgPath).isDirectory()) {
+//       searchDirectory(pkgPath);
+//     }
+//   }
 
-  return entrypoints;
-}
+//   return entrypoints;
+// }
