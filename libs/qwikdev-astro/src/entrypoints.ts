@@ -1,7 +1,4 @@
-import fs from "node:fs";
-import path from "node:path";
 import ts from "typescript";
-import { crawlDirectory } from "./utils";
 
 export const qwikModules = [
   "@builder.io/qwik",
@@ -10,84 +7,58 @@ export const qwikModules = [
   "@qwikdev/qwik-react"
 ];
 
-export async function getQwikEntrypoints(
-  dir: string,
-  filter: (id: unknown) => boolean
-): Promise<string[]> {
-  const files = await crawlDirectory(dir);
-  const qwikFiles = [];
+import type { Plugin } from "vite";
 
-  // Find project entrypoints
-  for (const file of files) {
-    if (!filter(file)) {
-      continue;
-    }
-    const fileContent = fs.readFileSync(file, "utf-8");
-    const sourceFile = ts.createSourceFile(
-      file,
-      fileContent,
-      ts.ScriptTarget.ESNext,
-      true
-    );
+export function qwikTransformPlugin(filter: (id: unknown) => boolean): Plugin {
+  const entrypoints: Set<string> = new Set();
+  const processedModules: Set<string> = new Set();
 
-    let qwikImportFound = false;
+  return {
+    name: "qwik-transform-plugin",
+    enforce: "pre",
 
-    ts.forEachChild(sourceFile, function nodeVisitor(node) {
-      if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
-        if (qwikModules.includes(node.moduleSpecifier.text)) {
-          qwikImportFound = true;
+    async transform(code, id) {
+      if (filter(id) || entrypoints.has(id)) {
+        if (!processedModules.has(id)) {
+          processedModules.add(id);
+          const sourceFile = ts.createSourceFile(id, code, ts.ScriptTarget.Latest, true);
+          let hasQwikImport = false;
+
+          const importedModules: string[] = [];
+
+          ts.forEachChild(sourceFile, (node) => {
+            if (
+              ts.isImportDeclaration(node) &&
+              ts.isStringLiteral(node.moduleSpecifier)
+            ) {
+              const importPath = node.moduleSpecifier.text;
+              if (qwikModules.includes(importPath)) {
+                hasQwikImport = true;
+              }
+              importedModules.push(importPath);
+            }
+          });
+
+          if (hasQwikImport) {
+            entrypoints.add(id);
+            console.log("New Qwik entrypoint found:", id);
+
+            // Process transitive dependencies
+            for (const importedModule of importedModules) {
+              const resolvedModule = await this.resolve(importedModule, id);
+              if (resolvedModule) {
+                await this.load({ id: resolvedModule.id });
+              }
+            }
+          }
         }
       }
 
-      if (!qwikImportFound) {
-        ts.forEachChild(node, nodeVisitor);
-      }
-    });
+      return null;
+    },
 
-    if (qwikImportFound) {
-      qwikFiles.push(file);
+    api: {
+      getEntrypoints: () => Array.from(entrypoints)
     }
-  }
-
-  return qwikFiles;
-
-  // Find library entrypoints here
-  // const nodeModulesPath = path.resolve(dir, "..", "node_modules");
-  // const libraryEntrypoints = findQwikLibraryEntrypoints(nodeModulesPath);
-
-  // return [...qwikFiles, ...libraryEntrypoints];
+  };
 }
-
-// function findQwikLibraryEntrypoints(nodeModulesPath: string): string[] {
-//   const entrypoints: string[] = [];
-
-//   function searchDirectory(dirPath: string) {
-//     const items = fs.readdirSync(dirPath);
-
-//     for (const item of items) {
-//       const fullPath = path.join(dirPath, item);
-//       const stat = fs.statSync(fullPath);
-
-//       if (stat.isDirectory()) {
-//         // Skip nested node_modules to avoid redundant searches
-//         if (item === "node_modules") {
-//           continue;
-//         }
-//         searchDirectory(fullPath);
-//       } else if (stat.isFile() && item.includes(".qwik.")) {
-//         entrypoints.push(fullPath);
-//       }
-//     }
-//   }
-
-//   // Start the search from each immediate subdirectory of node_modules
-//   const packages = fs.readdirSync(nodeModulesPath);
-//   for (const pkg of packages) {
-//     const pkgPath = path.join(nodeModulesPath, pkg);
-//     if (fs.statSync(pkgPath).isDirectory()) {
-//       searchDirectory(pkgPath);
-//     }
-//   }
-
-//   return entrypoints;
-// }

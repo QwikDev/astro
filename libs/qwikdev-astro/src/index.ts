@@ -15,12 +15,13 @@ import { build, createFilter } from "vite";
 import type { InlineConfig, PluginOption } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-import { getQwikEntrypoints, qwikModules } from "./entrypoints";
+import { qwikModules, qwikTransformPlugin } from "./entrypoints";
 import { moveArtifacts, newHash } from "./utils";
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
   var hash: string | undefined;
+  var qwikEntrypoints: string[];
 }
 
 /* Similar to vite's FilterPattern */
@@ -88,89 +89,90 @@ export default defineIntegration({
         // Retrieve Qwik files from the project source directory
         srcDir = relative(astroConfig.root.pathname, astroConfig.srcDir.pathname);
 
-        entrypoints = getQwikEntrypoints(srcDir, filter);
+        const myQwikTransformPlugin = qwikTransformPlugin(filter);
 
-        if ((await entrypoints).length !== 0) {
-          addRenderer({
-            name: "@qwikdev/astro",
-            serverEntrypoint: "@qwikdev/astro/server"
-          });
+        entrypoints = myQwikTransformPlugin.api.getEntrypoints();
 
-          // Update the global dist directory
-          outDir = astroConfig.outDir.pathname;
+        addRenderer({
+          name: "@qwikdev/astro",
+          serverEntrypoint: "@qwikdev/astro/server"
+        });
 
-          // checks all windows platforms and removes drive ex: C:\\
-          if (os.platform() === "win32") {
-            outDir = outDir.substring(3);
+        // Update the global dist directory
+        outDir = astroConfig.outDir.pathname;
+
+        // checks all windows platforms and removes drive ex: C:\\
+        if (os.platform() === "win32") {
+          outDir = outDir.substring(3);
+        }
+
+        /** We need to get the symbolMapper straight from qwikVite here. You can think of it as the "manifest" for dev mode. */
+        const symbolMapperPlugin: PluginOption = {
+          name: "grabSymbolMapper",
+          configResolved() {
+            globalThis.symbolMapperFn = symbolMapper;
+          }
+        };
+
+        /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
+        const fileFilter = (id: string, hook: string) => {
+          try {
+            const content = fs.readFileSync(id, "utf-8");
+            if (qwikModules.some((module) => content.includes(module))) {
+              return true;
+            }
+          } catch (error) {
+            // file can't be read, silently continue
           }
 
-          /** We need to get the symbolMapper straight from qwikVite here. You can think of it as the "manifest" for dev mode. */
-          const symbolMapperPlugin: PluginOption = {
-            name: "grabSymbolMapper",
-            configResolved() {
-              globalThis.symbolMapperFn = symbolMapper;
-            }
-          };
+          if (hook === "transform" && !filter(id)) {
+            return false;
+          }
 
-          /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
-          const fileFilter = (id: string, hook: string) => {
-            try {
-              const content = fs.readFileSync(id, "utf-8");
-              if (qwikModules.some((module) => content.includes(module))) {
-                return true;
-              }
-            } catch (error) {
-              // file can't be read, silently continue
-            }
+          return true;
+        };
 
-            if (hook === "transform" && !filter(id)) {
-              return false;
-            }
+        const qwikViteConfig: QwikVitePluginOptions = {
+          fileFilter,
+          devSsrServer: false,
+          srcDir,
+          client: {
+            input: await entrypoints
+          },
+          ssr: {
+            input: "@qwikdev/astro/server"
+          },
+          debug: options?.debug ?? false
+        };
 
-            return true;
-          };
+        const overrideEsbuildPlugin: PluginOption = {
+          // override qwikVite's attempt to set `esbuild` to false during dev
+          name: "overrideEsbuild",
+          enforce: "post",
+          config(config) {
+            config.esbuild = {};
+            return config;
+          }
+        };
 
-          const qwikViteConfig: QwikVitePluginOptions = {
-            fileFilter,
-            devSsrServer: false,
-            srcDir,
-            client: {
-              input: await entrypoints
-            },
-            ssr: {
-              input: "@qwikdev/astro/server"
-            },
-            debug: options?.debug ?? false
-          };
-
-          const overrideEsbuildPlugin: PluginOption = {
-            // override qwikVite's attempt to set `esbuild` to false during dev
-            name: "overrideEsbuild",
-            enforce: "post",
-            config(config) {
-              config.esbuild = {};
-              return config;
-            }
-          };
-
-          updateConfig({
-            vite: {
-              build: {
-                rollupOptions: {
-                  output: {
-                    inlineDynamicImports: false
-                  }
+        updateConfig({
+          vite: {
+            build: {
+              rollupOptions: {
+                output: {
+                  inlineDynamicImports: false
                 }
-              },
-              plugins: [
-                symbolMapperPlugin,
-                qwikVite(qwikViteConfig),
-                tsconfigPaths(),
-                overrideEsbuildPlugin
-              ]
-            }
-          });
-        }
+              }
+            },
+            plugins: [
+              myQwikTransformPlugin,
+              symbolMapperPlugin,
+              qwikVite(qwikViteConfig),
+              tsconfigPaths(),
+              overrideEsbuildPlugin
+            ]
+          }
+        });
       },
 
       "astro:config:done": async ({ config }) => {
