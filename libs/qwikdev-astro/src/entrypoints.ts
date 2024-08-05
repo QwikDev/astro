@@ -57,18 +57,27 @@ export async function getQwikEntrypoints(
 }
 
 function findQwikLibraryEntrypoints(nodeModulesPath: string): string[] {
-  const entrypoints = [];
-  const packages = fs.readdirSync(nodeModulesPath);
+  const entrypoints: string[] = [];
 
-  for (const pkg of packages) {
-    const pkgPath = path.join(nodeModulesPath, pkg);
-    const libPath = path.join(pkgPath, "lib");
-    const entrypointPath = path.join(libPath, "index.qwik.mjs");
+  function searchDirectory(dirPath: string) {
+    const items = fs.readdirSync(dirPath);
 
-    if (fs.existsSync(entrypointPath)) {
-      entrypoints.push(entrypointPath);
+    for (const item of items) {
+      const fullPath = path.join(dirPath, item);
+      const stat = fs.statSync(fullPath);
+
+      if (stat.isDirectory()) {
+        // Skip nested node_modules to avoid redundant searches
+        if (item === "node_modules") {
+          continue;
+        }
+        searchDirectory(fullPath);
+      } else if (stat.isFile() && item.includes(".qwik.")) {
+        entrypoints.push(fullPath);
+      }
     }
   }
 
+  searchDirectory(nodeModulesPath);
   return entrypoints;
 }
