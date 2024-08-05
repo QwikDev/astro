@@ -1,25 +1,22 @@
 import fs from "node:fs";
-import os from "node:os";
-import fsExtra from "fs-extra";
-import move from "fs-move";
-
 import { rmSync } from "node:fs";
-import { lstat, readdir, readlink } from "node:fs/promises";
-import { dirname, join, normalize, relative, resolve } from "node:path";
+import os from "node:os";
+import { normalize, relative } from "node:path";
 
 import type { AstroConfig, AstroIntegration } from "astro";
-import { z } from "astro/zod";
-import ts from "typescript";
-
-import {
-  type QwikVitePluginOptions,
-  type SymbolMapperFn,
-  qwikVite
-} from "@builder.io/qwik/optimizer";
-import { symbolMapper } from "@builder.io/qwik/optimizer";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
-import { type InlineConfig, type PluginOption, build, createFilter } from "vite";
+import { z } from "astro/zod";
+
+import { qwikVite } from "@builder.io/qwik/optimizer";
+import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
+import { symbolMapper } from "@builder.io/qwik/optimizer";
+
+import { build, createFilter } from "vite";
+import type { InlineConfig, PluginOption } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+
+import { getQwikEntrypoints, qwikModules } from "./entrypoints";
+import { moveArtifacts, newHash } from "./utils";
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
@@ -33,14 +30,6 @@ const FilterPatternSchema = z.union([
   z.array(z.union([z.string(), z.instanceof(RegExp)])).readonly(),
   z.null()
 ]);
-
-// previous & current versions of qwik & qwik-react
-const qwikModules = [
-  "@builder.io/qwik",
-  "@builder.io/qwik-react",
-  "@qwikdev/core",
-  "@qwikdev/qwik-react"
-];
 
 /**
  * This project uses Astro Integration Kit.
@@ -236,137 +225,3 @@ export default defineIntegration({
     };
   }
 });
-
-/** We need to find the Qwik entrypoints so that the client build will run successfully. */
-export async function getQwikEntrypoints(
-  dir: string,
-  filter: (id: unknown) => boolean
-): Promise<string[]> {
-  const files = await crawlDirectory(dir);
-  const qwikFiles = [];
-
-  for (const file of files) {
-    // Skip files not matching patterns w/ astro config include & exclude
-    if (!filter(file)) {
-      continue;
-    }
-
-    const fileContent = fs.readFileSync(file, "utf-8");
-    const sourceFile = ts.createSourceFile(
-      file,
-      fileContent,
-      ts.ScriptTarget.ESNext,
-      true
-    );
-
-    let qwikImportFound = false;
-
-    ts.forEachChild(sourceFile, function nodeVisitor(node) {
-      if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
-        if (qwikModules.includes(node.moduleSpecifier.text)) {
-          qwikImportFound = true;
-        }
-      }
-
-      if (!qwikImportFound) {
-        ts.forEachChild(node, nodeVisitor);
-      }
-    });
-
-    if (qwikImportFound) {
-      qwikFiles.push(file);
-    }
-  }
-
-  return qwikFiles;
-}
-
-export function newHash() {
-  const hash = Math.random().toString(26).split(".").pop();
-  globalThis.hash = hash;
-  return hash;
-}
-
-export async function moveArtifacts(srcDir: string, destDir: string) {
-  // Ensure the destination dir exists, create if not
-  await fsExtra.ensureDir(destDir);
-
-  for (const file of await readdir(srcDir)) {
-    // move files from source to destintation, overwrite if they exist
-    await move(join(srcDir, file), join(destDir, file), {
-      // Merge directories
-      merge: true,
-      // Don't overwrite any files, as this would overwrite astro-generated files with files from public.
-      // This matches astro's default behavior of replacing files in public with generated pages on naming-conflicts.
-      overwrite: false
-    });
-  }
-}
-
-export async function crawlDirectory(dir: string): Promise<string[]> {
-  /**
-   * Recursively follows a symlink.
-   *
-   * @param path symlink to follow
-   * @returns `[target, stat]` where `target` is the final target path and `stat` is the {@link fs.Stats} of the target or `undefined` if the target does not exist.
-   */
-  const readLinkRec = async (path: string): Promise<[string, fs.Stats | undefined]> => {
-    const target = resolve(dirname(path), await readlink(path));
-    const stat = await lstat(target).catch((e) => {
-      if (e.code === "ENOENT") {
-        return undefined;
-      }
-
-      throw e;
-    });
-
-    if (stat?.isSymbolicLink()) {
-      return readLinkRec(target);
-    }
-
-    return [target, stat];
-  };
-
-  /**
-   * Recurse on the passed directory. Follows symlinks and stops when a loop is detected (i.e., `dir` has already been visited)
-   *
-   * @param dir The current directory to recursively list
-   * @param visitedDirs Directories that have already been visited
-   * @returns A recursive list of files in the passed directory
-   */
-  const crawl = async (dir: string, visitedDirs: string[]): Promise<string[]> => {
-    if (visitedDirs.includes(dir)) {
-      return [];
-    }
-
-    visitedDirs.push(dir);
-    const entries = await readdir(dir, { withFileTypes: true });
-
-    const files = await Promise.all(
-      entries.map((entry) => {
-        const fullPath = join(dir, entry.name);
-
-        if (entry.isSymbolicLink()) {
-          return readLinkRec(fullPath).then(
-            ([target, stat]): string | string[] | Promise<string[]> => {
-              if (stat === undefined) {
-                return []; // target does not exist
-              }
-
-              return stat.isDirectory() ? crawl(target, visitedDirs) : target;
-            }
-          );
-        }
-
-        return entry.isDirectory() ? crawl(fullPath, visitedDirs) : fullPath;
-      })
-    );
-
-    // flatten files array
-    return files.flat();
-  };
-
-  // Absolute path for duplicate-detection
-  const absoluteDir = resolve(dir);
-  return crawl(absoluteDir, []);
-}
