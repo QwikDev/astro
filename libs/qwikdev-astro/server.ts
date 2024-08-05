@@ -8,19 +8,26 @@ import {
 } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
-import { getQwikLoaderScript, renderToString } from "@builder.io/qwik/server";
+import {
+  type RenderToStreamOptions,
+  getQwikLoaderScript,
+  renderToStream
+} from "@builder.io/qwik/server";
 import { manifest } from "@qwik-client-manifest";
 
-const qwikLoaderAdded = new WeakMap<SSRResult, boolean>();
+const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 
 type RendererContext = {
   result: SSRResult;
 };
 
 function isInlineComponent(component: unknown): boolean {
+  if (typeof component !== "function") return false;
   const codeStr = component!.toString().toLowerCase();
-
-  return codeStr.includes("_jsxq") || codeStr.includes("jsxSplit");
+  return (
+    (codeStr.includes("_jsxq") || codeStr.includes("jsxsplit")) &&
+    component.name !== "QwikComponent"
+  );
 }
 
 function isQwikComponent(component: unknown) {
@@ -53,63 +60,76 @@ export async function renderToStaticMarkup(
       return;
     }
 
-    const isInline = isInlineComponent(component);
     const base = (props["q:base"] || process.env.Q_BASE) as string;
-    const renderConfig = {
+
+    // html that gets added to the stream
+    let html = "";
+
+    const renderToStreamOpts: RenderToStreamOptions = {
       base,
-      containerTagName: "div",
       containerAttributes: { style: "display: contents" },
+      containerTagName: "div",
       ...(isDev
         ? {
             manifest: {} as QwikManifest,
-            symbolMapper: (globalThis as any).symbolMapperGlobal
+            symbolMapper: globalThis.symbolMapperFn
           }
         : { manifest }),
-      qwikLoader: { include: "never" }
-    } as const;
+      serverData: props,
+      stream: {
+        write: (chunk) => {
+          html += chunk;
+        }
+      }
+    };
 
-    // Handle inline components
+    // https://qwik.dev/docs/components/overview/#inline-components
+    const isInline = isInlineComponent(component);
     if (isInline) {
       const inlineComponentJSX = component(props);
-
-      const result = await renderToString(inlineComponentJSX, renderConfig);
-
+      // we don't want to process slots for inline components
+      await renderToStream(inlineComponentJSX, renderToStreamOpts);
       return {
-        html: result.html
+        html
       };
     }
 
-    const shouldAddQwikLoader = !qwikLoaderAdded.has(this.result);
+    // https://qwik.dev/docs/advanced/qwikloader/#qwikloader
+    const isQwikLoaderNeeded = !isQwikLoaderAddedMap.has(this.result);
     const qwikLoader =
-      shouldAddQwikLoader &&
+      isQwikLoaderNeeded &&
       jsx("script", {
         "qwik-loader": "",
         dangerouslySetInnerHTML: getQwikLoaderScript()
       });
 
-    // we want to add the sw script only on the first container.
+    /**
+     * service worker script is only added to the page once, and in prod.
+     * https://github.com/QwikDev/qwik/pull/5618
+     */
     const serviceWorkerScript =
-      !isDev && shouldAddQwikLoader && jsx(PrefetchServiceWorker, {});
-
-    // we want a prefetch graph on each container
+      !isDev && isQwikLoaderNeeded && jsx(PrefetchServiceWorker, {});
     const prefetchGraph = !isDev && jsx(PrefetchGraph, {});
-
-    const slots: { [key: string]: unknown } = {};
-    let defaultSlot: JSXNode<"span"> | undefined = undefined;
-
     const qwikScripts = jsx("span", {
       "q:slot": "qwik-scripts",
       "qwik-scripts": "",
       children: [qwikLoader, serviceWorkerScript, prefetchGraph]
     });
 
-    // this is how we get slots
+    const slots: { [key: string]: unknown } = {};
+    let defaultSlot: JSXNode<"span"> | undefined = undefined;
+
+    /** slot handling
+     *  https://qwik.dev/docs/components/slots/#slots
+     *  https://docs.astro.build/en/basics/astro-components/#slots
+     */
     for (const [key, value] of Object.entries(slotted)) {
+      const namedSlot = key !== "default" && { "q:slot": key };
       const jsxElement = jsx("span", {
         dangerouslySetInnerHTML: String(value),
         style: "display: contents",
-        ...(key !== "default" && { "q:slot": key }),
-        "q:key": Math.random().toString(26).split(".").pop()
+        ...namedSlot,
+        "q:key": globalThis.hash
       });
 
       if (key === "default") {
@@ -120,31 +140,26 @@ export async function renderToStaticMarkup(
     }
 
     const slotValues = Object.values(slots);
-
-    const app = jsx(component, {
+    const qwikComponentJSX = jsx(component, {
       ...props,
-      children: [qwikScripts, ...(defaultSlot ? [defaultSlot] : []), ...slotValues]
+      children: [qwikScripts, defaultSlot, ...slotValues]
     });
 
-    if (shouldAddQwikLoader) {
-      qwikLoaderAdded.set(this.result, true);
+    if (isQwikLoaderNeeded) {
+      isQwikLoaderAddedMap.set(this.result, true);
     }
 
-    // TODO: `jsx` must correctly be imported.
-    // Currently the vite loads `core.mjs` and `core.prod.mjs` at the same time and this causes issues.
-    // WORKAROUND: ensure that `npm postinstall` is run to patch the `@builder.io/qwik/package.json` file.
-    const result = await renderToString(app, renderConfig);
+    await renderToStream(qwikComponentJSX, renderToStreamOpts);
 
-    const { html } = result;
-
-    // With VT, rerun so that signals work
+    /** With View Transitions, rerun so that signals work
+     * https://docs.astro.build/en/guides/view-transitions/#data-astro-rerun
+     */
     const htmlWithRerun = html.replace(
       '<script q:func="qwik/json">',
       '<script q:func="qwik/json" data-astro-rerun>'
     );
 
     return {
-      ...result,
       html: htmlWithRerun
     };
   } catch (error) {
