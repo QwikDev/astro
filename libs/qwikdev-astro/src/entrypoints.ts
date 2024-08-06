@@ -1,4 +1,4 @@
-import ts from "typescript";
+import type { Plugin } from "vite";
 
 export const qwikModules = [
   "@builder.io/qwik",
@@ -7,35 +7,23 @@ export const qwikModules = [
   "@qwikdev/qwik-react"
 ];
 
-import type { Plugin } from "vite";
-
-export function qwikTransformPlugin(filter: (id: unknown) => boolean): Plugin {
+export function qwikEntrypointsPlugin(filter: (id: string) => boolean): Plugin {
   const entrypoints: Set<string> = new Set();
 
   return {
-    name: "qwik-transform-plugin",
+    name: "qwik-entrypoints-plugin",
     enforce: "pre",
 
-    async transform(code, id) {
-      if (filter(id) || entrypoints.has(id)) {
-        const sourceFile = ts.createSourceFile(id, code, ts.ScriptTarget.Latest, true);
-
-        const hasQwikImport = ts.forEachChild(sourceFile, (node) => {
-          return (
-            ts.isImportDeclaration(node) &&
-            ts.isStringLiteral(node.moduleSpecifier) &&
-            qwikModules.includes(node.moduleSpecifier.text)
-          );
-        });
-
-        if (hasQwikImport) {
-          entrypoints.add(id);
-          console.log("New Qwik entrypoint found:", id);
+    async resolveId(source, importer) {
+      if (importer && filter(source)) {
+        const resolved = await this.resolve(source, importer, { skipSelf: true });
+        if (resolved) {
+          entrypoints.add(resolved.id);
+          console.log(entrypoints);
         }
       }
       return null;
     },
-
     api: {
       getEntrypoints: () => Array.from(entrypoints)
     }

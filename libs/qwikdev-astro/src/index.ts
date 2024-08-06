@@ -15,7 +15,7 @@ import { build, createFilter } from "vite";
 import type { InlineConfig, PluginOption } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-import { qwikModules, qwikTransformPlugin } from "./entrypoints";
+import { qwikEntrypointsPlugin, qwikModules } from "./entrypoints";
 import { moveArtifacts, newHash } from "./utils";
 
 declare global {
@@ -89,9 +89,7 @@ export default defineIntegration({
         // Retrieve Qwik files from the project source directory
         srcDir = relative(astroConfig.root.pathname, astroConfig.srcDir.pathname);
 
-        const myQwikTransformPlugin = qwikTransformPlugin(filter);
-
-        entrypoints = myQwikTransformPlugin.api.getEntrypoints();
+        entrypoints = qwikEntrypointsPlugin(filter).api.getEntrypoints();
 
         addRenderer({
           name: "@qwikdev/astro",
@@ -165,7 +163,7 @@ export default defineIntegration({
               }
             },
             plugins: [
-              myQwikTransformPlugin,
+              qwikEntrypointsPlugin(filter),
               symbolMapperPlugin,
               qwikVite(qwikViteConfig),
               tsconfigPaths(),
