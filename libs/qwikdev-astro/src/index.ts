@@ -21,7 +21,6 @@ import { moveArtifacts, newHash } from "./utils";
 declare global {
   var symbolMapperFn: SymbolMapperFn;
   var hash: string | undefined;
-  var qwikEntrypoints: string[];
 }
 
 /* Similar to vite's FilterPattern */
