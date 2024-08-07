@@ -35,7 +35,12 @@
     "./entrypoints": "./src/entrypoints.ts",
     "./utils": "./src/utils.ts"
   },
-  "files": ["src", "src/index.ts", "server.ts", "env.d.ts"],
+  "files": [
+    "src",
+    "src/index.ts",
+    "server.ts",
+    "env.d.ts"
+  ],
   "keywords": [
     "astro-integration",
     "astro-component",
@@ -61,6 +66,7 @@
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.10.0",
     "astro": "^4.12.2",
+    "tslib": "^2.6.3",
     "typescript": "^5.4.2",
     "vite": "^5.3"
   },
