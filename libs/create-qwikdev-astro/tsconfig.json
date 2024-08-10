@@ -8,7 +8,7 @@
     "outDir": "./dist",
     "declaration": true,
     "declarationDir": "./dist",
-    "emitDeclarationOnly": false,
+    "emitDeclarationOnly": true,
     "module": "ESNext",
     "target": "ESNext",
     "moduleResolution": "Bundler",

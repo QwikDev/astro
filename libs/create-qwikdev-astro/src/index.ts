@@ -4,7 +4,6 @@ import fs from "node:fs";
 import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
 import process from "node:process";
-import { fileURLToPath } from "node:url";
 import {
   cancel,
   confirm,
@@ -30,9 +29,6 @@ import {
 } from "kleur/colors";
 import detectPackageManager from "which-pm-runs";
 import yargs from "yargs";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export function isHome(dir: string): boolean {
   return dir.startsWith("~/");
