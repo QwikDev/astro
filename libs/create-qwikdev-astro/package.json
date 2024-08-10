@@ -1,11 +1,10 @@
 {
   "name": "@qwikdev/create-astro",
-  "type": "module",
   "license": "MIT",
   "version": "0.1.2",
   "description": "Interactive CLI for create @QwikDev/astro projects.",
   "scripts": {
-    "build": "rimraf dist && tsc --build"
+    "build": "rimraf dist && tsc --build && tsm scripts/build.ts"
   },
   "contributors": [
     {
@@ -69,7 +68,10 @@
   "devDependencies": {
     "@types/which-pm-runs": "^1.0.2",
     "@types/yargs": "^17.0.32",
+    "esbuild": "^0.23.0",
+    "globby": "^14.0.2",
     "rimraf": "^5.0.5",
+    "tsm": "^2.3.0",
     "typescript": "^5.4.5"
   }
 }
