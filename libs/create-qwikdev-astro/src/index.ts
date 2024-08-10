@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 import {
   cancel,
   confirm,
@@ -29,6 +30,22 @@ import {
 } from "kleur/colors";
 import detectPackageManager from "which-pm-runs";
 import yargs from "yargs";
+
+const __filename = getModuleFilename();
+const __dirname = path.dirname(__filename);
+
+export function getModuleFilename(): string {
+  const error = new Error();
+  const stack = error.stack;
+  const matches = stack?.match(
+    /^Error\s+at[^\r\n]+\s+at *(?:[^\r\n(]+\((.+?)(?::\d+:\d+)?\)|(.+?)(?::\d+:\d+)?) *([\r\n]|$)/
+  );
+  const filename = matches?.[1] || matches?.[2];
+  if (filename?.startsWith("file://")) {
+    return fileURLToPath(filename);
+  }
+  return filename || fileURLToPath(import.meta.url);
+}
 
 export function isHome(dir: string): boolean {
   return dir.startsWith("~/");
