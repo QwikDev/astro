@@ -1,5 +1,6 @@
 {
   "name": "@qwikdev/create-astro",
+  "type": "module",
   "license": "MIT",
   "version": "0.1.2",
   "description": "Interactive CLI for create @QwikDev/astro projects.",
