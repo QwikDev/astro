@@ -29,33 +29,15 @@ importers:
 
   apps/demo:
     dependencies:
-      '@astrojs/react':
-        specifier: ^3.6.0
-        version: 3.6.0(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(vite@5.3.5(@types/node@20.12.7))
       '@builder.io/qwik':
         specifier: ^1.9
         version: 1.9.0(@types/node@20.12.7)
       '@qwikdev/astro':
         specifier: workspace:*
         version: link:../../libs/qwikdev-astro
-      '@qwikest/icons':
-        specifier: ^0.0.13
-        version: 0.0.13(@builder.io/qwik@1.9.0(@types/node@20.12.7))
-      '@types/react':
-        specifier: ^18.2.64
-        version: 18.2.79
-      '@types/react-dom':
-        specifier: ^18.2.21
-        version: 18.2.25
       astro:
         specifier: ^4.12.2
         version: 4.12.2(@types/node@20.12.7)(typescript@5.4.5)
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
 
   apps/deno-demo:
     dependencies:
@@ -1388,12 +1370,6 @@ packages:
   '@pnpm/npm-conf@2.3.0':
     resolution: {integrity: sha512-DqrO+oXGR7HCuicNy6quk6ALJSDDPKI7RZz1bP5im8mSL8J2e+9w26LdkjuAfpAjOutYUJVbnXnx4IbTQeIgfw==}
     engines: {node: '>=12'}
-
-  '@qwikest/icons@0.0.13':
-    resolution: {integrity: sha512-e0wY8vmx0nDSUiuCATlk+ojTvdBV4txIGHHWjZW5SRkv4XB8H9+3WSDcLPz0ItUdRyzcrohE9k2jtQI/98aRPA==}
-    engines: {node: '>=15.0.0'}
-    peerDependencies:
-      '@builder.io/qwik': '>=1.0.0'
 
   '@rollup/rollup-android-arm-eabi@4.16.1':
     resolution: {integrity: sha512-92/y0TqNLRYOTXpm6Z7mnpvKAG9P7qmK7yJeRJSdzElNCUnsgbpAsGqerUboYRIQKzgfq4pWu9xVkgpWLfmNsw==}
@@ -6947,10 +6923,6 @@ snapshots:
       '@pnpm/config.env-replace': 1.1.0
       '@pnpm/network.ca-file': 1.0.2
       config-chain: 1.1.13
-
-  '@qwikest/icons@0.0.13(@builder.io/qwik@1.9.0(@types/node@20.12.7))':
-    dependencies:
-      '@builder.io/qwik': 1.9.0(@types/node@20.12.7)
 
   '@rollup/rollup-android-arm-eabi@4.16.1':
     optional: true

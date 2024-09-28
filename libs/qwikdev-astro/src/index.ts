@@ -1,4 +1,3 @@
-import { rmSync } from "node:fs";
 import os from "node:os";
 import { normalize, relative } from "node:path";
 
@@ -10,11 +9,9 @@ import { qwikVite } from "@builder.io/qwik/optimizer";
 import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import { symbolMapper } from "@builder.io/qwik/optimizer";
 
-import { build, createFilter } from "vite";
-import type { InlineConfig, PluginOption } from "vite";
+import { createFilter } from "vite";
+import type { PluginOption } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-
-import { moveArtifacts, newHash } from "./utils";
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
@@ -57,7 +54,6 @@ export default defineIntegration({
   setup({ options }) {
     let srcDir = "";
     let outDir = "";
-    const tempDir = `tmp-${newHash()}`;
 
     let astroConfig: AstroConfig | null = null;
 
@@ -177,10 +173,6 @@ export default defineIntegration({
 
         const normalizedPath = normalize(outputPath);
         process.env.Q_BASE = normalizedPath;
-
-        await moveArtifacts(tempDir, normalizedPath);
-        // remove the temp dir folder
-        rmSync(tempDir, { recursive: true });
       }
     };
 
