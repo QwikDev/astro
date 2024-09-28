@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^3.6.0",
-    "@builder.io/qwik": "https://pkg.pr.new/@builder.io/qwik@eb845d0",
+    "@builder.io/qwik": "^1.9",
     "@qwikdev/astro": "workspace:*",
     "@qwikest/icons": "^0.0.13",
     "@types/react": "^18.2.64",

@@ -118,9 +118,6 @@ export default defineIntegration({
           fileFilter,
           devSsrServer: false,
           srcDir,
-          client: {
-            input: "src/root.tsx"
-          },
           ssr: {
             input: "@qwikdev/astro/server"
           },
@@ -158,31 +155,6 @@ export default defineIntegration({
 
       "astro:config:done": async ({ config }) => {
         astroConfig = config;
-      },
-
-      "astro:build:start": async ({ logger }) => {
-        logger.info("astro:build:start");
-
-        // make sure vite does not parse .astro files in the qwik integration
-        const astroNoopPlugin: PluginOption = {
-          enforce: "pre",
-          name: "astro-noop",
-
-          load(id: string) {
-            if (id.endsWith(".astro")) {
-              return "export default function() {}";
-            }
-            return null;
-          }
-        };
-
-        // client build that we pass back to the server build
-        await build({
-          ...astroConfig?.vite,
-          plugins: [...(astroConfig?.vite.plugins || []), astroNoopPlugin]
-        } as InlineConfig);
-
-        await moveArtifacts(outDir, tempDir);
       },
 
       "astro:build:done": async () => {
