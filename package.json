@@ -20,7 +20,7 @@
     "fix": "pnpm lint && pnpm format",
     "format": "biome format --write .",
     "lint": "biome check --apply-unsafe .",
-    "build.create-qwikdev-astro": "pnpm -C ./libs/create-qwikdev-astro && pnpm build",
+    "build.create-qwikdev-astro": "pnpm -C ./libs/create-qwikdev-astro build",
     "postinstall": "lefthook install && playwright install --with-deps",
     "changeset": "changeset",
     "release": "pnpm build.create-qwikdev-astro && changeset publish",
