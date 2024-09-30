@@ -174,22 +174,18 @@ export const clearDir = async (dir: string) => {
   );
 };
 
-export function fileGetContents(file: string): string {
+function fileGetContents(file: string): string {
   if (!fs.existsSync(file)) {
     throw new Error(`File ${file} not found`);
   }
   return fs.readFileSync(file, { encoding: "utf8" }).toString();
 }
 
-export function filePutContents(file: string, contents: string) {
+function filePutContents(file: string, contents: string) {
   return fs.writeFileSync(file, contents, { encoding: "utf8" });
 }
 
-export function fileReplaceContents(
-  file: string,
-  search: string | RegExp,
-  replace: string
-) {
+function fileReplaceContents(file: string, search: string | RegExp, replace: string) {
   let contents = fileGetContents(file);
   contents = contents.replace(search, replace);
   filePutContents(file, contents);
@@ -215,8 +211,52 @@ export function pmRunCommand(): string {
   return pm;
 }
 
-export function replacePackageJsonRunCommand(dir: string) {
-  fileReplaceContents(join(dir, "package.json"), /npm run/g, pmRunCommand());
+export function getPackageJsonPath(dir = __dirname): string {
+  return join(dir, "package.json");
+}
+
+function packageJsonReplace(dir: string, search: string | RegExp, replace: string) {
+  fileReplaceContents(getPackageJsonPath(dir), search, replace);
+}
+
+function replacePackageJsonRunCommand(dir: string) {
+  packageJsonReplace(dir, /npm run/g, pmRunCommand());
+}
+
+const npmPackageNamePattern =
+  /^(?:(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*)$/;
+
+function sanitizePackageName(name: string): string {
+  name = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  name = name.replace(/[^a-zA-Z0-9\-._~/@]/g, "-");
+  name = name.replace(/^[-.]+|[-.]+$/g, "");
+  name = name.replace(/[-.]{2,}/g, "-");
+  name = name.toLowerCase();
+
+  return name;
+}
+
+function isValidPackageName(name: string): boolean {
+  return npmPackageNamePattern.test(name);
+}
+
+function validatePackageName(name: string): string {
+  name = sanitizePackageName(name);
+
+  if (!isValidPackageName(name)) {
+    throw new Error(`Invalid package name: ${name}`);
+  }
+
+  return name;
+}
+
+function updatePackageName(newName: string, dir = __dirname): void {
+  const packageJsonPath = getPackageJsonPath(dir);
+  const packageJson = JSON.parse(fileGetContents(packageJsonPath));
+  const cleanedName = validatePackageName(newName);
+
+  packageJson.name = cleanedName;
+  filePutContents(packageJsonPath, JSON.stringify(packageJson, null, 2));
 }
 
 export function panicCanceled() {
@@ -448,6 +488,22 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
       }
       cpSync(templatePath, outDir, { recursive: true });
     }
+
+    const defaultPackageName = sanitizePackageName(projectAnswer as string);
+    const packageName = config.it
+      ? await text({
+          message: "What should be the name of this package?",
+          defaultValue: defaultPackageName,
+          placeholder: defaultPackageName
+        })
+      : defaultPackageName;
+
+    if (typeof packageName === "symbol" || isCancel(packageName)) {
+      panicCanceled();
+    }
+
+    updatePackageName(packageName as string, outDir);
+    log.info(`Updated package name to "${packageName as string}" 📦️`);
 
     if (packageManager !== "npm") {
       log.info(`Replacing 'npm run' by '${pmRunCommand()}' in package.json...`);

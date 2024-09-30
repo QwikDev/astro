@@ -10,7 +10,8 @@
         "noParameterAssign": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noMisleadingCharacterClass": "off"
       }
     }
   },
