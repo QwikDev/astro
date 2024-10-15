@@ -32,21 +32,41 @@ import {
   updatePackageName
 } from "./utils";
 
-export type ProjectConfig = {
+export type Config = {
   project: string;
-  adapter?: "deno" | "node";
-  force?: boolean;
-  install?: boolean;
-  biome?: boolean;
-  git?: boolean;
-  ci?: boolean;
+  adapter: "deno" | "node" | null;
+  force: boolean;
+  install: boolean;
+  biome: boolean;
+  git: boolean;
+  ci: boolean;
+  it: boolean;
   yes: boolean;
   no: boolean;
-  it: boolean;
   dryRun: boolean;
 };
 
-export function parseArgs(args: string[]): ProjectConfig {
+export type UserConfig = Partial<Config>;
+
+export const defaultConfig = {
+  project: "./qwik-astro-astro",
+  adapter: null,
+  force: false,
+  install: true,
+  biome: true,
+  git: false,
+  ci: false,
+  it: false,
+  yes: false,
+  no: false,
+  dryRun: false
+} as const;
+
+export function defineConfig(config: UserConfig): Config {
+  return { ...defaultConfig, ...config };
+}
+
+export function parseArgs(args: string[]): UserConfig {
   const parsedArgs = yargs(args)
     .strict()
     .command(
@@ -122,12 +142,15 @@ export function parseArgs(args: string[]): ProjectConfig {
           .usage("npm create @qwikdev/astro [project] [adapter] [...options]");
       }
     )
-    .alias("h", "help").argv as unknown as ProjectConfig;
+    .alias("h", "help").argv as unknown as UserConfig;
 
   return parsedArgs;
 }
 
-export async function createProject(config: ProjectConfig, defaultProject: string) {
+export async function createProject(options: UserConfig) {
+  const config = defineConfig(options);
+  const defaultProject = config.project;
+
   try {
     intro(`Let's create a ${bgBlue(" QwikDev/astro App ")} ✨`);
 
@@ -183,7 +206,7 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
           (config.it &&
             (await confirm({
               message: "Would you prefer Biome over ESLint/Prettier?",
-              initialValue: true
+              initialValue: config.biome
             })));
 
     if (preferBiome) {
@@ -206,7 +229,7 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
                 message: `Directory "./${resolveRelativeDir(
                   outDir
                 )}" already exists and is not empty. What would you like to overwrite it?`,
-                initialValue: true
+                initialValue: config.force
               })));
       if (force) {
         if (!config.dryRun) {
@@ -258,7 +281,7 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
           (config.it &&
             (await confirm({
               message: "Would you like to add CI workflow?",
-              initialValue: true
+              initialValue: config.ci
             })));
 
     if (addCIWorkflow && !config.dryRun) {
@@ -283,7 +306,7 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
           (config.it &&
             (await confirm({
               message: `Would you like to install ${packageManager} dependencies?`,
-              initialValue: true
+              initialValue: config.install
             })));
 
     let ranInstall = false;
@@ -303,7 +326,7 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
           (config.it &&
             (await confirm({
               message: "Initialize a new git repository?",
-              initialValue: true
+              initialValue: config.git
             })));
 
     if (initGit) {
@@ -373,11 +396,10 @@ export async function createProject(config: ProjectConfig, defaultProject: strin
 
 /** @param args Pass here process.argv.slice(2) */
 export async function runCreate(...args: string[]) {
-  const defaultProject = "./qwik-astro-app";
-  const projectConfig = parseArgs(args.length ? args : [defaultProject]);
+  const projectConfig = parseArgs(args.length ? args : []);
   projectConfig.it = projectConfig.it || args.length === 0;
 
-  createProject(projectConfig, defaultProject);
+  createProject(projectConfig);
 }
 
 export default async function () {
