@@ -47,6 +47,12 @@
       "require": "./dist/cli.cjs",
       "default": "./dist/cli.js"
     },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js",
+      "require": "./dist/utils.cjs",
+      "default": "./dist/utils.js"
+    },
     "./package.json": "./package.json"
   },
   "files": ["dist", "stubs"],
