@@ -76,55 +76,62 @@ export function parseArgs(args: string[]): UserConfig {
         return yargs
           .positional("project", {
             type: "string",
+            default: defaultConfig.project,
             desc: "Directory of the project"
           })
           .positional("adapter", {
             type: "string",
+            default: defaultConfig.adapter,
             desc: "Server adapter",
             choices: ["deno", "node"]
           })
           .option("force", {
             alias: "f",
             type: "boolean",
+            default: defaultConfig.force,
             desc: "Overwrite target directory if it exists"
           })
           .option("install", {
             alias: "i",
             type: "boolean",
+            default: defaultConfig.install,
             desc: "Install dependencies"
           })
           .option("biome", {
             type: "boolean",
+            default: defaultConfig.biome,
             desc: "Prefer Biome to ESLint/Prettier"
           })
           .option("git", {
             type: "boolean",
+            default: defaultConfig.git,
             desc: "Initialize Git repository"
           })
           .option("ci", {
             type: "boolean",
+            default: defaultConfig.ci,
             desc: "Add CI workflow"
           })
           .option("yes", {
             alias: "y",
-            default: false,
+            default: defaultConfig.yes,
             type: "boolean",
             desc: "Skip all prompts by accepting defaults"
           })
           .option("no", {
             alias: "n",
-            default: false,
             type: "boolean",
+            default: defaultConfig.no,
             desc: "Skip all prompts by declining defaults"
           })
           .option("it", {
-            default: false,
             type: "boolean",
+            default: defaultConfig.it,
             desc: "Execute actions interactively"
           })
           .option("dryRun", {
-            default: false,
             type: "boolean",
+            default: defaultConfig.dryRun,
             desc: "Walk through steps without executing"
           })
           .example(
