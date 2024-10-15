@@ -86,10 +86,10 @@
     createProject(config);
     ```
 
-  **Project configuration type:**
+  **User configuration type:**
 
   ```typescript
-  export type ProjectConfig = {
+  export type UserConfig = {
     project: string;
     adapter?: "deno" | "node";
     force?: boolean;
@@ -103,6 +103,24 @@
     dryRun: boolean;
   };
   ```
+
+**Default configuration options:**
+
+```typescript
+export const defaultConfig = {
+  project: "./qwik-astro-astro",
+  adapter: null,
+  force: false,
+  install: true,
+  biome: true,
+  git: false,
+  ci: false,
+  it: false,
+  yes: false,
+  no: false,
+  dryRun: false
+} as const;
+```
 
 ## 🌍 Community
 
