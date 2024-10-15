@@ -136,11 +136,15 @@ export function parseArgs(args: string[]): UserConfig {
           })
           .example(
             "npm create @qwikdev/astro@latest",
-            "Create a project in interactive mode"
+            "Create a project with default options"
+          )
+          .example(
+            "npm create @qwikdev/astro@latest ./qwik-astro-app",
+            "Create a project in a specific directory"
           )
           .example(
             "npm create @qwikdev/astro@latest ./qwik-astro-app node",
-            "Create a project in commande mode"
+            "Create a project using a server adapter"
           )
           .example(
             "npm create @qwikdev/astro@latest ./qwik-astro-app node --it",
