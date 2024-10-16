@@ -272,16 +272,13 @@ export async function createProject(options: UserConfig) {
       replacePackageJsonRunCommand(outDir);
     }
 
-    const addCIWorkflow =
-      config.no && !config.ci
-        ? false
-        : (config.yes && config.ci !== false) ||
-          config.ci ||
-          (config.it &&
-            (await confirm({
-              message: "Would you like to add CI workflow?",
-              initialValue: config.ci
-            })));
+    const addCIWorkflow = scanBoolean(
+      "Would you like to add CI workflow?",
+      config.ci,
+      config.it,
+      config.yes,
+      config.no
+    );
 
     if (addCIWorkflow && !config.dryRun) {
       const starterCIPath = join(
@@ -297,36 +294,30 @@ export async function createProject(options: UserConfig) {
       cpSync(starterCIPath, projectCIPath, { force: true });
     }
 
-    const runInstall =
-      config.no && !config.install
-        ? false
-        : (config.yes && config.install !== false) ||
-          config.install ||
-          (config.it &&
-            (await confirm({
-              message: `Would you like to install ${packageManager} dependencies?`,
-              initialValue: config.install
-            })));
+    const runInstall = scanBoolean(
+      `Would you like to install ${packageManager} dependencies?`,
+      config.install,
+      config.it,
+      config.yes,
+      config.no
+    );
 
     let ranInstall = false;
     if (typeof runInstall !== "symbol" && runInstall) {
       log.step("Installing dependencies...");
       if (!config.dryRun) {
-        await installDependencies(projectAnswer as string);
+        await installDependencies(projectAnswer);
       }
       ranInstall = true;
     }
 
-    const initGit =
-      config.no && !config.git
-        ? false
-        : (config.yes && config.git !== false) ||
-          config.git ||
-          (config.it &&
-            (await confirm({
-              message: "Initialize a new git repository?",
-              initialValue: config.git
-            })));
+    const initGit = scanBoolean(
+      "Initialize a new git repository?",
+      config.git,
+      config.it,
+      config.yes,
+      config.no
+    );
 
     if (initGit) {
       const s = spinner();
