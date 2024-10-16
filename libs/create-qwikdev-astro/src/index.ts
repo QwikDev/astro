@@ -15,10 +15,18 @@ import {
 import { bgBlue, bgMagenta, bold, cyan, gray, magenta, red } from "kleur/colors";
 import yargs from "yargs";
 import {
+  type Adapter,
+  type Config,
+  type UserConfig,
+  defaultConfig,
+  defineConfig
+} from "./config";
+import {
   $,
   __dirname,
   __filename,
   clearDir,
+  ensureString,
   getPackageManager,
   installDependencies,
   note,
@@ -29,42 +37,10 @@ import {
   resolveAbsoluteDir,
   resolveRelativeDir,
   sanitizePackageName,
+  scanBoolean,
+  scanString,
   updatePackageName
 } from "./utils";
-
-export type Config = {
-  project: string;
-  adapter?: "deno" | "node";
-  force: boolean;
-  install: boolean;
-  biome: boolean;
-  git: boolean;
-  ci: boolean;
-  it: boolean;
-  yes: boolean;
-  no: boolean;
-  dryRun: boolean;
-};
-
-export type UserConfig = Partial<Config>;
-
-export const defaultConfig = {
-  project: "./qwik-astro-astro",
-  adapter: undefined,
-  force: false,
-  install: true,
-  biome: true,
-  git: false,
-  ci: false,
-  it: false,
-  yes: false,
-  no: false,
-  dryRun: false
-} as const;
-
-export function defineConfig(config: UserConfig): Config {
-  return { ...defaultConfig, ...config };
-}
 
 export function parseArgs(args: string[]): UserConfig {
   const parsedArgs = yargs(args)
@@ -158,68 +134,97 @@ export function parseArgs(args: string[]): UserConfig {
   return parsedArgs;
 }
 
+export async function scanProjectDirectory(
+  defaultDirectory: string = defaultConfig.project,
+  it: boolean = defaultConfig.it
+): Promise<string> {
+  return scanString(
+    `Where would you like to create your new project? ${gray(
+      `(Use '.' or './' for current directory)`
+    )}`,
+    defaultDirectory,
+    it,
+    true
+  );
+}
+
+export async function scanAdapter(
+  defaultAdapter: Adapter = defaultConfig.adapter || "default",
+  it: boolean = defaultConfig.it
+): Promise<Adapter> {
+  const adapter =
+    (it &&
+      (await scanBoolean("Would you like to use a server adapter?", false, it)) &&
+      (await select({
+        message: "Which adapter do you prefer?",
+        options: [
+          {
+            value: "node",
+            label: "Node"
+          },
+          {
+            value: "deno",
+            label: "Deno"
+          }
+        ]
+      }))) ||
+    defaultAdapter;
+
+  ensureString<Adapter>(adapter, true);
+
+  return adapter;
+}
+
+export async function scanPreferBiome(
+  defaultValue: boolean = defaultConfig.biome,
+  it: boolean = defaultConfig.it,
+  yes: boolean = defaultConfig.yes,
+  no: boolean = defaultConfig.no
+): boolean {
+  return scanBoolean(
+    "Would you prefer Biome over ESLint/Prettier?",
+    defaultValue,
+    it,
+    yes,
+    no
+  );
+}
+
+export async function scanForce(
+  outDir: string,
+  defaultValue: boolean = defaultConfig.force,
+  it: boolean = defaultConfig.it,
+  yes: boolean = defaultConfig.yes,
+  no: boolean = defaultConfig.no
+): boolean {
+  return scanBoolean(
+    `Directory "./${resolveRelativeDir(
+      outDir
+    )}" already exists and is not empty. What would you like to overwrite it?`,
+    defaultValue,
+    it,
+    yes,
+    no
+  );
+}
+
 export async function createProject(options: UserConfig) {
   const config = defineConfig(options);
-  const defaultProject = config.project;
 
   try {
     intro(`Let's create a ${bgBlue(" QwikDev/astro App ")} ✨`);
 
     const packageManager = getPackageManager();
+    const projectAnswer = await scanProjectDirectory(config.project, config.it);
+    const adapter = await scanAdapter(config.adapter, config.it);
+    const preferBiome = await scanPreferBiome(
+      config.biome,
+      config.it,
+      config.yes,
+      config.no
+    );
 
-    const projectAnswer =
-      config.project !== defaultProject || !config.it
-        ? config.project
-        : (await text({
-            message: `Where would you like to create your new project? ${gray(
-              `(Use '.' or './' for current directory)`
-            )}`,
-            placeholder: defaultProject
-          })) || defaultProject;
-
-    if (typeof projectAnswer === "symbol" || isCancel([projectAnswer, packageManager])) {
-      panicCanceled();
-    }
-
-    const adapter =
-      config.adapter ||
-      (config.it &&
-        (await confirm({
-          message: "Would you like to use a server adapter?",
-          initialValue: false
-        })) &&
-        (await select({
-          message: "Which adapter do you prefer?",
-          options: [
-            {
-              value: "node",
-              label: "Node"
-            },
-            {
-              value: "deno",
-              label: "Deno"
-            }
-          ]
-        }))) ||
-      "default";
-
-    if (typeof adapter === "symbol" || isCancel(adapter)) {
-      panicCanceled();
-    }
-
-    let starterKit = adapter as string;
-
-    const preferBiome =
-      config.no && !config.biome
-        ? false
-        : (config.yes && config.biome !== false) ||
-          config.biome ||
-          (config.it &&
-            (await confirm({
-              message: "Would you prefer Biome over ESLint/Prettier?",
-              initialValue: config.biome
-            })));
-
+    let starterKit = adapter;
     if (preferBiome) {
       starterKit += "-biome";
     }
@@ -230,18 +235,7 @@ export async function createProject(options: UserConfig) {
     log.step(`Creating new project in ${bgBlue(` ${outDir} `)} ... 🐇`);
 
     if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
-      const force =
-        config.no && !config.force
-          ? false
-          : (config.yes && config.force !== false) ||
-            config.force ||
-            (config.it &&
-              (await confirm({
-                message: `Directory "./${resolveRelativeDir(
-                  outDir
-                )}" already exists and is not empty. What would you like to overwrite it?`,
-                initialValue: config.force
-              })));
+      const force = scanForce(outDir, config.force, config.it, config.yes, config.no);
       if (force) {
         if (!config.dryRun) {
           await clearDir(outDir);
@@ -263,21 +257,15 @@ export async function createProject(options: UserConfig) {
       cpSync(templatePath, outDir, { recursive: true });
     }
 
-    const defaultPackageName = sanitizePackageName(projectAnswer as string);
-    const packageName = config.it
-      ? await text({
-          message: "What should be the name of this package?",
-          defaultValue: defaultPackageName,
-          placeholder: defaultPackageName
-        })
-      : defaultPackageName;
+    const defaultPackageName = sanitizePackageName(projectAnswer);
+    const packageName = scanString(
+      "What should be the name of this package?",
+      defaultPackageName,
+      config.it
+    );
 
-    if (typeof packageName === "symbol" || isCancel(packageName)) {
-      panicCanceled();
-    }
-
-    updatePackageName(packageName as string, outDir);
-    log.info(`Updated package name to "${packageName as string}" 📦️`);
+    updatePackageName(packageName, outDir);
+    log.info(`Updated package name to "${packageName}" 📦️`);
 
     if (packageManager !== "npm") {
       log.info(`Replacing 'npm run' by '${pmRunCommand()}' in package.json...`);

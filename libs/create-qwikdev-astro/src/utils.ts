@@ -3,9 +3,10 @@ import fs from "node:fs";
 import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { isCancel, log } from "@clack/prompts";
+import { isCancel, log, text } from "@clack/prompts";
 import { gray, green, red, reset, white } from "kleur/colors";
 import detectPackageManager from "which-pm-runs";
+import { defaultConfig } from "./config";
 
 export const __filename = getModuleFilename();
 export const __dirname = path.dirname(__filename);
@@ -264,22 +265,66 @@ export const installDependencies = async (cwd: string) => {
   await $pm("install", cwd);
 };
 
+export async function scanString(
+  message: string,
+  initialValue: string,
+  it: boolean = defaultConfig.it,
+  positional = false
+): Promise<string> {
+  const input = !it
+    ? initialValue
+    : (await text({
+        message,
+        placeholder: initialValue
+      })) || initialValue;
+
+  ensureString(input, positional);
+
+  return input;
+}
+
+export async function scanBoolean(
+  message: string,
+  initialValue: boolean,
+  it: boolean = defaultConfig.it,
+  yes: boolean = defaultConfig.yes,
+  no: boolean = defaultConfig.no,
+  positional = false
+): Promise<boolean> {
+  const input =
+    no && !initialValue
+      ? false
+      : (yes && initialValue !== false) ||
+        initialValue ||
+        (it &&
+          (await confirm({
+            message,
+            initialValue
+          })));
+
+  ensureBoolean(input, positional);
+
+  return input;
+}
+
 export function ensureString<T extends string>(
   input: any,
-  validate?: (v: string) => v is T
+  validate?: (v: string) => v is T,
+  positional = false
 ): asserts input is T {
-  ensure(input, validate ?? isString);
+  ensure(input, validate ?? isString, positional);
 }
 
 export function ensureNumber<T extends number>(
   input: any,
-  validate?: (v: number) => v is T
+  validate?: (v: number) => v is T,
+  positional = false
 ): asserts input is T {
-  ensure(input, validate ?? isNumber);
+  ensure(input, validate ?? isNumber, positional);
 }
 
-export function ensureBoolean(input: any): asserts input is boolean {
-  ensure(input, isBoolean);
+export function ensureBoolean(input: any, positional = false): asserts input is boolean {
+  ensure(input, isBoolean, positional);
 }
 
 export function ensureTrue(input: any): asserts input is true {
@@ -290,8 +335,12 @@ export function ensureFalse(input: any): asserts input is false {
   ensure(input, (v) => v === false);
 }
 
-export function ensure<T, U>(input: T, validate: (v: T) => U): asserts input is T {
-  if (isCanceled(input)) {
+export function ensure<T, U>(
+  input: T,
+  validate: (v: T) => U,
+  positional = false
+): asserts input is T {
+  if (isCanceled(input, positional)) {
     panic("Operation canceled.");
   }
 
@@ -312,9 +361,9 @@ export function isBoolean(input: any): input is boolean {
   return typeof input === "boolean";
 }
 
-export function isCanceled(input: any): boolean {
+export function isCanceled(input: any, positional = false): boolean {
   return (
     typeof input === "symbol" ||
-    isCancel(isBoolean(input) ? input : [input, getPackageManager()])
+    isCancel(positional ? [input, getPackageManager()] : input)
   );
 }
