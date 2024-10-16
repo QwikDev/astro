@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { log } from "@clack/prompts";
+import { isCancel, log } from "@clack/prompts";
 import { gray, green, red, reset, white } from "kleur/colors";
 import detectPackageManager from "which-pm-runs";
 
@@ -136,7 +136,7 @@ export const note = (message = "", title = "") => {
 };
 
 // Used from https://github.com/QwikDev/qwik/blob/main/packages/qwik/src/cli/utils/utils.ts
-export function panic(msg: string) {
+export function panic(msg: string): never {
   console.error(`\n❌ ${red(msg)}\n`);
   process.exit(1);
 }
@@ -235,7 +235,7 @@ export function updatePackageName(newName: string, dir = __dirname): void {
   filePutContents(packageJsonPath, JSON.stringify(packageJson, null, 2));
 }
 
-export function panicCanceled() {
+export function panicCanceled(): never {
   panic("Operation canceled.");
 }
 
@@ -267,3 +267,42 @@ export const $pm = async (
 export const installDependencies = async (cwd: string) => {
   await $pm("install", cwd);
 };
+
+export function ensureString(input: any): input is string | never {
+  return ensure(input, isString);
+}
+
+export function ensureNumber(input: any): input is number | never {
+  return ensure(input, isString);
+}
+
+export function ensureBoolean(input: any): input is boolean {
+  return ensure(input, isBoolean);
+}
+
+export function ensure<T>(input, validate: (v) => T): input is T | never {
+  if (isCanceled(input) || !validate(input)) {
+    panicCanceled();
+  }
+
+  return true;
+}
+
+export function isString(input: any): input is string {
+  return typeof input === "string" || input instanceof String;
+}
+
+export function isNumber(input: any): input is number {
+  return typeof input === "number" && !Number.isNaN(input);
+}
+
+export function isBoolean(input: any): input is boolean {
+  return typeof input === "boolean";
+}
+
+export function isCanceled(input: any): boolean {
+  return (
+    typeof input === "symbol" ||
+    isCancel(isBoolean(input) ? input : [input, getPackageManager()])
+  );
+}
