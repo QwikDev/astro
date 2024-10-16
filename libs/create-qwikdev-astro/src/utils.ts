@@ -235,10 +235,6 @@ export function updatePackageName(newName: string, dir = __dirname): void {
   filePutContents(packageJsonPath, JSON.stringify(packageJson, null, 2));
 }
 
-export function panicCanceled(): never {
-  panic("Operation canceled.");
-}
-
 export const $pm = async (
   args: string | string[],
   cwd = process.cwd(),
@@ -268,24 +264,26 @@ export const installDependencies = async (cwd: string) => {
   await $pm("install", cwd);
 };
 
-export function ensureString(input: any): input is string | never {
-  return ensure(input, isString);
+export function ensureString(input: any): asserts input is string {
+  ensure(input, isString);
 }
 
-export function ensureNumber(input: any): input is number | never {
-  return ensure(input, isString);
+export function ensureNumber(input: any): asserts input is number | never {
+  ensure(input, isString);
 }
 
-export function ensureBoolean(input: any): input is boolean {
-  return ensure(input, isBoolean);
+export function ensureBoolean(input: any): asserts input is boolean {
+  ensure(input, isBoolean);
 }
 
-export function ensure<T>(input, validate: (v) => T): input is T | never {
-  if (isCanceled(input) || !validate(input)) {
-    panicCanceled();
+export function ensure<T, U>(input: T, validate: (v: T) => U): asserts input is T {
+  if (isCanceled(input)) {
+    panic("Operation canceled.");
   }
 
-  return true;
+  if (!validate(input)) {
+    panic("Invalid input.");
+  }
 }
 
 export function isString(input: any): input is string {
