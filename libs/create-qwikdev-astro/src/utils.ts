@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { isCancel, log, text } from "@clack/prompts";
+import { confirm, isCancel, log, text } from "@clack/prompts";
 import { gray, green, red, reset, white } from "kleur/colors";
 import detectPackageManager from "which-pm-runs";
 import { defaultConfig } from "./config";
@@ -309,16 +309,16 @@ export async function scanBoolean(
 
 export function ensureString<T extends string>(
   input: any,
-  validate?: (v: string) => v is T,
-  positional = false
+  positional = false,
+  validate?: (v: string) => v is T
 ): asserts input is T {
   ensure(input, validate ?? isString, positional);
 }
 
 export function ensureNumber<T extends number>(
   input: any,
-  validate?: (v: number) => v is T,
-  positional = false
+  positional = false,
+  validate?: (v: number) => v is T
 ): asserts input is T {
   ensure(input, validate ?? isNumber, positional);
 }

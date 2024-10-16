@@ -1,38 +1,7 @@
-import fs, { cpSync, existsSync, mkdirSync } from "node:fs";
-import path, { join } from "node:path";
-import process from "node:process";
-import {
-  cancel,
-  confirm,
-  intro,
-  isCancel,
-  log,
-  outro,
-  select,
-  spinner,
-  text
-} from "@clack/prompts";
-import { bgBlue, bgMagenta, bold, cyan, gray, magenta, red } from "kleur/colors";
 import yargs from "yargs";
 import { app } from "./app";
-import { type Adapter, type Config, type UserConfig, defaultConfig } from "./config";
-import {
-  $,
-  __dirname,
-  getPackageManager,
-  installDependencies,
-  note,
-  panic,
-  panicCanceled,
-  pmRunCommand,
-  replacePackageJsonRunCommand,
-  resolveAbsoluteDir,
-  resolveRelativeDir,
-  sanitizePackageName,
-  scanBoolean,
-  scanString,
-  updatePackageName
-} from "./utils";
+import { type UserConfig, defaultConfig } from "./config";
+import { __dirname, panic } from "./utils";
 
 export function parseArgs(args: string[]): UserConfig {
   const parsedArgs = yargs(args)
