@@ -34,7 +34,7 @@ import {
 
 export type Config = {
   project: string;
-  adapter: "deno" | "node" | null;
+  adapter?: "deno" | "node";
   force: boolean;
   install: boolean;
   biome: boolean;
@@ -50,7 +50,7 @@ export type UserConfig = Partial<Config>;
 
 export const defaultConfig = {
   project: "./qwik-astro-astro",
-  adapter: null,
+  adapter: undefined,
   force: false,
   install: true,
   biome: true,
