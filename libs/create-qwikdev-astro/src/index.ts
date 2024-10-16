@@ -413,9 +413,9 @@ export async function runCreate(...args: string[]) {
   createProject(projectConfig);
 }
 
-export default async function () {
+export default async function (args: string[] = []) {
   try {
-    await runCreate(...process.argv.slice(2));
+    await runCreate(...args);
   } catch (err: any) {
     panic(err.message || err);
   }
