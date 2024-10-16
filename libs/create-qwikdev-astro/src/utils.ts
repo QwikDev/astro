@@ -264,12 +264,18 @@ export const installDependencies = async (cwd: string) => {
   await $pm("install", cwd);
 };
 
-export function ensureString<T extends string>(input: any): asserts input is T {
-  ensure(input, isString);
+export function ensureString<T extends string>(
+  input: any,
+  validate?: (v: string) => v is T
+): asserts input is T {
+  ensure(input, validate ?? isString);
 }
 
-export function ensureNumber<T extends number>(input: any): asserts input is T {
-  ensure(input, isNumber);
+export function ensureNumber<T extends number>(
+  input: any,
+  validate?: (v: number) => v is T
+): asserts input is T {
+  ensure(input, validate ?? isNumber);
 }
 
 export function ensureBoolean(input: any): asserts input is boolean {
