@@ -267,8 +267,8 @@ export const installDependencies = async (cwd: string) => {
 
 export async function scanString(
   message: string,
-  initialValue: string,
-  it: boolean = defaultConfig.it,
+  initialValue?: string,
+  it?: boolean,
   positional = false
 ): Promise<string> {
   const input = !it
@@ -285,10 +285,10 @@ export async function scanString(
 
 export async function scanBoolean(
   message: string,
-  initialValue: boolean,
-  it: boolean = defaultConfig.it,
-  yes: boolean = defaultConfig.yes,
-  no: boolean = defaultConfig.no,
+  initialValue?: boolean,
+  it?: boolean,
+  yes?: boolean,
+  no?: boolean,
   positional = false
 ): Promise<boolean> {
   const input =

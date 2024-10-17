@@ -1,31 +1,31 @@
 export type Config = {
   project: string;
   adapter?: "deno" | "node";
-  force: boolean;
-  install: boolean;
-  biome: boolean;
-  git: boolean;
-  ci: boolean;
-  it: boolean;
-  yes: boolean;
-  no: boolean;
-  dryRun: boolean;
+  force?: boolean;
+  install?: boolean;
+  biome?: boolean;
+  git?: boolean;
+  ci?: boolean;
+  it?: boolean;
+  yes?: boolean;
+  no?: boolean;
+  dryRun?: boolean;
 };
 
 export type UserConfig = Partial<Config>;
 
 export const defaultConfig = {
-  project: "./qwik-astro-astro",
+  project: ".",
   adapter: undefined,
-  force: false,
-  install: true,
-  biome: true,
-  git: false,
-  ci: false,
-  it: false,
-  yes: false,
-  no: false,
-  dryRun: false
+  force: undefined,
+  install: undefined,
+  biome: undefined,
+  git: undefined,
+  ci: undefined,
+  it: undefined,
+  yes: undefined,
+  no: undefined,
+  dryRun: undefined
 } as const;
 
 export type Adapter = "node" | "deno" | "default";

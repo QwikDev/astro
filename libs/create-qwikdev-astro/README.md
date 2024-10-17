@@ -97,10 +97,10 @@
     biome?: boolean;
     git?: boolean;
     ci?: boolean;
-    yes: boolean;
-    no: boolean;
-    it: boolean;
-    dryRun: boolean;
+    yes?: boolean;
+    no?: boolean;
+    it?: boolean;
+    dryRun?: boolean;
   };
   ```
 
@@ -108,17 +108,17 @@
 
 ```typescript
 export const defaultConfig = {
-  project: "./qwik-astro-astro",
-  adapter: null,
-  force: false,
-  install: true,
-  biome: true,
-  git: false,
-  ci: false,
-  it: false,
-  yes: false,
-  no: false,
-  dryRun: false
+  project: ".",
+  adapter: undefined,
+  force: undefined,
+  install: undefined,
+  biome: undefined,
+  git: undefined,
+  ci: undefined,
+  it: undefined,
+  yes: undefined,
+  no: undefined,
+  dryRun: undefined
 } as const;
 ```
 
