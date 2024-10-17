@@ -243,9 +243,27 @@ export const $pm = async (
 ) => {
   const packageManager = getPackageManager();
   args = Array.isArray(args) ? args : [args];
+  if (["exec", "dlx"].includes(args[0])) {
+    switch (packageManager) {
+      case "pnpm":
+      case "yarn":
+        break;
+      case "bun":
+      case "npm": {
+        args = ["x", ...args.slice(1)];
+        break;
+      }
+      default: {
+        args = ["run", ...args.slice(1)];
+        break;
+      }
+    }
+  }
+
+  const command = `${packageManager} ${args.join(" ")}`;
 
   return new Promise((resolve, reject) => {
-    const child = spawn(packageManager, args, {
+    const child = spawn(command, {
       cwd,
       stdio: "inherit",
       env
@@ -253,7 +271,7 @@ export const $pm = async (
 
     child.on("close", (code) => {
       if (code !== 0) {
-        reject({ command: `${packageManager} ${args.join(" ")}` });
+        reject({ command });
         return;
       }
       resolve(true);
@@ -263,6 +281,18 @@ export const $pm = async (
 
 export const $pmInstall = async (cwd: string) => {
   await $pm("install", cwd);
+};
+
+export const $pmRun = async (script: string, cwd: string) => {
+  await $pm(["run", script], cwd);
+};
+
+export const $pmExec = async (command: string, cwd: string) => {
+  await $pm("exec", command, cwd);
+};
+
+export const $pmDlx = async (binary: string, cwd: string) => {
+  await $pm("dlx", binary, cwd);
 };
 
 export async function scanString(
