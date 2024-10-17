@@ -11,10 +11,10 @@ import {
 } from "./config";
 import {
   $,
+  $pmInstall,
   clearDir,
   ensureString,
   getPackageManager,
-  installDependencies,
   pmRunCommand,
   replacePackageJsonRunCommand,
   resolveAbsoluteDir,
@@ -225,7 +225,7 @@ export class Application {
     if (typeof runInstall !== "symbol" && runInstall) {
       log.step("Installing dependencies...");
       if (!this.#config.dryRun) {
-        await installDependencies(projectAnswer);
+        await $pmInstall(projectAnswer);
       }
       ranInstall = true;
     }

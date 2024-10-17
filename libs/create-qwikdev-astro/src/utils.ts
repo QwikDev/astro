@@ -261,7 +261,7 @@ export const $pm = async (
   });
 };
 
-export const installDependencies = async (cwd: string) => {
+export const $pmInstall = async (cwd: string) => {
   await $pm("install", cwd);
 };
 
