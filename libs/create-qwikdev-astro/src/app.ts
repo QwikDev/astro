@@ -36,7 +36,7 @@ export class Application {
 
   async scanBoolean(
     message: string,
-    initialValue: boolean,
+    initialValue?: boolean,
     positional = false
   ): Promise<boolean> {
     return scanBoolean(
@@ -51,7 +51,7 @@ export class Application {
 
   async scanString(
     message: string,
-    initialValue: string,
+    initialValue?: string,
     positional = false
   ): Promise<string> {
     return scanString(message, initialValue, this.#config.it, positional);
@@ -127,7 +127,6 @@ export class Application {
     try {
       intro(`Let's create a ${bgBlue(" QwikDev/astro App ")} ✨`);
 
-      const packageManager = getPackageManager();
       const projectAnswer = await this.scanProjectDirectory();
       const adapter = await this.scanAdapter();
       const preferBiome = await this.scanPreferBiome();
@@ -140,7 +139,7 @@ export class Application {
       const templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
       const outDir: string = resolveAbsoluteDir(projectAnswer.trim());
 
-      await this.createProject(templatePath, outDir, projectAnswer, adapter);
+      await this.createProject(outDir);
       this.copyTemplate(templatePath, outDir);
       await this.updatePackageJson(projectAnswer, outDir);
       await this.runCI(outDir);
@@ -153,12 +152,7 @@ export class Application {
     }
   }
 
-  async createProject(
-    templatePath: string,
-    outDir: string,
-    projectAnswer: string,
-    adapter: Adapter
-  ): Promise<void> {
+  async createProject(outDir: string): Promise<void> {
     log.step(`Creating new project in ${bgBlue(` ${outDir} `)} ... 🐇`);
 
     if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {

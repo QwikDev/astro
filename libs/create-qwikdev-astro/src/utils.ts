@@ -288,11 +288,11 @@ export const $pmRun = async (script: string, cwd: string) => {
 };
 
 export const $pmExec = async (command: string, cwd: string) => {
-  await $pm("exec", command, cwd);
+  await $pm(["exec", command], cwd);
 };
 
 export const $pmDlx = async (binary: string, cwd: string) => {
-  await $pm("dlx", binary, cwd);
+  await $pm(["dlx", binary], cwd);
 };
 
 export async function scanString(
