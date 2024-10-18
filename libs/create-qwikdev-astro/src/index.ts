@@ -8,7 +8,7 @@ export function parseArgs(args: string[]): UserConfig {
   const parsedArgs = yargs(args)
     .strict()
     .command(
-      "* <project> [adapter]",
+      "* [project] [adapter]",
       "Create a new project powered by QwikDev/astro",
       (yargs) => {
         return yargs
