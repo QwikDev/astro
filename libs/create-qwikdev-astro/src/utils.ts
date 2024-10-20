@@ -295,6 +295,18 @@ export const $pmDlx = async (binary: string, cwd: string) => {
   await $pm(["dlx", binary], cwd);
 };
 
+export const $pmX = async (executable: string, cwd: string) => {
+  if (["pnpm", "yarn"].includes(getPackageManager())) {
+    try {
+      await $pmExec(executable, cwd);
+    } catch (e: any) {
+      await $pmDlx(executable, cwd);
+    }
+  } else {
+    await $pmDlx(executable, cwd);
+  }
+};
+
 export async function scanString(
   message: string,
   initialValue?: string,

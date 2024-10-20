@@ -12,9 +12,12 @@ import {
 import {
   $,
   $pmInstall,
+  $pmX,
   clearDir,
+  ensureBoolean,
   ensureString,
   getPackageManager,
+  panic,
   pmRunCommand,
   replacePackageJsonRunCommand,
   resolveAbsoluteDir,
@@ -128,20 +131,23 @@ export class Application {
       intro(`Let's create a ${bgBlue(" QwikDev/astro App ")} ✨`);
 
       const projectAnswer = await this.scanProjectDirectory();
-      const adapter = await this.scanAdapter();
-      const preferBiome = await this.scanPreferBiome();
 
-      let starterKit = adapter;
-      if (preferBiome) {
-        starterKit += "-biome";
+      const outDir: string = resolveAbsoluteDir(projectAnswer.trim());
+      let add = false;
+
+      if (outDir === process.cwd()) {
+        add = await this.scanBoolean(
+          "Do you want to add @QwikDev/astro to your existing project?"
+        );
+        ensureBoolean(add);
       }
 
-      const templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
-      const outDir: string = resolveAbsoluteDir(projectAnswer.trim());
+      if (add) {
+        await this.add(outDir);
+      } else {
+        await this.create(outDir, projectAnswer);
+      }
 
-      await this.createProject(outDir);
-      this.copyTemplate(templatePath, outDir);
-      await this.updatePackageJson(projectAnswer, outDir);
       await this.runCI(outDir);
       const ranInstall = await this.runInstall(projectAnswer);
       await this.runGitInit(outDir);
@@ -150,6 +156,30 @@ export class Application {
       console.error("An error occurred during QwikDev/astro project creation:", err);
       process.exit(1);
     }
+  }
+
+  async add(outDir: string) {
+    log.info("Adding @QwikDev/astro...");
+    try {
+      await $pmX("astro add @qwikdev/astro", outDir);
+    } catch (e: any) {
+      panic("Failed to run `astro add @qwikdev/astro`. Please try it manually.");
+    }
+  }
+
+  async create(outDir: string, project: string) {
+    const adapter = await this.scanAdapter();
+    const preferBiome = await this.scanPreferBiome();
+
+    let starterKit = adapter;
+    if (preferBiome) {
+      starterKit += "-biome";
+    }
+
+    const templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
+    await this.createProject(outDir);
+    this.copyTemplate(templatePath, outDir);
+    await this.updatePackageJson(project, outDir);
   }
 
   async createProject(outDir: string): Promise<void> {
