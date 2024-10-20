@@ -163,7 +163,7 @@ export class Application {
     try {
       await $pmX("astro add @qwikdev/astro", outDir);
     } catch (e: any) {
-      panic("Failed to run `astro add @qwikdev/astro`. Please try it manually.");
+      panic(`${e.message ?? e}: . Please try it manually.`);
     }
   }
 
