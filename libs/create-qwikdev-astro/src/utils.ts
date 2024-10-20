@@ -263,7 +263,7 @@ export const $pm = async (
   const command = `${packageManager} ${args.join(" ")}`;
 
   return new Promise((resolve, reject) => {
-    const child = spawn(command, {
+    const child = spawn(packageManager, args, {
       cwd,
       stdio: "inherit",
       env
