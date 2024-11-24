@@ -9,7 +9,7 @@ import { qwikVite } from "@builder.io/qwik/optimizer";
 import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import { symbolMapper } from "@builder.io/qwik/optimizer";
 
-import { createFilter } from "vite";
+import { build, createFilter } from "vite";
 import type { PluginOption } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -66,8 +66,6 @@ export default defineIntegration({
 
         // integration HMR support
         watchDirectory(setupProps, resolver());
-
-        console.log("COMMAND: ", setupProps.command);
 
         // Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
         if (command === "dev") {
@@ -153,6 +151,25 @@ export default defineIntegration({
 
       "astro:config:done": async ({ config }) => {
         astroConfig = config;
+      },
+
+      "astro:build:start": async ({ logger }) => {
+        logger.info("astro:build:start");
+        const buildOutput = (await build({
+          mode: "production",
+          ssr: false,
+          ...astroConfig?.vite,
+          plugins: [...(astroConfig?.vite.plugins || [])]
+        })) as any;
+
+        console.log("BUILD OUTPUT: ", buildOutput.output);
+
+        const manifest = buildOutput.output.find((o) => o.fileName === "q-manifest.json");
+
+        console.log("MANIFEST: ", manifest);
+
+        const parsedManifest = JSON.parse(manifest.source);
+        console.log("PARSED MANIFEST: ", parsedManifest);
       },
 
       "astro:build:done": async () => {
