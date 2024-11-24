@@ -12,8 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@builder.io/qwik": "^1.9",
+    "@builder.io/qwik": "^1.10",
     "@qwikdev/astro": "workspace:*",
-    "astro": "^4.12.2"
+    "astro": "^4.16.14"
   }
 }

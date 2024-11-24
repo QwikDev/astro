@@ -67,6 +67,8 @@ export default defineIntegration({
         // integration HMR support
         watchDirectory(setupProps, resolver());
 
+        console.log("COMMAND: ", setupProps.command);
+
         // Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
         if (command === "dev") {
           const unregisterSW =
