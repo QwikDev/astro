@@ -163,7 +163,9 @@ export default defineIntegration({
         logger.info("astro:build:start");
 
         console.log("OUTDIR: ", astroConfig?.outDir);
+      },
 
+      "astro:build:setup": async ({ logger }) => {
         const buildOutput = (await build({
           plugins: [...(astroConfig?.vite.plugins || [])],
           build: {
@@ -183,6 +185,8 @@ export default defineIntegration({
 
         Object.assign(manifest, parsedManifest);
         console.log("PARSED MANIFEST: ", parsedManifest);
+
+        logger.info("astro:build:setup");
       },
 
       "astro:build:done": async () => {
