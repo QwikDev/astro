@@ -6,7 +6,11 @@ import { createResolver, defineIntegration, watchDirectory } from "astro-integra
 import { z } from "astro/zod";
 
 import { qwikVite } from "@builder.io/qwik/optimizer";
-import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
+import type {
+  QwikManifest,
+  QwikVitePluginOptions,
+  SymbolMapperFn
+} from "@builder.io/qwik/optimizer";
 import { symbolMapper } from "@builder.io/qwik/optimizer";
 
 import { build, createFilter } from "vite";
@@ -54,6 +58,7 @@ export default defineIntegration({
   setup({ options }) {
     let srcDir = "";
     let outDir = "";
+    const manifest = {} as QwikManifest;
 
     let astroConfig: AstroConfig | null = null;
 
@@ -115,7 +120,8 @@ export default defineIntegration({
           devSsrServer: false,
           srcDir,
           ssr: {
-            input: "@qwikdev/astro/server"
+            input: "@qwikdev/astro/server",
+            manifestInput: manifest
           },
           debug: options?.debug ?? false
         };
@@ -155,20 +161,27 @@ export default defineIntegration({
 
       "astro:build:start": async ({ logger }) => {
         logger.info("astro:build:start");
+
+        console.log("OUTDIR: ", astroConfig?.outDir);
+
         const buildOutput = (await build({
-          mode: "production",
-          ssr: false,
-          ...astroConfig?.vite,
-          plugins: [...(astroConfig?.vite.plugins || [])]
+          plugins: [...(astroConfig?.vite.plugins || [])],
+          build: {
+            ...astroConfig?.vite.build,
+            ssr: false,
+            outDir: astroConfig?.outDir.pathname ?? "dist"
+          }
         })) as any;
 
-        console.log("BUILD OUTPUT: ", buildOutput.output);
+        console.log("PLUGINS: ", astroConfig?.vite.plugins);
 
-        const manifest = buildOutput.output.find((o) => o.fileName === "q-manifest.json");
+        const getManifest = buildOutput.output.find(
+          (o) => o.fileName === "q-manifest.json"
+        );
 
-        console.log("MANIFEST: ", manifest);
+        const parsedManifest = JSON.parse(getManifest.source);
 
-        const parsedManifest = JSON.parse(manifest.source);
+        Object.assign(manifest, parsedManifest);
         console.log("PARSED MANIFEST: ", parsedManifest);
       },
 
