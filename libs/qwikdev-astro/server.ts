@@ -76,7 +76,7 @@ export async function renderToStaticMarkup(
             manifest: {} as QwikManifest,
             symbolMapper: globalThis.symbolMapperFn
           }
-        : {}),
+        : { manifest: JSON.parse(process.env.MANIFESTLOL) }),
       serverData: props,
       stream: {
         write: (chunk) => {

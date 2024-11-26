@@ -182,6 +182,13 @@ export default defineIntegration({
           `${astroConfig?.outDir?.pathname}/q-manifest.json`,
           getManifest.source
         );
+
+        // now replace process.env.MANIFESTLOL with the actual q-manifest.json contents
+        process.env.MANIFESTLOL = await fs.promises.readFile(
+          `${astroConfig?.outDir?.pathname}/q-manifest.json`,
+          "utf-8"
+        );
+        console.log("MANIFESTLOL: ", process.env.MANIFESTLOL);
       },
 
       "astro:build:done": async (options) => {
