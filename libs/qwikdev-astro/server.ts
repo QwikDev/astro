@@ -107,13 +107,10 @@ export async function renderToStaticMarkup(
      * service worker script is only added to the page once, and in prod.
      * https://github.com/QwikDev/qwik/pull/5618
      */
-    const serviceWorkerScript =
-      !isDev && isQwikLoaderNeeded && jsx(PrefetchServiceWorker, {});
-    const prefetchGraph = !isDev && jsx(PrefetchGraph, {});
     const qwikScripts = jsx("span", {
       "q:slot": "qwik-scripts",
       "qwik-scripts": "",
-      children: [qwikLoader, serviceWorkerScript, prefetchGraph]
+      children: [qwikLoader]
     });
 
     const slots: { [key: string]: unknown } = {};
