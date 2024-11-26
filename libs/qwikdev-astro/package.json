@@ -61,6 +61,7 @@
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.10.0",
     "astro": "^4.16.14",
+    "fast-glob": "^3.3.2",
     "typescript": "^5.4.2",
     "vite": "^5.4.11"
   },

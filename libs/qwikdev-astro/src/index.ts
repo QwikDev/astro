@@ -1,18 +1,19 @@
+import fs from "node:fs";
 import os from "node:os";
-import { normalize, relative } from "node:path";
+import { tmpdir } from "node:os";
+import { join, normalize } from "node:path";
 
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
+import fg from "fast-glob";
+import ts from "typescript";
 
 import { qwikVite } from "@builder.io/qwik/optimizer";
-import type {
-  QwikManifest,
-  QwikVitePluginOptions,
-  SymbolMapperFn
-} from "@builder.io/qwik/optimizer";
+import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import { symbolMapper } from "@builder.io/qwik/optimizer";
 
+import fsExtra from "fs-extra";
 import { build, createFilter } from "vite";
 import type { PluginOption } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -56,18 +57,19 @@ export default defineIntegration({
     .optional(),
 
   setup({ options }) {
-    let srcDir = "";
-    const qwikEntrypoints = new Set<string>();
-    const manifest = {} as QwikManifest;
-
+    const srcDir = "";
     let astroConfig: AstroConfig | null = null;
+    let entrypoints: Promise<string[]>;
+    // Create temp dir in system temp directory
+    const tempDir = join(tmpdir(), `qwik-astro-${newHash()}`);
+    const filter = createFilter(options?.include, options?.exclude);
 
     const { resolve: resolver } = createResolver(import.meta.url);
-    const filter = createFilter(options?.include, options?.exclude);
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
         const { addRenderer, updateConfig, config, command, injectScript } = setupProps;
+        astroConfig = config;
 
         // integration HMR support
         watchDirectory(setupProps, resolver());
@@ -80,10 +82,9 @@ export default defineIntegration({
           injectScript("head-inline", unregisterSW);
         }
 
-        // Update the global config
-        astroConfig = config;
-        // Retrieve Qwik files from the project source directory
-        srcDir = relative(astroConfig.root.pathname, astroConfig.srcDir.pathname);
+        entrypoints = getQwikEntrypoints(astroConfig.srcDir.pathname, filter);
+
+        console.log("ENTRYPOINTS: ", await entrypoints);
 
         addRenderer({
           name: "@qwikdev/astro",
@@ -107,23 +108,15 @@ export default defineIntegration({
           return true;
         };
 
-        const astroQwikPlugin: PluginOption = {
-          name: "astro-qwik-parser",
-          enforce: "pre",
-          transform(_, id) {
-            if (id.endsWith(".tsx")) {
-              qwikEntrypoints.add(id);
-            }
-          }
-        };
-
         const qwikViteConfig: QwikVitePluginOptions = {
           fileFilter,
           devSsrServer: false,
           srcDir,
           ssr: {
-            input: "@qwikdev/astro/server",
-            manifestInput: manifest
+            input: "@qwikdev/astro/server"
+          },
+          client: {
+            input: await entrypoints
           },
           debug: options?.debug ?? false
         };
@@ -149,7 +142,6 @@ export default defineIntegration({
             },
             plugins: [
               symbolMapperPlugin,
-              astroQwikPlugin,
               qwikVite(qwikViteConfig),
               tsconfigPaths(),
               overrideEsbuildPlugin
@@ -162,56 +154,48 @@ export default defineIntegration({
         astroConfig = config;
       },
 
-      "astro:build:setup": async ({ logger }) => {
-        /**
-         *  This is a client build, we need to Generate the q-manifest.json file to pass back to the server.
-         *
-         * Otherwise, Qwik will not transform the client files.
-         */
-        const clientBuild = await build({
+      "astro:build:start": async () => {
+        if ((await entrypoints).length === 0) {
+          return;
+        }
+
+        await fsExtra.ensureDir(tempDir);
+
+        await build({
           plugins: [...(astroConfig?.vite.plugins || [])],
           build: {
             ...astroConfig?.vite.build,
             ssr: false,
-            outDir: astroConfig?.outDir.pathname ?? "dist",
-            rollupOptions: {
-              input: Array.from(qwikEntrypoints)
-            }
+            outDir: tempDir
           }
         });
-
-        const getManifest = clientBuild.output.find(
-          (o) => o.fileName === "q-manifest.json"
-        );
-
-        const parsedManifest = JSON.parse(getManifest.source);
-
-        Object.assign(manifest, parsedManifest);
-        console.log("PARSED MANIFEST: ", parsedManifest);
-
-        logger.info("astro:build:setup");
       },
 
       "astro:build:done": async () => {
-        let outputPath: string;
+        let outputPath =
+          astroConfig.output === "server" || astroConfig.output === "hybrid"
+            ? astroConfig.build.client.pathname
+            : astroConfig.outDir.pathname;
 
-        if (!astroConfig) {
-          throw new Error("Qwik Astro: there is no astro config present.");
-        }
-
-        if (astroConfig.output === "server" || astroConfig.output === "hybrid") {
-          outputPath = astroConfig.build.client.pathname;
-        } else {
-          outputPath = astroConfig.outDir.pathname;
-        }
-
-        // checks all windows platforms and removes drive ex: C:\\
         if (os.platform() === "win32") {
           outputPath = outputPath.substring(3);
         }
 
         const normalizedPath = normalize(outputPath);
         process.env.Q_BASE = normalizedPath;
+
+        try {
+          if ((await entrypoints).length > 0 && astroConfig) {
+            // Copy files from temp to final destination
+            await fsExtra.copy(tempDir, astroConfig.outDir.pathname, {
+              overwrite: false, // Don't overwrite existing files
+              errorOnExist: false // Don't error if files exist
+            });
+          }
+        } finally {
+          // Always clean up temp directory
+          await fsExtra.remove(tempDir).catch(() => {});
+        }
       }
     };
 
@@ -220,3 +204,58 @@ export default defineIntegration({
     };
   }
 });
+
+export async function getQwikEntrypoints(
+  dir: string,
+  filter: (id: unknown) => boolean
+): Promise<string[]> {
+  const files = await fg(["**/*.{ts,tsx,js,jsx}"], {
+    cwd: dir,
+    absolute: true
+  });
+  const qwikFiles = [];
+
+  for (const file of files) {
+    // Skip files not matching patterns w/ astro config include & exclude
+    if (!filter(file)) {
+      continue;
+    }
+
+    const fileContent = fs.readFileSync(file, "utf-8");
+    const sourceFile = ts.createSourceFile(
+      file,
+      fileContent,
+      ts.ScriptTarget.ESNext,
+      true
+    );
+
+    let qwikImportFound = false;
+
+    ts.forEachChild(sourceFile, function nodeVisitor(node) {
+      if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
+        if (
+          node.moduleSpecifier.text === "@builder.io/qwik" ||
+          node.moduleSpecifier.text === "@builder.io/qwik-react"
+        ) {
+          qwikImportFound = true;
+        }
+      }
+
+      if (!qwikImportFound) {
+        ts.forEachChild(node, nodeVisitor);
+      }
+    });
+
+    if (qwikImportFound) {
+      qwikFiles.push(file);
+    }
+  }
+
+  return qwikFiles;
+}
+
+export function newHash() {
+  const hash = Math.random().toString(26).split(".").pop();
+  globalThis.hash = hash;
+  return hash;
+}

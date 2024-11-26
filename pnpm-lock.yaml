@@ -179,7 +179,7 @@ importers:
         version: 8.57.0
       eslint-plugin-qwik:
         specifier: latest
-        version: 1.10.0(eslint@8.57.0)(typescript@5.4.5)
+        version: 1.11.0(eslint@8.57.0)(typescript@5.4.5)
       np:
         specifier: ^8.0.4
         version: 8.0.4(typescript@5.4.5)
@@ -226,6 +226,9 @@ importers:
       astro:
         specifier: ^4.16.14
         version: 4.16.14(@types/node@20.12.7)(rollup@4.27.4)(typescript@5.4.5)
+      fast-glob:
+        specifier: ^3.3.2
+        version: 3.3.2
       typescript:
         specifier: ^5.4.2
         version: 5.4.5
@@ -2857,8 +2860,8 @@ packages:
     resolution: {integrity: sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw==}
     engines: {node: '>=12'}
 
-  eslint-plugin-qwik@1.10.0:
-    resolution: {integrity: sha512-wTBF0tffIb7LH8CvI7RILtyB68JSMo+jr3uonNanGK26Nq9olhITwdzP+u00tIzxrDW6nWcyfutgScpYKiZtSw==}
+  eslint-plugin-qwik@1.11.0:
+    resolution: {integrity: sha512-2F31M+JaCQLr9iHfwCwM+6ihOV200NyUmBLsmvshXj6YQVddanS0fOthyYznXX0rWsNu/jlhrPVb8qB5oPFZzg==}
     engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
     peerDependencies:
       eslint: ^8.57.0
@@ -9263,7 +9266,7 @@ snapshots:
 
   escape-string-regexp@5.0.0: {}
 
-  eslint-plugin-qwik@1.10.0(eslint@8.57.0)(typescript@5.4.5):
+  eslint-plugin-qwik@1.11.0(eslint@8.57.0)(typescript@5.4.5):
     dependencies:
       '@typescript-eslint/utils': 8.15.0(eslint@8.57.0)(typescript@5.4.5)
       eslint: 8.57.0
