@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import os from "node:os";
 import { normalize, relative } from "node:path";
 
@@ -6,11 +7,7 @@ import { createResolver, defineIntegration, watchDirectory } from "astro-integra
 import { z } from "astro/zod";
 
 import { qwikVite } from "@builder.io/qwik/optimizer";
-import type {
-  QwikManifest,
-  QwikVitePluginOptions,
-  SymbolMapperFn
-} from "@builder.io/qwik/optimizer";
+import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import { symbolMapper } from "@builder.io/qwik/optimizer";
 
 import { build, createFilter } from "vite";
@@ -58,7 +55,6 @@ export default defineIntegration({
   setup({ options }) {
     let srcDir = "";
     const qwikEntrypoints = new Set<string>();
-    const manifest = {} as QwikManifest;
 
     let astroConfig: AstroConfig | null = null;
 
@@ -122,8 +118,7 @@ export default defineIntegration({
           devSsrServer: false,
           srcDir,
           ssr: {
-            input: "@qwikdev/astro/server",
-            manifestInput: manifest
+            input: "@qwikdev/astro/server"
           },
           debug: options?.debug ?? false
         };
@@ -140,6 +135,7 @@ export default defineIntegration({
 
         updateConfig({
           vite: {
+            mode: "production",
             build: {
               rollupOptions: {
                 output: {
@@ -162,7 +158,7 @@ export default defineIntegration({
         astroConfig = config;
       },
 
-      "astro:build:setup": async ({ logger }) => {
+      "astro:build:setup": async (setupOptions) => {
         /**
          *  This is a client build, we need to Generate the q-manifest.json file to pass back to the server.
          *
@@ -179,20 +175,18 @@ export default defineIntegration({
             }
           }
         });
-
         const getManifest = clientBuild.output.find(
           (o) => o.fileName === "q-manifest.json"
         );
-
-        const parsedManifest = JSON.parse(getManifest.source);
-
-        Object.assign(manifest, parsedManifest);
-        console.log("PARSED MANIFEST: ", parsedManifest);
-
-        logger.info("astro:build:setup");
+        await fs.promises.writeFile(
+          `${astroConfig?.outDir?.pathname}/q-manifest.json`,
+          getManifest.source
+        );
       },
 
-      "astro:build:done": async () => {
+      "astro:build:done": async (options) => {
+        console.log("OPTIONS: ", options);
+
         let outputPath: string;
 
         if (!astroConfig) {

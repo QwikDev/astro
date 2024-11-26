@@ -1,11 +1,6 @@
 import type { SSRResult } from "astro";
 
-import {
-  type JSXNode,
-  PrefetchGraph,
-  PrefetchServiceWorker,
-  jsx
-} from "@builder.io/qwik";
+import { type JSXNode, jsx } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
 import {
@@ -13,7 +8,6 @@ import {
   getQwikLoaderScript,
   renderToStream
 } from "@builder.io/qwik/server";
-import { manifest } from "@qwik-client-manifest";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 
@@ -22,8 +16,10 @@ type RendererContext = {
 };
 
 function isInlineComponent(component: unknown): boolean {
-  if (typeof component !== "function") return false;
-  const codeStr = component!.toString().toLowerCase();
+  if (typeof component !== "function") {
+    return false;
+  }
+  const codeStr = component?.toString().toLowerCase();
   return (
     (codeStr.includes("_jsxq") || codeStr.includes("jsxsplit")) &&
     component.name !== "QwikComponent"
@@ -31,9 +27,15 @@ function isInlineComponent(component: unknown): boolean {
 }
 
 function isQwikComponent(component: unknown) {
-  if (typeof component !== "function") return false;
-  if (isInlineComponent(component)) return true;
-  if (component.name !== "QwikComponent") return false;
+  if (typeof component !== "function") {
+    return false;
+  }
+  if (isInlineComponent(component)) {
+    return true;
+  }
+  if (component.name !== "QwikComponent") {
+    return false;
+  }
 
   return true;
 }
@@ -74,7 +76,7 @@ export async function renderToStaticMarkup(
             manifest: {} as QwikManifest,
             symbolMapper: globalThis.symbolMapperFn
           }
-        : { manifest }),
+        : {}),
       serverData: props,
       stream: {
         write: (chunk) => {
