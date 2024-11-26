@@ -27,6 +27,9 @@ const FilterPatternSchema = z.union([
   z.null()
 ]);
 
+console.log("HELLLOOOOOOOOO ============= ");
+const qwikEntrypoints = new Set<string>();
+
 /**
  * This project uses Astro Integration Kit.
  * @see https://astro-integration-kit.netlify.app/
@@ -54,7 +57,6 @@ export default defineIntegration({
 
   setup({ options }) {
     let srcDir = "";
-    const qwikEntrypoints = new Set<string>();
 
     let astroConfig: AstroConfig | null = null;
 
@@ -106,10 +108,14 @@ export default defineIntegration({
         const astroQwikPlugin: PluginOption = {
           name: "astro-qwik-parser",
           enforce: "pre",
-          transform(_, id) {
-            if (id.endsWith(".tsx")) {
+          resolveId(id, importer) {
+            console.log("Resolving ID:", id, importer, typeof importer);
+            // Anything that
+            if (importer?.endsWith(".astro")) {
+              // TODO only add code
               qwikEntrypoints.add(id);
             }
+            return null;
           }
         };
 
@@ -144,8 +150,8 @@ export default defineIntegration({
               }
             },
             plugins: [
-              symbolMapperPlugin,
               astroQwikPlugin,
+              symbolMapperPlugin,
               qwikVite(qwikViteConfig),
               tsconfigPaths(),
               overrideEsbuildPlugin
@@ -158,23 +164,32 @@ export default defineIntegration({
         astroConfig = config;
       },
 
-      "astro:build:setup": async (setupOptions) => {
+      "astro:build:ssr": async (setupOptions) => {
         /**
          *  This is a client build, we need to Generate the q-manifest.json file to pass back to the server.
          *
          * Otherwise, Qwik will not transform the client files.
          */
+
+        console.log("BEFORE CLIENT BUILD: ", qwikEntrypoints);
+
         const clientBuild = await build({
+          ...astroConfig?.vite,
           plugins: [...(astroConfig?.vite.plugins || [])],
           build: {
             ...astroConfig?.vite.build,
+            rollupOptions: {
+              ...astroConfig?.vite.build?.rollupOptions,
+              input: [...qwikEntrypoints]
+            },
             ssr: false,
             outDir: astroConfig?.outDir.pathname ?? "dist",
-            rollupOptions: {
-              input: Array.from(qwikEntrypoints)
-            }
+            emptyOutDir: false
           }
         });
+
+        console.log("AFTER CLIENT BUILD: ", qwikEntrypoints);
+
         const getManifest = clientBuild.output.find(
           (o) => o.fileName === "q-manifest.json"
         );
