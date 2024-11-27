@@ -52,6 +52,8 @@ export default defineIntegration({
 
   setup({ options }) {
     let srcDir = "";
+    let clientDir = "";
+    let serverDir = "";
     let astroConfig: AstroConfig | null = null;
     const { resolve: resolver } = createResolver(import.meta.url);
     const filter = createFilter(options?.include, options?.exclude);
@@ -73,6 +75,8 @@ export default defineIntegration({
         }
 
         srcDir = astroConfig.srcDir.pathname;
+        clientDir = astroConfig.build.client.pathname;
+        serverDir = astroConfig.build.server.pathname;
 
         addRenderer({
           name: "@qwikdev/astro",
@@ -122,7 +126,7 @@ export default defineIntegration({
           },
           client: {
             input: resolver("./root.tsx"),
-            outDir: astroConfig?.build.client.pathname ?? "dist/client"
+            outDir: clientDir
           },
           debug: options?.debug ?? false
         };
@@ -154,10 +158,7 @@ export default defineIntegration({
       "astro:config:done": async ({ config }) => {
         astroConfig = config;
         // renderToStream needs the relative client path for q-chunks
-        const base = astroConfig.build.client.pathname.replace(
-          astroConfig.outDir.pathname,
-          ""
-        );
+        const base = clientDir.replace(astroConfig.outDir.pathname, "");
         globalThis.relativeClientPath = `${base}build/`;
       },
 
@@ -168,11 +169,11 @@ export default defineIntegration({
           srcDir,
           ssr: {
             input: "@qwikdev/astro/server",
-            outDir: astroConfig?.build.server.pathname ?? "dist/server"
+            outDir: serverDir
           },
           client: {
             input: [...qwikEntrypoints, resolver("./root.tsx")],
-            outDir: astroConfig?.build.client.pathname ?? "dist/client"
+            outDir: clientDir
           },
           debug: options?.debug ?? false
         };
@@ -183,7 +184,7 @@ export default defineIntegration({
           build: {
             ...astroConfig?.vite.build,
             ssr: false,
-            outDir: astroConfig?.build.client.pathname ?? "dist/client",
+            outDir: clientDir,
             emptyOutDir: false
           }
         });
