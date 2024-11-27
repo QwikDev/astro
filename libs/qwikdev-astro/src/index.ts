@@ -1,5 +1,5 @@
 import os from "node:os";
-import { normalize, relative, resolve } from "node:path";
+import { normalize, relative } from "node:path";
 
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
@@ -11,7 +11,6 @@ import { symbolMapper } from "@builder.io/qwik/optimizer";
 
 import { build, createFilter } from "vite";
 import type { PluginOption } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
@@ -150,12 +149,7 @@ export default defineIntegration({
                 }
               }
             },
-            plugins: [
-              astroQwikPlugin,
-              qwikVite(qwikServerConfig),
-              tsconfigPaths(),
-              overrideEsbuildPlugin
-            ]
+            plugins: [astroQwikPlugin, qwikVite(qwikServerConfig), overrideEsbuildPlugin]
           }
         });
       },
