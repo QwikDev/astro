@@ -1,4 +1,3 @@
-import fs from "node:fs";
 import os from "node:os";
 import { normalize, relative, resolve } from "node:path";
 
@@ -27,9 +26,7 @@ const FilterPatternSchema = z.union([
   z.null()
 ]);
 
-console.log("HELLLOOOOOOOOO ============= ");
 const qwikEntrypoints = new Set<string>();
-const qwikVitePlugin: any = null;
 
 /**
  * This project uses Astro Integration Kit.
@@ -87,14 +84,6 @@ export default defineIntegration({
           serverEntrypoint: "@qwikdev/astro/server"
         });
 
-        /** We need to get the symbolMapper straight from qwikVite here. You can think of it as the "manifest" for dev mode. */
-        const symbolMapperPlugin: PluginOption = {
-          name: "grabSymbolMapper",
-          configResolved() {
-            globalThis.symbolMapperFn = symbolMapper;
-          }
-        };
-
         /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
         const fileFilter = (id: string, hook: string) => {
           if (hook === "transform" && !filter(id)) {
@@ -107,13 +96,15 @@ export default defineIntegration({
         const astroQwikPlugin: PluginOption = {
           name: "astro-qwik-parser",
           enforce: "pre",
+          configResolved() {
+            globalThis.symbolMapperFn = symbolMapper;
+          },
           async resolveId(id, importer) {
             if (!importer?.endsWith(".astro")) return null;
 
             // Handle component imports
             if (id.startsWith("@")) {
               try {
-                // Use Vite's internal resolve to handle aliases
                 const resolved = await this.resolve(id, importer, { skipSelf: true });
                 if (resolved) {
                   qwikEntrypoints.add(resolved.id);
@@ -152,7 +143,6 @@ export default defineIntegration({
 
         updateConfig({
           vite: {
-            mode: "production",
             build: {
               rollupOptions: {
                 output: {
@@ -162,7 +152,6 @@ export default defineIntegration({
             },
             plugins: [
               astroQwikPlugin,
-              symbolMapperPlugin,
               qwikVite(qwikServerConfig),
               tsconfigPaths(),
               overrideEsbuildPlugin
@@ -176,7 +165,7 @@ export default defineIntegration({
       },
 
       "astro:build:ssr": async () => {
-        // After the Astro SSR build has finished, we do the client build
+        // SSR build finished -> Now do the Qwik client build
         const qwikClientConfig: QwikVitePluginOptions = {
           devSsrServer: false,
           srcDir,
@@ -189,40 +178,16 @@ export default defineIntegration({
           debug: options?.debug ?? false
         };
 
-        const clientBuild = await build({
+        await build({
           ...astroConfig?.vite,
           plugins: [qwikVite(qwikClientConfig)],
           build: {
             ...astroConfig?.vite.build,
-            rollupOptions: {
-              ...astroConfig?.vite.build?.rollupOptions,
-              input: [...qwikEntrypoints, resolver("./root.tsx")]
-            },
             ssr: false,
             outDir: astroConfig?.outDir.pathname ?? "dist",
             emptyOutDir: false
           }
         });
-
-        console.log("AFTER CLIENT BUILD: ", qwikEntrypoints);
-
-        const getManifest = clientBuild.output.find(
-          (o) => o.fileName === "q-manifest.json"
-        );
-
-        console.log("MANIFEST: ", getManifest);
-
-        await fs.promises.writeFile(
-          `${astroConfig?.outDir?.pathname}/q-manifest.json`,
-          getManifest.source
-        );
-
-        // now replace process.env.MANIFESTLOL with the actual q-manifest.json contents
-        process.env.MANIFESTLOL = await fs.promises.readFile(
-          `${astroConfig?.outDir?.pathname}/q-manifest.json`,
-          "utf-8"
-        );
-        console.log("MANIFESTLOL: ", process.env.MANIFESTLOL);
       },
 
       "astro:build:done": async (options) => {
