@@ -159,7 +159,8 @@ export default defineIntegration({
         astroConfig = config;
         // renderToStream needs the relative client path for q-chunks
         const base = clientDir.replace(astroConfig.outDir.pathname, "");
-        globalThis.relativeClientPath = `${base}build/`;
+        globalThis.relativeClientPath =
+          astroConfig.output === "static" ? `${base}build/` : "build/";
       },
 
       "astro:build:ssr": async () => {
