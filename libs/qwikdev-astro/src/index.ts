@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import os from "node:os";
-import { normalize, relative } from "node:path";
+import { normalize, relative, resolve } from "node:path";
 
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
@@ -29,6 +29,7 @@ const FilterPatternSchema = z.union([
 
 console.log("HELLLOOOOOOOOO ============= ");
 const qwikEntrypoints = new Set<string>();
+let qwikVitePlugin: any = null;
 
 /**
  * This project uses Astro Integration Kit.
@@ -108,12 +109,21 @@ export default defineIntegration({
         const astroQwikPlugin: PluginOption = {
           name: "astro-qwik-parser",
           enforce: "pre",
-          resolveId(id, importer) {
-            console.log("Resolving ID:", id, importer, typeof importer);
-            // Anything that
-            if (importer?.endsWith(".astro")) {
-              // TODO only add code
-              qwikEntrypoints.add(id);
+          async resolveId(id, importer) {
+            if (!importer?.endsWith(".astro")) return null;
+
+            // Handle component imports
+            if (id.startsWith("@")) {
+              try {
+                // Use Vite's internal resolve to handle aliases
+                const resolved = await this.resolve(id, importer, { skipSelf: true });
+                if (resolved) {
+                  qwikEntrypoints.add(resolved.id);
+                  return resolved.id;
+                }
+              } catch (e) {
+                console.warn(`Failed to resolve Qwik component: ${id}`, e);
+              }
             }
             return null;
           }
@@ -126,8 +136,13 @@ export default defineIntegration({
           ssr: {
             input: "@qwikdev/astro/server"
           },
+          client: {
+            input: resolver('./root.tsx')
+          },
           debug: options?.debug ?? false
         };
+
+        qwikVitePlugin = qwikVite(qwikViteConfig);
 
         const overrideEsbuildPlugin: PluginOption = {
           // override qwikVite's attempt to set `esbuild` to false during dev
@@ -152,7 +167,7 @@ export default defineIntegration({
             plugins: [
               astroQwikPlugin,
               symbolMapperPlugin,
-              qwikVite(qwikViteConfig),
+              qwikVitePlugin,
               tsconfigPaths(),
               overrideEsbuildPlugin
             ]
@@ -165,6 +180,7 @@ export default defineIntegration({
       },
 
       "astro:build:ssr": async (setupOptions) => {
+        console.log(setupOptions)
         /**
          *  This is a client build, we need to Generate the q-manifest.json file to pass back to the server.
          *
@@ -173,14 +189,28 @@ export default defineIntegration({
 
         console.log("BEFORE CLIENT BUILD: ", qwikEntrypoints);
 
+        const updatedQwikViteConfig: QwikVitePluginOptions = {
+          devSsrServer: false,
+          srcDir,
+          ssr: {
+            input: "@qwikdev/astro/server"
+          },
+          client: {
+            input: [...qwikEntrypoints, resolver('./root.tsx')]
+          },
+          debug: options?.debug ?? false
+        };
+
         const clientBuild = await build({
           ...astroConfig?.vite,
-          plugins: [...(astroConfig?.vite.plugins || [])],
+          plugins: [
+            qwikVite(updatedQwikViteConfig)
+          ],
           build: {
             ...astroConfig?.vite.build,
             rollupOptions: {
               ...astroConfig?.vite.build?.rollupOptions,
-              input: [...qwikEntrypoints]
+              input: [...qwikEntrypoints, resolver('./root.tsx')]
             },
             ssr: false,
             outDir: astroConfig?.outDir.pathname ?? "dist",
@@ -193,6 +223,9 @@ export default defineIntegration({
         const getManifest = clientBuild.output.find(
           (o) => o.fileName === "q-manifest.json"
         );
+
+        console.log("MANIFEST: ", getManifest);
+
         await fs.promises.writeFile(
           `${astroConfig?.outDir?.pathname}/q-manifest.json`,
           getManifest.source
