@@ -1,6 +1,3 @@
-import os from "node:os";
-import { normalize, relative } from "node:path";
-
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
@@ -9,7 +6,7 @@ import { qwikVite } from "@builder.io/qwik/optimizer";
 import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import { symbolMapper } from "@builder.io/qwik/optimizer";
 
-import { build, createFilter } from "vite";
+import { build, createFilter, normalizePath } from "vite";
 import type { PluginOption } from "vite";
 
 declare global {
@@ -61,6 +58,7 @@ export default defineIntegration({
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
         const { addRenderer, updateConfig, config, command, injectScript } = setupProps;
+        astroConfig = config;
 
         // integration HMR support
         watchDirectory(setupProps, resolver());
@@ -73,10 +71,7 @@ export default defineIntegration({
           injectScript("head-inline", unregisterSW);
         }
 
-        // Update the global config
-        astroConfig = config;
-        // Retrieve Qwik files from the project source directory
-        srcDir = relative(astroConfig.root.pathname, astroConfig.srcDir.pathname);
+        srcDir = astroConfig.srcDir.pathname;
 
         addRenderer({
           name: "@qwikdev/astro",
@@ -185,7 +180,7 @@ export default defineIntegration({
       },
 
       "astro:build:done": async (options) => {
-        console.log("OPTIONS: ", options);
+        console.log("OPTIO  NS: ", options);
 
         let outputPath: string;
 
@@ -199,12 +194,7 @@ export default defineIntegration({
           outputPath = astroConfig.outDir.pathname;
         }
 
-        // checks all windows platforms and removes drive ex: C:\\
-        if (os.platform() === "win32") {
-          outputPath = outputPath.substring(3);
-        }
-
-        const normalizedPath = normalize(outputPath);
+        const normalizedPath = normalizePath(outputPath);
         process.env.Q_BASE = normalizedPath;
       }
     };
