@@ -6,12 +6,13 @@ import { qwikVite } from "@builder.io/qwik/optimizer";
 import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import { symbolMapper } from "@builder.io/qwik/optimizer";
 
-import { build, createFilter, normalizePath } from "vite";
+import { build, createFilter } from "vite";
 import type { PluginOption } from "vite";
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
   var hash: string | undefined;
+  var relativeClientPath: string;
 }
 
 /* Similar to vite's FilterPattern */
@@ -120,7 +121,8 @@ export default defineIntegration({
             input: "@qwikdev/astro/server"
           },
           client: {
-            input: resolver("./root.tsx")
+            input: resolver("./root.tsx"),
+            outDir: astroConfig?.build.client.pathname ?? "dist/client"
           },
           debug: options?.debug ?? false
         };
@@ -151,6 +153,12 @@ export default defineIntegration({
 
       "astro:config:done": async ({ config }) => {
         astroConfig = config;
+        // renderToStream needs the relative client path for q-chunks
+        const base = astroConfig.build.client.pathname.replace(
+          astroConfig.outDir.pathname,
+          ""
+        );
+        globalThis.relativeClientPath = `${base}build/`;
       },
 
       "astro:build:ssr": async () => {
@@ -159,10 +167,12 @@ export default defineIntegration({
           devSsrServer: false,
           srcDir,
           ssr: {
-            input: "@qwikdev/astro/server"
+            input: "@qwikdev/astro/server",
+            outDir: astroConfig?.build.server.pathname ?? "dist/server"
           },
           client: {
-            input: [...qwikEntrypoints, resolver("./root.tsx")]
+            input: [...qwikEntrypoints, resolver("./root.tsx")],
+            outDir: astroConfig?.build.client.pathname ?? "dist/client"
           },
           debug: options?.debug ?? false
         };
@@ -173,29 +183,10 @@ export default defineIntegration({
           build: {
             ...astroConfig?.vite.build,
             ssr: false,
-            outDir: astroConfig?.outDir.pathname ?? "dist",
+            outDir: astroConfig?.build.client.pathname ?? "dist/client",
             emptyOutDir: false
           }
         });
-      },
-
-      "astro:build:done": async () => {
-        let outputPath: string;
-
-        if (!astroConfig) {
-          throw new Error("Qwik Astro: there is no astro config present.");
-        }
-
-        if (astroConfig.output === "server" || astroConfig.output === "hybrid") {
-          // to support Astro's SSR adapters
-          outputPath = astroConfig.build.client.pathname;
-        } else {
-          // to support Astro's static adapter
-          outputPath = astroConfig.outDir.pathname;
-        }
-
-        const normalizedPath = normalizePath(outputPath);
-        import.meta.env.Q_BASE = normalizedPath;
       }
     };
 

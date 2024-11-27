@@ -63,13 +63,11 @@ export async function renderToStaticMarkup(
       return;
     }
 
-    const base = (props["q:base"] || import.meta.env.Q_BASE) as string;
-
     // html that gets added to the stream
     let html = "";
 
     const renderToStreamOpts: RenderToStreamOptions = {
-      base,
+      base: globalThis.relativeClientPath,
       containerAttributes: { style: "display: contents" },
       containerTagName: "div",
       ...(isDev
