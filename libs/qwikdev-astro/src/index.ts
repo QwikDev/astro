@@ -179,9 +179,7 @@ export default defineIntegration({
         });
       },
 
-      "astro:build:done": async (options) => {
-        console.log("OPTIO  NS: ", options);
-
+      "astro:build:done": async () => {
         let outputPath: string;
 
         if (!astroConfig) {
@@ -189,13 +187,15 @@ export default defineIntegration({
         }
 
         if (astroConfig.output === "server" || astroConfig.output === "hybrid") {
+          // to support Astro's SSR adapters
           outputPath = astroConfig.build.client.pathname;
         } else {
+          // to support Astro's static adapter
           outputPath = astroConfig.outDir.pathname;
         }
 
         const normalizedPath = normalizePath(outputPath);
-        process.env.Q_BASE = normalizedPath;
+        import.meta.env.Q_BASE = normalizedPath;
       }
     };
 

@@ -63,7 +63,7 @@ export async function renderToStaticMarkup(
       return;
     }
 
-    const base = (props["q:base"] || process.env.Q_BASE) as string;
+    const base = (props["q:base"] || import.meta.env.Q_BASE) as string;
 
     // html that gets added to the stream
     let html = "";
