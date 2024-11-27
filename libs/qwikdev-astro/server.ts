@@ -78,6 +78,9 @@ export async function renderToStaticMarkup(
           }
         : { manifest: JSON.parse(process.env.MANIFESTLOL) }),
       serverData: props,
+      qwikPrefetchServiceWorker: {
+        include: false
+      },
       stream: {
         write: (chunk) => {
           html += chunk;

@@ -29,7 +29,7 @@ const FilterPatternSchema = z.union([
 
 console.log("HELLLOOOOOOOOO ============= ");
 const qwikEntrypoints = new Set<string>();
-let qwikVitePlugin: any = null;
+const qwikVitePlugin: any = null;
 
 /**
  * This project uses Astro Integration Kit.
@@ -58,9 +58,7 @@ export default defineIntegration({
 
   setup({ options }) {
     let srcDir = "";
-
     let astroConfig: AstroConfig | null = null;
-
     const { resolve: resolver } = createResolver(import.meta.url);
     const filter = createFilter(options?.include, options?.exclude);
 
@@ -129,7 +127,7 @@ export default defineIntegration({
           }
         };
 
-        const qwikViteConfig: QwikVitePluginOptions = {
+        const qwikServerConfig: QwikVitePluginOptions = {
           fileFilter,
           devSsrServer: false,
           srcDir,
@@ -137,12 +135,10 @@ export default defineIntegration({
             input: "@qwikdev/astro/server"
           },
           client: {
-            input: resolver('./root.tsx')
+            input: resolver("./root.tsx")
           },
           debug: options?.debug ?? false
         };
-
-        qwikVitePlugin = qwikVite(qwikViteConfig);
 
         const overrideEsbuildPlugin: PluginOption = {
           // override qwikVite's attempt to set `esbuild` to false during dev
@@ -167,7 +163,7 @@ export default defineIntegration({
             plugins: [
               astroQwikPlugin,
               symbolMapperPlugin,
-              qwikVitePlugin,
+              qwikVite(qwikServerConfig),
               tsconfigPaths(),
               overrideEsbuildPlugin
             ]
@@ -179,38 +175,28 @@ export default defineIntegration({
         astroConfig = config;
       },
 
-      "astro:build:ssr": async (setupOptions) => {
-        console.log(setupOptions)
-        /**
-         *  This is a client build, we need to Generate the q-manifest.json file to pass back to the server.
-         *
-         * Otherwise, Qwik will not transform the client files.
-         */
-
-        console.log("BEFORE CLIENT BUILD: ", qwikEntrypoints);
-
-        const updatedQwikViteConfig: QwikVitePluginOptions = {
+      "astro:build:ssr": async () => {
+        // After the Astro SSR build has finished, we do the client build
+        const qwikClientConfig: QwikVitePluginOptions = {
           devSsrServer: false,
           srcDir,
           ssr: {
             input: "@qwikdev/astro/server"
           },
           client: {
-            input: [...qwikEntrypoints, resolver('./root.tsx')]
+            input: [...qwikEntrypoints, resolver("./root.tsx")]
           },
           debug: options?.debug ?? false
         };
 
         const clientBuild = await build({
           ...astroConfig?.vite,
-          plugins: [
-            qwikVite(updatedQwikViteConfig)
-          ],
+          plugins: [qwikVite(qwikClientConfig)],
           build: {
             ...astroConfig?.vite.build,
             rollupOptions: {
               ...astroConfig?.vite.build?.rollupOptions,
-              input: [...qwikEntrypoints, resolver('./root.tsx')]
+              input: [...qwikEntrypoints, resolver("./root.tsx")]
             },
             ssr: false,
             outDir: astroConfig?.outDir.pathname ?? "dist",
