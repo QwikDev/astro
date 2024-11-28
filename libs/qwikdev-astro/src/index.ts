@@ -184,7 +184,7 @@ export default defineIntegration({
             ...astroConfig?.vite.build,
             ssr: false,
             outDir: clientDir,
-            emptyOutDir: false
+            emptyOutDir: true
           }
         });
       }
