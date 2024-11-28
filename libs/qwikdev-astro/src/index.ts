@@ -188,6 +188,8 @@ export default defineIntegration({
           debug: options?.debug ?? false
         };
 
+        console.log("QWIK ENTRYPOINTS: ", qwikEntrypoints);
+
         await build({
           ...astroConfig?.vite,
           plugins: [qwikVite(qwikClientConfig)],
