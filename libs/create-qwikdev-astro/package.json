@@ -5,7 +5,9 @@
   "version": "0.1.2",
   "description": "Interactive CLI for create @QwikDev/astro projects.",
   "scripts": {
-    "build": "rimraf dist && tsc --build"
+    "check": "tsc --noEmit",
+    "build": "pnpm check && tsup-node --env.NODE_ENV production",
+    "start": "tsup-node --env.NODE_ENV development --watch"
   },
   "contributors": [
     {
@@ -31,8 +33,20 @@
   },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "exports": {
-    ".": "./dist/index.js",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js",
+      "require": "./dist/cli.cjs",
+      "default": "./dist/cli.js"
+    },
     "./package.json": "./package.json"
   },
   "files": ["dist", "stubs"],
@@ -69,7 +83,7 @@
   "devDependencies": {
     "@types/which-pm-runs": "^1.0.2",
     "@types/yargs": "^17.0.32",
-    "rimraf": "^5.0.5",
+    "tsup": "^8.2.4",
     "typescript": "^5.4.5"
   }
 }
