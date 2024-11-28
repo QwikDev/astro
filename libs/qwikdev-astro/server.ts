@@ -8,6 +8,7 @@ import {
   getQwikLoaderScript,
   renderToStream
 } from "@builder.io/qwik/server";
+import { manifest } from "@qwik-client-manifest";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 
@@ -74,7 +75,7 @@ export async function renderToStaticMarkup(
             manifest: {} as QwikManifest,
             symbolMapper: globalThis.symbolMapperFn
           }
-        : { manifest: globalThis.qManifest }),
+        : { manifest: globalThis.isStatic ? globalThis.qManifest : manifest }),
       serverData: props,
       qwikPrefetchServiceWorker: {
         include: false
