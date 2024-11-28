@@ -1,13 +1,9 @@
+import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
+import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
-
-import { qwikVite } from "@builder.io/qwik/optimizer";
-import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
-import { symbolMapper } from "@builder.io/qwik/optimizer";
-
-import { build, createFilter } from "vite";
-import type { PluginOption } from "vite";
+import { type PluginOption, build, createFilter } from "vite";
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
