@@ -66,6 +66,8 @@ export async function renderToStaticMarkup(
     // html that gets added to the stream
     let html = "";
 
+    console.log("SERVER MANIFEST: ", manifest);
+
     const renderToStreamOpts: RenderToStreamOptions = {
       base: globalThis.relativeClientPath,
       containerAttributes: { style: "display: contents" },
