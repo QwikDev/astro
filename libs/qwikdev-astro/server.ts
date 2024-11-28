@@ -66,6 +66,10 @@ export async function renderToStaticMarkup(
     // html that gets added to the stream
     let html = "";
 
+    const checkManifest = globalThis.qManifest || manifest;
+
+    console.log("CHECK MANIFEST: ", checkManifest);
+
     const renderToStreamOpts: RenderToStreamOptions = {
       base: globalThis.relativeClientPath,
       containerAttributes: { style: "display: contents" },
