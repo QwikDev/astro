@@ -77,7 +77,7 @@ export async function renderToStaticMarkup(
             manifest: {} as QwikManifest,
             symbolMapper: globalThis.symbolMapperFn
           }
-        : { manifest }),
+        : { manifest: globalThis.qManifest }),
       serverData: props,
       qwikPrefetchServiceWorker: {
         include: false

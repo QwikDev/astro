@@ -9,6 +9,7 @@ declare global {
   var symbolMapperFn: SymbolMapperFn;
   var hash: string | undefined;
   var relativeClientPath: string;
+  var qManifest: any;
 }
 
 /* Similar to vite's FilterPattern */
@@ -190,7 +191,7 @@ export default defineIntegration({
 
         console.log("QWIK ENTRYPOINTS: ", qwikEntrypoints);
 
-        await build({
+        const clientBuild = await build({
           ...astroConfig?.vite,
           plugins: [qwikVite(qwikClientConfig)],
           build: {
@@ -200,6 +201,14 @@ export default defineIntegration({
             emptyOutDir: false
           }
         });
+
+        // @ts-ignore
+        const manifestAsset = clientBuild.output.find(
+          // @ts-ignore
+          (output) => output.fileName === "q-manifest.json"
+        );
+
+        globalThis.qManifest = JSON.parse(manifestAsset.source);
       }
     };
 
