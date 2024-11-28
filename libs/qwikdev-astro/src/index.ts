@@ -189,8 +189,6 @@ export default defineIntegration({
           debug: options?.debug ?? false
         };
 
-        console.log("QWIK ENTRYPOINTS: ", qwikEntrypoints);
-
         const clientBuild = await build({
           ...astroConfig?.vite,
           plugins: [qwikVite(qwikClientConfig)],
@@ -202,13 +200,15 @@ export default defineIntegration({
           }
         });
 
-        // @ts-ignore
-        const manifestAsset = clientBuild.output.find(
-          // @ts-ignore
-          (output) => output.fileName === "q-manifest.json"
-        );
+        const qManifest = (
+          clientBuild as { output: Array<{ fileName: string; source: string }> }
+        ).output.find((output) => output.fileName === "q-manifest.json");
 
-        globalThis.qManifest = JSON.parse(manifestAsset.source);
+        if (!qManifest) {
+          throw new Error("Could not find q-manifest.json");
+        }
+
+        globalThis.qManifest = JSON.parse(qManifest.source);
       }
     };
 

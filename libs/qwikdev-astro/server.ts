@@ -8,7 +8,6 @@ import {
   getQwikLoaderScript,
   renderToStream
 } from "@builder.io/qwik/server";
-import { manifest } from "@qwik-client-manifest";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 
@@ -65,8 +64,6 @@ export async function renderToStaticMarkup(
 
     // html that gets added to the stream
     let html = "";
-
-    console.log("SERVER MANIFEST: ", manifest);
 
     const renderToStreamOpts: RenderToStreamOptions = {
       base: globalThis.relativeClientPath,
