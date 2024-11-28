@@ -21,5 +21,5 @@ test("Qwik container is SSR rendered in dev mode", async ({ page }) => {
     console.error("Page content:", await page.content());
   }
 
-  await expect(page.locator("q:container")).toBeVisible();
+  await expect(page.locator("[q\\:container]").first()).toBeVisible();
 });
