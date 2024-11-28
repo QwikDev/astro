@@ -183,7 +183,7 @@ export default defineIntegration({
           build: {
             ...astroConfig?.vite.build,
             ssr: false,
-            outDir: astroConfig?.outDir.pathname ?? "dist",
+            outDir: clientDir,
             emptyOutDir: false
           }
         });
