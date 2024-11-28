@@ -20,6 +20,10 @@ const FilterPatternSchema = z.union([
 ]);
 
 const qwikEntrypoints = new Set<string>();
+let resolveEntrypoints: () => void;
+const entrypointsReady = new Promise<void>((resolve) => {
+  resolveEntrypoints = resolve;
+});
 
 /**
  * This project uses Astro Integration Kit.
@@ -94,6 +98,10 @@ export default defineIntegration({
           configResolved() {
             globalThis.symbolMapperFn = symbolMapper;
           },
+          buildEnd() {
+            // Signal that we're done collecting entrypoints
+            resolveEntrypoints();
+          },
           async resolveId(id, importer) {
             if (!importer?.endsWith(".astro")) {
               return null;
@@ -162,6 +170,9 @@ export default defineIntegration({
       },
 
       "astro:build:ssr": async () => {
+        // Wait for entrypoint collection to complete
+        await entrypointsReady;
+
         // SSR build finished -> Now do the Qwik client build
         const qwikClientConfig: QwikVitePluginOptions = {
           devSsrServer: false,
