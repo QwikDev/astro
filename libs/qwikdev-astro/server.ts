@@ -75,7 +75,8 @@ export async function renderToStaticMarkup(
             manifest: {} as QwikManifest,
             symbolMapper: globalThis.symbolMapperFn
           }
-        : { manifest }),
+        : // CI, SSG, and SSR get the manifest at different times / environments
+          { manifest: globalThis.qManifest || manifest }),
       serverData: props,
       qwikPrefetchServiceWorker: {
         include: false

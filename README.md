@@ -433,6 +433,8 @@ Resumability is "Lazy execution", it's the ability to build the "framework state
 
 > This is in contrast to most frameworks, which will run the framework twice. Once on the server, and once on the client. (Hydration)
 
+Hydration forces everything to be executed as the user visits the page. By avoiding hydration, we can execute code only when an interaction occurs. When combined with JavaScript Streaming, this results in a massive improvement in user experience.
+
 ### What is JavaScript Streaming?
 
 JavaScript streaming is Resumability plus the ability to stream the functions into the browser and to buffer them in the cache.

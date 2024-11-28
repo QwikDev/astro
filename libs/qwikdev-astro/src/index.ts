@@ -9,6 +9,8 @@ declare global {
   var symbolMapperFn: SymbolMapperFn;
   var hash: string | undefined;
   var relativeClientPath: string;
+  var qManifest: any;
+  var isStatic: boolean;
 }
 
 /* Similar to vite's FilterPattern */
@@ -20,6 +22,10 @@ const FilterPatternSchema = z.union([
 ]);
 
 const qwikEntrypoints = new Set<string>();
+let resolveEntrypoints: () => void;
+const entrypointsReady = new Promise<void>((resolve) => {
+  resolveEntrypoints = resolve;
+});
 
 /**
  * This project uses Astro Integration Kit.
@@ -94,8 +100,14 @@ export default defineIntegration({
           configResolved() {
             globalThis.symbolMapperFn = symbolMapper;
           },
+          buildEnd() {
+            // Signal that we're done collecting entrypoints
+            resolveEntrypoints();
+          },
           async resolveId(id, importer) {
-            if (!importer?.endsWith(".astro")) return null;
+            if (!importer?.endsWith(".astro")) {
+              return null;
+            }
 
             // Handle component imports
             if (id.startsWith("@")) {
@@ -160,6 +172,9 @@ export default defineIntegration({
       },
 
       "astro:build:ssr": async () => {
+        // Wait for entrypoint collection to complete
+        await entrypointsReady;
+
         // SSR build finished -> Now do the Qwik client build
         const qwikClientConfig: QwikVitePluginOptions = {
           devSsrServer: false,
@@ -175,16 +190,26 @@ export default defineIntegration({
           debug: options?.debug ?? false
         };
 
-        await build({
+        const clientBuild = await build({
           ...astroConfig?.vite,
           plugins: [qwikVite(qwikClientConfig)],
           build: {
             ...astroConfig?.vite.build,
             ssr: false,
-            outDir: astroConfig?.outDir.pathname ?? "dist",
+            outDir: clientDir,
             emptyOutDir: false
           }
         });
+
+        const qManifest = (
+          clientBuild as { output: Array<{ fileName: string; source: string }> }
+        ).output.find((output) => output.fileName === "q-manifest.json");
+
+        if (!qManifest) {
+          throw new Error("Could not find q-manifest.json");
+        }
+
+        globalThis.qManifest = JSON.parse(qManifest.source);
       }
     };
 

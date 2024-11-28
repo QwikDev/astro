@@ -1,0 +1,19 @@
+{
+  "name": "minimal-fixture",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "dev.debug": "node --inspect ./node_modules/astro/astro.js dev",
+    "start": "astro dev --open",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@builder.io/qwik": "^1.10",
+    "@qwikdev/astro": "workspace:*",
+    "astro": "^4.16.14"
+  }
+}
