@@ -95,7 +95,9 @@ export default defineIntegration({
             globalThis.symbolMapperFn = symbolMapper;
           },
           async resolveId(id, importer) {
-            if (!importer?.endsWith(".astro")) return null;
+            if (!importer?.endsWith(".astro")) {
+              return null;
+            }
 
             // Handle component imports
             if (id.startsWith("@")) {

@@ -1,0 +1,11 @@
+{
+  "name": "minimal-fixture",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "dependencies": {
+    "@builder.io/qwik": "^1.10",
+    "@qwikdev/astro": "workspace:*",
+    "astro": "^4.16.14"
+  }
+}
