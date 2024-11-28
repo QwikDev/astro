@@ -169,7 +169,6 @@ export default defineIntegration({
         const base = clientDir.replace(astroConfig.outDir.pathname, "");
         globalThis.relativeClientPath =
           astroConfig.output === "static" ? `${base}build/` : "build/";
-        globalThis.isStatic = astroConfig.output === "static";
       },
 
       "astro:build:ssr": async () => {
