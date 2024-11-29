@@ -1,3 +1,4 @@
+import os from 'node:os'
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import type { AstroConfig, AstroIntegration } from "astro";
@@ -56,6 +57,7 @@ export default defineIntegration({
     let srcDir = "";
     let clientDir = "";
     let serverDir = "";
+    let outDir = "";
     let astroConfig: AstroConfig | null = null;
     const { resolve: resolver } = createResolver(import.meta.url);
     const filter = createFilter(options?.include, options?.exclude);
@@ -79,6 +81,18 @@ export default defineIntegration({
         srcDir = astroConfig.srcDir.pathname;
         clientDir = astroConfig.build.client.pathname;
         serverDir = astroConfig.build.server.pathname;
+        outDir = astroConfig.outDir.pathname;
+
+        /**
+         * HACK: Remove drive letter (e.g., "C:") on Windows
+         * This is needed because the Qwik optimizer and Vite plugin handle their own normalization due to a difference in environments
+         */
+        if (os.platform() === "win32") {
+          srcDir = srcDir.substring(3);
+          clientDir = clientDir.substring(3);
+          serverDir = serverDir.substring(3);
+          outDir = outDir.substring(3);
+        }
 
         addRenderer({
           name: "@qwikdev/astro",
@@ -166,7 +180,7 @@ export default defineIntegration({
       "astro:config:done": async ({ config }) => {
         astroConfig = config;
         // renderToStream needs the relative client path for q-chunks
-        const base = clientDir.replace(astroConfig.outDir.pathname, "");
+        const base = clientDir.replace(outDir, "");
         globalThis.relativeClientPath =
           astroConfig.output === "static" ? `${base}build/` : "build/";
       },
