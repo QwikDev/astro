@@ -1,4 +1,3 @@
-import os from 'node:os'
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import type { AstroConfig, AstroIntegration } from "astro";
@@ -83,11 +82,14 @@ export default defineIntegration({
         serverDir = astroConfig.build.server.pathname;
         outDir = astroConfig.outDir.pathname;
 
+        console.log("SRC DIR:", srcDir)
+
         /**
-         * HACK: Remove drive letter (e.g., "C:") on Windows
-         * This is needed because the Qwik optimizer and Vite plugin handle their own normalization due to a difference in environments
+         * HACK: Normalize Windows paths by removing drive letter prefix
+         * Required because Qwik optimizer and Vite plugin normalize paths differently
          */
-        if (os.platform() === "win32") {
+        const windowsPathPattern = /^(?:\/)?[A-Z]:[/\\]/i;
+        if (windowsPathPattern.test(srcDir)) {
           srcDir = srcDir.substring(3);
           clientDir = clientDir.substring(3);
           serverDir = serverDir.substring(3);
