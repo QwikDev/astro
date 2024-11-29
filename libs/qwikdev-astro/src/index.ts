@@ -84,22 +84,22 @@ export default defineIntegration({
 
         console.log("SRC DIR:", srcDir)
 
-        /**
+        addRenderer({
+          name: "@qwikdev/astro",
+          serverEntrypoint: resolver("../server.ts")
+        });
+
+                /**
          * HACK: Normalize Windows paths by removing drive letter prefix
          * Required because Qwik optimizer and Vite plugin normalize paths differently
          */
-        // const windowsPathPattern = /^(?:\/)?[A-Z]:[/\\]/i;
-        // if (windowsPathPattern.test(srcDir)) {
-        //   srcDir = srcDir.substring(3);
-        //   clientDir = clientDir.substring(3);
-        //   serverDir = serverDir.substring(3);
-        //   outDir = outDir.substring(3);
-        // }
-
-        addRenderer({
-          name: "@qwikdev/astro",
-          serverEntrypoint: "@qwikdev/astro/server"
-        });
+        const windowsPathPattern = /^(?:\/)?[A-Z]:[/\\]/i;
+        if (windowsPathPattern.test(srcDir)) {
+          srcDir = srcDir.substring(3);
+          clientDir = clientDir.substring(3);
+          serverDir = serverDir.substring(3);
+          outDir = outDir.substring(3);
+        }
 
         /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
         const fileFilter = (id: string, hook: string) => {
@@ -146,7 +146,7 @@ export default defineIntegration({
           devSsrServer: false,
           srcDir,
           ssr: {
-            input: "@qwikdev/astro/server"
+            input: resolver("../server.ts")
           },
           client: {
             input: resolver("./root.tsx"),
