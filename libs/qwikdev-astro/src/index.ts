@@ -109,17 +109,17 @@ export default defineIntegration({
               return null;
             }
 
-            // Handle component imports
-            if (id.startsWith("@")) {
-              try {
-                const resolved = await this.resolve(id, importer, { skipSelf: true });
-                if (resolved) {
-                  qwikEntrypoints.add(resolved.id);
-                  return resolved.id;
-                }
-              } catch (e) {
-                console.warn(`Failed to resolve Qwik component: ${id}`, e);
-              }
+            const resolved = await this.resolve(id, importer);
+
+            if (!resolved) {
+              throw new Error(`Could not resolve ${id} from ${importer}`);
+            }
+
+            console.log("RESOLVED ID:", resolved.id);
+
+            // Only add non-astro files to entrypoints
+            if (resolved.id.includes(".tsx")) {
+              qwikEntrypoints.add(resolved.id);
             }
             return null;
           }

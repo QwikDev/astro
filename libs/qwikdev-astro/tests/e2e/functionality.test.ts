@@ -22,4 +22,46 @@ test("Qwik container is SSR rendered in dev mode", async ({ page }) => {
   }
 
   await expect(page.locator("[q\\:container]").first()).toBeVisible();
+
+  await devServer.stop();
+});
+
+test("Qwik container is SSR rendered in production", async ({ page }) => {
+  const fixture = await loadFixture({
+    root: "../fixtures/minimal"
+  });
+
+  await fixture.build({});
+
+  const pageUrl = await fixture.resolveUrl("/");
+
+  console.log("PAGE URL: ", pageUrl);
+  const response = await page.goto(pageUrl);
+
+  if (!response?.ok()) {
+    console.error("Response status:", response?.status());
+    console.error("Response status text:", response?.statusText());
+    console.error("Page content:", await page.content());
+  }
+
+  await expect(page.locator("[q\\:container]").first()).toBeVisible();
+});
+
+test("Counter increments on click", async ({ page }) => {
+  const fixture = await loadFixture({
+    root: "../fixtures/minimal"
+  });
+
+  const devServer = await fixture.startDevServer({});
+
+  console.log("DEV SERVER URL: ", devServer);
+
+  const pageUrl = await fixture.resolveUrl("/");
+  await page.goto(pageUrl);
+
+  const counter = page.getByTestId("counter");
+
+  await expect(counter).toBeVisible();
+  await counter.click();
+  await expect(counter).toHaveText("1");
 });
