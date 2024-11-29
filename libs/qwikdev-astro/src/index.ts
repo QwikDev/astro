@@ -88,13 +88,13 @@ export default defineIntegration({
          * HACK: Normalize Windows paths by removing drive letter prefix
          * Required because Qwik optimizer and Vite plugin normalize paths differently
          */
-        const windowsPathPattern = /^(?:\/)?[A-Z]:[/\\]/i;
-        if (windowsPathPattern.test(srcDir)) {
-          srcDir = srcDir.substring(3);
-          clientDir = clientDir.substring(3);
-          serverDir = serverDir.substring(3);
-          outDir = outDir.substring(3);
-        }
+        // const windowsPathPattern = /^(?:\/)?[A-Z]:[/\\]/i;
+        // if (windowsPathPattern.test(srcDir)) {
+        //   srcDir = srcDir.substring(3);
+        //   clientDir = clientDir.substring(3);
+        //   serverDir = serverDir.substring(3);
+        //   outDir = outDir.substring(3);
+        // }
 
         addRenderer({
           name: "@qwikdev/astro",
