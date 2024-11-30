@@ -22,7 +22,7 @@ const FilterPatternSchema = z.union([
 ]);
 
 const qwikEntrypoints = new Set<string>();
-const potentialEntrypoints = new Set<string>();
+const potentialEntries = new Set<string>();
 let resolveEntrypoints: () => void;
 const entrypointsReady = new Promise<void>((resolve) => {
   resolveEntrypoints = resolve;
@@ -122,35 +122,46 @@ export default defineIntegration({
             resolveEntrypoints();
           },
           async resolveId(id, importer) {
+            // Early return if not an Astro file
             if (!importer?.endsWith(".astro")) {
               return null;
             }
 
             const resolved = await this.resolve(id, importer);
-
             if (!resolved) {
               throw new Error(`Could not resolve ${id} from ${importer}`);
             }
 
-            // qwik libraries
-            if (resolved.id.includes(".qwik.")) {
-              qwikEntrypoints.add(resolved.id);
+            const isPotentialEntry = /\.(tsx|jsx|ts|js|qwik\.)/.test(resolved.id);
+            if (!isPotentialEntry) {
+              return null;
             }
 
-            if (/\.(tsx|jsx|ts|js)$/.test(resolved.id)) {
-              potentialEntrypoints.add(resolved.id);
+            // Add to appropriate Set based on whether it's a Qwik file
+            if (resolved.id.includes(".qwik.")) {
+              qwikEntrypoints.add(resolved.id);
+            } else {
+              potentialEntries.add(resolved.id);
             }
 
             return null;
           },
           async transform(code, id) {
-            if (!potentialEntrypoints.has(id)) {
+            if (!potentialEntries.has(id)) {
               return null;
             }
 
-            const qwikPackages = ['@builder.io/qwik', "@builder.io/qwik-react", "qwik.dev/core", "@qwik.dev/react"]
-
-            if (qwikPackages.some(pkg => code.includes(pkg))) {
+            /**
+             *  Qwik Entrypoints
+             *  ---
+             *  @builder.io/qwik
+             *  @builder.io/qwik-react
+             *  @qwik.dev/core
+             *  @qwik.dev/react
+             */
+            const QWIK_IMPORTS_REGEX = /@builder\.io\/qwik(-react)?|qwik\.dev\/(core|react)/;
+            
+            if (QWIK_IMPORTS_REGEX.test(code)) {
               qwikEntrypoints.add(id);
             }
 
