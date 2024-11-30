@@ -1,5 +1,5 @@
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
-import type { QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
+import type { QwikManifest, QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
@@ -9,8 +9,7 @@ declare global {
   var symbolMapperFn: SymbolMapperFn;
   var hash: string | undefined;
   var relativeClientPath: string;
-  var qManifest: any;
-  var isStatic: boolean;
+  var qManifest: QwikManifest;
 }
 
 /* Similar to vite's FilterPattern */
@@ -90,7 +89,7 @@ export default defineIntegration({
           serverEntrypoint: resolver("../server.ts")
         });
 
-                /**
+        /**
          * HACK: Normalize Windows paths by removing drive letter prefix
          * Required because Qwik optimizer and Vite plugin normalize paths differently
          */
@@ -229,12 +228,15 @@ export default defineIntegration({
           },
           client: {
             input: [...qwikEntrypoints, resolver("./root.tsx")],
-            outDir: clientDir
+            outDir: clientDir,
+            manifestOutput: (manifest) => {
+              globalThis.qManifest = manifest;
+            }
           },
           debug: options?.debug ?? false
         };
 
-        const clientBuild = await build({
+        await build({
           ...astroConfig?.vite,
           plugins: [qwikVite(qwikClientConfig)],
           build: {
@@ -244,16 +246,6 @@ export default defineIntegration({
             emptyOutDir: false
           }
         });
-
-        const qManifest = (
-          clientBuild as { output: Array<{ fileName: string; source: string }> }
-        ).output.find((output) => output.fileName === "q-manifest.json");
-
-        if (!qManifest) {
-          throw new Error("Could not find q-manifest.json");
-        }
-
-        globalThis.qManifest = JSON.parse(qManifest.source);
       }
     };
 
