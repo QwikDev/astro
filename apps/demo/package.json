@@ -14,7 +14,6 @@
   "dependencies": {
     "@builder.io/qwik": "^1.10",
     "@qwikdev/astro": "workspace:*",
-    "astro": "^4.16.14",
-    "demo-lib": "workspace:*"
+    "astro": "^4.16.14"
   }
 }
