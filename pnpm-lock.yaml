@@ -44,6 +44,9 @@ importers:
       astro:
         specifier: ^4.16.14
         version: 4.16.16(@types/node@20.17.8)(rollup@4.27.4)(typescript@5.7.2)
+      demo-lib:
+        specifier: workspace:*
+        version: link:../../libs/demo-lib
 
   apps/deno-demo:
     dependencies:

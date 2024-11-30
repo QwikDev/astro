@@ -22,6 +22,7 @@ const FilterPatternSchema = z.union([
 ]);
 
 const qwikEntrypoints = new Set<string>();
+const potentialEntrypoints = new Set<string>();
 let resolveEntrypoints: () => void;
 const entrypointsReady = new Promise<void>((resolve) => {
   resolveEntrypoints = resolve;
@@ -131,12 +132,28 @@ export default defineIntegration({
               throw new Error(`Could not resolve ${id} from ${importer}`);
             }
 
-            console.log("RESOLVED ID:", resolved.id);
-
-            // Only add non-astro files to entrypoints
-            if (resolved.id.includes(".tsx")) {
+            // qwik libraries
+            if (resolved.id.includes(".qwik.")) {
               qwikEntrypoints.add(resolved.id);
             }
+
+            if (/\.(tsx|jsx|ts|js)$/.test(resolved.id)) {
+              potentialEntrypoints.add(resolved.id);
+            }
+
+            return null;
+          },
+          async transform(code, id) {
+            if (!potentialEntrypoints.has(id)) {
+              return null;
+            }
+
+            const qwikPackages = ['@builder.io/qwik', "@builder.io/qwik-react", "qwik.dev/core", "@qwik.dev/react"]
+
+            if (qwikPackages.some(pkg => code.includes(pkg))) {
+              qwikEntrypoints.add(id);
+            }
+
             return null;
           }
         };
