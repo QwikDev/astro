@@ -1,10 +1,12 @@
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
-import type { QwikManifest, QwikVitePluginOptions, SymbolMapperFn } from "@builder.io/qwik/optimizer";
+import type {
+  QwikManifest,
+  QwikVitePluginOptions,
+  SymbolMapperFn
+} from "@builder.io/qwik/optimizer";
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
-import { mkdirSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
 import { type PluginOption, build, createFilter } from "vite";
 
 declare global {
@@ -84,7 +86,7 @@ export default defineIntegration({
         serverDir = astroConfig.build.server.pathname;
         outDir = astroConfig.outDir.pathname;
 
-        console.log("SRC DIR:", srcDir)
+        console.log("SRC DIR:", srcDir);
 
         addRenderer({
           name: "@qwikdev/astro",
@@ -160,9 +162,10 @@ export default defineIntegration({
              *  @qwik.dev/core
              *  @qwik.dev/react
              */
-            const QWIK_IMPORTS_REGEX = /@builder\.io\/qwik(-react)?|qwik\.dev\/(core|react)/;
-            
-            if (QWIK_IMPORTS_REGEX.test(code)) {
+            const qwikImportsRegex =
+              /@builder\.io\/qwik(-react)?|qwik\.dev\/(core|react)/;
+
+            if (qwikImportsRegex.test(code)) {
               qwikEntrypoints.add(id);
             }
 
@@ -231,24 +234,34 @@ export default defineIntegration({
           client: {
             input: [...qwikEntrypoints, resolver("./root.tsx")],
             outDir: clientDir,
-            manifestOutput: (manifest) => {
+            manifestOutput: async (manifest) => {
               globalThis.qManifest = manifest;
-              const manifestPath = join(clientDir, 'q-manifest.json');
-              
-              /**
-               * Write manifest to disk since server and client builds run in separate processes.
-               * Required for production and Playwright tests to access the manifest.
-               */
-              mkdirSync(dirname(manifestPath), { recursive: true });
-              writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
             }
           },
           debug: options?.debug ?? false
         };
 
+        /**
+         * Write manifest to disk for server build to access.
+         * Required for production/Playwright tests where server
+         * build runs in a separate process from client build.
+         */
+        const manifestWriterPlugin: PluginOption = {
+          name: "qwik-manifest-writer",
+          generateBundle() {
+            if (globalThis.qManifest) {
+              this.emitFile({
+                type: "asset",
+                fileName: "q-manifest.json",
+                source: JSON.stringify(globalThis.qManifest, null, 2)
+              });
+            }
+          }
+        };
+
         await build({
           ...astroConfig?.vite,
-          plugins: [qwikVite(qwikClientConfig)],
+          plugins: [qwikVite(qwikClientConfig), manifestWriterPlugin],
           build: {
             ...astroConfig?.vite.build,
             ssr: false,
