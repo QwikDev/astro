@@ -120,11 +120,10 @@ export default defineIntegration({
             globalThis.symbolMapperFn = symbolMapper;
           },
           buildEnd() {
-            // Signal that we're done collecting entrypoints
             resolveEntrypoints();
           },
           async resolveId(id, importer) {
-            // Early return if not an Astro file
+            // only grab the imports of Astro files
             if (!importer?.endsWith(".astro")) {
               return null;
             }
@@ -139,7 +138,7 @@ export default defineIntegration({
               return null;
             }
 
-            // Add to appropriate Set based on whether it's a Qwik file
+            // add Qwik libraries
             if (resolved.id.includes(".qwik.")) {
               qwikEntrypoints.add(resolved.id);
             } else {
@@ -219,7 +218,6 @@ export default defineIntegration({
       },
 
       "astro:build:ssr": async () => {
-        // Wait for entrypoint collection to complete
         await entrypointsReady;
 
         let qManifest: null | QwikManifest = null;
