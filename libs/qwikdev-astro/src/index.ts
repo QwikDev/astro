@@ -13,7 +13,6 @@ declare global {
   var symbolMapperFn: SymbolMapperFn;
   var hash: string | undefined;
   var relativeClientPath: string;
-  var qManifest: QwikManifest;
 }
 
 /* Similar to vite's FilterPattern */
@@ -223,6 +222,8 @@ export default defineIntegration({
         // Wait for entrypoint collection to complete
         await entrypointsReady;
 
+        let qManifest: null | QwikManifest = null;
+
         // SSR build finished -> Now do the Qwik client build
         const qwikClientConfig: QwikVitePluginOptions = {
           devSsrServer: false,
@@ -235,7 +236,7 @@ export default defineIntegration({
             input: [...qwikEntrypoints, resolver("./root.tsx")],
             outDir: clientDir,
             manifestOutput: async (manifest) => {
-              globalThis.qManifest = manifest;
+              qManifest = manifest;
             }
           },
           debug: options?.debug ?? false
@@ -249,11 +250,11 @@ export default defineIntegration({
         const manifestWriterPlugin: PluginOption = {
           name: "qwik-manifest-writer",
           generateBundle() {
-            if (globalThis.qManifest) {
+            if (qManifest) {
               this.emitFile({
                 type: "asset",
                 fileName: "q-manifest.json",
-                source: JSON.stringify(globalThis.qManifest, null, 2)
+                source: JSON.stringify(qManifest, null, 2)
               });
             }
           }
