@@ -83,7 +83,7 @@ export async function renderToStaticMarkup(
             }
           }
         : // CI, SSG, and SSR get the manifest at different times / environments
-          { manifest }),
+          { manifest: manifest || globalThis.qManifest }),
       serverData: props,
       qwikPrefetchServiceWorker: {
         include: false

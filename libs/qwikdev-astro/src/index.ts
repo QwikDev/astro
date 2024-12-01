@@ -13,6 +13,7 @@ declare global {
   var symbolMapperFn: SymbolMapperFn;
   var hash: string | undefined;
   var relativeClientPath: string;
+  var qManifest: QwikManifest;
 }
 
 /* Similar to vite's FilterPattern */
@@ -233,7 +234,8 @@ export default defineIntegration({
           client: {
             input: [...qwikEntrypoints, resolver("./root.tsx")],
             outDir: clientDir,
-            manifestOutput: async (manifest) => {
+            manifestOutput: (manifest) => {
+              globalThis.qManifest = manifest;
               qManifest = manifest;
             }
           },
