@@ -16,6 +16,7 @@ export default defineConfig({
       testDir: "./libs/qwikdev-astro/tests/e2e"
     }
   ],
+  timeout: 30000,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
