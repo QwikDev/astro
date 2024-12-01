@@ -11,6 +11,7 @@ import {
 import { manifest } from "@qwik-client-manifest";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
+const devModulePreloadPaths = new Set();
 
 type RendererContext = {
   result: SSRResult;
@@ -63,7 +64,6 @@ export async function renderToStaticMarkup(
       return;
     }
 
-    // html that gets added to the stream
     let html = "";
 
     const renderToStreamOpts: RenderToStreamOptions = {
@@ -73,7 +73,14 @@ export async function renderToStaticMarkup(
       ...(isDev
         ? {
             manifest: {} as QwikManifest,
-            symbolMapper: globalThis.symbolMapperFn
+            symbolMapper: (symbolName, mapper, parent) => {
+              const mapped = globalThis.symbolMapperFn(symbolName, mapper, parent);
+
+              const chunkPath = mapped?.[1];
+              devModulePreloadPaths.add(chunkPath);
+
+              return mapped;
+            }
           }
         : // CI, SSG, and SSR get the manifest at different times / environments
           { manifest }),
@@ -152,6 +159,14 @@ export async function renderToStaticMarkup(
     }
 
     await renderToStream(qwikComponentJSX, renderToStreamOpts);
+
+    // ssr module preload links in dev mode -> idle time in production (root)
+    if (isDev && devModulePreloadPaths.size > 0) {
+      const modulePreloads = Array.from(devModulePreloadPaths)
+        .map((path) => `<link rel="modulepreload" href="${path}">`)
+        .join("");
+      html += modulePreloads;
+    }
 
     /** With View Transitions, rerun so that signals work
      * https://docs.astro.build/en/guides/view-transitions/#data-astro-rerun
