@@ -1,67 +1,87 @@
 import { loadFixture } from "@inox-tools/astro-tests/astroFixture";
 import { expect, test } from "@playwright/test";
 
-test("Qwik container is SSR rendered in dev mode", async ({ page }) => {
-  const fixture = await loadFixture({
-    root: "../fixtures/minimal"
+test.describe('Qwik functionality', () => {
+  test.beforeEach(async () => {
+    // Clean up before each test to ensure fresh state
+    const fixture = await loadFixture({
+      root: "../fixtures/minimal"
+    });
+    await fixture.clean();
   });
 
-  const devServer = await fixture.startDevServer({});
+  test("Qwik container is SSR rendered in dev mode", async ({ page }) => {
+    const fixture = await loadFixture({
+      root: "../fixtures/minimal"
+    });
 
-  console.log("DEV SERVER URL: ", devServer);
+    const devServer = await fixture.startDevServer({});
+    try {
+      const pageUrl = fixture.resolveUrl("/");
+      const response = await page.goto(pageUrl);
 
-  const pageUrl = await fixture.resolveUrl("/");
+      if (!response?.ok()) {
+        throw new Error(`Failed to load page: ${response?.status()} ${response?.statusText()}`);
+      }
 
-  console.log("PAGE URL: ", pageUrl);
-  const response = await page.goto(pageUrl);
-
-  if (!response?.ok()) {
-    console.error("Response status:", response?.status());
-    console.error("Response status text:", response?.statusText());
-    console.error("Page content:", await page.content());
-  }
-
-  await expect(page.locator("[q\\:container]").first()).toBeVisible();
-
-  await devServer.stop();
-});
-
-test("Qwik container is SSR rendered in production", async ({ page }) => {
-  const fixture = await loadFixture({
-    root: "../fixtures/minimal"
+      await expect(page.locator("[q\\:container]").first()).toBeVisible();
+    } finally {
+      await devServer.stop();
+    }
   });
 
-  await fixture.build({});
+  test("Qwik container is SSR rendered in production", async ({ page }) => {
+    const fixture = await loadFixture({
+      root: "../fixtures/minimal",
+      // Explicitly set output mode
+      output: 'static',
+      // Ensure clean build
+      cacheDir: './.cache',
+      outDir: './dist'
+    });
 
-  const pageUrl = await fixture.resolveUrl("/");
+    // Ensure sync before build
+    await fixture.sync({});
+    
+    console.log()
+    // Build with explicit configuration
+    const seeBuild = await fixture.build({
+      mode: 'production'
+    });
 
-  console.log("PAGE URL: ", pageUrl);
-  const response = await page.goto(pageUrl);
+    console.log("SEE BUILD: ", seeBuild)
 
-  if (!response?.ok()) {
-    console.error("Response status:", response?.status());
-    console.error("Response status text:", response?.statusText());
-    console.error("Page content:", await page.content());
-  }
+    const preview = await fixture.preview({});
+    try {
+      const pageUrl = fixture.resolveUrl("/");
+      const response = await page.goto(pageUrl);
 
-  await expect(page.locator("[q\\:container]").first()).toBeVisible();
-});
+      if (!response?.ok()) {
+        throw new Error(`Failed to load page: ${response?.status()} ${response?.statusText()}`);
+      }
 
-test("Counter increments on click", async ({ page }) => {
-  const fixture = await loadFixture({
-    root: "../fixtures/minimal"
+      await expect(page.locator("[q\\:container]").first()).toBeVisible();
+    } finally {
+      await preview.stop();
+    }
   });
 
-  const devServer = await fixture.startDevServer({});
+  test("Counter increments on click", async ({ page }) => {
+    const fixture = await loadFixture({
+      root: "../fixtures/minimal"
+    });
 
-  console.log("DEV SERVER URL: ", devServer);
+    const devServer = await fixture.startDevServer({});
+    try {
+      const pageUrl = fixture.resolveUrl("/");
+      await page.goto(pageUrl);
 
-  const pageUrl = await fixture.resolveUrl("/");
-  await page.goto(pageUrl);
-
-  const counter = page.getByTestId("counter");
-
-  await expect(counter).toBeVisible();
-  await counter.click();
-  await expect(counter).toHaveText("1");
+      const counter = page.getByTestId("counter");
+      await expect(counter).toBeVisible();
+      await counter.click();
+      await expect(counter).toHaveText("1");
+    } finally {
+      await devServer.stop();
+    }
+  });
 });

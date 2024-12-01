@@ -3,6 +3,8 @@ import type { QwikManifest, QwikVitePluginOptions, SymbolMapperFn } from "@build
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { type PluginOption, build, createFilter } from "vite";
 
 declare global {
@@ -231,6 +233,14 @@ export default defineIntegration({
             outDir: clientDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
+              const manifestPath = join(clientDir, 'q-manifest.json');
+              
+              /**
+               * Write manifest to disk since server and client builds run in separate processes.
+               * Required for production and Playwright tests to access the manifest.
+               */
+              mkdirSync(dirname(manifestPath), { recursive: true });
+              writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
             }
           },
           debug: options?.debug ?? false
