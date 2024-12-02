@@ -30,8 +30,8 @@ jobs:
         with:
           version: 9
 
-      # - name: ✅ Install dependencies, check code & run E2E tests
-      #   run: make test
+      - name: ✅ Install dependencies, check code & run E2E tests
+        run: make test
 
       - uses: actions/upload-artifact@v4
         if: always()

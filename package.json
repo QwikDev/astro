@@ -24,7 +24,7 @@
     "postinstall": "lefthook install && playwright install --with-deps",
     "changeset": "changeset",
     "release": "pnpm build.create-qwikdev-astro && changeset publish",
-    "test": "playwright test",
+    "test": "playwright test --pass-with-no-tests",
     "test.ui": "playwright test --ui",
     "test.report": "playwright show-report"
   },
