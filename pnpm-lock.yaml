@@ -232,6 +232,9 @@ importers:
       '@qwikdev/astro':
         specifier: workspace:*
         version: link:../../..
+      astro:
+        specifier: 5.0.0-beta.12
+        version: 5.0.0-beta.12(@types/node@20.17.8)(rollup@4.27.4)(typescript@5.7.2)(yaml@2.6.1)
 
 packages:
 

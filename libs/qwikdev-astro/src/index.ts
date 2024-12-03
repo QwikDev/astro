@@ -24,13 +24,6 @@ const FilterPatternSchema = z.union([
   z.null()
 ]);
 
-const qwikEntrypoints = new Set<string>();
-const potentialEntries = new Set<string>();
-let resolveEntrypoints: () => void;
-const entrypointsReady = new Promise<void>((resolve) => {
-  resolveEntrypoints = resolve;
-});
-
 /**
  * This project uses Astro Integration Kit.
  * @see https://astro-integration-kit.netlify.app/
@@ -62,6 +55,14 @@ export default defineIntegration({
     let serverDir = "";
     let outDir = "";
     let finalDir = "";
+
+    let resolveEntrypoints: () => void;
+    const entrypointsReady = new Promise<void>((resolve) => {
+      resolveEntrypoints = resolve;
+    });
+
+    const qwikEntrypoints = new Set<string>();
+    const potentialEntries = new Set<string>();
     let astroConfig: AstroConfig | null = null;
     const { resolve: resolver } = createResolver(import.meta.url);
     const filter = createFilter(options?.include, options?.exclude);
@@ -86,6 +87,8 @@ export default defineIntegration({
         clientDir = astroConfig.build.client.pathname;
         serverDir = astroConfig.build.server.pathname;
         outDir = astroConfig.outDir.pathname;
+
+        // check whether it has an adapter instead of output (e.g Node, Netlify, etc.)
         finalDir = astroConfig.output === 'static' ? outDir : clientDir;
 
         console.log("SRC DIR:", srcDir);
@@ -164,6 +167,8 @@ export default defineIntegration({
              *  @qwik.dev/core
              *  @qwik.dev/react
              */
+
+            // TODO: use parser here (vite gives it)
             const qwikImportsRegex =
               /@builder\.io\/qwik(-react)?|qwik\.dev\/(core|react)/;
 

@@ -1,13 +1,25 @@
 // import { loadFixture } from "@inox-tools/astro-tests/astroFixture";
 // import { expect, test } from "@playwright/test";
 
+// function clearGlobalState() {
+//     (globalThis as any).qManifest = undefined;
+//     (globalThis as any).symbolMapperFn = undefined;
+// }
+
 // test.describe("Dev Mode", () => {
 //   let devServer: any;
 //   let fixture: any;
 
 //   test.beforeAll(async () => {
+//     console.log("BEFORE ALL!!!")
+
+//     clearGlobalState();
+
 //     fixture = await loadFixture({
-//       root: "../fixtures/minimal"
+//       root: "../fixtures/minimal",
+//       devToolbar: {
+//         enabled: false
+//       }
 //     });
 //     devServer = await fixture.startDevServer({});
 //   });
@@ -49,18 +61,12 @@
 //   test.beforeAll(async () => {
 //     fixture = await loadFixture({
 //       root: "../fixtures/minimal",
-//       output: "static",
-//       cacheDir: "./.cache",
-//       outDir: "./dist"
 //     });
 
-//     // Ensure sync before build
-//     await fixture.sync({});
+//     clearGlobalState();
 
 //     // Build with explicit configuration
-//     await fixture.build({
-//       mode: "production"
-//     });
+//     await fixture.build();
 
 //     preview = await fixture.preview({});
 //   });
