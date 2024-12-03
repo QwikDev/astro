@@ -89,7 +89,7 @@ export default defineIntegration({
         outDir = astroConfig.outDir.pathname;
 
         // check whether it has an adapter instead of output (e.g Node, Netlify, etc.)
-        finalDir = astroConfig.output === 'static' ? outDir : clientDir;
+        finalDir = astroConfig.output === "static" ? outDir : clientDir;
 
         console.log("SRC DIR:", srcDir);
 
@@ -113,6 +113,10 @@ export default defineIntegration({
 
         /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
         const fileFilter = (id: string, hook: string) => {
+          if (id.includes(".qwik.")) {
+            return true;
+          }
+
           if (hook === "transform" && !filter(id)) {
             return false;
           }
