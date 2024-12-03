@@ -40,7 +40,12 @@
     "./entrypoints": "./src/entrypoints.ts",
     "./utils": "./src/utils.ts"
   },
-  "files": ["src", "src/index.ts", "server.ts", "env.d.ts"],
+  "files": [
+    "src",
+    "src/index.ts",
+    "server.ts",
+    "env.d.ts"
+  ],
   "keywords": [
     "astro-integration",
     "astro-component",
@@ -60,7 +65,7 @@
   },
   "devDependencies": {
     "@builder.io/qwik": "^1.10",
-    "astro": "^4.16.14",
+    "astro": "5.0.0-beta.12",
     "vite": "^5.4.11"
   },
   "peerDependencies": {

@@ -253,7 +253,7 @@ export default defineIntegration({
             if (qManifest) {
               this.emitFile({
                 type: "asset",
-                fileName: "q-manifest.json",
+                fileName: `${clientDir}q-manifest.json`,
                 source: JSON.stringify(qManifest, null, 2)
               });
             }
