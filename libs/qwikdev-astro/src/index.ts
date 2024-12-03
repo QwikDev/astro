@@ -61,6 +61,7 @@ export default defineIntegration({
     let clientDir = "";
     let serverDir = "";
     let outDir = "";
+    let finalDir = "";
     let astroConfig: AstroConfig | null = null;
     const { resolve: resolver } = createResolver(import.meta.url);
     const filter = createFilter(options?.include, options?.exclude);
@@ -85,6 +86,7 @@ export default defineIntegration({
         clientDir = astroConfig.build.client.pathname;
         serverDir = astroConfig.build.server.pathname;
         outDir = astroConfig.outDir.pathname;
+        finalDir = astroConfig.output === 'static' ? outDir : clientDir;
 
         console.log("SRC DIR:", srcDir);
 
@@ -103,6 +105,7 @@ export default defineIntegration({
           clientDir = clientDir.substring(3);
           serverDir = serverDir.substring(3);
           outDir = outDir.substring(3);
+          finalDir = finalDir.substring(3);
         }
 
         /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
@@ -181,7 +184,7 @@ export default defineIntegration({
           },
           client: {
             input: resolver("./root.tsx"),
-            outDir: clientDir
+            outDir: finalDir
           },
           debug: options?.debug ?? false
         };
@@ -212,10 +215,6 @@ export default defineIntegration({
 
       "astro:config:done": async ({ config }) => {
         astroConfig = config;
-        // renderToStream needs the relative client path for q-chunks
-        const base = clientDir.replace(outDir, "");
-        globalThis.relativeClientPath =
-          astroConfig.output === "static" ? `${base}build/` : "build/";
       },
 
       "astro:build:ssr": async () => {
@@ -233,7 +232,7 @@ export default defineIntegration({
           },
           client: {
             input: [...qwikEntrypoints, resolver("./root.tsx")],
-            outDir: clientDir,
+            outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
               qManifest = manifest;
@@ -253,7 +252,7 @@ export default defineIntegration({
             if (qManifest) {
               this.emitFile({
                 type: "asset",
-                fileName: `${clientDir}q-manifest.json`,
+                fileName: `${finalDir}q-manifest.json`,
                 source: JSON.stringify(qManifest, null, 2)
               });
             }
@@ -266,7 +265,7 @@ export default defineIntegration({
           build: {
             ...astroConfig?.vite.build,
             ssr: false,
-            outDir: clientDir,
+            outDir: finalDir,
             emptyOutDir: false
           }
         });

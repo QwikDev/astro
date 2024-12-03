@@ -67,7 +67,6 @@ export async function renderToStaticMarkup(
     let html = "";
 
     const renderToStreamOpts: RenderToStreamOptions = {
-      base: globalThis.relativeClientPath,
       containerAttributes: { style: "display: contents" },
       containerTagName: "div",
       ...(isDev
