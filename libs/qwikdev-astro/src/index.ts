@@ -9,6 +9,8 @@ import { createResolver, defineIntegration, watchDirectory } from "astro-integra
 import { z } from "astro/zod";
 import { type PluginOption, build, createFilter } from "vite";
 import type { InlineConfig } from "vite";
+import fs from 'node:fs';
+import path from 'node:path';
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
@@ -246,28 +248,18 @@ export default defineIntegration({
             outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
+              fs.writeFileSync(
+                path.join(finalDir, 'q-manifest.json'), 
+                JSON.stringify(manifest, null, 2)
+              );
             }
           },
           debug: options?.debug ?? false
         };
 
-        const manifestWriterPlugin: PluginOption = {
-          name: 'qwik-manifest-writer',
-          enforce: 'post',
-          generateBundle() {
-            if (globalThis.qManifest) {
-              this.emitFile({
-                type: 'asset',
-                fileName: 'q-manifest.json',
-                source: JSON.stringify(`${finalDir}${globalThis.qManifest}`, null, 2)
-              });
-            }
-          }
-        };
-
         await build({
           ...astroConfig?.vite,
-          plugins: [qwikVite(qwikClientConfig), manifestWriterPlugin],
+          plugins: [qwikVite(qwikClientConfig)],
           build: {
             ...astroConfig?.vite?.build,
             ssr: false,
