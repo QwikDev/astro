@@ -247,6 +247,7 @@ export default defineIntegration({
             input: [...qwikEntrypoints, resolver("./root.tsx")],
             outDir: finalDir,
             manifestOutput: (manifest) => {
+              console.log("MANIFEST: ", manifest)
               globalThis.qManifest = manifest;
               fs.writeFileSync(
                 path.join(finalDir, 'q-manifest.json'), 
