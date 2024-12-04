@@ -19,12 +19,11 @@
     "start": "astro dev --open"
   },
   "dependencies": {
-    "@astrojs/check": "^0.5.10",
-    "@astrojs/node": "^8.2.5",
-    "@builder.io/qwik": "^1.7.2",
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/node": "^9.0.0",
+    "@builder.io/qwik": "^1.11",
     "@qwikdev/astro": "^0.6",
-    "astro": "^4.11",
-    "typescript": "^5.4.5"
+    "astro": "5.0.2"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.0"
