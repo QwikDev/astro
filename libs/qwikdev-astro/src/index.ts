@@ -67,6 +67,8 @@ export default defineIntegration({
     let astroConfig: AstroConfig | null = null;
     const { resolve: resolver } = createResolver(import.meta.url);
     const filter = createFilter(options?.include, options?.exclude);
+    const qwikManifestId = 'virtual:qwik-manifest';
+    const resolvedQwikManifestId = `\0${qwikManifestId}`;
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
@@ -75,6 +77,23 @@ export default defineIntegration({
 
         // integration HMR support
         watchDirectory(setupProps, resolver());
+
+        const virtualModulePlugin: PluginOption = {
+          name: 'virtual:qwik-manifest',
+          resolveId(id) {
+            if (id === qwikManifestId) {
+              return resolvedQwikManifestId;
+            }
+
+            return null;
+          },
+          load(id) {
+            if (id === resolvedQwikManifestId) {
+              return `export const manifest = globalThis.qManifest`;
+            }
+            return null;
+          }
+        };
 
         // Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
         if (command === "dev") {
@@ -221,7 +240,7 @@ export default defineIntegration({
                 }
               }
             },
-            plugins: [astroQwikPlugin, qwikVite(qwikServerConfig), overrideEsbuildPlugin]
+            plugins: [virtualModulePlugin, astroQwikPlugin, qwikVite(qwikServerConfig), overrideEsbuildPlugin]
           }
         });
       },
