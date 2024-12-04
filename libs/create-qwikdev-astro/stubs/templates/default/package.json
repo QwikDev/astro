@@ -20,11 +20,10 @@
     "start": "astro dev --open"
   },
   "dependencies": {
-    "@astrojs/check": "^0.5.10",
-    "@builder.io/qwik": "^1.7.2",
+    "@astrojs/check": "^0.9.4",
+    "@builder.io/qwik": "^1.11",
     "@qwikdev/astro": "^0.6",
-    "astro": "^4.11",
-    "typescript": "^5.4.5"
+    "astro": "5.0.2"
   },
   "devDependencies": {
     "@types/eslint": "^8.56.10",
