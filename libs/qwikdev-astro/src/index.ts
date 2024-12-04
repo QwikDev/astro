@@ -137,7 +137,10 @@ export default defineIntegration({
           },
           async resolveId(id, importer) {
             // only grab the imports of Astro files
-            if (!importer?.endsWith(".astro")) {
+            const isAstroFile =
+              importer?.endsWith(".astro") || importer?.endsWith(".mdx");
+
+            if (!isAstroFile) {
               return null;
             }
 
