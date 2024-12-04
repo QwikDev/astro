@@ -9,8 +9,6 @@ import { createResolver, defineIntegration, watchDirectory } from "astro-integra
 import { z } from "astro/zod";
 import { type PluginOption, build, createFilter } from "vite";
 import type { InlineConfig } from "vite";
-import fs from 'node:fs';
-import path from 'node:path';
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
@@ -247,12 +245,7 @@ export default defineIntegration({
             input: [...qwikEntrypoints, resolver("./root.tsx")],
             outDir: finalDir,
             manifestOutput: (manifest) => {
-              console.log("MANIFEST: ", manifest)
               globalThis.qManifest = manifest;
-              fs.writeFileSync(
-                path.join(finalDir, 'q-manifest.json'), 
-                JSON.stringify(manifest, null, 2)
-              );
             }
           },
           debug: options?.debug ?? false

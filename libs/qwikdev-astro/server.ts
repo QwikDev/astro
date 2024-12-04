@@ -66,6 +66,7 @@ export async function renderToStaticMarkup(
     }
 
     let html = "";
+    const isSSG = !!globalThis.qManifest;
 
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: { style: "display: contents" },
@@ -83,7 +84,7 @@ export async function renderToStaticMarkup(
             }
           }
         : // CI, SSG, and SSR get the manifest at different times / environments
-          { manifest }),
+          { manifest: isSSG ? globalThis.qManifest : manifest }),
       serverData: props,
       qwikPrefetchServiceWorker: {
         include: false
