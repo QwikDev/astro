@@ -83,32 +83,30 @@ export default defineIntegration({
           injectScript("head-inline", unregisterSW);
         }
 
-        srcDir = astroConfig.srcDir.pathname;
-        clientDir = astroConfig.build.client.pathname;
-        serverDir = astroConfig.build.server.pathname;
-        outDir = astroConfig.outDir.pathname;
-
-        // check whether it has an adapter instead of output (e.g Node, Netlify, etc.)
-        finalDir = astroConfig.output === "static" ? outDir : clientDir;
-
-        console.log("SRC DIR:", srcDir);
-
         addRenderer({
           name: "@qwikdev/astro",
           serverEntrypoint: resolver("../server.ts")
         });
 
-        /**
-         * HACK: Normalize Windows paths by removing drive letter prefix
-         * Required because Qwik optimizer and Vite plugin normalize paths differently
-         */
-        const windowsPathPattern = /^(?:\/)?[A-Z]:[/\\]/i;
-        if (windowsPathPattern.test(srcDir)) {
-          srcDir = srcDir.substring(3);
-          clientDir = clientDir.substring(3);
-          serverDir = serverDir.substring(3);
-          outDir = outDir.substring(3);
-          finalDir = finalDir.substring(3);
+        /** Relative paths, as the Qwik optimizer handles normalization */
+        srcDir = getRelativePath(astroConfig.root.pathname, astroConfig.srcDir.pathname);
+
+        clientDir = getRelativePath(
+          astroConfig.root.pathname,
+          astroConfig.build.client.pathname
+        );
+
+        serverDir = getRelativePath(
+          astroConfig.root.pathname,
+          astroConfig.build.server.pathname
+        );
+
+        outDir = getRelativePath(astroConfig.root.pathname, astroConfig.outDir.pathname);
+
+        if (astroConfig.adapter) {
+          finalDir = clientDir;
+        } else {
+          finalDir = outDir;
         }
 
         /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
@@ -234,8 +232,6 @@ export default defineIntegration({
       "astro:build:ssr": async () => {
         await entrypointsReady;
 
-        let qManifest: null | QwikManifest = null;
-
         // SSR build finished -> Now do the Qwik client build
         const qwikClientConfig: QwikVitePluginOptions = {
           devSsrServer: false,
@@ -249,7 +245,6 @@ export default defineIntegration({
             outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
-              qManifest = manifest;
             }
           },
           debug: options?.debug ?? false
@@ -273,3 +268,7 @@ export default defineIntegration({
     };
   }
 });
+
+function getRelativePath(from: string, to: string) {
+  return to.replace(from, "") || ".";
+}
