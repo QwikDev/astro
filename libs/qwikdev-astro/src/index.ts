@@ -113,12 +113,14 @@ export default defineIntegration({
 
         /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
         const fileFilter = (id: string, hook: string) => {
-          if (id.includes(".qwik.")) {
-            return true;
-          }
+          if (hook === "transform") {
+            if (id.includes(".qwik.")) {
+              return true;
+            }
 
-          if (hook === "transform" && !filter(id)) {
-            return false;
+            if (!filter(id)) {
+              return false;
+            }
           }
 
           return true;
