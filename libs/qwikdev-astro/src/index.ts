@@ -8,6 +8,7 @@ import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
 import { type PluginOption, build, createFilter } from "vite";
+import type { InlineConfig } from "vite";
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
@@ -254,12 +255,12 @@ export default defineIntegration({
           ...astroConfig?.vite,
           plugins: [qwikVite(qwikClientConfig)],
           build: {
-            ...astroConfig?.vite.build,
+            ...astroConfig?.vite?.build,
             ssr: false,
             outDir: finalDir,
             emptyOutDir: false
           }
-        });
+        } as InlineConfig);
       }
     };
 
