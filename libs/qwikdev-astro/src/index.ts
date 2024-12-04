@@ -251,9 +251,23 @@ export default defineIntegration({
           debug: options?.debug ?? false
         };
 
+        const manifestWriterPlugin: PluginOption = {
+          name: 'qwik-manifest-writer',
+          enforce: 'post',
+          generateBundle() {
+            if (globalThis.qManifest) {
+              this.emitFile({
+                type: 'asset',
+                fileName: 'q-manifest.json',
+                source: JSON.stringify(globalThis.qManifest, null, 2)
+              });
+            }
+          }
+        };
+
         await build({
           ...astroConfig?.vite,
-          plugins: [qwikVite(qwikClientConfig)],
+          plugins: [qwikVite(qwikClientConfig), manifestWriterPlugin],
           build: {
             ...astroConfig?.vite?.build,
             ssr: false,
