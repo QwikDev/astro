@@ -255,27 +255,9 @@ export default defineIntegration({
           debug: options?.debug ?? false
         };
 
-        /**
-         * Write manifest to disk for server build to access.
-         * Required for production/Playwright tests where server
-         * build runs in a separate process from client build.
-         */
-        const manifestWriterPlugin: PluginOption = {
-          name: "qwik-manifest-writer",
-          generateBundle() {
-            if (qManifest) {
-              this.emitFile({
-                type: "asset",
-                fileName: `${finalDir}q-manifest.json`,
-                source: JSON.stringify(qManifest, null, 2)
-              });
-            }
-          }
-        };
-
         await build({
           ...astroConfig?.vite,
-          plugins: [qwikVite(qwikClientConfig), manifestWriterPlugin],
+          plugins: [qwikVite(qwikClientConfig)],
           build: {
             ...astroConfig?.vite.build,
             ssr: false,
