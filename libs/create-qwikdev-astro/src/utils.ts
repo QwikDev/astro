@@ -6,7 +6,6 @@ import { fileURLToPath } from "node:url";
 import { confirm, isCancel, log, text } from "@clack/prompts";
 import { gray, green, red, reset, white } from "kleur/colors";
 import detectPackageManager from "which-pm-runs";
-import { defaultConfig } from "./config";
 
 export const __filename = getModuleFilename();
 export const __dirname = path.dirname(__filename);
