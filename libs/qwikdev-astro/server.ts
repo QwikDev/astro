@@ -8,7 +8,7 @@ import {
   getQwikLoaderScript,
   renderToStream
 } from "@builder.io/qwik/server";
-import { manifest } from "@qwik-client-manifest";
+import manifestJson from './manifest.json';
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 const devModulePreloadPaths = new Set();
@@ -85,7 +85,7 @@ export async function renderToStaticMarkup(
             }
           }
         : // CI, SSG, and SSR get the manifest at different times / environments
-          { manifest: isSSG ? globalThis.qManifest : manifest }),
+        { manifest: manifestJson as unknown as QwikManifest }),
       serverData: props,
       qwikPrefetchServiceWorker: {
         include: false
