@@ -8,7 +8,7 @@ import {
   getQwikLoaderScript,
   renderToStream
 } from "@builder.io/qwik/server";
-import manifestJson from "./q-astro-manifest.json";
+import manifestJson from "@qwikdev/astro/q-astro-manifest.json";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 const devModulePreloadPaths = new Set();
