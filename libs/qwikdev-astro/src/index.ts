@@ -9,6 +9,7 @@ import { createResolver, defineIntegration, watchDirectory } from "astro-integra
 import { z } from "astro/zod";
 import { type PluginOption, build, createFilter } from "vite";
 import type { InlineConfig } from "vite";
+import fs from 'node:fs/promises';
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
@@ -24,6 +25,10 @@ const FilterPatternSchema = z.union([
   z.array(z.union([z.string(), z.instanceof(RegExp)])).readonly(),
   z.null()
 ]);
+
+const log = (msg: string) => {
+  console.log(`[PID:${process.pid}][${new Date().toISOString()}] ${msg}`);
+};
 
 /**
  * This project uses Astro Integration Kit.
@@ -51,6 +56,8 @@ export default defineIntegration({
     .optional(),
 
   setup({ options }) {
+    log("Integration setup START");
+
     let srcDir = "";
     let clientDir = "";
     let serverDir = "";
@@ -70,6 +77,7 @@ export default defineIntegration({
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
+        log("astro:config:setup START");
         const { addRenderer, updateConfig, config, command, injectScript } = setupProps;
         astroConfig = config;
 
@@ -129,12 +137,15 @@ export default defineIntegration({
           name: "astro-qwik-parser",
           enforce: "pre",
           configResolved() {
+            log("ENTRYPOINTS Plugin configResolved START");
             globalThis.symbolMapperFn = symbolMapper;
+            log("ENTRYPOINTS Plugin configResolved END");
           },
           buildEnd() {
             resolveEntrypoints();
           },
           async resolveId(id, importer) {
+            log("ENTRYPOINTS Plugin resolveId START");
             // only grab the imports of Astro files
             const isAstroFile =
               importer?.endsWith(".astro") || importer?.endsWith(".mdx");
@@ -163,6 +174,7 @@ export default defineIntegration({
             return null;
           },
           async transform(code, id) {
+            log("ENTRYPOINTS Plugin transform START");
             if (!potentialEntries.has(id)) {
               return null;
             }
@@ -184,6 +196,7 @@ export default defineIntegration({
               qwikEntrypoints.add(id);
             }
 
+            log("ENTRYPOINTS Plugin transform END");
             return null;
           }
         };
@@ -224,6 +237,7 @@ export default defineIntegration({
             plugins: [astroQwikPlugin, qwikVite(qwikSetupConfig), overrideEsbuildPlugin]
           }
         });
+        log("astro:config:setup END");
       },
 
       "astro:config:done": async ({ config }) => {
@@ -231,6 +245,7 @@ export default defineIntegration({
       },
 
       "astro:build:ssr": async () => {
+        log("astro:build:ssr START");
         await entrypointsReady;
 
         // Astro's SSR build finished -> Now we can handle how Qwik normally builds
@@ -262,9 +277,21 @@ export default defineIntegration({
             emptyOutDir: false
           }
         } as InlineConfig);
+        log("astro:build:ssr END");
+
+        console.log("PUBLIC: ", astroConfig?.publicDir.pathname)
+        fs.writeFile(
+          `${astroConfig?.publicDir.pathname}/q-manifest.json`, 
+          JSON.stringify(globalThis.qManifest, null, 2)
+        );
+        console.log("WRITTEN!", globalThis.qManifest)
+      },
+      "astro:build:done": async () => {
+
       }
     };
 
+    log("Integration setup END");
     return {
       hooks: lifecycleHooks
     };

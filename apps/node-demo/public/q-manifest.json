@@ -1,0 +1,129 @@
+{
+  "manifestHash": "8mtr3m",
+  "symbols": {
+    "s_0DHRa0FqCj4": {
+      "origin": "../../../libs/qwikdev-astro/src/root.tsx",
+      "displayName": "root.tsx_root_component",
+      "canonicalFilename": "root.tsx_root_component_0DHRa0FqCj4",
+      "hash": "0DHRa0FqCj4",
+      "ctxKind": "function",
+      "ctxName": "component$",
+      "captures": false,
+      "loc": [
+        81,
+        136
+      ]
+    },
+    "s_qY02pQHKSts": {
+      "origin": "components/qwik/counter.tsx",
+      "displayName": "counter.tsx_Counter_component",
+      "canonicalFilename": "counter.tsx_Counter_component_qY02pQHKSts",
+      "hash": "qY02pQHKSts",
+      "ctxKind": "function",
+      "ctxName": "component$",
+      "captures": false,
+      "loc": [
+        121,
+        322
+      ]
+    },
+    "s_WDqUvWziK5k": {
+      "origin": "components/qwik/counter.tsx",
+      "displayName": "counter.tsx_Counter_component_Fragment_button_onClick",
+      "canonicalFilename": "counter.tsx_Counter_component_Fragment_button_onClick_WDqUvWziK5k",
+      "hash": "WDqUvWziK5k",
+      "ctxKind": "eventHandler",
+      "ctxName": "onClick$",
+      "captures": true,
+      "parent": "s_qY02pQHKSts",
+      "loc": [
+        235,
+        256
+      ]
+    }
+  },
+  "mapping": {
+    "s_0DHRa0FqCj4": "q-DVLWz_eo.js",
+    "s_qY02pQHKSts": "q-CDmgDIcy.js",
+    "s_WDqUvWziK5k": "q-pqvi7ndh.js"
+  },
+  "bundles": {
+    "q-Brj-tER5.js": {
+      "size": 184,
+      "imports": [
+        "q-DVLWz_eo.js",
+        "q-pqvi7ndh.js"
+      ],
+      "dynamicImports": [
+        "q-DVLWz_eo.js"
+      ],
+      "origins": [
+        "../../libs/qwikdev-astro/src/root.tsx"
+      ]
+    },
+    "q-C6OVY9Aq.js": {
+      "size": 171,
+      "imports": [
+        "q-DVLWz_eo.js",
+        "q-pqvi7ndh.js"
+      ],
+      "dynamicImports": [
+        "q-CDmgDIcy.js"
+      ],
+      "origins": [
+        "src/components/qwik/counter.tsx"
+      ]
+    },
+    "q-CDmgDIcy.js": {
+      "size": 88,
+      "imports": [
+        "q-DVLWz_eo.js",
+        "q-pqvi7ndh.js"
+      ],
+      "symbols": [
+        "s_qY02pQHKSts"
+      ]
+    },
+    "q-DVLWz_eo.js": {
+      "size": 61670,
+      "origins": [
+        "../../libs/qwikdev-astro/src/root.tsx_root_component_0DHRa0FqCj4.js",
+        "../../node_modules/.pnpm/@builder.io+qwik@1.11.0_vite@6.0.1_@types+node@20.17.8_yaml@2.6.1_/node_modules/@builder.io/qwik/dist/core.prod.mjs",
+        "@builder.io/qwik/build"
+      ],
+      "symbols": [
+        "s_0DHRa0FqCj4"
+      ]
+    },
+    "q-pqvi7ndh.js": {
+      "size": 1635,
+      "imports": [
+        "q-DVLWz_eo.js"
+      ],
+      "origins": [
+        "src/components/qwik/counter.tsx_Counter_component_Fragment_button_onClick_WDqUvWziK5k.js",
+        "src/components/qwik/counter.tsx_Counter_component_qY02pQHKSts.js"
+      ],
+      "symbols": [
+        "s_WDqUvWziK5k"
+      ]
+    }
+  },
+  "injections": [],
+  "version": "1",
+  "options": {
+    "target": "client",
+    "buildMode": "production",
+    "entryStrategy": {
+      "type": "smart"
+    }
+  },
+  "platform": {
+    "qwik": "1.11.0",
+    "vite": "",
+    "rollup": "4.27.4",
+    "env": "node",
+    "os": "darwin",
+    "node": "20.12.2"
+  }
+}

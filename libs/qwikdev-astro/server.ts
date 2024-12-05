@@ -2,17 +2,31 @@ import type { SSRResult } from "astro";
 
 import { type JSXNode, jsx } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
-import type { QwikManifest } from "@builder.io/qwik/optimizer";
 import {
   type RenderToStreamOptions,
   getQwikLoaderScript,
   renderToStream
 } from "@builder.io/qwik/server";
-import { manifest } from "@qwik-client-manifest";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 const devModulePreloadPaths = new Set();
 const modulePreloadScript = `(async()=>{window.requestIdleCallback||(window.requestIdleCallback=(e,t)=>{const n=t||{},o=1,i=n.timeout||o,a=performance.now();return setTimeout(()=>{e({get didTimeout(){return!n.timeout&&performance.now()-a-o>i},timeRemaining:()=>Math.max(0,o+(performance.now()-a))})},o)});const e=async()=>{const e=document.querySelectorAll('script[q\\\\:type="prefetch-bundles"]');if(!e.length)return;const t=new Set;e.forEach(e=>{if(!e.textContent)return;const n=e.textContent,r=n.match(/\\["prefetch","[/]build[/]","(.*?)"\\]/);r&&r[1]&&r[1].split('","').forEach(e=>{e.startsWith("q-")&&t.add(e)})}),t.forEach(e=>{const t=document.createElement("link");t.rel="modulepreload",t.href="/build/"+e,t.fetchPriority="low",document.head.appendChild(t)})};await requestIdleCallback(await e)})();`;
+
+// Function to fetch manifest once
+async function getManifest(result: SSRResult) {
+  if (globalThis.qManifest) return globalThis.qManifest;
+  
+  const origin = new URL(result.request.url).origin;
+  const manifestUrl = `${origin}/q-manifest.json`;
+  
+  try {
+    const res = await fetch(manifestUrl);
+    return await res.json();
+  } catch (e) {
+    console.error('Failed to load manifest:', e);
+    return {};
+  }
+}
 
 type RendererContext = {
   result: SSRResult;
@@ -65,14 +79,15 @@ export async function renderToStaticMarkup(
       return;
     }
 
+    const qManifest = await getManifest(this.result);
+    
     let html = "";
 
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: { style: "display: contents" },
       containerTagName: "div",
       ...(isDev
-        ? {
-            manifest: {} as QwikManifest,
+        && {
             symbolMapper: (symbolName, mapper, parent) => {
               const mapped = globalThis.symbolMapperFn(symbolName, mapper, parent);
 
@@ -81,11 +96,8 @@ export async function renderToStaticMarkup(
 
               return mapped;
             }
-          }
-        : // CI, SSG, and SSR get the manifest at different times / environments
-          {
-            manifest: globalThis.qManifest || manifest
           }),
+      manifest: qManifest,
       serverData: props,
       qwikPrefetchServiceWorker: {
         include: false

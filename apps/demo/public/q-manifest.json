@@ -1,0 +1,129 @@
+{
+  "manifestHash": "ubrbi3",
+  "symbols": {
+    "s_Jkq4JnSu3vc": {
+      "origin": "components/qwik/counter.tsx",
+      "displayName": "counter.tsx_Counter_component",
+      "canonicalFilename": "counter.tsx_Counter_component_Jkq4JnSu3vc",
+      "hash": "Jkq4JnSu3vc",
+      "ctxKind": "function",
+      "ctxName": "component$",
+      "captures": false,
+      "loc": [
+        121,
+        301
+      ]
+    },
+    "s_o0dE1oWgGK4": {
+      "origin": "../../../libs/qwikdev-astro/src/root.tsx",
+      "displayName": "root.tsx_root_component",
+      "canonicalFilename": "root.tsx_root_component_o0dE1oWgGK4",
+      "hash": "o0dE1oWgGK4",
+      "ctxKind": "function",
+      "ctxName": "component$",
+      "captures": false,
+      "loc": [
+        81,
+        136
+      ]
+    },
+    "s_WTj7Z5OCKjk": {
+      "origin": "components/qwik/counter.tsx",
+      "displayName": "counter.tsx_Counter_component_button_onClick",
+      "canonicalFilename": "counter.tsx_Counter_component_button_onClick_WTj7Z5OCKjk",
+      "hash": "WTj7Z5OCKjk",
+      "ctxKind": "eventHandler",
+      "ctxName": "onClick$",
+      "captures": true,
+      "parent": "s_Jkq4JnSu3vc",
+      "loc": [
+        226,
+        247
+      ]
+    }
+  },
+  "mapping": {
+    "s_Jkq4JnSu3vc": "q-BP8RkWlE.js",
+    "s_o0dE1oWgGK4": "q-IacMbs2L.js",
+    "s_WTj7Z5OCKjk": "q-CUGg9l4N.js"
+  },
+  "bundles": {
+    "q-B4N4tT8a.js": {
+      "size": 184,
+      "imports": [
+        "q-CUGg9l4N.js",
+        "q-IacMbs2L.js"
+      ],
+      "dynamicImports": [
+        "q-IacMbs2L.js"
+      ],
+      "origins": [
+        "../../libs/qwikdev-astro/src/root.tsx"
+      ]
+    },
+    "q-BP8RkWlE.js": {
+      "size": 88,
+      "imports": [
+        "q-CUGg9l4N.js",
+        "q-IacMbs2L.js"
+      ],
+      "symbols": [
+        "s_Jkq4JnSu3vc"
+      ]
+    },
+    "q-CUGg9l4N.js": {
+      "size": 1610,
+      "imports": [
+        "q-IacMbs2L.js"
+      ],
+      "origins": [
+        "src/components/qwik/counter.tsx_Counter_component_Jkq4JnSu3vc.js",
+        "src/components/qwik/counter.tsx_Counter_component_button_onClick_WTj7Z5OCKjk.js"
+      ],
+      "symbols": [
+        "s_WTj7Z5OCKjk"
+      ]
+    },
+    "q-CZTaFqsy.js": {
+      "size": 171,
+      "imports": [
+        "q-CUGg9l4N.js",
+        "q-IacMbs2L.js"
+      ],
+      "dynamicImports": [
+        "q-BP8RkWlE.js"
+      ],
+      "origins": [
+        "src/components/qwik/counter.tsx"
+      ]
+    },
+    "q-IacMbs2L.js": {
+      "size": 61662,
+      "origins": [
+        "../../libs/qwikdev-astro/src/root.tsx_root_component_o0dE1oWgGK4.js",
+        "../../node_modules/.pnpm/@builder.io+qwik@1.11.0_vite@6.0.1_@types+node@20.17.8_yaml@2.6.1_/node_modules/@builder.io/qwik/dist/core.prod.mjs",
+        "@builder.io/qwik/build"
+      ],
+      "symbols": [
+        "s_o0dE1oWgGK4"
+      ]
+    }
+  },
+  "injections": [],
+  "version": "1",
+  "options": {
+    "target": "client",
+    "buildMode": "production",
+    "entryStrategy": {
+      "type": "smart"
+    }
+  },
+  "platform": {
+    "qwik": "1.11.0",
+    "vite": "",
+    "rollup": "4.27.4",
+    "env": "node",
+    "os": "darwin",
+    "node": "20.12.2"
+  }
+}
