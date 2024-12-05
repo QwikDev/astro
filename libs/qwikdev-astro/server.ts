@@ -66,7 +66,7 @@ export async function renderToStaticMarkup(
     }
 
     let html = "";
-
+    
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: { style: "display: contents" },
       containerTagName: "div",

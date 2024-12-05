@@ -233,13 +233,45 @@ export default defineIntegration({
       "astro:build:ssr": async () => {
         await entrypointsReady;
 
+        let qManifest = null;
+
         // Astro's SSR build finished -> Now we can handle how Qwik normally builds
-        const qwikViteConfig: QwikVitePluginOptions = {
+        const qwikClientConfig: QwikVitePluginOptions = {
           devSsrServer: false,
           srcDir,
           ssr: {
             input: "@qwikdev/astro/server",
             outDir: serverDir
+          },
+          client: {
+            input: [...qwikEntrypoints, resolver("./root.tsx")],
+            outDir: finalDir,
+            manifestOutput: (manifest) => {
+              qManifest = manifest;
+            }
+          },
+          debug: options?.debug ?? false
+        };
+
+        // client build -> passed into server build
+        await build({
+          ...astroConfig?.vite,
+          plugins: [qwikVite(qwikClientConfig)],
+          build: {
+            ...astroConfig?.vite?.build,
+            ssr: false,
+            outDir: finalDir,
+            emptyOutDir: false
+          }
+        } as InlineConfig);
+
+        const qwikServerConfig: QwikVitePluginOptions = {
+          devSsrServer: false,
+          srcDir,
+          ssr: {
+            input: "@qwikdev/astro/server",
+            outDir: serverDir,
+            ...(qManifest ? { manifestInput: qManifest } : {})
           },
           client: {
             input: [...qwikEntrypoints, resolver("./root.tsx")],
@@ -251,22 +283,10 @@ export default defineIntegration({
           debug: options?.debug ?? false
         };
 
-        // client build -> passed into server build
+        // ssr build
         await build({
           ...astroConfig?.vite,
-          plugins: [qwikVite(qwikViteConfig)],
-          build: {
-            ...astroConfig?.vite?.build,
-            ssr: false,
-            outDir: finalDir,
-            emptyOutDir: false
-          }
-        } as InlineConfig);
-
-        // server build
-        await build({
-          ...astroConfig?.vite,
-          plugins: [qwikVite(qwikViteConfig)],
+          plugins: [qwikVite(qwikServerConfig)],
           build: {
             ...astroConfig?.vite?.build,
             ssr: true,
