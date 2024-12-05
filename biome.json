@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "ignore": [".git", "build", "dist", "node_modules"]
+    "ignore": [".git", "build", "dist", "node_modules", "**/q-astro-manifest.json"]
   },
 
   "formatter": {

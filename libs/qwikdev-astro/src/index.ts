@@ -1,3 +1,4 @@
+import { writeFileSync } from "node:fs";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
@@ -7,7 +8,6 @@ import type {
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
-import { writeFileSync } from "node:fs";
 import { type PluginOption, build, createFilter } from "vite";
 import type { InlineConfig } from "vite";
 
@@ -248,17 +248,17 @@ export default defineIntegration({
             input: [...qwikEntrypoints, resolver("./root.tsx")],
             outDir: finalDir,
             manifestOutput: (manifest) => {
-              console.log('Got manifest in manifestOutput:', manifest);
+              console.log("Got manifest in manifestOutput:", manifest);
               qManifest = manifest;
               globalThis.qManifest = manifest;
-              
+
               try {
-                const manifestPath = resolver('../manifest.json');
-                console.log('Attempting to write manifest to:', manifestPath);
+                const manifestPath = resolver("../q-astro-manifest.json");
+                console.log("Attempting to write manifest to:", manifestPath);
                 writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-                console.log('Successfully wrote manifest to:', manifestPath);
+                console.log("Successfully wrote manifest to:", manifestPath);
               } catch (error) {
-                console.error('Failed to write manifest:', error);
+                console.error("Failed to write manifest:", error);
               }
             }
           },
@@ -291,9 +291,9 @@ export default defineIntegration({
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
 
-              const manifestPath = resolver('../manifest.json');
+              const manifestPath = resolver("../manifest.json");
               writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-              console.log('Wrote manifest to:', manifestPath);
+              console.log("Wrote manifest to:", manifestPath);
             }
           },
           debug: options?.debug ?? false
