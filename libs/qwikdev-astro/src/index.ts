@@ -1,4 +1,3 @@
-import { writeFileSync } from "node:fs";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
@@ -234,8 +233,6 @@ export default defineIntegration({
       "astro:build:ssr": async () => {
         await entrypointsReady;
 
-        let qManifest = null;
-
         // Astro's SSR build finished -> Now we can handle how Qwik normally builds
         const qwikClientConfig: QwikVitePluginOptions = {
           devSsrServer: false,
@@ -248,18 +245,7 @@ export default defineIntegration({
             input: [...qwikEntrypoints, resolver("./root.tsx")],
             outDir: finalDir,
             manifestOutput: (manifest) => {
-              console.log("Got manifest in manifestOutput:", manifest);
-              qManifest = manifest;
               globalThis.qManifest = manifest;
-
-              try {
-                const manifestPath = resolver("../q-astro-manifest.json");
-                console.log("Attempting to write manifest to:", manifestPath);
-                writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-                console.log("Successfully wrote manifest to:", manifestPath);
-              } catch (error) {
-                console.error("Failed to write manifest:", error);
-              }
             }
           },
           debug: options?.debug ?? false
@@ -272,40 +258,6 @@ export default defineIntegration({
           build: {
             ...astroConfig?.vite?.build,
             ssr: false,
-            outDir: finalDir,
-            emptyOutDir: false
-          }
-        } as InlineConfig);
-
-        const qwikServerConfig: QwikVitePluginOptions = {
-          devSsrServer: false,
-          srcDir,
-          ssr: {
-            input: "@qwikdev/astro/server",
-            outDir: serverDir,
-            ...(qManifest ? { manifestInput: qManifest } : {})
-          },
-          client: {
-            input: [...qwikEntrypoints, resolver("./root.tsx")],
-            outDir: finalDir,
-            manifestOutput: (manifest) => {
-              globalThis.qManifest = manifest;
-
-              const manifestPath = resolver("../manifest.json");
-              writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-              console.log("Wrote manifest to:", manifestPath);
-            }
-          },
-          debug: options?.debug ?? false
-        };
-
-        // ssr build
-        await build({
-          ...astroConfig?.vite,
-          plugins: [qwikVite(qwikServerConfig)],
-          build: {
-            ...astroConfig?.vite?.build,
-            ssr: true,
             outDir: finalDir,
             emptyOutDir: false
           }

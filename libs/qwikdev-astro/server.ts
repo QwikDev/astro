@@ -8,7 +8,7 @@ import {
   getQwikLoaderScript,
   renderToStream
 } from "@builder.io/qwik/server";
-import manifestJson from "@qwikdev/astro/q-astro-manifest.json";
+import { manifest } from "@qwik-client-manifest";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 const devModulePreloadPaths = new Set();
@@ -67,8 +67,6 @@ export async function renderToStaticMarkup(
 
     let html = "";
 
-    const isSSG = !!globalThis.qManifest;
-
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: { style: "display: contents" },
       containerTagName: "div",
@@ -86,9 +84,7 @@ export async function renderToStaticMarkup(
           }
         : // CI, SSG, and SSR get the manifest at different times / environments
           {
-            manifest: isSSG
-              ? globalThis.qManifest
-              : (manifestJson as unknown as QwikManifest)
+            manifest: globalThis.qManifest || manifest
           }),
       serverData: props,
       qwikPrefetchServiceWorker: {
