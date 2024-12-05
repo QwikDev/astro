@@ -248,6 +248,7 @@ export default defineIntegration({
             outDir: finalDir,
             manifestOutput: (manifest) => {
               qManifest = manifest;
+              globalThis.qManifest = manifest;
             }
           },
           debug: options?.debug ?? false
