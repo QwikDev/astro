@@ -188,7 +188,7 @@ export default defineIntegration({
           }
         };
 
-        const qwikServerConfig: QwikVitePluginOptions = {
+        const qwikSetupConfig: QwikVitePluginOptions = {
           fileFilter,
           devSsrServer: false,
           srcDir,
@@ -221,7 +221,7 @@ export default defineIntegration({
                 }
               }
             },
-            plugins: [astroQwikPlugin, qwikVite(qwikServerConfig), overrideEsbuildPlugin]
+            plugins: [astroQwikPlugin, qwikVite(qwikSetupConfig), overrideEsbuildPlugin]
           }
         });
       },
@@ -233,8 +233,8 @@ export default defineIntegration({
       "astro:build:ssr": async () => {
         await entrypointsReady;
 
-        // SSR build finished -> Now do the Qwik client build
-        const qwikClientConfig: QwikVitePluginOptions = {
+        // Astro's SSR build finished -> Now we can handle how Qwik normally builds
+        const qwikViteConfig: QwikVitePluginOptions = {
           devSsrServer: false,
           srcDir,
           ssr: {
@@ -251,12 +251,25 @@ export default defineIntegration({
           debug: options?.debug ?? false
         };
 
+        // client build -> passed into server build
         await build({
           ...astroConfig?.vite,
-          plugins: [qwikVite(qwikClientConfig)],
+          plugins: [qwikVite(qwikViteConfig)],
           build: {
             ...astroConfig?.vite?.build,
             ssr: false,
+            outDir: finalDir,
+            emptyOutDir: false
+          }
+        } as InlineConfig);
+
+        // server build
+        await build({
+          ...astroConfig?.vite,
+          plugins: [qwikVite(qwikViteConfig)],
+          build: {
+            ...astroConfig?.vite?.build,
+            ssr: true,
             outDir: finalDir,
             emptyOutDir: false
           }
