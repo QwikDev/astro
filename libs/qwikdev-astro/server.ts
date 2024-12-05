@@ -85,7 +85,7 @@ export async function renderToStaticMarkup(
             }
           }
         : // CI, SSG, and SSR get the manifest at different times / environments
-        { manifest: manifestJson as unknown as QwikManifest }),
+        { manifest: isSSG ? globalThis.qManifest : manifestJson as unknown as QwikManifest }),
       serverData: props,
       qwikPrefetchServiceWorker: {
         include: false
