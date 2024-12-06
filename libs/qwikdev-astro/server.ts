@@ -10,7 +10,6 @@ import {
 } from "@builder.io/qwik/server";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
-const devModulePreloadPaths = new Set();
 const modulePreloadScript = `(async()=>{window.requestIdleCallback||(window.requestIdleCallback=(e,t)=>{const n=t||{},o=1,i=n.timeout||o,a=performance.now();return setTimeout(()=>{e({get didTimeout(){return!n.timeout&&performance.now()-a-o>i},timeRemaining:()=>Math.max(0,o+(performance.now()-a))})},o)});const e=async()=>{const e=document.querySelectorAll('script[q\\\\:type="prefetch-bundles"]');if(!e.length)return;const t=new Set;e.forEach(e=>{if(!e.textContent)return;const n=e.textContent,r=n.match(/\\["prefetch","[/]build[/]","(.*?)"\\]/);r&&r[1]&&r[1].split('","').forEach(e=>{e.startsWith("q-")&&t.add(e)})}),t.forEach(e=>{const t=document.createElement("link");t.rel="modulepreload",t.href="/build/"+e,t.fetchPriority="low",document.head.appendChild(t)})};await requestIdleCallback(await e)})();`;
 
 type RendererContext = {
@@ -75,7 +74,7 @@ export async function renderToStaticMarkup(
     );
 
     const integrationManifest = manifestPath
-      ? await import(manifestPath, { with: { type: "json" } })
+      ? await import(/* @vite-ignore */ manifestPath, { with: { type: "json" } })
       : null;
 
     const renderToStreamOpts: RenderToStreamOptions = {
@@ -84,14 +83,7 @@ export async function renderToStaticMarkup(
       ...(isDev
         ? {
             manifest: {} as QwikManifest,
-            symbolMapper: (symbolName, mapper, parent) => {
-              const mapped = globalThis.symbolMapperFn(symbolName, mapper, parent);
-
-              const chunkPath = mapped?.[1];
-              devModulePreloadPaths.add(chunkPath);
-
-              return mapped;
-            }
+            symbolMapper: globalThis.symbolMapperFn
           }
         : {
             manifest: globalThis.qManifest || integrationManifest?.default
@@ -178,14 +170,6 @@ export async function renderToStaticMarkup(
     }
 
     await renderToStream(qwikComponentJSX, renderToStreamOpts);
-
-    // ssr module preload links in dev mode -> idle time in production (root)
-    if (isDev && devModulePreloadPaths.size > 0) {
-      const modulePreloads = Array.from(devModulePreloadPaths)
-        .map((path) => `<link rel="modulepreload" href="${path}">`)
-        .join("");
-      html += modulePreloads;
-    }
 
     /** With View Transitions, rerun so that signals work
      * https://docs.astro.build/en/guides/view-transitions/#data-astro-rerun
