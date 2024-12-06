@@ -6,7 +6,8 @@
 
     "outDir": "./dist",
     "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
 
     "noEmit": false,
     "allowImportingTsExtensions": false,
