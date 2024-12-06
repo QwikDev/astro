@@ -1,3 +1,5 @@
+import { writeFileSync } from "node:fs";
+import path from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
@@ -246,6 +248,11 @@ export default defineIntegration({
             outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
+              writeFileSync(
+                path.join(resolver("../"), "q-astro-manifest.json"),
+                JSON.stringify(manifest),
+                "utf-8"
+              );
             }
           },
           debug: options?.debug ?? false

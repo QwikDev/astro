@@ -8,7 +8,6 @@ import {
   getQwikLoaderScript,
   renderToStream
 } from "@builder.io/qwik/server";
-import { manifest } from "@qwik-client-manifest";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 const devModulePreloadPaths = new Set();
@@ -54,10 +53,8 @@ async function check(this: RendererContext, component: unknown) {
 
 export async function renderToStaticMarkup(
   this: RendererContext,
-  // biome-ignore lint/suspicious/noExplicitAny: unknown type of component.
   component: any,
   props: Record<string, unknown>,
-  // biome-ignore lint/suspicious/noExplicitAny: unknown type of slotted.
   slotted: any
 ) {
   try {
@@ -66,6 +63,20 @@ export async function renderToStaticMarkup(
     }
 
     let html = "";
+
+    // Get the manifest from the integration directory
+    const qwikRenderer = this.result.renderers.find(
+      (r) => r.name === "@qwikdev/astro"
+    ) as any;
+
+    const manifestPath = qwikRenderer?.serverEntrypoint?.replace(
+      "server.ts",
+      "q-astro-manifest.json"
+    );
+
+    const integrationManifest = manifestPath
+      ? await import(manifestPath, { with: { type: "json" } })
+      : null;
 
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: { style: "display: contents" },
@@ -82,9 +93,8 @@ export async function renderToStaticMarkup(
               return mapped;
             }
           }
-        : // CI, SSG, and SSR get the manifest at different times / environments
-          {
-            manifest: globalThis.qManifest || manifest
+        : {
+            manifest: globalThis.qManifest || integrationManifest?.default
           }),
       serverData: props,
       qwikPrefetchServiceWorker: {
