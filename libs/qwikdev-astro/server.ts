@@ -64,15 +64,10 @@ export async function renderToStaticMarkup(
 
     let html = "";
 
-    console.log(this.result.renderers);
-    console.log(this.result.request);
-
     // Get the manifest from the integration directory
     const qwikRenderer = this.result.renderers.find(
       (r) => r.name === "@qwikdev/astro"
     ) as any;
-
-    console.log("qwik renderer: ", qwikRenderer);
 
     const manifestPath = qwikRenderer?.serverEntrypoint?.replace(
       "server.ts",
