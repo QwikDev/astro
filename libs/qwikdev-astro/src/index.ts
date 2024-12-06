@@ -72,19 +72,20 @@ export default defineIntegration({
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
-        const { addRenderer, updateConfig, config, command, injectScript } = setupProps;
+        const { addRenderer, updateConfig, config, command } = setupProps;
         astroConfig = config;
+
+        /* q-astro-manifest.json doesn't error in dev */
+        if (command === "dev") {
+          writeFileSync(
+            path.join(resolver("../"), "q-astro-manifest.json"),
+            "{}",
+            "utf-8"
+          );
+        }
 
         // integration HMR support
         watchDirectory(setupProps, resolver());
-
-        // Because Astro uses the same port for both dev and preview, we need to unregister the SW in order to avoid a stale SW in dev mode.
-        if (command === "dev") {
-          const unregisterSW =
-            "navigator.serviceWorker.getRegistration().then((r) => r && r.unregister())";
-
-          injectScript("head-inline", unregisterSW);
-        }
 
         addRenderer({
           name: "@qwikdev/astro",
