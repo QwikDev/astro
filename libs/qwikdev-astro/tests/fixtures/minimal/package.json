@@ -1,0 +1,10 @@
+{
+  "name": "minimal-fixture",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "dependencies": {
+    "@qwikdev/astro": "workspace:*",
+    "astro": "5.0.0-beta.12"
+  }
+}
