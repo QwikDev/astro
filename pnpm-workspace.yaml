@@ -1,3 +1,4 @@
 packages:
   - libs/*
+  - libs/*/tests/fixtures/*
   - apps/*

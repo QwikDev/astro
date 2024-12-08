@@ -12,14 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/react": "^3.6.0",
-    "@builder.io/qwik": "^1.7.2",
+    "@builder.io/qwik": "^1.11.0",
     "@qwikdev/astro": "workspace:*",
-    "@qwikest/icons": "^0.0.13",
-    "@types/react": "^18.2.64",
-    "@types/react-dom": "^18.2.21",
-    "astro": "^4.12.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "astro": "5.0.2"
   }
 }

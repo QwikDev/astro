@@ -1,7 +1,5 @@
 ---
-import { Counter } from "@components/qwik/counter";
-import { SayHi } from "@components/qwik/say-hi";
-import { LuCheck } from "@qwikest/icons/lucide";
+import { Counter as NativeCounter } from "@components/qwik/counter";
 ---
 
 <html lang="en">
@@ -13,11 +11,8 @@ import { LuCheck } from "@qwikest/icons/lucide";
 		<title>Astro</title>
 	</head>
 	<body>
-		<div style={{ height: '1000px' }}>
-			<Counter initial={5}>Yo</Counter>
-			<SayHi>John</SayHi>
-			<a href="/test">test</a>
-			<LuCheck />
+		<div style={{ height: "1000px" }}>
+			<NativeCounter initial={2} />
 		</div>
 	</body>
 </html>
