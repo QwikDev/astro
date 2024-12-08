@@ -82,19 +82,12 @@ app
   )
   .usage("npm create @qwikdev/astro [project] [adapter] [...options]");
 
-export async function createProject() {
-  app.run();
-}
-
 /** @param args Pass here process.argv.slice(2) */
 export async function runCreate(...args: string[]) {
-  const projectConfig = app.parseArgs(hideBin(args));
-  projectConfig.it = projectConfig.it || args.length === 0;
-
-  createProject();
+  app.run(args);
 }
 
-export default async function (args: string[] = []) {
+export default async function (args = process.argv) {
   try {
     await runCreate(...args);
   } catch (err: any) {

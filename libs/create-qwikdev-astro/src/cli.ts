@@ -1,5 +1,3 @@
 #!/usr/bin/env node
 
-import("./index.js").then((createQwikDevAstro) =>
-  createQwikDevAstro.default(process.argv)
-);
+import("./index.js").then((createQwikDevAstro) => createQwikDevAstro.default());

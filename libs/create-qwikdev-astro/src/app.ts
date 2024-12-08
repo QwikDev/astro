@@ -7,6 +7,7 @@ import yargs, {
   type PositionalOptions as ArgumentConfig,
   type Options as OptionConfig
 } from "yargs";
+import { hideBin } from "yargs/helpers";
 import {
   type Adapter,
   type Config,
@@ -144,7 +145,7 @@ export function command(signature: string, description: string): Command {
 }
 
 export class Application {
-  #config: Config;
+  #config: UserConfig = defaultConfig;
   #packageManger: string;
   #strict = false;
   readonly commands = new Set<Command>();
@@ -152,10 +153,8 @@ export class Application {
 
   constructor(
     readonly name: string,
-    readonly version: string,
-    options: UserConfig
+    readonly version: string
   ) {
-    this.#config = defineConfig(options);
     this.#packageManger = getPackageManager();
   }
 
@@ -375,7 +374,10 @@ export class Application {
     return this.scanBoolean("Would you like to initialize Git?", this.#config.git);
   }
 
-  async run(): Promise<void> {
+  async execute(args: string[]) {
+    this.#config = defineConfig(this.parseArgs(args));
+    this.#config.it = this.#config.it || args.length === 0;
+
     try {
       intro(`Let's create a ${bgBlue(" QwikDev/astro App ")} ✨`);
 
@@ -405,6 +407,11 @@ export class Application {
       console.error("An error occurred during QwikDev/astro project creation:", err);
       process.exit(1);
     }
+  }
+
+  /** @param args Pass here process.argv.slice(2) */
+  async run(args = process.argv, raw = true): Promise<void> {
+    await this.execute(raw ? hideBin(args) : args);
   }
 
   async add(outDir: string) {
@@ -581,11 +588,11 @@ export class Application {
   }
 }
 
-export function app(name: string, version: string, options: UserConfig): Application {
-  return new Application(name, version, options);
+export function app(name: string, version: string): Application {
+  return new Application(name, version);
 }
 
 const _pkg = await import("../package.json");
-const _app: Application = app(_pkg.name, _pkg.version, defaultConfig);
+const _app: Application = app(_pkg.name, _pkg.version);
 
 export default _app;
