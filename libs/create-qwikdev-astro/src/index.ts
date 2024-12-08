@@ -4,7 +4,7 @@ import { cancel, intro, log, note, outro, select, spinner } from "@clack/prompts
 import { bgBlue, bgMagenta, bold, cyan, gray, magenta, red } from "kleur/colors";
 import pkg from "../package.json";
 import { type Adapter, type UserConfig, defaultConfig, defineConfig } from "./config";
-import { BaseApplication } from "./core";
+import { Program } from "./core";
 import {
   $,
   $pmInstall,
@@ -23,7 +23,7 @@ import {
   updatePackageName
 } from "./utils";
 
-export class Application extends BaseApplication {
+export class Application extends Program {
   #packageManger = getPackageManager();
   #config: UserConfig = defaultConfig;
 

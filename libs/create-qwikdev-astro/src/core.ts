@@ -112,7 +112,7 @@ export class Command {
   }
 }
 
-export abstract class BaseApplication {
+export abstract class Program {
   #strict = false;
   #it = false;
   #yes = false;
