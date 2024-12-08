@@ -1,6 +1,9 @@
+import pkg from "../package.json";
 import { defaultConfig } from "./config";
-import app from "./core";
+import { Application } from "./core";
 import { __dirname, panic } from "./utils";
+
+const app: Application = new Application(pkg.name, pkg.version);
 
 app
   .strict()

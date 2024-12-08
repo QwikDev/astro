@@ -140,10 +140,6 @@ export class Command {
   }
 }
 
-export function command(signature: string, description: string): Command {
-  return new Command(signature, description);
-}
-
 export class Application {
   #config: UserConfig = defaultConfig;
   #packageManger: string;
@@ -163,7 +159,7 @@ export class Application {
   }
 
   addCommand(signature: string, description: string): Command {
-    const _command = command(signature, description);
+    const _command = new Command(signature, description);
 
     if (this.#yes) {
       _command.option("yes", {
@@ -650,12 +646,3 @@ export class Application {
     outro("Happy coding! 💻🎉");
   }
 }
-
-export function app(name: string, version: string): Application {
-  return new Application(name, version);
-}
-
-const _pkg = await import("../package.json");
-const _app: Application = app(_pkg.name, _pkg.version);
-
-export default _app;
