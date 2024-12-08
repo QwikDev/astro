@@ -374,6 +374,7 @@ export class Application {
     return this.scanBoolean("Would you like to initialize Git?", this.#config.git);
   }
 
+  /** @param args Pass here process.argv.slice(2) */
   async execute(args: string[]) {
     this.#config = defineConfig(this.parseArgs(args));
     this.#config.it = this.#config.it || args.length === 0;
@@ -409,9 +410,9 @@ export class Application {
     }
   }
 
-  /** @param args Pass here process.argv.slice(2) */
-  async run(args = process.argv, raw = true): Promise<void> {
-    await this.execute(raw ? hideBin(args) : args);
+  /** @param args Pass here process.argv */
+  async run(args = process.argv): Promise<void> {
+    await this.execute(hideBin(args));
   }
 
   async add(outDir: string) {

@@ -1,4 +1,3 @@
-import { hideBin } from "yargs/helpers";
 import app from "./app";
 import { defaultConfig } from "./config";
 import { __dirname, panic } from "./utils";
@@ -82,7 +81,7 @@ app
   )
   .usage("npm create @qwikdev/astro [project] [adapter] [...options]");
 
-/** @param args Pass here process.argv.slice(2) */
+/** @param args Pass here process.argv */
 export async function runCreate(...args: string[]) {
   app.run(args);
 }
