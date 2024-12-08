@@ -1,12 +1,11 @@
-import yargs, {
-  type Options as OptionConfig,
-  type PositionalOptions as ArgumentConfig
-} from "yargs";
+import type { PositionalOptions as ArgumentConfig, Options as OptionConfig } from "yargs";
 
 export type Example = {
   command: string;
   description: string;
 };
+
+export type { ArgumentConfig, OptionConfig };
 
 export class Command {
   readonly arguments = new Map<string, ArgumentConfig>();

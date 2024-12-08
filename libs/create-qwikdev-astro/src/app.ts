@@ -2,7 +2,14 @@ import fs, { cpSync, existsSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { cancel, intro, log, note, outro, select, spinner } from "@clack/prompts";
 import { bgBlue, bgMagenta, bold, cyan, gray, magenta, red } from "kleur/colors";
-import { type Command, command } from "./cmd";
+import yargs, { type Argv } from "yargs";
+import {
+  type ArgumentConfig,
+  type Command,
+  type Example,
+  type OptionConfig,
+  command
+} from "./cmd";
 import {
   type Adapter,
   type Config,
@@ -29,10 +36,14 @@ import {
   updatePackageName
 } from "./utils";
 
+export type Alias = { shortName: string; longName: string };
+
 export class Application {
   #config: Config;
   #packageManger: string;
+  #strict = false;
   readonly commands = new Set<Command>();
+  readonly aliases = new Set<Alias>();
 
   constructor(
     readonly name: string,
@@ -71,6 +82,103 @@ export class Application {
 
   getCommands(): Command[] {
     return this.commands.values().toArray();
+  }
+
+  strict(enabled = true): this {
+    this.#strict = enabled;
+
+    return this;
+  }
+
+  addAlias(shortName: string, longName: string): this {
+    this.aliases.add({ shortName, longName });
+
+    return this;
+  }
+
+  getAlias(shortOrLongName: string): Alias | undefined {
+    return this.aliases
+      .values()
+      .find(
+        (alias) =>
+          alias.shortName === shortOrLongName || alias.longName === shortOrLongName
+      );
+  }
+
+  alias(shortOrLongName: string): Alias | undefined;
+  alias(shortName: string, longName: string): this;
+  alias(shortOrLongName: string, longName?: string): this | Alias | undefined {
+    return longName
+      ? this.addAlias(shortOrLongName, longName)
+      : this.getAlias(shortOrLongName);
+  }
+
+  getAliases(): Alias[] {
+    return this.aliases.values().toArray();
+  }
+
+  parseArgs(args: string[]): UserConfig {
+    const _yargs = yargs(args);
+
+    if (this.#strict) {
+      _yargs.strict();
+    }
+
+    this.#parseCommands(_yargs);
+
+    _yargs.version(this.version);
+
+    for (const { shortName, longName } of this.aliases) {
+      _yargs.alias(shortName, longName);
+    }
+
+    const parsedArgs = _yargs.argv as unknown as UserConfig;
+    return parsedArgs;
+  }
+
+  #parseCommands(argv: Argv) {
+    for (const command of this.commands) {
+      this.#parseCommand(argv, command);
+    }
+  }
+
+  #parseCommand(argv: Argv, command: Command) {
+    argv.command(command.signature, command.description, (cmdYargs) => {
+      this.#parseArguments(argv, command.arguments);
+      this.#parseOptions(argv, command.options);
+      this.#parseExamples(argv, command.examples);
+      cmdYargs.usage(command.usage());
+    });
+  }
+
+  #parseArguments(argv: Argv, args: Map<string, ArgumentConfig>) {
+    for (const [name, options] of args) {
+      this.#parseArgument(argv, name, options);
+    }
+  }
+
+  #parseArgument(argv: Argv, name: string, options: ArgumentConfig) {
+    argv.positional(name, options);
+  }
+
+  #parseOptions(argv: Argv, opts: Map<string, OptionConfig>) {
+    for (const [name, options] of opts) {
+      this.#parseOption(argv, name, options);
+    }
+  }
+
+  #parseOption(argv: Argv, name: string, options: OptionConfig) {
+    argv.option(name, options);
+  }
+
+  #parseExamples(argv: Argv, examples: Set<Example>) {
+    for (const example of examples) {
+      this.#parseExample(argv, example.command, example.description);
+    }
+  }
+
+  #parseExample(argv: Argv, command: string, description: string) {
+    argv.example(command, description);
   }
 
   async scanBoolean(
