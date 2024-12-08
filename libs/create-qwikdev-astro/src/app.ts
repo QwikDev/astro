@@ -1,7 +1,5 @@
 import fs, { cpSync, existsSync, mkdirSync } from "node:fs";
 import path from "node:path";
-import { cancel, intro, log, note, outro, select, spinner } from "@clack/prompts";
-import { bgBlue, bgMagenta, bold, cyan, gray, magenta, red } from "kleur/colors";
 import pkg from "../package.json";
 import { type Adapter, type UserConfig, defaultConfig, defineConfig } from "./config";
 import { Program } from "./core";
@@ -29,7 +27,7 @@ export class Application extends Program {
 
   async scanProjectDirectory(): Promise<string> {
     return this.scanString(
-      `Where would you like to create your new project? ${gray(
+      `Where would you like to create your new project? ${this.toGray(
         `(Use '.' or './' for current directory)`
       )}`,
       this.#config.project,
@@ -41,9 +39,9 @@ export class Application extends Program {
     const adapter =
       (this.#config.it &&
         (await this.scanBoolean("Would you like to use a server adapter?", false)) &&
-        (await select({
-          message: "Which adapter do you prefer?",
-          options: [
+        (await this.scanChoice(
+          "Which adapter do you prefer?",
+          [
             {
               value: "node",
               label: "Node"
@@ -52,9 +50,9 @@ export class Application extends Program {
               value: "deno",
               label: "Deno"
             }
-          ]
-        }))) ||
-      this.#config.adapter ||
+          ],
+          this.#config.adapter
+        ))) ||
       "default";
 
     ensureString<Adapter>(adapter, true);
@@ -98,7 +96,7 @@ export class Application extends Program {
     this.#config.it = this.#config.it || args.length === 0;
 
     try {
-      intro(`Let's create a ${bgBlue(" QwikDev/astro App ")} ✨`);
+      this.intro(`Let's create a ${this.toBgBlue(" QwikDev/astro App ")} ✨`);
 
       const projectAnswer = await this.scanProjectDirectory();
 
@@ -129,7 +127,7 @@ export class Application extends Program {
   }
 
   async add(outDir: string) {
-    log.info("Adding @QwikDev/astro...");
+    this.logInfo("Adding @QwikDev/astro...");
     try {
       await $pmX("astro add @qwikdev/astro", outDir);
     } catch (e: any) {
@@ -153,7 +151,7 @@ export class Application extends Program {
   }
 
   async createProject(outDir: string): Promise<void> {
-    log.step(`Creating new project in ${bgBlue(` ${outDir} `)} ... 🐇`);
+    this.logStep(`Creating new project in ${this.toBgBlue(` ${outDir} `)} ... 🐇`);
 
     if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
       const force = await this.scanForce(outDir);
@@ -162,11 +160,11 @@ export class Application extends Program {
           await clearDir(outDir);
         }
       } else {
-        log.error(`Directory "${outDir}" already exists.`);
-        log.info(
+        this.logError(`Directory "${outDir}" already exists.`);
+        this.logInfo(
           `Please either remove this directory, choose another location or run the command again with '--force | -f' flag.`
         );
-        cancel();
+        this.cancel();
         process.exit(1);
       }
     }
@@ -180,10 +178,10 @@ export class Application extends Program {
     );
 
     updatePackageName(packageName, outDir);
-    log.info(`Updated package name to "${packageName}" 📦️`);
+    this.logInfo(`Updated package name to "${packageName}" 📦️`);
 
     if (getPackageManager() !== "npm") {
-      log.info(`Replacing 'npm run' by '${pmRunCommand()}' in package.json...`);
+      this.logInfo(`Replacing 'npm run' by '${pmRunCommand()}' in package.json...`);
       replacePackageJsonRunCommand(outDir);
     }
   }
@@ -192,7 +190,7 @@ export class Application extends Program {
     const ci = await this.scanCI();
 
     if (ci) {
-      log.step("Adding CI workflow...");
+      this.logStep("Adding CI workflow...");
 
       if (!this.#config.dryRun) {
         const starterCIPath = path.join(
@@ -217,7 +215,7 @@ export class Application extends Program {
 
     let ranInstall = false;
     if (typeof runInstall !== "symbol" && runInstall) {
-      log.step("Installing dependencies...");
+      this.logStep("Installing dependencies...");
       if (!this.#config.dryRun) {
         await $pmInstall(projectAnswer);
       }
@@ -230,10 +228,10 @@ export class Application extends Program {
   async runGitInit(outDir: string): Promise<void> {
     const initGit = await this.scanGit();
     if (initGit) {
-      const s = spinner();
+      const s = this.spinner();
 
       if (fs.existsSync(path.join(outDir, ".git"))) {
-        log.info("Git has already been initialized before. Skipping...");
+        this.logInfo("Git has already been initialized before. Skipping...");
       } else {
         s.start("Git initializing...");
 
@@ -254,8 +252,10 @@ export class Application extends Program {
           s.stop("Git initialized 🎲");
         } catch (e) {
           s.stop("Git failed to initialize");
-          log.error(
-            red("Git failed to initialize. You can do this manually by running: git init")
+          this.logError(
+            this.toRed(
+              "Git failed to initialize. You can do this manually by running: git init"
+            )
           );
         }
       }
@@ -277,17 +277,19 @@ export class Application extends Program {
     const outString = [];
 
     if (isCwdDir) {
-      outString.push(`🦄 ${bgMagenta(" Success! ")}`);
+      outString.push(`🦄 ${this.toBgMagenta(" Success! ")}`);
     } else {
       outString.push(
-        `🦄 ${bgMagenta(" Success! ")} ${cyan("Project created in")} ${bold(
-          magenta(relativeProjectPath)
-        )} ${cyan("directory")}`
+        `🦄 ${this.toBgMagenta(" Success! ")} ${this.toCyan(
+          "Project created in"
+        )} ${this.toBold(this.toMagenta(relativeProjectPath))} ${this.toCyan(
+          "directory"
+        )}`
       );
     }
     outString.push("");
 
-    outString.push(`🐰 ${cyan("Next steps:")}`);
+    outString.push(`🐰 ${this.toCyan("Next steps:")}`);
     if (!isCwdDir) {
       outString.push(`   cd ${relativeProjectPath}`);
     }
@@ -296,9 +298,9 @@ export class Application extends Program {
     }
     outString.push(`   ${getPackageManager()} start`);
 
-    note(outString.join("\n"), "Ready to start 🚀");
+    this.note(outString.join("\n"), "Ready to start 🚀");
 
-    outro("Happy coding! 💻🎉");
+    this.outro("Happy coding! 💻🎉");
   }
 }
 

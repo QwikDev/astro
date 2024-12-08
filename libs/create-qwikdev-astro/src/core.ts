@@ -1,10 +1,12 @@
+import { cancel, intro, log, note, outro, spinner } from "@clack/prompts";
+import { bgBlue, bgMagenta, bold, cyan, gray, magenta, red } from "kleur/colors";
 import yargs, {
   type Argv,
   type PositionalOptions as ArgumentConfig,
   type Options as OptionConfig
 } from "yargs";
 import { hideBin } from "yargs/helpers";
-import { scanBoolean, scanString } from "./utils";
+import { scanBoolean, scanChoice, scanString } from "./utils";
 
 export type Alias = { shortName: string; longName: string };
 
@@ -325,6 +327,87 @@ export abstract class Program {
     positional = false
   ): Promise<string> {
     return scanString(message, initialValue, this.#it, positional);
+  }
+
+  async scanChoice(
+    message: string,
+    options: { value: string; label: string }[],
+    initialValue?: string,
+    positional = false
+  ): Promise<string> {
+    return scanChoice(message, options, initialValue, this.#it, positional);
+  }
+
+  cancel(message?: string) {
+    cancel(message);
+  }
+
+  intro(title?: string) {
+    intro(title);
+  }
+
+  outro(message?: string) {
+    outro(message);
+  }
+
+  note(message?: string, title?: string) {
+    note(message, title);
+  }
+
+  spinner() {
+    return spinner();
+  }
+
+  logInfo(message: string) {
+    log.info(message);
+  }
+
+  logWarning(message: string) {
+    log.warning(message);
+  }
+
+  logWarn(message: string) {
+    log.warn(message);
+  }
+
+  logError(message: string) {
+    log.error(message);
+  }
+
+  logStep(message: string) {
+    log.step(message);
+  }
+
+  logSuccess(message: string) {
+    log.success(message);
+  }
+
+  toGray(output: string | number | boolean): string {
+    return gray(output);
+  }
+
+  toCyan(output: string | number | boolean): string {
+    return cyan(output);
+  }
+
+  toMagenta(output: string | number | boolean): string {
+    return magenta(output);
+  }
+
+  toRed(output: string | number | boolean): string {
+    return red(output);
+  }
+
+  toBgBlue(output: string | number | boolean): string {
+    return bgBlue(output);
+  }
+
+  toBgMagenta(output: string | number | boolean): string {
+    return bgMagenta(output);
+  }
+
+  toBold(output: string | number | boolean): string {
+    return bold(output);
   }
 
   /** @param args Pass here process.argv.slice(2) */

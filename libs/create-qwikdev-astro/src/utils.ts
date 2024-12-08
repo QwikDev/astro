@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { confirm, isCancel, log, text } from "@clack/prompts";
+import { confirm, isCancel, log, select, text } from "@clack/prompts";
 import { gray, green, red, reset, white } from "kleur/colors";
 import detectPackageManager from "which-pm-runs";
 
@@ -324,6 +324,25 @@ export async function scanString(
   return input;
 }
 
+export async function scanChoice(
+  message: string,
+  options: { value: string; label: string }[],
+  initialValue?: string,
+  it?: boolean,
+  positional = false
+): Promise<string> {
+  const input = !it
+    ? initialValue
+    : (await select({
+        message,
+        options
+      })) || initialValue;
+
+  ensureString(input, positional);
+
+  return input;
+}
+
 export async function scanBoolean(
   message: string,
   initialValue?: boolean,
@@ -346,6 +365,37 @@ export async function scanBoolean(
   ensureBoolean(input, positional);
 
   return input;
+}
+
+export function ensureArray<T extends any[]>(
+  input: any,
+  positional = false,
+  validate?: (v: any[]) => v is T
+): asserts input is T {
+  ensure(input, validate ?? isArray, positional);
+}
+
+export function ensureStringArray<T extends string[]>(
+  input: any,
+  positional = false,
+  validate?: (v: string[]) => v is T
+): asserts input is T {
+  ensureArray(input, positional, validate ?? isStringArray);
+}
+
+export function ensureNumberArray<T extends number[]>(
+  input: any,
+  positional = false,
+  validate?: (v: number[]) => v is T
+): asserts input is T {
+  ensureArray(input, positional, validate ?? isNumberArray);
+}
+
+export function ensureBooleanArray<T extends any[]>(
+  input: any,
+  positional = false
+): asserts input is T {
+  ensure(input, isBooleanArray, positional);
 }
 
 export function ensureString<T extends string>(
@@ -388,6 +438,22 @@ export function ensure<T, U>(
   if (!validate(input)) {
     panic("Invalid input.");
   }
+}
+
+export function isArray<T, U>(input: any, validate?: (v: T) => U): input is T[] {
+  return Array.isArray(input) && input.every(validate ?? ((v): v is any => true));
+}
+
+export function isStringArray(input: any): input is string[] {
+  return isArray(input, isString);
+}
+
+export function isNumberArray(input: any): input is number[] {
+  return isArray(input, isNumber);
+}
+
+export function isBooleanArray(input: any): input is boolean[] {
+  return isArray(input, isBoolean);
 }
 
 export function isString(input: any): input is string {
