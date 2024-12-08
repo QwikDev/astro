@@ -250,6 +250,10 @@ export abstract class BaseApplication {
       _yargs.strict();
     }
 
+    if (this.#yes && this.#no) {
+      _yargs.conflicts("yes", "no");
+    }
+
     this.#parseCommands(_yargs);
 
     _yargs.version(this.version);
