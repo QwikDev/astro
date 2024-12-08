@@ -283,15 +283,15 @@ export const $pmInstall = async (cwd: string) => {
 };
 
 export const $pmRun = async (script: string, cwd: string) => {
-  await $pm(["run", script], cwd);
+  await $pm(["run", ...script.split(/\s+/)], cwd);
 };
 
 export const $pmExec = async (command: string, cwd: string) => {
-  await $pm(["exec", command], cwd);
+  await $pm(["exec", ...command.split(/\s+/)], cwd);
 };
 
 export const $pmDlx = async (binary: string, cwd: string) => {
-  await $pm(["dlx", binary], cwd);
+  await $pm(["dlx", ...binary.split(/\s+/)], cwd);
 };
 
 export const $pmX = async (executable: string, cwd: string) => {
