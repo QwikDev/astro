@@ -148,6 +148,10 @@ export class Application {
   #config: UserConfig = defaultConfig;
   #packageManger: string;
   #strict = false;
+  #it = false;
+  #yes = false;
+  #no = false;
+  #dryRun = false;
   readonly commands = new Set<Command>();
   readonly aliases = new Set<Alias>();
 
@@ -160,6 +164,40 @@ export class Application {
 
   addCommand(signature: string, description: string): Command {
     const _command = command(signature, description);
+
+    if (this.#yes) {
+      _command.option("yes", {
+        alias: "y",
+        default: defaultConfig.yes,
+        type: "boolean",
+        desc: "Skip all prompts by accepting defaults"
+      });
+    }
+
+    if (this.#no) {
+      _command.option("no", {
+        alias: "n",
+        type: "boolean",
+        default: defaultConfig.no,
+        desc: "Skip all prompts by declining defaults"
+      });
+    }
+
+    if (this.#it) {
+      _command.option("it", {
+        type: "boolean",
+        default: defaultConfig.it,
+        desc: "Execute actions interactively"
+      });
+    }
+
+    if (this.#dryRun) {
+      _command.option("dryRun", {
+        type: "boolean",
+        default: defaultConfig.dryRun,
+        desc: "Walk through steps without executing"
+      });
+    }
 
     this.commands.add(_command);
 
@@ -190,6 +228,30 @@ export class Application {
 
   strict(enabled = true): this {
     this.#strict = enabled;
+
+    return this;
+  }
+
+  it(enabled = true): this {
+    this.#it = enabled;
+
+    return this;
+  }
+
+  dryRun(enabled = true): this {
+    this.#dryRun = enabled;
+
+    return this;
+  }
+
+  yes(enabled = true): this {
+    this.#yes = enabled;
+
+    return this;
+  }
+
+  no(enabled = true): this {
+    this.#no = enabled;
 
     return this;
   }

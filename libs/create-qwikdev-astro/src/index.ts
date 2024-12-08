@@ -5,6 +5,10 @@ import { __dirname, panic } from "./utils";
 app
   .strict()
   .alias("h", "help")
+  .yes()
+  .no()
+  .it()
+  .dryRun()
   .command("* [project] [adapter]", "Create a new project powered by QwikDev/astro")
   .argument("project", {
     type: "string",
@@ -43,28 +47,6 @@ app
     type: "boolean",
     default: defaultConfig.ci,
     desc: "Add CI workflow"
-  })
-  .option("yes", {
-    alias: "y",
-    default: defaultConfig.yes,
-    type: "boolean",
-    desc: "Skip all prompts by accepting defaults"
-  })
-  .option("no", {
-    alias: "n",
-    type: "boolean",
-    default: defaultConfig.no,
-    desc: "Skip all prompts by declining defaults"
-  })
-  .option("it", {
-    type: "boolean",
-    default: defaultConfig.it,
-    desc: "Execute actions interactively"
-  })
-  .option("dryRun", {
-    type: "boolean",
-    default: defaultConfig.dryRun,
-    desc: "Walk through steps without executing"
   })
   .example("npm create @qwikdev/astro@latest", "Create a project with default options")
   .example(
