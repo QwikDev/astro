@@ -1,5 +1,5 @@
-import app from "./app";
 import { defaultConfig } from "./config";
+import app from "./core";
 import { __dirname, panic } from "./utils";
 
 app
