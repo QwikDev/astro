@@ -2,6 +2,7 @@ import fs, { cpSync, existsSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { cancel, intro, log, note, outro, select, spinner } from "@clack/prompts";
 import { bgBlue, bgMagenta, bold, cyan, gray, magenta, red } from "kleur/colors";
+import { type Command, command } from "./cmd";
 import {
   type Adapter,
   type Config,
@@ -31,10 +32,45 @@ import {
 export class Application {
   #config: Config;
   #packageManger: string;
+  readonly commands = new Set<Command>();
 
-  constructor(options: UserConfig) {
+  constructor(
+    readonly name: string,
+    readonly version: string,
+    options: UserConfig
+  ) {
     this.#config = defineConfig(options);
     this.#packageManger = getPackageManager();
+  }
+
+  addCommand(signature: string, description: string): Command {
+    const _command = command(signature, description);
+
+    this.commands.add(_command);
+
+    return _command;
+  }
+
+  getCommand(signatureOrDescription: string): Command | undefined {
+    return this.commands
+      .values()
+      .find(
+        (command) =>
+          command.signature === signatureOrDescription ||
+          command.description === signatureOrDescription
+      );
+  }
+
+  command(signatureOrDescription: string): Command | undefined;
+  command(signature: string, description: string): Command;
+  command(signatureOrDescription: string, description?: string): Command | undefined {
+    return description
+      ? this.addCommand(signatureOrDescription, description)
+      : this.getCommand(signatureOrDescription);
+  }
+
+  getCommands(): Command[] {
+    return this.commands.values().toArray();
   }
 
   async scanBoolean(
@@ -332,10 +368,11 @@ export class Application {
   }
 }
 
-export function app(options: UserConfig): Application {
-  return new Application(options);
+export function app(name: string, version: string, options: UserConfig): Application {
+  return new Application(name, version, options);
 }
 
-const _app: Application = app(defaultConfig);
+const _pkg = await import("../package.json");
+const _app: Application = app(_pkg.name, _pkg.version, defaultConfig);
 
 export default _app;

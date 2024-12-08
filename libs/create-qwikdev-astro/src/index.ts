@@ -1,11 +1,11 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import { app } from "./app";
-import { command } from "./cmd";
+import app from "./app";
 import { type UserConfig, defaultConfig } from "./config";
 import { __dirname, panic } from "./utils";
 
-command("* [project] [adapter]", "Create a new project powered by QwikDev/astro")
+app
+  .command("* [project] [adapter]", "Create a new project powered by QwikDev/astro")
   .argument("project", {
     type: "string",
     default: defaultConfig.project,
@@ -90,9 +90,8 @@ export function parseArgs(args: string[]): UserConfig {
   return parsedArgs;
 }
 
-export async function createProject(options: UserConfig) {
-  const project = app(options);
-  project.run();
+export async function createProject() {
+  app.run();
 }
 
 /** @param args Pass here process.argv.slice(2) */
@@ -100,7 +99,7 @@ export async function runCreate(...args: string[]) {
   const projectConfig = parseArgs(hideBin(args));
   projectConfig.it = projectConfig.it || args.length === 0;
 
-  createProject(projectConfig);
+  createProject();
 }
 
 export default async function (args: string[] = []) {
