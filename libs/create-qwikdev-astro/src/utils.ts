@@ -5,6 +5,7 @@ import path, { join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { confirm, isCancel, log, select, text } from "@clack/prompts";
 import { gray, green, red, reset, white } from "kleur/colors";
+import which from "which";
 import detectPackageManager from "which-pm-runs";
 
 export const __filename = getModuleFilename();
@@ -259,10 +260,11 @@ export const $pm = async (
     }
   }
 
-  const command = `${packageManager} ${args.join(" ")}`;
+  const packageManagerPath = await which(packageManager);
+  const command = `${packageManagerPath} ${args.join(" ")}`;
 
   return new Promise((resolve, reject) => {
-    const child = spawn(packageManager, args, {
+    const child = spawn(packageManagerPath, args, {
       cwd,
       stdio: "inherit",
       env

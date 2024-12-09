@@ -83,10 +83,12 @@
   "dependencies": {
     "@clack/prompts": "^0.8.2",
     "kleur": "^4.1.5",
+    "which": "^5.0.0",
     "which-pm-runs": "^1.1.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@types/which": "^3.0.4",
     "@types/which-pm-runs": "^1.0.2",
     "@types/yargs": "^17.0.33",
     "tsup": "^8.3.5",
