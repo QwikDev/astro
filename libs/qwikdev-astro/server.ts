@@ -10,7 +10,6 @@ import {
 } from "@builder.io/qwik/server";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
-const modulePreloadScript = `(async()=>{window.requestIdleCallback||(window.requestIdleCallback=(e,t)=>{const n=t||{},o=1,i=n.timeout||o,a=performance.now();return setTimeout(()=>{e({get didTimeout(){return!n.timeout&&performance.now()-a-o>i},timeRemaining:()=>Math.max(0,o+(performance.now()-a))})},o)});const e=async()=>{const e=new Set,t=document.querySelectorAll('script[q\\\\:type="prefetch-bundles"]');t.forEach(t=>{if(!t.textContent)return;const n=t.textContent,o=n.match(/\\["prefetch","[/]build[/]","(.*?)"\\]/);o&&o[1]&&o[1].split('","').forEach(t=>{t.startsWith("q-")&&e.add(t)})}),document.querySelectorAll('script[type="qwik/json"]').forEach(t=>{if(!t.textContent)return;const n=t.textContent.match(/q-[A-Za-z0-9_-]+\\.js/g);n&&n.forEach(t=>e.add(t))}),e.forEach(e=>{const t=document.createElement("link");t.rel="modulepreload",t.href="/build/"+e,t.fetchPriority="low",document.head.appendChild(t)})};await requestIdleCallback(await e)})();`;
 
 type RendererContext = {
   result: SSRResult;
@@ -119,13 +118,6 @@ export async function renderToStaticMarkup(
         dangerouslySetInnerHTML: getQwikLoaderScript()
       });
 
-    const modulePreload =
-      isQwikLoaderNeeded &&
-      jsx("script", {
-        "qwik-astro-preloader": "",
-        dangerouslySetInnerHTML: modulePreloadScript
-      });
-
     /**
      * service worker script is only added to the page once, and in prod.
      * https://github.com/QwikDev/qwik/pull/5618
@@ -133,7 +125,7 @@ export async function renderToStaticMarkup(
     const qwikScripts = jsx("span", {
       "q:slot": "qwik-scripts",
       "qwik-scripts": "",
-      children: [qwikLoader, modulePreload]
+      children: [qwikLoader]
     });
 
     const slots: { [key: string]: unknown } = {};
