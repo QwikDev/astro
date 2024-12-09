@@ -367,37 +367,6 @@ export async function scanBoolean(
   return input;
 }
 
-export function ensureArray<T extends any[]>(
-  input: any,
-  positional = false,
-  validate?: (v: any[]) => v is T
-): asserts input is T {
-  ensure(input, validate ?? isArray, positional);
-}
-
-export function ensureStringArray<T extends string[]>(
-  input: any,
-  positional = false,
-  validate?: (v: string[]) => v is T
-): asserts input is T {
-  ensureArray(input, positional, validate ?? isStringArray);
-}
-
-export function ensureNumberArray<T extends number[]>(
-  input: any,
-  positional = false,
-  validate?: (v: number[]) => v is T
-): asserts input is T {
-  ensureArray(input, positional, validate ?? isNumberArray);
-}
-
-export function ensureBooleanArray<T extends any[]>(
-  input: any,
-  positional = false
-): asserts input is T {
-  ensure(input, isBooleanArray, positional);
-}
-
 export function ensureString<T extends string>(
   input: any,
   positional = false,
@@ -438,22 +407,6 @@ export function ensure<T, U>(
   if (!validate(input)) {
     panic("Invalid input.");
   }
-}
-
-export function isArray<T, U>(input: any, validate?: (v: T) => U): input is T[] {
-  return Array.isArray(input) && input.every(validate ?? ((v): v is any => true));
-}
-
-export function isStringArray(input: any): input is string[] {
-  return isArray(input, isString);
-}
-
-export function isNumberArray(input: any): input is number[] {
-  return isArray(input, isNumber);
-}
-
-export function isBooleanArray(input: any): input is boolean[] {
-  return isArray(input, isBoolean);
 }
 
 export function isString(input: any): input is string {
