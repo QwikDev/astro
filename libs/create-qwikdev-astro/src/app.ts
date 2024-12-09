@@ -125,7 +125,7 @@ export class Application extends Program {
   }
 
   async execute(args: string[]) {
-    this.#config = defineConfig(this.parseArgs(args));
+    this.#config = defineConfig(this.parse(args));
     this.#config.it = this.#config.it || args.length === 0;
 
     try {

@@ -245,7 +245,7 @@ export abstract class Program {
     return this.aliases.values().toArray();
   }
 
-  parseArgs<T>(args: string[]): T {
+  parse<T>(args: string[]): T {
     const _yargs = yargs(args);
 
     if (this.#strict) {
