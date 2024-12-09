@@ -1,12 +1,28 @@
-import { cancel, intro, log, note, outro, spinner } from "@clack/prompts";
-import { bgBlue, bgMagenta, bold, cyan, gray, magenta, red } from "kleur/colors";
 import yargs, {
   type Argv,
   type PositionalOptions as ArgumentConfig,
   type Options as OptionConfig
 } from "yargs";
 import { hideBin } from "yargs/helpers";
-import { scanBoolean, scanChoice, scanString } from "./utils";
+import {
+  background,
+  cancel,
+  color,
+  intro,
+  logError,
+  logInfo,
+  logStep,
+  logSuccess,
+  logWarning,
+  note,
+  outro,
+  panic,
+  scanBoolean,
+  scanChoice,
+  scanString,
+  spinner,
+  style
+} from "./console";
 
 export type Alias = { shortName: string; longName: string };
 
@@ -318,36 +334,32 @@ export abstract class Program {
     initialValue?: boolean,
     it = false,
     yes = false,
-    no = false,
-    positional = false
+    no = false
   ): Promise<boolean> {
     return scanBoolean(
       message,
       initialValue,
       this.#it && it,
       this.#yes && yes,
-      this.#no && no,
-      positional
+      this.#no && no
     );
   }
 
-  async scanString(
-    message: string,
-    initialValue?: string,
-    it = false,
-    positional = false
-  ): Promise<string> {
-    return scanString(message, initialValue, this.#it && it, positional);
+  async scanString(message: string, initialValue?: string, it = false): Promise<string> {
+    return scanString(message, initialValue, this.#it && it);
   }
 
   async scanChoice(
     message: string,
     options: { value: string; label: string }[],
     initialValue?: string,
-    it = false,
-    positional = false
+    it = false
   ): Promise<string> {
-    return scanChoice(message, options, initialValue, this.#it && it, positional);
+    return scanChoice(message, options, initialValue, this.#it && it);
+  }
+
+  panic(message: string): never {
+    panic(message);
   }
 
   cancel(message?: string) {
@@ -370,56 +382,128 @@ export abstract class Program {
     return spinner();
   }
 
-  logInfo(message: string) {
-    log.info(message);
+  info(message: string) {
+    logInfo(message);
   }
 
-  logWarning(message: string) {
-    log.warning(message);
+  warn(message: string) {
+    logWarning(message);
   }
 
-  logWarn(message: string) {
-    log.warn(message);
+  error(message: string) {
+    logError(message);
   }
 
-  logError(message: string) {
-    log.error(message);
+  step(message: string) {
+    logStep(message);
   }
 
-  logStep(message: string) {
-    log.step(message);
+  success(message: string) {
+    logSuccess(message);
   }
 
-  logSuccess(message: string) {
-    log.success(message);
+  red(output: string | number | boolean): string {
+    return color.red(output);
   }
 
-  toGray(output: string | number | boolean): string {
-    return gray(output);
+  green(output: string | number | boolean): string {
+    return color.green(output);
   }
 
-  toCyan(output: string | number | boolean): string {
-    return cyan(output);
+  blue(output: string | number | boolean): string {
+    return color.blue(output);
   }
 
-  toMagenta(output: string | number | boolean): string {
-    return magenta(output);
+  yellow(output: string | number | boolean): string {
+    return color.yellow(output);
   }
 
-  toRed(output: string | number | boolean): string {
-    return red(output);
+  magenta(output: string | number | boolean): string {
+    return color.magenta(output);
   }
 
-  toBgBlue(output: string | number | boolean): string {
-    return bgBlue(output);
+  cyan(output: string | number | boolean): string {
+    return color.cyan(output);
   }
 
-  toBgMagenta(output: string | number | boolean): string {
-    return bgMagenta(output);
+  gray(output: string | number | boolean): string {
+    return color.gray(output);
   }
 
-  toBold(output: string | number | boolean): string {
-    return bold(output);
+  grey(output: string | number | boolean): string {
+    return color.grey(output);
+  }
+
+  white(output: string | number | boolean): string {
+    return color.white(output);
+  }
+
+  black(output: string | number | boolean): string {
+    return color.black(output);
+  }
+
+  bgRed(output: string | number | boolean): string {
+    return background.red(output);
+  }
+
+  bgGreen(output: string | number | boolean): string {
+    return background.green(output);
+  }
+
+  bgBlue(output: string | number | boolean): string {
+    return background.blue(output);
+  }
+
+  bgYellow(output: string | number | boolean): string {
+    return background.yellow(output);
+  }
+
+  bgMagenta(output: string | number | boolean): string {
+    return background.magenta(output);
+  }
+
+  bgCyan(output: string | number | boolean): string {
+    return background.cyan(output);
+  }
+
+  bgWhite(output: string | number | boolean): string {
+    return background.white(output);
+  }
+
+  bgBlack(output: string | number | boolean): string {
+    return background.black(output);
+  }
+
+  reset(output: string | number | boolean): string {
+    return style.reset(output);
+  }
+
+  dim(output: string | number | boolean): string {
+    return style.dim(output);
+  }
+
+  bold(output: string | number | boolean): string {
+    return style.bold(output);
+  }
+
+  italic(output: string | number | boolean): string {
+    return style.italic(output);
+  }
+
+  underline(output: string | number | boolean): string {
+    return style.underline(output);
+  }
+
+  inverse(output: string | number | boolean): string {
+    return style.inverse(output);
+  }
+
+  hidden(output: string | number | boolean): string {
+    return style.hidden(output);
+  }
+
+  strikethrough(output: string | number | boolean): string {
+    return style.strikethrough(output);
   }
 
   /** @param args Pass here process.argv.slice(2) */

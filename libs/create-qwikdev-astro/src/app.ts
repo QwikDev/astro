@@ -3,6 +3,7 @@ import path from "node:path";
 import { copySync, ensureDirSync } from "fs-extra";
 import pkg from "../package.json";
 import { type Adapter, type UserConfig, defaultConfig, defineConfig } from "./config";
+import { ensureBoolean, ensureString } from "./console";
 import { Program } from "./core";
 import {
   $,
@@ -10,10 +11,7 @@ import {
   $pmX,
   __dirname,
   clearDir,
-  ensureBoolean,
-  ensureString,
   getPackageManager,
-  panic,
   pmRunCommand,
   replacePackageJsonRunCommand,
   resolveAbsoluteDir,
@@ -26,45 +24,34 @@ export class Application extends Program {
   #packageManger = getPackageManager();
   #config: UserConfig = defaultConfig;
 
-  async scanBoolean(
-    message: string,
-    initialValue?: boolean,
-    positional = false
-  ): Promise<boolean> {
+  async scanBoolean(message: string, initialValue?: boolean): Promise<boolean> {
     return super.scanBoolean(
       message,
       initialValue,
       this.#config.it,
       this.#config.yes,
-      this.#config.no,
-      positional
+      this.#config.no
     );
   }
 
-  async scanString(
-    message: string,
-    initialValue?: string,
-    positional = false
-  ): Promise<string> {
-    return super.scanString(message, initialValue, this.#config.it, positional);
+  async scanString(message: string, initialValue?: string): Promise<string> {
+    return super.scanString(message, initialValue, this.#config.it);
   }
 
   async scanChoice(
     message: string,
     options: { value: string; label: string }[],
-    initialValue?: string,
-    positional = false
+    initialValue?: string
   ): Promise<string> {
-    return super.scanChoice(message, options, initialValue, this.#config.it, positional);
+    return super.scanChoice(message, options, initialValue, this.#config.it);
   }
 
   async scanProjectDirectory(): Promise<string> {
     return this.scanString(
-      `Where would you like to create your new project? ${this.toGray(
+      `Where would you like to create your new project? ${this.gray(
         `(Use '.' or './' for current directory)`
       )}`,
-      this.#config.project,
-      true
+      this.#config.project
     );
   }
 
@@ -88,7 +75,7 @@ export class Application extends Program {
         ))) ||
       "default";
 
-    ensureString<Adapter>(adapter, true);
+    ensureString<Adapter>(adapter);
 
     return adapter;
   }
@@ -129,7 +116,7 @@ export class Application extends Program {
     this.#config.it = this.#config.it || args.length === 0;
 
     try {
-      this.intro(`Let's create a ${this.toBgBlue(" QwikDev/astro App ")} ✨`);
+      this.intro(`Let's create a ${this.bgBlue(" QwikDev/astro App ")} ✨`);
 
       const projectAnswer = await this.scanProjectDirectory();
 
@@ -160,11 +147,11 @@ export class Application extends Program {
   }
 
   async add(outDir: string) {
-    this.logInfo("Adding @QwikDev/astro...");
+    this.info("Adding @QwikDev/astro...");
     try {
       await $pmX("astro add @qwikdev/astro", outDir);
     } catch (e: any) {
-      panic(`${e.message ?? e}: . Please try it manually.`);
+      this.panic(`${e.message ?? e}: . Please try it manually.`);
     }
   }
 
@@ -184,7 +171,7 @@ export class Application extends Program {
   }
 
   async createProject(outDir: string): Promise<void> {
-    this.logStep(`Creating new project in ${this.toBgBlue(` ${outDir} `)} ... 🐇`);
+    this.step(`Creating new project in ${this.bgBlue(` ${outDir} `)} ... 🐇`);
 
     if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
       const force = await this.scanForce(outDir);
@@ -193,8 +180,8 @@ export class Application extends Program {
           await clearDir(outDir);
         }
       } else {
-        this.logError(`Directory "${outDir}" already exists.`);
-        this.logInfo(
+        this.error(`Directory "${outDir}" already exists.`);
+        this.info(
           `Please either remove this directory, choose another location or run the command again with '--force | -f' flag.`
         );
         this.cancel();
@@ -211,10 +198,10 @@ export class Application extends Program {
     );
 
     updatePackageName(packageName, outDir);
-    this.logInfo(`Updated package name to "${packageName}" 📦️`);
+    this.info(`Updated package name to "${packageName}" 📦️`);
 
     if (getPackageManager() !== "npm") {
-      this.logInfo(`Replacing 'npm run' by '${pmRunCommand()}' in package.json...`);
+      this.info(`Replacing 'npm run' by '${pmRunCommand()}' in package.json...`);
       replacePackageJsonRunCommand(outDir);
     }
   }
@@ -223,7 +210,7 @@ export class Application extends Program {
     const ci = await this.scanCI();
 
     if (ci) {
-      this.logStep("Adding CI workflow...");
+      this.step("Adding CI workflow...");
 
       if (!this.#config.dryRun) {
         const starterCIPath = path.join(
@@ -248,7 +235,7 @@ export class Application extends Program {
 
     let ranInstall = false;
     if (typeof runInstall !== "symbol" && runInstall) {
-      this.logStep("Installing dependencies...");
+      this.step("Installing dependencies...");
       if (!this.#config.dryRun) {
         await $pmInstall(projectAnswer);
       }
@@ -264,7 +251,7 @@ export class Application extends Program {
       const s = this.spinner();
 
       if (fs.existsSync(path.join(outDir, ".git"))) {
-        this.logInfo("Git has already been initialized before. Skipping...");
+        this.info("Git has already been initialized before. Skipping...");
       } else {
         s.start("Git initializing...");
 
@@ -285,8 +272,8 @@ export class Application extends Program {
           s.stop("Git initialized 🎲");
         } catch (e) {
           s.stop("Git failed to initialize");
-          this.logError(
-            this.toRed(
+          this.error(
+            this.red(
               "Git failed to initialize. You can do this manually by running: git init"
             )
           );
@@ -301,7 +288,7 @@ export class Application extends Program {
         ensureDirSync(outDir);
         copySync(templatePath, outDir);
       } catch (error) {
-        this.logError(this.toRed(`Template copy failed: ${error}`));
+        this.error(this.red(`Template copy failed: ${error}`));
       }
     }
   }
@@ -312,19 +299,17 @@ export class Application extends Program {
     const outString = [];
 
     if (isCwdDir) {
-      outString.push(`🦄 ${this.toBgMagenta(" Success! ")}`);
+      outString.push(`🦄 ${this.bgMagenta(" Success! ")}`);
     } else {
       outString.push(
-        `🦄 ${this.toBgMagenta(" Success! ")} ${this.toCyan(
+        `🦄 ${this.bgMagenta(" Success! ")} ${this.cyan(
           "Project created in"
-        )} ${this.toBold(this.toMagenta(relativeProjectPath))} ${this.toCyan(
-          "directory"
-        )}`
+        )} ${this.bold(this.magenta(relativeProjectPath))} ${this.cyan("directory")}`
       );
     }
     outString.push("");
 
-    outString.push(`🐰 ${this.toCyan("Next steps:")}`);
+    outString.push(`🐰 ${this.cyan("Next steps:")}`);
     if (!isCwdDir) {
       outString.push(`   cd ${relativeProjectPath}`);
     }
