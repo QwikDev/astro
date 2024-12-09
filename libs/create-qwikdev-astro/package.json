@@ -55,10 +55,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist",
-    "stubs"
-  ],
+  "files": ["dist", "stubs"],
   "bin": "./dist/cli.js",
   "keywords": [
     "astro-integration",
