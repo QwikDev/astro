@@ -25,6 +25,38 @@ export class Application extends Program {
   #packageManger = getPackageManager();
   #config: UserConfig = defaultConfig;
 
+  async scanBoolean(
+    message: string,
+    initialValue?: boolean,
+    positional = false
+  ): Promise<boolean> {
+    return super.scanBoolean(
+      message,
+      initialValue,
+      this.#config.it,
+      this.#config.yes,
+      this.#config.no,
+      positional
+    );
+  }
+
+  async scanString(
+    message: string,
+    initialValue?: string,
+    positional = false
+  ): Promise<string> {
+    return super.scanString(message, initialValue, this.#config.it, positional);
+  }
+
+  async scanChoice(
+    message: string,
+    options: { value: string; label: string }[],
+    initialValue?: string,
+    positional = false
+  ): Promise<string> {
+    return super.scanChoice(message, options, initialValue, this.#config.it, positional);
+  }
+
   async scanProjectDirectory(): Promise<string> {
     return this.scanString(
       `Where would you like to create your new project? ${this.toGray(

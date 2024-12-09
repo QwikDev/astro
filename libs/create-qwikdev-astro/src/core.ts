@@ -316,26 +316,38 @@ export abstract class Program {
   async scanBoolean(
     message: string,
     initialValue?: boolean,
+    it = false,
+    yes = false,
+    no = false,
     positional = false
   ): Promise<boolean> {
-    return scanBoolean(message, initialValue, this.#it, this.#yes, this.#no, positional);
+    return scanBoolean(
+      message,
+      initialValue,
+      this.#it && it,
+      this.#yes && yes,
+      this.#no && no,
+      positional
+    );
   }
 
   async scanString(
     message: string,
     initialValue?: string,
+    it = false,
     positional = false
   ): Promise<string> {
-    return scanString(message, initialValue, this.#it, positional);
+    return scanString(message, initialValue, this.#it && it, positional);
   }
 
   async scanChoice(
     message: string,
     options: { value: string; label: string }[],
     initialValue?: string,
+    it = false,
     positional = false
   ): Promise<string> {
-    return scanChoice(message, options, initialValue, this.#it, positional);
+    return scanChoice(message, options, initialValue, this.#it && it, positional);
   }
 
   cancel(message?: string) {
