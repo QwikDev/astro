@@ -1,5 +1,5 @@
 import { type ChildProcess, exec, spawn } from "node:child_process";
-import fs from "node:fs";
+import fs, { statSync, existsSync, mkdirSync, readdirSync, copyFileSync } from "node:fs";
 import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";

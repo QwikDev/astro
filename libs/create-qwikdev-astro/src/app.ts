@@ -1,5 +1,6 @@
 import fs, { cpSync, existsSync, mkdirSync } from "node:fs";
 import path from "node:path";
+import { copySync, ensureDirSync } from "fs-extra";
 import pkg from "../package.json";
 import { type Adapter, type UserConfig, defaultConfig, defineConfig } from "./config";
 import { Program } from "./core";
@@ -296,10 +297,12 @@ export class Application extends Program {
 
   copyTemplate(templatePath: string, outDir: string): void {
     if (!this.#config.dryRun) {
-      if (!existsSync(outDir)) {
-        mkdirSync(outDir, { recursive: true });
+      try {
+        ensureDirSync(outDir);
+        copySync(templatePath, outDir);
+      } catch (error) {
+        this.logError(this.toRed(`Template copy failed: ${error}`));
       }
-      cpSync(templatePath, outDir, { recursive: true });
     }
   }
 
