@@ -1,14 +1,12 @@
-import fs, { cpSync, existsSync, mkdirSync } from "node:fs";
+import fs, { cpSync } from "node:fs";
 import path from "node:path";
 import { copySync, ensureDirSync } from "fs-extra";
 import pkg from "../package.json";
 import { type Adapter, type UserConfig, defaultConfig, defineConfig } from "./config";
 import { ensureBoolean, ensureString } from "./console";
 import { Program } from "./core";
+import { $, $pmInstall, $pmX } from "./process";
 import {
-  $,
-  $pmInstall,
-  $pmX,
   __dirname,
   clearDir,
   getPackageManager,

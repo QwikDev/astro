@@ -1,11 +1,8 @@
-import { type ChildProcess, exec, spawn } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import which from "which";
 import detectPackageManager from "which-pm-runs";
-import { logError } from "./console";
 
 export const __filename = getModuleFilename();
 export const __dirname = path.dirname(__filename);
@@ -33,40 +30,6 @@ export function resolveAbsoluteDir(dir: string) {
 
 export function resolveRelativeDir(dir: string) {
   return isHome(dir) ? relative(os.homedir(), dir) : relative(process.cwd(), dir);
-}
-
-export function $(cmd: string, args: string[], cwd: string) {
-  let child: ChildProcess;
-
-  const install = new Promise<boolean>((resolve) => {
-    try {
-      child = spawn(cmd, args, {
-        cwd,
-        stdio: "ignore"
-      });
-
-      child.on("error", (e) => {
-        if (e) {
-          logError(String(e.message || e));
-        }
-        resolve(false);
-      });
-
-      child.on("close", (code) => {
-        resolve(code === 0);
-      });
-    } catch (e) {
-      resolve(false);
-    }
-  });
-
-  const abort = async () => {
-    if (child) {
-      child.kill("SIGINT");
-    }
-  };
-
-  return { abort, install };
 }
 
 // Used from https://github.com/QwikDev/qwik/blob/main/packages/create-qwik/src/helpers/clearDir.ts
@@ -98,14 +61,6 @@ function fileReplaceContents(file: string, search: string | RegExp, replace: str
 export function getPackageManager() {
   return detectPackageManager()?.name || "npm";
 }
-
-export const isPackageManagerInstalled = (packageManager: string) => {
-  return new Promise((resolve) => {
-    exec(`${packageManager} --version`, (error, _, stderr) => {
-      resolve(!(error || stderr));
-    });
-  });
-};
 
 export function pmRunCommand(): string {
   const pm = getPackageManager();
@@ -162,75 +117,3 @@ export function updatePackageName(newName: string, dir = __dirname): void {
   packageJson.name = cleanedName;
   filePutContents(packageJsonPath, JSON.stringify(packageJson, null, 2));
 }
-
-export const $pm = async (
-  args: string | string[],
-  cwd = process.cwd(),
-  env = process.env
-) => {
-  const packageManager = getPackageManager();
-  args = Array.isArray(args) ? args : [args];
-  if (["exec", "dlx"].includes(args[0])) {
-    switch (packageManager) {
-      case "pnpm":
-      case "yarn":
-        break;
-      case "bun":
-      case "npm": {
-        args = ["x", ...args.slice(1)];
-        break;
-      }
-      default: {
-        args = ["run", ...args.slice(1)];
-        break;
-      }
-    }
-  }
-
-  const packageManagerPath = await which(packageManager);
-  const command = `${packageManagerPath} ${args.join(" ")}`;
-
-  return new Promise((resolve, reject) => {
-    const child = spawn(packageManagerPath, args, {
-      cwd,
-      stdio: "inherit",
-      env
-    });
-
-    child.on("close", (code) => {
-      if (code !== 0) {
-        reject({ command });
-        return;
-      }
-      resolve(true);
-    });
-  });
-};
-
-export const $pmInstall = async (cwd: string) => {
-  await $pm("install", cwd);
-};
-
-export const $pmRun = async (script: string, cwd: string) => {
-  await $pm(["run", ...script.split(/\s+/)], cwd);
-};
-
-export const $pmExec = async (command: string, cwd: string) => {
-  await $pm(["exec", ...command.split(/\s+/)], cwd);
-};
-
-export const $pmDlx = async (binary: string, cwd: string) => {
-  await $pm(["dlx", ...binary.split(/\s+/)], cwd);
-};
-
-export const $pmX = async (executable: string, cwd: string) => {
-  if (["pnpm", "yarn"].includes(getPackageManager())) {
-    try {
-      await $pmExec(executable, cwd);
-    } catch (e: any) {
-      await $pmDlx(executable, cwd);
-    }
-  } else {
-    await $pmDlx(executable, cwd);
-  }
-};
