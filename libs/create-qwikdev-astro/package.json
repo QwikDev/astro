@@ -7,7 +7,8 @@
   "scripts": {
     "check": "tsc --noEmit",
     "build": "pnpm check && tsup-node --env.NODE_ENV production",
-    "start": "tsup-node --env.NODE_ENV development --watch"
+    "start": "tsup-node --env.NODE_ENV development --watch",
+    "test": "tsm bin/test.ts"
   },
   "contributors": [
     {
@@ -89,10 +90,15 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@japa/assert": "^3.0.0",
+    "@japa/runner": "^3.1.4",
     "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.10.1",
     "@types/which": "^3.0.4",
     "@types/which-pm-runs": "^1.0.2",
     "@types/yargs": "^17.0.33",
+    "tslib": "^2.8.1",
+    "tsm": "^2.3.0",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2"
   }

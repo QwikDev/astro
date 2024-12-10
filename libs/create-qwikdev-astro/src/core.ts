@@ -261,6 +261,14 @@ export abstract class Program {
     return this.aliases.values().toArray();
   }
 
+  /** @param args Pass here process.argv.slice(2) */
+  abstract execute(args: string[]): number | Promise<number>;
+
+  /** @param args Pass here process.argv */
+  async run(args = process.argv): Promise<number> {
+    return await this.execute(hideBin(args));
+  }
+
   parse<T>(args: string[]): T {
     const _yargs = yargs(args);
 
@@ -504,13 +512,5 @@ export abstract class Program {
 
   strikethrough(output: string | number | boolean): string {
     return style.strikethrough(output);
-  }
-
-  /** @param args Pass here process.argv.slice(2) */
-  abstract execute(args: string[]): void | Promise<void>;
-
-  /** @param args Pass here process.argv */
-  async run(args = process.argv): Promise<void> {
-    await this.execute(hideBin(args));
   }
 }

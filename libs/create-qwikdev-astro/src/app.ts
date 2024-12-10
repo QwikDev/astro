@@ -109,7 +109,7 @@ export class Application extends Program {
     return this.scanBoolean("Would you like to initialize Git?", this.#config.git);
   }
 
-  async execute(args: string[]) {
+  async execute(args: string[]): Promise<number> {
     this.#config = defineConfig(this.parse(args));
     this.#config.it = this.#config.it || args.length === 0;
 
@@ -138,9 +138,10 @@ export class Application extends Program {
       const ranInstall = await this.runInstall(projectAnswer);
       await this.runGitInit(outDir);
       this.end(outDir, ranInstall);
+      return 0;
     } catch (err) {
       console.error("An error occurred during QwikDev/astro project creation:", err);
-      process.exit(1);
+      return 1;
     }
   }
 
