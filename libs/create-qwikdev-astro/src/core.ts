@@ -130,7 +130,14 @@ export class Command {
   }
 }
 
-export abstract class Program {
+export type Config = {
+  it?: boolean;
+  yes?: boolean;
+  no?: boolean;
+  dryRun?: boolean;
+};
+
+export abstract class Program<T extends Config> {
   #strict = false;
   #it = false;
   #yes = false;
@@ -269,7 +276,7 @@ export abstract class Program {
     return await this.execute(hideBin(args));
   }
 
-  parse<T>(args: string[]): T {
+  parse(args: string[]): T {
     const _yargs = yargs(args);
 
     if (this.#strict) {

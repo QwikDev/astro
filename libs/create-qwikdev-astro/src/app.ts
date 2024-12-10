@@ -2,7 +2,13 @@ import fs, { cpSync } from "node:fs";
 import path from "node:path";
 import { copySync, ensureDirSync } from "fs-extra";
 import pkg from "../package.json";
-import { type Adapter, type UserConfig, defaultConfig, defineConfig } from "./config";
+import {
+  type Adapter,
+  type Config,
+  type UserConfig,
+  defaultConfig,
+  defineConfig
+} from "./config";
 import { ensureBoolean, ensureString } from "./console";
 import { Program } from "./core";
 import { $, $pmInstall, $pmX } from "./process";
@@ -18,7 +24,7 @@ import {
   updatePackageName
 } from "./utils";
 
-export class Application extends Program {
+export class Application extends Program<Config> {
   #packageManger = getPackageManager();
   #config: UserConfig = defaultConfig;
 

@@ -1,7 +1,7 @@
-import type { Program } from "./core";
+import type { Config, Program } from "./core";
 
-export class ProgramTester {
-  constructor(readonly program: Program) {}
+export class ProgramTester<T extends Config> {
+  constructor(readonly program: Program<T>) {}
 
   async run(args: string[]): Promise<ResultTester> {
     const result = await this.program.run(args);
