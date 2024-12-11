@@ -77,6 +77,9 @@ export async function renderToStaticMarkup(
       ? await import(/* @vite-ignore */ manifestPath, { with: { type: "json" } })
       : null;
 
+    const manifest = globalThis.qManifest || integrationManifest?.default;
+    console.log("MANIFEST: ", manifest);
+
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: { style: "display: contents" },
       containerTagName: "div",
@@ -86,7 +89,7 @@ export async function renderToStaticMarkup(
             symbolMapper: globalThis.symbolMapperFn
           }
         : {
-            manifest: globalThis.qManifest || integrationManifest?.default
+            manifest: manifest
           }),
       serverData: props,
       qwikPrefetchServiceWorker: {

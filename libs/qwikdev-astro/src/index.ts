@@ -1,5 +1,6 @@
 import { writeFileSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
@@ -93,25 +94,34 @@ export default defineIntegration({
         });
 
         /** Relative paths, as the Qwik optimizer handles normalization */
-        srcDir = getRelativePath(astroConfig.root.pathname, astroConfig.srcDir.pathname);
-
-        clientDir = getRelativePath(
-          astroConfig.root.pathname,
-          astroConfig.build.client.pathname
+        srcDir = "./src";
+        clientDir = path.relative(
+          fileURLToPath(astroConfig.srcDir),
+          fileURLToPath(astroConfig.build.client)
         );
 
-        serverDir = getRelativePath(
-          astroConfig.root.pathname,
-          astroConfig.build.server.pathname
+        serverDir = path.relative(
+          fileURLToPath(astroConfig.srcDir),
+          fileURLToPath(astroConfig.build.server)
         );
 
-        outDir = getRelativePath(astroConfig.root.pathname, astroConfig.outDir.pathname);
+        outDir = path.relative(
+          fileURLToPath(astroConfig.srcDir),
+          fileURLToPath(astroConfig.outDir)
+        );
 
         if (astroConfig.adapter) {
           finalDir = clientDir;
         } else {
           finalDir = outDir;
         }
+
+        console.log("CHANGE!", {
+          srcDir,
+          clientDir,
+          serverDir,
+          outDir
+        });
 
         /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
         const fileFilter = (id: string, hook: string) => {
