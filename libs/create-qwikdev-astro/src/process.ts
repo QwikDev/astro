@@ -129,20 +129,23 @@ export function $it(
     });
 
     let output = "";
+    let buffer = "";
     const prompts = Object.entries(interactions);
     const promptsCount = prompts.length;
     let promptIndex = 0;
 
     child.stdout.on("data", (data) => {
       const chunk = data.toString();
+      buffer += chunk;
       output += chunk;
 
-      for (let i = promptIndex; i < promptsCount; i++) {
-        const prompt = prompts[promptIndex][0];
-        const input = prompts[promptIndex][1];
-        if (chunk.includes(prompt)) {
+      while (promptIndex < promptsCount) {
+        const [prompt, input] = prompts[promptIndex];
+        if (buffer.includes(prompt)) {
           child.stdin.write(`${input}\n`);
-          promptIndex = i;
+          buffer = buffer.slice(buffer.indexOf(prompt) + prompt.length);
+          promptIndex++;
+        } else {
           break;
         }
       }
