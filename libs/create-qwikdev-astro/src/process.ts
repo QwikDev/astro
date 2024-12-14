@@ -145,27 +145,36 @@ export function $it(
       while (promptIndex < promptsCount) {
         const [prompt, input] = prompts[promptIndex];
         if (buffer.includes(prompt)) {
-          child.stdin.write(`${input}\n`);
+          child.stdin.write(`${input}\n`, (error) => {
+            if (error) {
+              reject(error);
+            }
+          });
           buffer = buffer.slice(buffer.indexOf(prompt) + prompt.length);
           promptIndex++;
         } else {
           break;
         }
       }
+
+      if (promptIndex === promptsCount) {
+        child.stdin.end();
+      }
     });
 
-    child.on("error", (err) => {
+    child.once("error", (err) => {
       reject(err);
     });
 
-    child.stdin.end();
-
-    child.on("close", (code) => {
+    const end = (code?: number) => {
       if (code !== 0) {
         reject(new Error(`Command failed with exit code ${code}`));
       } else {
         resolve(output);
       }
-    });
+    };
+
+    child.once("exit", end);
+    child.once("close", end);
   });
 }
