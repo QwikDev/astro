@@ -115,3 +115,43 @@ export const $pmX = async (executable: string, cwd: string) => {
     await $pmDlx(executable, cwd);
   }
 };
+
+export function $it(
+  command: string,
+  args: string[] = [],
+  interactions: Record<string, string> = {},
+  options: { cwd?: string } = {}
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, {
+      stdio: ["pipe", "pipe", "inherit"],
+      ...options
+    });
+
+    let output = "";
+
+    child.stdout.on("data", (data) => {
+      const chunk = data.toString();
+      output += chunk;
+      for (const [prompt, input] of Object.entries(interactions)) {
+        if (chunk.includes(prompt)) {
+          child.stdin.write(`${input}\n`);
+        }
+      }
+    });
+
+    child.on("error", (err) => {
+      reject(err);
+    });
+
+    child.stdin.end();
+
+    child.on("close", (code) => {
+      if (code !== 0) {
+        reject(new Error(`Command failed with exit code ${code}`));
+      } else {
+        resolve(output);
+      }
+    });
+  });
+}
