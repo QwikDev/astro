@@ -1,4 +1,5 @@
 import { type ChildProcess, exec, spawn } from "node:child_process";
+import ansiRegex from "ansi-regex";
 import which from "which";
 import { logError } from "./console";
 import { getPackageManager } from "./utils";
@@ -128,6 +129,8 @@ export function $it(
       ...options
     });
 
+    const cleanOutput = (data: string) => data.replace(ansiRegex(), "");
+
     let output = "";
     let buffer = "";
     const prompts = Object.entries(interactions);
@@ -136,7 +139,7 @@ export function $it(
 
     child.stdout.on("data", (data) => {
       const chunk = data.toString();
-      buffer += chunk;
+      buffer += cleanOutput(chunk);
       output += chunk;
 
       while (promptIndex < promptsCount) {
