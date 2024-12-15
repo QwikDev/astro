@@ -42,11 +42,47 @@
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
     },
+    "./app": {
+      "types": "./dist/app.d.ts",
+      "import": "./dist/app.js",
+      "require": "./dist/app.cjs",
+      "default": "./dist/app.js"
+    },
     "./cli": {
       "types": "./dist/cli.d.ts",
       "import": "./dist/cli.js",
       "require": "./dist/cli.cjs",
       "default": "./dist/cli.js"
+    },
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "import": "./dist/config.js",
+      "require": "./dist/config.cjs",
+      "default": "./dist/config.js"
+    },
+    "./console": {
+      "types": "./dist/console.d.ts",
+      "import": "./dist/console.js",
+      "require": "./dist/console.cjs",
+      "default": "./dist/console.js"
+    },
+    "./core": {
+      "types": "./dist/core.d.ts",
+      "import": "./dist/core.js",
+      "require": "./dist/core.cjs",
+      "default": "./dist/core.js"
+    },
+    "./process": {
+      "types": "./dist/process.d.ts",
+      "import": "./dist/process.js",
+      "require": "./dist/process.cjs",
+      "default": "./dist/process.js"
+    },
+    "./tester": {
+      "types": "./dist/tester.d.ts",
+      "import": "./dist/tester.js",
+      "require": "./dist/tester.cjs",
+      "default": "./dist/tester.js"
     },
     "./utils": {
       "types": "./dist/utils.d.ts",
