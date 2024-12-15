@@ -1,6 +1,6 @@
 import fs, { cpSync } from "node:fs";
 import path from "node:path";
-import { copySync, ensureDirSync } from "fs-extra";
+import { copySync, ensureDirSync } from "fs-extra/esm";
 import pkg from "../package.json";
 import {
   type Adapter,
