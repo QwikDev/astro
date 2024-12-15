@@ -1,5 +1,5 @@
-import ansiRegex from "ansi-regex";
 import { spawn } from "node-pty";
+import stripAnsi from "strip-ansi";
 
 export function $it(
   command: string,
@@ -17,15 +17,13 @@ export function $it(
       ...options
     });
 
-    const cleanOutput = (data: string) => data.replace(ansiRegex(), "");
-
     let output = "";
     const prompts = Object.entries(interactions);
     const promptsCount = prompts.length;
     let promptIndex = 0;
 
     shell.onData((data) => {
-      const chunk = cleanOutput(data);
+      const chunk = stripAnsi(data);
       output += data;
 
       for (let i = promptIndex; i < promptsCount; i++) {
