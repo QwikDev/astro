@@ -1,5 +1,6 @@
-import { type ChildProcess, exec, spawn } from "node:child_process";
+import { type ChildProcess, exec } from "node:child_process";
 import ansiRegex from "ansi-regex";
+import { spawn } from "cross-spawn";
 import which from "which";
 import { logError } from "./console";
 import { getPackageManager } from "./utils";
@@ -129,32 +130,34 @@ export function $it(
       ...options
     });
 
+    child.stdin.setDefaultEncoding("utf-8");
+
     const cleanOutput = (data: string) => data.replace(ansiRegex(), "");
 
     let output = "";
-    let buffer = "";
     const prompts = Object.entries(interactions);
     const promptsCount = prompts.length;
     let promptIndex = 0;
 
     child.stdout.on("data", (data) => {
       const chunk = data.toString();
-      buffer += cleanOutput(chunk);
+      const buffer = cleanOutput(chunk);
       output += chunk;
 
-      while (promptIndex < promptsCount) {
-        const [prompt, input] = prompts[promptIndex];
+      for (let i = promptIndex; i < promptsCount; i++) {
+        const [prompt, input] = prompts[i];
+
         if (buffer.includes(prompt)) {
+          child.stdin.cork();
           child.stdin.write(`${input}\n`, (error) => {
             if (error) {
               reject(error);
             }
           });
-          buffer = buffer.slice(buffer.indexOf(prompt) + prompt.length);
-          promptIndex++;
-        } else {
+          child.stdin.uncork();
           break;
         }
+        promptIndex++;
       }
 
       if (promptIndex === promptsCount) {
@@ -162,11 +165,13 @@ export function $it(
       }
     });
 
-    child.once("error", (err) => {
-      reject(err);
+    child.once("error", (error) => {
+      child.stdin.end();
+      reject(error);
     });
 
     const end = (code?: number) => {
+      child.stdin.end();
       if (code !== 0) {
         reject(new Error(`Command failed with exit code ${code}`));
       } else {
