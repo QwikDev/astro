@@ -24,6 +24,10 @@ export function $(
     const prompts = Object.entries(interactions);
     const promptsCount = prompts.length;
     let promptIndex = 0;
+    const commands = {
+      "Ctrl+C": "\u0003",
+      "Ctrl+D": "\u0004"
+    } as Record<string, string>;
 
     shell.onData((data) => {
       const output = stripAnsi(data);
@@ -31,9 +35,8 @@ export function $(
 
       for (let i = promptIndex; i < promptsCount; i++) {
         const [prompt, input] = prompts[i];
-
         if (output.includes(prompt)) {
-          shell.write(`${input}\n`);
+          shell.write(commands[input] ?? `${input}\n`);
           break;
         }
         promptIndex++;
