@@ -1,6 +1,7 @@
 import { type ChildProcess, exec } from "node:child_process";
 import ansiRegex from "ansi-regex";
 import { spawn } from "cross-spawn";
+import { spawn as ptySpawn } from "node-pty";
 import which from "which";
 import { logError } from "./console";
 import { getPackageManager } from "./utils";
@@ -125,12 +126,14 @@ export function $it(
   options: { cwd?: string } = {}
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, {
-      stdio: ["pipe", "pipe", "inherit"],
+    const shell = ptySpawn(command, args, {
+      name: "xterm-color",
+      cols: 80,
+      rows: 30,
+      cwd: process.cwd(),
+      env: process.env,
       ...options
     });
-
-    child.stdin.setDefaultEncoding("utf-8");
 
     const cleanOutput = (data: string) => data.replace(ansiRegex(), "");
 
@@ -139,47 +142,27 @@ export function $it(
     const promptsCount = prompts.length;
     let promptIndex = 0;
 
-    child.stdout.on("data", (data) => {
-      const chunk = data.toString();
-      const buffer = cleanOutput(chunk);
-      output += chunk;
+    shell.onData((data) => {
+      const chunk = cleanOutput(data);
+      output += data;
 
       for (let i = promptIndex; i < promptsCount; i++) {
         const [prompt, input] = prompts[i];
 
-        if (buffer.includes(prompt)) {
-          child.stdin.cork();
-          child.stdin.write(`${input}\n`, (error) => {
-            if (error) {
-              reject(error);
-            }
-          });
-          child.stdin.uncork();
+        if (chunk.includes(prompt)) {
+          shell.write(`${input}\n`);
           break;
         }
         promptIndex++;
       }
-
-      if (promptIndex === promptsCount) {
-        child.stdin.end();
-      }
     });
 
-    child.once("error", (error) => {
-      child.stdin.end();
-      reject(error);
-    });
-
-    const end = (code?: number) => {
-      child.stdin.end();
-      if (code !== 0) {
-        reject(new Error(`Command failed with exit code ${code}`));
+    shell.onExit(({ exitCode }) => {
+      if (exitCode !== 0) {
+        reject(new Error(`Command failed with exit code ${exitCode}`));
       } else {
         resolve(output);
       }
-    };
-
-    child.once("exit", end);
-    child.once("close", end);
+    });
   });
 }
