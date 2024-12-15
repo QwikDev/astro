@@ -14,6 +14,7 @@ export default defineConfig((options) => {
       "src/core.ts",
       "src/index.ts",
       "src/process.ts",
+      "src/pty.ts",
       "src/tester.ts"
     ]
   };

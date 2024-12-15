@@ -1,35 +1,38 @@
 import { spawn } from "node-pty";
 import stripAnsi from "strip-ansi";
 
-export function $it(
+export function $(
   command: string,
   args: string[] = [],
   interactions: Record<string, string> = {},
-  options: { cwd?: string } = {}
+  options = {
+    cwd: process.cwd(),
+    env: { ...process.env }
+  }
 ): Promise<string> {
   return new Promise((resolve, reject) => {
+    options.env.CI = "true";
+
     const shell = spawn(command, args, {
-      name: "xterm-color",
+      name: "xterm-256color",
       cols: 80,
       rows: 30,
-      cwd: process.cwd(),
-      env: process.env,
       ...options
     });
 
-    let output = "";
+    let stdout = "";
     const prompts = Object.entries(interactions);
     const promptsCount = prompts.length;
     let promptIndex = 0;
 
     shell.onData((data) => {
-      const chunk = stripAnsi(data);
-      output += data;
+      const output = stripAnsi(data);
+      stdout += output;
 
       for (let i = promptIndex; i < promptsCount; i++) {
         const [prompt, input] = prompts[i];
 
-        if (chunk.includes(prompt)) {
+        if (output.includes(prompt)) {
           shell.write(`${input}\n`);
           break;
         }
@@ -41,7 +44,7 @@ export function $it(
       if (exitCode !== 0) {
         reject(new Error(`Command failed with exit code ${exitCode}`));
       } else {
-        resolve(output);
+        resolve(stdout);
       }
     });
   });

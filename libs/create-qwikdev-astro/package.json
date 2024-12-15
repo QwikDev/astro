@@ -78,6 +78,12 @@
       "require": "./dist/process.cjs",
       "default": "./dist/process.js"
     },
+    "./pty": {
+      "types": "./dist/pty.d.ts",
+      "import": "./dist/pty.js",
+      "require": "./dist/pty.cjs",
+      "default": "./dist/pty.js"
+    },
     "./tester": {
       "types": "./dist/tester.d.ts",
       "import": "./dist/tester.js",
