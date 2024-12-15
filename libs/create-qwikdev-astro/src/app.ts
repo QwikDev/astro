@@ -2,15 +2,8 @@ import fs, { cpSync } from "node:fs";
 import path from "node:path";
 import { copySync, ensureDirSync } from "fs-extra/esm";
 import pkg from "../package.json";
-import {
-  type Adapter,
-  type Config,
-  type UserConfig,
-  defaultConfig,
-  defineConfig
-} from "./config";
-import { ensureBoolean, ensureString } from "./console";
-import { Program } from "./core";
+import { ensureString } from "./console";
+import { type Definition as BaseDefinition, Program } from "./core";
 import { $, $pmInstall, $pmX } from "./process";
 import {
   __dirname,
@@ -24,9 +17,42 @@ import {
   updatePackageName
 } from "./utils";
 
-export class Application extends Program<Config> {
+export type Definition = BaseDefinition & {
+  destination: string;
+  adapter?: Adapter;
+  force?: boolean;
+  install?: boolean;
+  biome?: boolean;
+  git?: boolean;
+  ci?: boolean;
+  new?: boolean;
+};
+
+export type UserDefinition = Partial<Definition>;
+
+export const defaultDefinition = {
+  destination: ".",
+  adapter: undefined,
+  force: undefined,
+  install: undefined,
+  biome: undefined,
+  git: undefined,
+  ci: undefined,
+  it: undefined,
+  yes: undefined,
+  no: undefined,
+  dryRun: undefined,
+  new: undefined
+} as const;
+
+export type Adapter = "node" | "deno" | "default";
+
+export function defineDefinition(definition: UserDefinition): Definition {
+  return { ...defaultDefinition, ...definition };
+}
+
+export class Application extends Program<Definition> {
   #packageManger = getPackageManager();
-  #config: UserConfig = defaultConfig;
 
   configure(): void {
     this.strict()
@@ -41,40 +67,40 @@ export class Application extends Program<Config> {
       )
       .argument("destination", {
         type: "string",
-        default: defaultConfig.destination,
+        default: defaultDefinition.destination,
         desc: "Directory of the project"
       })
       .argument("adapter", {
         type: "string",
-        default: defaultConfig.adapter,
+        default: defaultDefinition.adapter,
         desc: "Server adapter",
         choices: ["deno", "node"]
       })
       .option("force", {
         alias: "f",
         type: "boolean",
-        default: defaultConfig.force,
+        default: defaultDefinition.force,
         desc: "Overwrite target directory if it exists"
       })
       .option("install", {
         alias: "i",
         type: "boolean",
-        default: defaultConfig.install,
+        default: defaultDefinition.install,
         desc: "Install dependencies"
       })
       .option("biome", {
         type: "boolean",
-        default: defaultConfig.biome,
+        default: defaultDefinition.biome,
         desc: "Prefer Biome to ESLint/Prettier"
       })
       .option("git", {
         type: "boolean",
-        default: defaultConfig.git,
+        default: defaultDefinition.git,
         desc: "Initialize Git repository"
       })
       .option("ci", {
         type: "boolean",
-        default: defaultConfig.ci,
+        default: defaultDefinition.ci,
         desc: "Add CI workflow"
       })
       .example(
@@ -96,42 +122,38 @@ export class Application extends Program<Config> {
       .usage("npm create @qwikdev/astro [destination] [adapter] [...options]");
   }
 
-  async scanBoolean(message: string, initialValue?: boolean): Promise<boolean> {
-    return super.scanBoolean(
-      message,
-      initialValue,
-      this.#config.it,
-      this.#config.yes,
-      this.#config.no
-    );
-  }
-
-  async scanString(message: string, initialValue?: string): Promise<string> {
-    return super.scanString(message, initialValue, this.#config.it);
-  }
-
-  async scanChoice(
-    message: string,
-    options: { value: string; label: string }[],
-    initialValue?: string
-  ): Promise<string> {
-    return super.scanChoice(message, options, initialValue, this.#config.it);
-  }
-
-  async scanProjectDirectory(): Promise<string> {
+  async scanDestination(definition: Definition): Promise<string> {
     return this.scanString(
+      definition,
       `Where would you like to create your new project? ${this.gray(
         `(Use '.' or './' for current directory)`
       )}`,
-      this.#config.destination
+      definition.destination
     );
   }
 
-  async scanAdapter(): Promise<Adapter> {
+  async scanNew(definition: Definition): Promise<boolean> {
+    if (this.#outDir(definition.destination) === process.cwd()) {
+      return await this.scanBoolean(
+        definition,
+        "Do you want to add @QwikDev/astro to your existing project?",
+        definition.new
+      );
+    }
+
+    return !!definition.new;
+  }
+
+  async scanAdapter(definition: Definition): Promise<Adapter> {
     const adapter =
-      (this.#config.it &&
-        (await this.scanBoolean("Would you like to use a server adapter?", false)) &&
+      (definition.it &&
+        (await this.scanBoolean(
+          definition,
+          "Would you like to use a server adapter?",
+          false
+        )) &&
         (await this.scanChoice(
+          definition,
           "Which adapter do you prefer?",
           [
             {
@@ -143,7 +165,7 @@ export class Application extends Program<Config> {
               label: "Deno"
             }
           ],
-          this.#config.adapter
+          definition.adapter
         ))) ||
       "default";
 
@@ -152,75 +174,101 @@ export class Application extends Program<Config> {
     return adapter;
   }
 
-  async scanPreferBiome(): Promise<boolean> {
+  async scanPreferBiome(definition: Definition): Promise<boolean> {
     return this.scanBoolean(
+      definition,
       "Would you prefer Biome over ESLint/Prettier?",
-      this.#config.biome
+      definition.biome
     );
   }
 
-  async scanForce(outDir: string): Promise<boolean> {
+  async scanForce(definition: Definition, outDir: string): Promise<boolean> {
     return this.scanBoolean(
+      definition,
       `Directory "./${resolveRelativeDir(
         outDir
       )}" already exists and is not empty. What would you like to overwrite it?`,
-      this.#config.force
+      definition.force
     );
   }
 
-  async scanCI(): Promise<boolean> {
-    return this.scanBoolean("Would you like to add CI workflow?", this.#config.ci);
-  }
-
-  async scanInstall(): Promise<boolean> {
+  async scanCI(definition: Definition): Promise<boolean> {
     return this.scanBoolean(
-      `Would you like to install ${this.#packageManger} dependencies?`,
-      this.#config.install
+      definition,
+      "Would you like to add CI workflow?",
+      definition.ci
     );
   }
 
-  async scanGit(): Promise<boolean> {
-    return this.scanBoolean("Would you like to initialize Git?", this.#config.git);
+  async scanInstall(definition: Definition): Promise<boolean> {
+    return this.scanBoolean(
+      definition,
+      `Would you like to install ${this.#packageManger} dependencies?`,
+      definition.install
+    );
   }
 
-  parse(args: string[]): Config {
-    return defineConfig(super.parse(args));
+  async scanGit(definition: Definition): Promise<boolean> {
+    return this.scanBoolean(
+      definition,
+      "Would you like to initialize Git?",
+      definition.git
+    );
   }
 
-  async interact(args: Config): Promise<Config> {
-    if (!args.destination || args.destination === defaultConfig.destination) {
-      args.destination = await this.scanProjectDirectory();
+  #outDir(destination: string): string {
+    return resolveAbsoluteDir(destination.trim());
+  }
+
+  parse(args: string[]): Definition {
+    return defineDefinition(super.parse(args));
+  }
+
+  async interact(definition: Definition): Promise<Required<Definition>> {
+    if (
+      !definition.destination ||
+      definition.destination === defaultDefinition.destination
+    ) {
+      definition.destination = await this.scanDestination(definition);
     }
 
-    return args;
+    if (definition.adapter === defaultDefinition.adapter) {
+      definition.adapter = await this.scanAdapter(definition);
+    }
+
+    if (definition.biome === defaultDefinition.biome) {
+      definition.biome = await this.scanPreferBiome(definition);
+    }
+
+    if (definition.ci === defaultDefinition.ci) {
+      definition.ci = await this.scanCI(definition);
+    }
+
+    if (definition.install === defaultDefinition.install) {
+      definition.install = await this.scanInstall(definition);
+    }
+
+    if (definition.git === defaultDefinition.git) {
+      definition.git = await this.scanGit(definition);
+    }
+
+    return definition as Required<Definition>;
   }
 
-  async execute(args: Config): Promise<number> {
+  async execute(definition: Required<Definition>): Promise<number> {
     try {
       this.intro(`Let's create a ${this.bgBlue(" QwikDev/astro App ")} ✨`);
 
-      const destination = args.destination;
-
-      const outDir: string = resolveAbsoluteDir(destination.trim());
-      let add = false;
-
-      if (outDir === process.cwd()) {
-        add = await this.scanBoolean(
-          "Do you want to add @QwikDev/astro to your existing project?"
-        );
-        ensureBoolean(add);
-      }
-
-      if (add) {
-        await this.add(outDir);
+      if (definition.new) {
+        await this.add(definition);
       } else {
-        await this.create(outDir, destination);
+        await this.create(definition);
       }
 
-      await this.runCI(outDir);
-      const ranInstall = await this.runInstall(destination);
-      await this.runGitInit(outDir);
-      this.end(outDir, ranInstall);
+      await this.runCI(definition);
+      const ranInstall = await this.runInstall(definition);
+      await this.runGitInit(definition);
+      this.end(definition, ranInstall);
       return 0;
     } catch (err) {
       console.error("An error occurred during QwikDev/astro project creation:", err);
@@ -228,37 +276,37 @@ export class Application extends Program<Config> {
     }
   }
 
-  async add(outDir: string) {
+  async add(definition: Required<Definition>) {
     this.info("Adding @QwikDev/astro...");
     try {
-      await $pmX("astro add @qwikdev/astro", outDir);
+      await $pmX("astro add @qwikdev/astro", this.#outDir(definition.destination));
     } catch (e: any) {
       this.panic(`${e.message ?? e}: . Please try it manually.`);
     }
   }
 
-  async create(outDir: string, project: string) {
-    const adapter = await this.scanAdapter();
-    const preferBiome = await this.scanPreferBiome();
+  async create(definition: Required<Definition>) {
+    let starterKit = definition.adapter;
 
-    let starterKit = adapter;
-    if (preferBiome) {
+    if (definition.biome) {
       starterKit += "-biome";
     }
 
     const templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
-    await this.createProject(outDir);
-    this.copyTemplate(templatePath, outDir);
-    await this.updatePackageJson(project, outDir);
+    await this.createProject(definition);
+    this.copyTemplate(definition, templatePath);
+    await this.updatePackageJson(definition);
   }
 
-  async createProject(outDir: string): Promise<void> {
+  async createProject(definition: Definition): Promise<void> {
+    const outDir = this.#outDir(definition.destination);
+
     this.step(`Creating new project in ${this.bgBlue(` ${outDir} `)} ... 🐇`);
 
     if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
-      const force = await this.scanForce(outDir);
+      const force = await this.scanForce(definition, outDir);
       if (force) {
-        if (!this.#config.dryRun) {
+        if (!definition.dryRun) {
           await clearDir(outDir);
         }
       } else {
@@ -272,12 +320,15 @@ export class Application extends Program<Config> {
     }
   }
 
-  async updatePackageJson(projectAnswer: string, outDir: string) {
-    const defaultPackageName = sanitizePackageName(projectAnswer);
+  async updatePackageJson(definition: Definition) {
+    const defaultPackageName = sanitizePackageName(definition.destination);
     const packageName = await this.scanString(
+      definition,
       "What should be the name of this package?",
       defaultPackageName
     );
+
+    const outDir = this.#outDir(definition.destination);
 
     updatePackageName(packageName, outDir);
     this.info(`Updated package name to "${packageName}" 📦️`);
@@ -288,13 +339,11 @@ export class Application extends Program<Config> {
     }
   }
 
-  async runCI(outDir: string): Promise<void> {
-    const ci = await this.scanCI();
-
-    if (ci) {
+  async runCI(definition: Definition): Promise<void> {
+    if (definition.ci) {
       this.step("Adding CI workflow...");
 
-      if (!this.#config.dryRun) {
+      if (!definition.dryRun) {
         const starterCIPath = path.join(
           __dirname,
           "..",
@@ -306,20 +355,23 @@ export class Application extends Program<Config> {
               : "npm"
           }-ci.yml`
         );
-        const projectCIPath = path.join(outDir, ".github", "workflows", "ci.yml");
+        const projectCIPath = path.join(
+          this.#outDir(definition.destination),
+          ".github",
+          "workflows",
+          "ci.yml"
+        );
         cpSync(starterCIPath, projectCIPath, { force: true });
       }
     }
   }
 
-  async runInstall(projectAnswer: string): Promise<boolean> {
-    const runInstall = await this.scanInstall();
-
+  async runInstall(definition: Definition): Promise<boolean> {
     let ranInstall = false;
-    if (typeof runInstall !== "symbol" && runInstall) {
+    if (definition.install) {
       this.step("Installing dependencies...");
-      if (!this.#config.dryRun) {
-        await $pmInstall(projectAnswer);
+      if (!definition.dryRun) {
+        await $pmInstall(definition.destination);
       }
       ranInstall = true;
     }
@@ -327,10 +379,11 @@ export class Application extends Program<Config> {
     return ranInstall;
   }
 
-  async runGitInit(outDir: string): Promise<void> {
-    const initGit = await this.scanGit();
-    if (initGit) {
+  async runGitInit(definition: Definition): Promise<void> {
+    if (definition.git) {
       const s = this.spinner();
+
+      const outDir = this.#outDir(definition.destination);
 
       if (fs.existsSync(path.join(outDir, ".git"))) {
         this.info("Git has already been initialized before. Skipping...");
@@ -338,7 +391,7 @@ export class Application extends Program<Config> {
         s.start("Git initializing...");
 
         try {
-          if (!this.#config.dryRun) {
+          if (!definition.dryRun) {
             const res = [];
             res.push(await $("git", ["init"], outDir).install);
             res.push(await $("git", ["add", "-A"], outDir).install);
@@ -364,8 +417,9 @@ export class Application extends Program<Config> {
     }
   }
 
-  copyTemplate(templatePath: string, outDir: string): void {
-    if (!this.#config.dryRun) {
+  copyTemplate(definition: Definition, templatePath: string): void {
+    if (!definition.dryRun) {
+      const outDir = this.#outDir(definition.destination);
       try {
         ensureDirSync(outDir);
         copySync(templatePath, outDir);
@@ -375,7 +429,8 @@ export class Application extends Program<Config> {
     }
   }
 
-  end(outDir: string, ranInstall: boolean): void {
+  end(definition: Definition, ranInstall: boolean): void {
+    const outDir = this.#outDir(definition.destination);
     const isCwdDir = process.cwd() === outDir;
     const relativeProjectPath = resolveRelativeDir(outDir);
     const outString = [];

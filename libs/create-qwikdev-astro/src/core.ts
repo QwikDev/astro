@@ -130,14 +130,14 @@ export class Command {
   }
 }
 
-export type Config = {
+export type Definition = {
   it?: boolean;
   yes?: boolean;
   no?: boolean;
   dryRun?: boolean;
 };
 
-export abstract class Program<T extends Config> {
+export abstract class Program<T extends Definition> {
   #strict = false;
   #it = false;
   #yes = false;
@@ -272,27 +272,35 @@ export abstract class Program<T extends Config> {
     return this.aliases.values().toArray();
   }
 
-  abstract execute(input: T): number | Promise<number>;
+  abstract execute(definition: Required<T>): number | Promise<number>;
 
   /** @param args Pass here process.argv */
   async run(args = process.argv): Promise<number> {
-    let input = this.parse(hideBin(args));
+    let definition = this.parse(hideBin(args));
 
-    const it = this.#it && (input.it || args.length === 0);
+    const it = this.#it && (definition.it || args.length === 0);
 
     if (it) {
-      input = await this.interact(input);
+      definition = await this.interact(definition);
     }
 
-    this.validate(input);
+    this.validate(definition);
 
-    return await this.execute(input);
+    return await this.execute(definition);
   }
 
-  validate(input: T): asserts input is Required<T> {}
+  validate(definition: T): asserts definition is Required<T> {
+    for (const [name, value] of Object.entries(definition)) {
+      if (value === undefined) {
+        this.panic(`${name} cannot be undefined`);
+      }
+    }
+  }
 
-  interact(args: T): T | Promise<T> {
-    return args;
+  async interact(definition: T): Promise<Required<T>> {
+    this.validate(definition);
+
+    return definition;
   }
 
   parse(args: string[]): T {
@@ -366,32 +374,34 @@ export abstract class Program<T extends Config> {
   }
 
   async scanBoolean(
+    definition: T,
     message: string,
-    initialValue?: boolean,
-    it = false,
-    yes = false,
-    no = false
+    initialValue?: boolean
   ): Promise<boolean> {
     return scanBoolean(
       message,
       initialValue,
-      this.#it && it,
-      this.#yes && yes,
-      this.#no && no
+      this.#it && definition.it,
+      this.#yes && definition.yes,
+      this.#no && definition.no
     );
   }
 
-  async scanString(message: string, initialValue?: string, it = false): Promise<string> {
-    return scanString(message, initialValue, this.#it && it);
+  async scanString(
+    definition: T,
+    message: string,
+    initialValue?: string
+  ): Promise<string> {
+    return scanString(message, initialValue, this.#it && definition.it);
   }
 
   async scanChoice(
+    definition: T,
     message: string,
     options: { value: string; label: string }[],
-    initialValue?: string,
-    it = false
+    initialValue?: string
   ): Promise<string> {
-    return scanChoice(message, options, initialValue, this.#it && it);
+    return scanChoice(message, options, initialValue, this.#it && definition.it);
   }
 
   panic(message: string): never {

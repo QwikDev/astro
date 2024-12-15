@@ -9,7 +9,6 @@ export default defineConfig((options) => {
     entry: [
       "src/app.ts",
       "src/cli.ts",
-      "src/config.ts",
       "src/console.ts",
       "src/core.ts",
       "src/index.ts",

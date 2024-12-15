@@ -54,12 +54,6 @@
       "require": "./dist/cli.cjs",
       "default": "./dist/cli.js"
     },
-    "./config": {
-      "types": "./dist/config.d.ts",
-      "import": "./dist/config.js",
-      "require": "./dist/config.cjs",
-      "default": "./dist/config.js"
-    },
     "./console": {
       "types": "./dist/console.d.ts",
       "import": "./dist/console.js",
