@@ -8,7 +8,7 @@
     "check": "tsc --noEmit",
     "build": "pnpm check && tsup-node --env.NODE_ENV production",
     "start": "tsup-node --env.NODE_ENV development --watch",
-    "test": "tsm bin/test.ts"
+    "test": "node --loader tsm --enable-source-maps bin/test.ts"
   },
   "contributors": [
     {
