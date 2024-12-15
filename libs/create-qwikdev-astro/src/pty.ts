@@ -20,6 +20,11 @@ export function $(
       ...options
     });
 
+    const timeout = setTimeout(() => {
+      shell.kill("SIGKILL");
+      console.error("Process killed due to timeout");
+    }, 5000);
+
     let stdout = "";
     const prompts = Object.entries(interactions);
     const promptsCount = prompts.length;
@@ -44,6 +49,7 @@ export function $(
     });
 
     shell.onExit(({ exitCode }) => {
+      clearTimeout(timeout);
       if (exitCode !== 0) {
         reject(new Error(`Command failed with exit code ${exitCode}`));
       } else {
