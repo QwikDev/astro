@@ -272,7 +272,7 @@ export abstract class Program<T extends Definition> {
     return this.aliases.values().toArray();
   }
 
-  abstract execute(definition: Required<T>): number | Promise<number>;
+  abstract execute(definition: T): number | Promise<number>;
 
   /** @param args Pass here process.argv */
   async run(args = process.argv): Promise<number> {
@@ -289,15 +289,17 @@ export abstract class Program<T extends Definition> {
     return await this.execute(definition);
   }
 
-  validate(definition: T): asserts definition is Required<T> {
+  validate(definition: T): asserts definition is T {
+    /*
     for (const [name, value] of Object.entries(definition)) {
       if (value === undefined) {
         this.panic(`${name} cannot be undefined`);
       }
     }
+    */
   }
 
-  async interact(definition: T): Promise<Required<T>> {
+  async interact(definition: T): Promise<T> {
     this.validate(definition);
 
     return definition;

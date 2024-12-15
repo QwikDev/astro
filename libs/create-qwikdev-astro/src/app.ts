@@ -255,7 +255,7 @@ export class Application extends Program<Definition> {
     return definition as Required<Definition>;
   }
 
-  async execute(definition: Required<Definition>): Promise<number> {
+  async execute(definition: Definition): Promise<number> {
     try {
       this.intro(`Let's create a ${this.bgBlue(" QwikDev/astro App ")} ✨`);
 
@@ -276,7 +276,7 @@ export class Application extends Program<Definition> {
     }
   }
 
-  async add(definition: Required<Definition>) {
+  async add(definition: Definition) {
     this.info("Adding @QwikDev/astro...");
     try {
       await $pmX("astro add @qwikdev/astro", this.#outDir(definition.destination));
@@ -285,8 +285,8 @@ export class Application extends Program<Definition> {
     }
   }
 
-  async create(definition: Required<Definition>) {
-    let starterKit = definition.adapter;
+  async create(definition: Definition) {
+    let starterKit = definition.adapter ?? "default";
 
     if (definition.biome) {
       starterKit += "-biome";
