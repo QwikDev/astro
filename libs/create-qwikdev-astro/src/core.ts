@@ -279,6 +279,8 @@ export abstract class Program<T extends Config> {
   parse(args: string[]): T {
     const _yargs = yargs(args);
 
+    _yargs.scriptName(this.name);
+
     if (this.#strict) {
       _yargs.strict();
     }
