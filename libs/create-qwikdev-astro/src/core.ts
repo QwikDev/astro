@@ -149,7 +149,11 @@ export abstract class Program<T extends Config> {
   constructor(
     readonly name: string,
     readonly version: string
-  ) {}
+  ) {
+    this.configure();
+  }
+
+  configure(): void {}
 
   addCommand(signature: string, description: string): Command {
     const _command = new Command(signature, description);
@@ -268,12 +272,27 @@ export abstract class Program<T extends Config> {
     return this.aliases.values().toArray();
   }
 
-  /** @param args Pass here process.argv.slice(2) */
-  abstract execute(args: string[]): number | Promise<number>;
+  abstract execute(input: T): number | Promise<number>;
 
   /** @param args Pass here process.argv */
   async run(args = process.argv): Promise<number> {
-    return await this.execute(hideBin(args));
+    let input = this.parse(hideBin(args));
+
+    const it = this.#it && (input.it || args.length === 0);
+
+    if (it) {
+      input = await this.interact(input);
+    }
+
+    this.validate(input);
+
+    return await this.execute(input);
+  }
+
+  validate(input: T): asserts input is Required<T> {}
+
+  interact(args: T): T | Promise<T> {
+    return args;
   }
 
   parse(args: string[]): T {

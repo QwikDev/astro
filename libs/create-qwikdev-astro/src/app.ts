@@ -28,6 +28,74 @@ export class Application extends Program<Config> {
   #packageManger = getPackageManager();
   #config: UserConfig = defaultConfig;
 
+  configure(): void {
+    this.strict()
+      .alias("h", "help")
+      .yes()
+      .no()
+      .it()
+      .dryRun()
+      .command(
+        "* [destination] [adapter]",
+        "Create a new project powered by QwikDev/astro"
+      )
+      .argument("destination", {
+        type: "string",
+        default: defaultConfig.destination,
+        desc: "Directory of the project"
+      })
+      .argument("adapter", {
+        type: "string",
+        default: defaultConfig.adapter,
+        desc: "Server adapter",
+        choices: ["deno", "node"]
+      })
+      .option("force", {
+        alias: "f",
+        type: "boolean",
+        default: defaultConfig.force,
+        desc: "Overwrite target directory if it exists"
+      })
+      .option("install", {
+        alias: "i",
+        type: "boolean",
+        default: defaultConfig.install,
+        desc: "Install dependencies"
+      })
+      .option("biome", {
+        type: "boolean",
+        default: defaultConfig.biome,
+        desc: "Prefer Biome to ESLint/Prettier"
+      })
+      .option("git", {
+        type: "boolean",
+        default: defaultConfig.git,
+        desc: "Initialize Git repository"
+      })
+      .option("ci", {
+        type: "boolean",
+        default: defaultConfig.ci,
+        desc: "Add CI workflow"
+      })
+      .example(
+        "npm create @qwikdev/astro@latest",
+        "Create a project with default options"
+      )
+      .example(
+        "npm create @qwikdev/astro@latest ./qwik-astro-app",
+        "Create a project in a specific directory"
+      )
+      .example(
+        "npm create @qwikdev/astro@latest ./qwik-astro-app node",
+        "Create a project using a server adapter"
+      )
+      .example(
+        "npm create @qwikdev/astro@latest ./qwik-astro-app node --it",
+        "Create a project in interactive command mode"
+      )
+      .usage("npm create @qwikdev/astro [destination] [adapter] [...options]");
+  }
+
   async scanBoolean(message: string, initialValue?: boolean): Promise<boolean> {
     return super.scanBoolean(
       message,
@@ -55,7 +123,7 @@ export class Application extends Program<Config> {
       `Where would you like to create your new project? ${this.gray(
         `(Use '.' or './' for current directory)`
       )}`,
-      this.#config.project
+      this.#config.destination
     );
   }
 
@@ -115,16 +183,25 @@ export class Application extends Program<Config> {
     return this.scanBoolean("Would you like to initialize Git?", this.#config.git);
   }
 
-  async execute(args: string[]): Promise<number> {
-    this.#config = defineConfig(this.parse(args));
-    this.#config.it = this.#config.it || args.length === 0;
+  parse(args: string[]): Config {
+    return defineConfig(super.parse(args));
+  }
 
+  async interact(args: Config): Promise<Config> {
+    if (!args.destination || args.destination === defaultConfig.destination) {
+      args.destination = await this.scanProjectDirectory();
+    }
+
+    return args;
+  }
+
+  async execute(args: Config): Promise<number> {
     try {
       this.intro(`Let's create a ${this.bgBlue(" QwikDev/astro App ")} ✨`);
 
-      const projectAnswer = await this.scanProjectDirectory();
+      const destination = args.destination;
 
-      const outDir: string = resolveAbsoluteDir(projectAnswer.trim());
+      const outDir: string = resolveAbsoluteDir(destination.trim());
       let add = false;
 
       if (outDir === process.cwd()) {
@@ -137,11 +214,11 @@ export class Application extends Program<Config> {
       if (add) {
         await this.add(outDir);
       } else {
-        await this.create(outDir, projectAnswer);
+        await this.create(outDir, destination);
       }
 
       await this.runCI(outDir);
-      const ranInstall = await this.runInstall(projectAnswer);
+      const ranInstall = await this.runInstall(destination);
       await this.runGitInit(outDir);
       this.end(outDir, ranInstall);
       return 0;
@@ -329,67 +406,8 @@ export class Application extends Program<Config> {
   }
 }
 
-const app: Application = new Application(pkg.name, pkg.version);
+export function app(name = pkg.name, version = pkg.version): Application {
+  return new Application(name, version);
+}
 
-app
-  .strict()
-  .alias("h", "help")
-  .yes()
-  .no()
-  .it()
-  .dryRun()
-  .command("* [project] [adapter]", "Create a new project powered by QwikDev/astro")
-  .argument("project", {
-    type: "string",
-    default: defaultConfig.project,
-    desc: "Directory of the project"
-  })
-  .argument("adapter", {
-    type: "string",
-    default: defaultConfig.adapter,
-    desc: "Server adapter",
-    choices: ["deno", "node"]
-  })
-  .option("force", {
-    alias: "f",
-    type: "boolean",
-    default: defaultConfig.force,
-    desc: "Overwrite target directory if it exists"
-  })
-  .option("install", {
-    alias: "i",
-    type: "boolean",
-    default: defaultConfig.install,
-    desc: "Install dependencies"
-  })
-  .option("biome", {
-    type: "boolean",
-    default: defaultConfig.biome,
-    desc: "Prefer Biome to ESLint/Prettier"
-  })
-  .option("git", {
-    type: "boolean",
-    default: defaultConfig.git,
-    desc: "Initialize Git repository"
-  })
-  .option("ci", {
-    type: "boolean",
-    default: defaultConfig.ci,
-    desc: "Add CI workflow"
-  })
-  .example("npm create @qwikdev/astro@latest", "Create a project with default options")
-  .example(
-    "npm create @qwikdev/astro@latest ./qwik-astro-app",
-    "Create a project in a specific directory"
-  )
-  .example(
-    "npm create @qwikdev/astro@latest ./qwik-astro-app node",
-    "Create a project using a server adapter"
-  )
-  .example(
-    "npm create @qwikdev/astro@latest ./qwik-astro-app node --it",
-    "Create a project in interactive command mode"
-  )
-  .usage("npm create @qwikdev/astro [project] [adapter] [...options]");
-
-export default app;
+export default app();

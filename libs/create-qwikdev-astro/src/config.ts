@@ -1,5 +1,5 @@
 export type Config = {
-  project: string;
+  destination: string;
   adapter?: "deno" | "node";
   force?: boolean;
   install?: boolean;
@@ -15,7 +15,7 @@ export type Config = {
 export type UserConfig = Partial<Config>;
 
 export const defaultConfig = {
-  project: ".",
+  destination: ".",
   adapter: undefined,
   force: undefined,
   install: undefined,
