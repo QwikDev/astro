@@ -242,10 +242,6 @@ export class Application extends Program<Definition> {
       definition.adapter = await this.scanAdapter(definition);
     }
 
-    if (definition.force === defaultDefinition.force) {
-      definition.force = await this.scanForce(definition);
-    }
-
     if (definition.biome === defaultDefinition.biome) {
       definition.biome = await this.scanPreferBiome(definition);
     }
@@ -267,10 +263,9 @@ export class Application extends Program<Definition> {
 
   async execute(definition: Definition): Promise<number> {
     try {
-      await this.start(definition);
+      const ranInstall = await this.start(definition);
       await this.updatePackageJson(definition);
       await this.runCI(definition);
-      const ranInstall = await this.runInstall(definition);
       await this.runGitInit(definition);
       this.end(definition, ranInstall);
       return 0;
@@ -299,9 +294,17 @@ export class Application extends Program<Definition> {
     const outDir = this.#outDir(definition.destination);
 
     if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
+      await this.scanAdd(definition);
+
       if (definition.add) {
         await this.add(definition);
-      } else if (definition.force) {
+
+        return;
+      }
+
+      await this.scanForce(definition);
+
+      if (definition.force) {
         if (!definition.dryRun) {
           await clearDir(outDir);
 
@@ -325,6 +328,53 @@ export class Application extends Program<Definition> {
         process.exit(1);
       }
     }
+  }
+
+  async start(definition: Definition): Promise<boolean> {
+    this.intro(`Let's create a ${this.bgBlue(" QwikDev/astro App ")} ✨`);
+
+    let ranInstall: boolean;
+
+    if (definition.add) {
+      ranInstall = await this.runInstall(definition);
+      await this.add(definition);
+    } else {
+      await this.create(definition);
+      ranInstall = await this.runInstall(definition);
+    }
+
+    return ranInstall;
+  }
+
+  end(definition: Definition, ranInstall: boolean): void {
+    const outDir = this.#outDir(definition.destination);
+    const isCwdDir = process.cwd() === outDir;
+    const relativeProjectPath = resolveRelativeDir(outDir);
+    const outString = [];
+
+    if (isCwdDir) {
+      outString.push(`🦄 ${this.bgMagenta(" Success! ")}`);
+    } else {
+      outString.push(
+        `🦄 ${this.bgMagenta(" Success! ")} ${this.cyan(
+          "Project created in"
+        )} ${this.bold(this.magenta(relativeProjectPath))} ${this.cyan("directory")}`
+      );
+    }
+    outString.push("");
+
+    outString.push(`🐰 ${this.cyan("Next steps:")}`);
+    if (!isCwdDir) {
+      outString.push(`   cd ${relativeProjectPath}`);
+    }
+    if (!ranInstall) {
+      outString.push(`   ${getPackageManager()} install`);
+    }
+    outString.push(`   ${getPackageManager()} start`);
+
+    this.note(outString.join("\n"), "Ready to start 🚀");
+
+    this.outro("Happy coding! 💻🎉");
   }
 
   async updatePackageJson(definition: Definition) {
@@ -434,47 +484,6 @@ export class Application extends Program<Definition> {
         this.error(this.red(`Template copy failed: ${error}`));
       }
     }
-  }
-
-  async start(definition: Definition): Promise<void> {
-    this.intro(`Let's create a ${this.bgBlue(" QwikDev/astro App ")} ✨`);
-
-    if (definition.add) {
-      await this.add(definition);
-    } else {
-      await this.create(definition);
-    }
-  }
-
-  end(definition: Definition, ranInstall: boolean): void {
-    const outDir = this.#outDir(definition.destination);
-    const isCwdDir = process.cwd() === outDir;
-    const relativeProjectPath = resolveRelativeDir(outDir);
-    const outString = [];
-
-    if (isCwdDir) {
-      outString.push(`🦄 ${this.bgMagenta(" Success! ")}`);
-    } else {
-      outString.push(
-        `🦄 ${this.bgMagenta(" Success! ")} ${this.cyan(
-          "Project created in"
-        )} ${this.bold(this.magenta(relativeProjectPath))} ${this.cyan("directory")}`
-      );
-    }
-    outString.push("");
-
-    outString.push(`🐰 ${this.cyan("Next steps:")}`);
-    if (!isCwdDir) {
-      outString.push(`   cd ${relativeProjectPath}`);
-    }
-    if (!ranInstall) {
-      outString.push(`   ${getPackageManager()} install`);
-    }
-    outString.push(`   ${getPackageManager()} start`);
-
-    this.note(outString.join("\n"), "Ready to start 🚀");
-
-    this.outro("Happy coding! 💻🎉");
   }
 }
 
