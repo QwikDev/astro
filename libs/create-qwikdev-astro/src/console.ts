@@ -320,35 +320,50 @@ export function ensureString<T extends string>(
   input: any,
   validate?: (v: string) => v is T
 ): asserts input is T {
-  ensure(input, validate ?? isString);
+  ensureType(input, validate ? (v) => isString(v) && validate(v) : isString, "string");
 }
 
 export function ensureNumber<T extends number>(
   input: any,
   validate?: (v: number) => v is T
 ): asserts input is T {
-  ensure(input, validate ?? isNumber);
+  ensureType(input, validate ? (v) => isNumber(v) && validate(v) : isNumber, "number");
 }
 
 export function ensureBoolean(input: any): asserts input is boolean {
-  ensure(input, isBoolean);
+  ensureType(input, isBoolean, "boolean");
 }
 
 export function ensureTrue(input: any): asserts input is true {
-  ensure(input, (v) => v === true);
+  ensureType(input, (v) => v === true, "true");
 }
 
 export function ensureFalse(input: any): asserts input is false {
-  ensure(input, (v) => v === false);
+  ensureType(input, (v) => v === false, "false");
 }
 
-export function ensure<T, U>(input: T, validate: (v: T) => U): asserts input is T {
+export function ensureType<T, U>(
+  input: any,
+  validate: (v: T) => U,
+  expected: string
+): asserts input is T {
+  ensure(input, validate, expected, typeof input);
+}
+
+export function ensure<T, U>(
+  input: T,
+  validate: (v: T) => U,
+  expected?: any,
+  provided?: any
+): asserts input is T {
   if (isCanceled(input)) {
     panic("Operation canceled.");
   }
 
   if (!validate(input)) {
-    panic("Invalid input.");
+    panic(
+      `Invalid input${expected ? `: ${expected} expected` : ""}${provided ? `, ${provided} provided` : ""}.`
+    );
   }
 }
 

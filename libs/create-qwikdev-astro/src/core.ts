@@ -8,6 +8,8 @@ import {
   background,
   cancel,
   color,
+  ensureBoolean,
+  ensureString,
   intro,
   logError,
   logInfo,
@@ -145,6 +147,7 @@ export abstract class Program<T extends Definition> {
   #dryRun = false;
   readonly commands = new Set<Command>();
   readonly aliases = new Set<Alias>();
+  readonly interactions = new Map<string, unknown>();
 
   constructor(
     readonly name: string,
@@ -299,6 +302,12 @@ export abstract class Program<T extends Definition> {
     */
   }
 
+  intercept(prompt: string, input: string): this {
+    this.interactions.set(prompt, input);
+
+    return this;
+  }
+
   async interact(definition: T): Promise<T> {
     this.validate(definition);
 
@@ -380,6 +389,14 @@ export abstract class Program<T extends Definition> {
     message: string,
     initialValue?: boolean
   ): Promise<boolean> {
+    if (this.interactions.has(message)) {
+      const value = this.interactions.get(message);
+
+      ensureBoolean(value);
+
+      return value;
+    }
+
     return scanBoolean(
       message,
       initialValue,
@@ -394,6 +411,14 @@ export abstract class Program<T extends Definition> {
     message: string,
     initialValue?: string
   ): Promise<string> {
+    if (this.interactions.has(message)) {
+      const value = this.interactions.get(message);
+
+      ensureString(value);
+
+      return value;
+    }
+
     return scanString(message, initialValue, this.#it && definition.it);
   }
 
@@ -403,6 +428,17 @@ export abstract class Program<T extends Definition> {
     options: { value: string; label: string }[],
     initialValue?: string
   ): Promise<string> {
+    if (this.interactions.has(message)) {
+      const value = this.interactions.get(message);
+
+      ensureString(
+        value,
+        (v): v is string => options.find((o) => o.value === v) !== undefined
+      );
+
+      return value;
+    }
+
     return scanChoice(message, options, initialValue, this.#it && definition.it);
   }
 
