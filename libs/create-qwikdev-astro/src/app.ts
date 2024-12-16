@@ -25,7 +25,7 @@ export type Definition = BaseDefinition & {
   biome?: boolean;
   git?: boolean;
   ci?: boolean;
-  new?: boolean;
+  add?: boolean;
 };
 
 export type UserDefinition = Partial<Definition>;
@@ -42,7 +42,7 @@ export const defaultDefinition = {
   yes: undefined,
   no: undefined,
   dryRun: undefined,
-  new: undefined
+  add: undefined
 } as const;
 
 export type Adapter = "node" | "deno" | "default";
@@ -75,6 +75,12 @@ export class Application extends Program<Definition> {
         default: defaultDefinition.adapter,
         desc: "Server adapter",
         choices: ["deno", "node"]
+      })
+      .option("add", {
+        alias: "a",
+        type: "boolean",
+        default: defaultDefinition.add,
+        desc: "Add QwikDev/astro to existing project"
       })
       .option("force", {
         alias: "f",
@@ -132,16 +138,16 @@ export class Application extends Program<Definition> {
     );
   }
 
-  async scanNew(definition: Definition): Promise<boolean> {
+  async scanAdd(definition: Definition): Promise<boolean> {
     if (this.#outDir(definition.destination) === process.cwd()) {
       return await this.scanBoolean(
         definition,
         "Do you want to add @QwikDev/astro to your existing project?",
-        definition.new
+        definition.add
       );
     }
 
-    return !!definition.new;
+    return !!definition.add;
   }
 
   async scanAdapter(definition: Definition): Promise<Adapter> {
@@ -182,11 +188,11 @@ export class Application extends Program<Definition> {
     );
   }
 
-  async scanForce(definition: Definition, outDir: string): Promise<boolean> {
+  async scanForce(definition: Definition): Promise<boolean> {
     return this.scanBoolean(
       definition,
       `Directory "./${resolveRelativeDir(
-        outDir
+        this.#outDir(definition.destination)
       )}" already exists and is not empty. What would you like to overwrite it?`,
       definition.force
     );
@@ -236,6 +242,10 @@ export class Application extends Program<Definition> {
       definition.adapter = await this.scanAdapter(definition);
     }
 
+    if (definition.force === defaultDefinition.force) {
+      definition.force = await this.scanForce(definition);
+    }
+
     if (definition.biome === defaultDefinition.biome) {
       definition.biome = await this.scanPreferBiome(definition);
     }
@@ -257,14 +267,8 @@ export class Application extends Program<Definition> {
 
   async execute(definition: Definition): Promise<number> {
     try {
-      this.intro(`Let's create a ${this.bgBlue(" QwikDev/astro App ")} ✨`);
-
-      if (definition.new) {
-        await this.add(definition);
-      } else {
-        await this.create(definition);
-      }
-
+      await this.start(definition);
+      await this.updatePackageJson(definition);
       await this.runCI(definition);
       const ranInstall = await this.runInstall(definition);
       await this.runGitInit(definition);
@@ -292,22 +296,25 @@ export class Application extends Program<Definition> {
       starterKit += "-biome";
     }
 
-    const templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
-    await this.createProject(definition);
-    this.copyTemplate(definition, templatePath);
-    await this.updatePackageJson(definition);
-  }
-
-  async createProject(definition: Definition): Promise<void> {
     const outDir = this.#outDir(definition.destination);
 
-    this.step(`Creating new project in ${this.bgBlue(` ${outDir} `)} ... 🐇`);
-
     if (fs.existsSync(outDir) && fs.readdirSync(outDir).length > 0) {
-      const force = await this.scanForce(definition, outDir);
-      if (force) {
+      if (definition.add) {
+        await this.add(definition);
+      } else if (definition.force) {
         if (!definition.dryRun) {
           await clearDir(outDir);
+
+          const templatePath = path.join(
+            __dirname,
+            "..",
+            "stubs",
+            "templates",
+            starterKit
+          );
+
+          this.step(`Creating new project in ${this.bgBlue(` ${outDir} `)} ... 🐇`);
+          this.copyTemplate(definition, templatePath);
         }
       } else {
         this.error(`Directory "${outDir}" already exists.`);
@@ -426,6 +433,16 @@ export class Application extends Program<Definition> {
       } catch (error) {
         this.error(this.red(`Template copy failed: ${error}`));
       }
+    }
+  }
+
+  async start(definition: Definition): Promise<void> {
+    this.intro(`Let's create a ${this.bgBlue(" QwikDev/astro App ")} ✨`);
+
+    if (definition.add) {
+      await this.add(definition);
+    } else {
+      await this.create(definition);
     }
   }
 
