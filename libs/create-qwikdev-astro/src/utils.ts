@@ -109,11 +109,20 @@ function validatePackageName(name: string): string {
   return name;
 }
 
-export function updatePackageName(newName: string, dir = __dirname): void {
+export function getPackageJson(dir: string): Record<string, any> {
   const packageJsonPath = getPackageJsonPath(dir);
-  const packageJson = JSON.parse(fileGetContents(packageJsonPath));
+
+  return JSON.parse(fileGetContents(packageJsonPath));
+}
+
+export function setPackageJson(dir: string, json: Record<string, any>) {
+  filePutContents(getPackageJsonPath(dir), JSON.stringify(json, null, 2));
+}
+
+export function updatePackageName(newName: string, dir = __dirname): void {
   const cleanedName = validatePackageName(newName);
+  const packageJson = getPackageJson(dir);
 
   packageJson.name = cleanedName;
-  filePutContents(packageJsonPath, JSON.stringify(packageJson, null, 2));
+  setPackageJson(dir, packageJson);
 }

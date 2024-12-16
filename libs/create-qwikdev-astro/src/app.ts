@@ -8,6 +8,7 @@ import { $, $pmInstall, $pmX } from "./process";
 import {
   __dirname,
   clearDir,
+  getPackageJson,
   getPackageManager,
   pmRunCommand,
   replacePackageJsonRunCommand,
@@ -379,13 +380,13 @@ export class Application extends Program<Definition> {
 
   async updatePackageJson(definition: Definition) {
     const defaultPackageName = sanitizePackageName(definition.destination);
+    const outDir = this.#outDir(definition.destination);
+
     const packageName = await this.scanString(
       definition,
       "What should be the name of this package?",
-      defaultPackageName
+      getPackageJson(outDir).name ?? defaultPackageName
     );
-
-    const outDir = this.#outDir(definition.destination);
 
     updatePackageName(packageName, outDir);
     this.info(`Updated package name to "${packageName}" 📦️`);
