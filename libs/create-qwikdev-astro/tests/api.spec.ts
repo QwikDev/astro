@@ -6,14 +6,17 @@ import { ProgramTester } from "../src/tester";
 const app = new Application(name, version);
 const tester = new ProgramTester(app);
 
-test.group(`${name}@${version} API testing`, () => {
+test.group(`${name}@${version}`, () => {
   test("constructor", ({ assert }) => {
     assert.equal(app.name, name);
     assert.equal(app.version, version);
   });
+});
 
-  test("default definition", ({ assert }) => {
-    const definition = tester.parse([]);
+test.group("default definition", () => {
+  const definition = tester.parse([]);
+
+  test("keys", ({ assert }) => {
     assert.isTrue(
       definition.has(
         "destination",
@@ -26,45 +29,68 @@ test.group(`${name}@${version} API testing`, () => {
         "add"
       )
     );
+  });
 
+  test("destination", ({ assert }) => {
     assert.isTrue(definition.get("destination").isString());
     assert.isTrue(definition.get("destination").equals("."));
     assert.isTrue(definition.get("destination").equals(defaultDefinition.destination));
+  });
 
+  test("adapter", ({ assert }) => {
     assert.isTrue(definition.get("adapter").isUndefined());
     assert.isTrue(definition.get("adapter").equals(defaultDefinition.adapter));
+  });
 
+  test("force", ({ assert }) => {
     assert.isTrue(definition.get("force").isUndefined());
     assert.isTrue(definition.get("force").equals(defaultDefinition.force));
+  });
 
+  test("install", ({ assert }) => {
     assert.isTrue(definition.get("install").isUndefined());
     assert.isTrue(definition.get("install").equals(defaultDefinition.install));
+  });
 
+  test("biome", ({ assert }) => {
     assert.isTrue(definition.get("biome").isUndefined());
     assert.isTrue(definition.get("biome").equals(defaultDefinition.biome));
+  });
 
+  test("git", ({ assert }) => {
     assert.isTrue(definition.get("git").isUndefined());
     assert.isTrue(definition.get("git").equals(defaultDefinition.git));
+  });
 
+  test("ci", ({ assert }) => {
     assert.isTrue(definition.get("ci").isUndefined());
     assert.isTrue(definition.get("ci").equals(defaultDefinition.ci));
+  });
 
+  test("add", ({ assert }) => {
     assert.isTrue(definition.get("add").isUndefined());
     assert.isTrue(definition.get("add").equals(defaultDefinition.add));
   });
+});
 
-  test("arguments", ({ assert }) => {
+test.group("arguments", () => {
+  test("no argument", ({ assert }) => {
     let definition = tester.parse([]);
+
     assert.isTrue(definition.get("destination").isString());
     assert.isTrue(definition.get("destination").equals("."));
     assert.isTrue(definition.get("adapter").isUndefined());
+  });
 
-    definition = tester.parse(["qapp"]);
+  test("one argument", ({ assert }) => {
+    const definition = tester.parse(["qapp"]);
     assert.isTrue(definition.get("destination").isString());
     assert.isTrue(definition.get("destination").equals("qapp"));
     assert.isTrue(definition.get("adapter").isUndefined());
+  });
 
-    definition = tester.parse(["my-qwik-astro-app", "node"]);
+  test("two arguments", ({ assert }) => {
+    let definition = tester.parse(["my-qwik-astro-app", "node"]);
     assert.isTrue(definition.get("destination").equals("my-qwik-astro-app"));
     assert.isTrue(definition.get("adapter").isString());
     assert.isTrue(definition.get("adapter").equals("node"));
@@ -73,7 +99,9 @@ test.group(`${name}@${version} API testing`, () => {
     assert.isTrue(definition.get("adapter").isString());
     assert.isTrue(definition.get("adapter").equals("deno"));
   });
+});
 
+test.group("options", () => {
   test("yes", ({ assert }) => {
     const definition = tester.parse(["--yes"]);
     assert.isTrue(definition.get("yes").isBoolean());
