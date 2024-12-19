@@ -29,6 +29,7 @@ export type Definition = BaseDefinition & {
   add?: boolean;
 };
 
+export type EnsureRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
 export type UserDefinition = Partial<Definition>;
 
 export const defaultDefinition = {
