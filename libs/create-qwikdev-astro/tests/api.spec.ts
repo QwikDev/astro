@@ -106,50 +106,70 @@ test.group("options", () => {
     let definition = tester.parse(["--yes"]);
     assert.isTrue(definition.get("yes").isBoolean());
     assert.isTrue(definition.get("yes").isTrue());
+    assert.isTrue(definition.get("y").isBoolean());
+    assert.isTrue(definition.get("y").isTrue());
 
     definition = tester.parse(["--no-yes"]);
     assert.isTrue(definition.get("yes").isBoolean());
     assert.isTrue(definition.get("yes").isFalse());
+    assert.isTrue(definition.get("y").isBoolean());
+    assert.isTrue(definition.get("y").isFalse());
   });
 
   test("no", ({ assert }) => {
     let definition = tester.parse(["--no"]);
     assert.isTrue(definition.get("no").isBoolean());
     assert.isTrue(definition.get("no").isTrue());
+    assert.isTrue(definition.get("n").isBoolean());
+    assert.isTrue(definition.get("n").isTrue());
 
     definition = tester.parse(["--no-no"]);
     assert.isTrue(definition.get("no").isBoolean());
     assert.isTrue(definition.get("no").isFalse());
+    assert.isTrue(definition.get("n").isBoolean());
+    assert.isTrue(definition.get("n").isFalse());
   });
 
   test("add", ({ assert }) => {
     let definition = tester.parse(["--add"]);
     assert.isTrue(definition.get("add").isBoolean());
     assert.isTrue(definition.get("add").isTrue());
+    assert.isTrue(definition.get("a").isBoolean());
+    assert.isTrue(definition.get("a").isTrue());
 
     definition = tester.parse(["--no-add"]);
     assert.isTrue(definition.get("add").isBoolean());
     assert.isTrue(definition.get("add").isFalse());
+    assert.isTrue(definition.get("a").isBoolean());
+    assert.isTrue(definition.get("a").isFalse());
   });
 
   test("force", ({ assert }) => {
     let definition = tester.parse(["--force"]);
     assert.isTrue(definition.get("force").isBoolean());
     assert.isTrue(definition.get("force").isTrue());
+    assert.isTrue(definition.get("f").isBoolean());
+    assert.isTrue(definition.get("f").isTrue());
 
     definition = tester.parse(["--no-force"]);
     assert.isTrue(definition.get("force").isBoolean());
     assert.isTrue(definition.get("force").isFalse());
+    assert.isTrue(definition.get("f").isBoolean());
+    assert.isTrue(definition.get("f").isFalse());
   });
 
   test("install", ({ assert }) => {
     let definition = tester.parse(["--install"]);
     assert.isTrue(definition.get("install").isBoolean());
     assert.isTrue(definition.get("install").isTrue());
+    assert.isTrue(definition.get("i").isBoolean());
+    assert.isTrue(definition.get("i").isTrue());
 
     definition = tester.parse(["--no-install"]);
     assert.isTrue(definition.get("install").isBoolean());
     assert.isTrue(definition.get("install").isFalse());
+    assert.isTrue(definition.get("i").isBoolean());
+    assert.isTrue(definition.get("i").isFalse());
   });
 
   test("biome", ({ assert }) => {
@@ -180,5 +200,77 @@ test.group("options", () => {
     definition = tester.parse(["--no-ci"]);
     assert.isTrue(definition.get("ci").isBoolean());
     assert.isTrue(definition.get("ci").isFalse());
+  });
+});
+
+test.group("aliases", () => {
+  test("y", ({ assert }) => {
+    let definition = tester.parse(["-y"]);
+    assert.isTrue(definition.get("yes").isBoolean());
+    assert.isTrue(definition.get("yes").isTrue());
+    assert.isTrue(definition.get("y").isBoolean());
+    assert.isTrue(definition.get("y").isTrue());
+
+    definition = tester.parse(["--no-y"]);
+    assert.isTrue(definition.get("yes").isBoolean());
+    assert.isTrue(definition.get("yes").isFalse());
+    assert.isTrue(definition.get("y").isBoolean());
+    assert.isTrue(definition.get("y").isFalse());
+  });
+
+  test("n", ({ assert }) => {
+    let definition = tester.parse(["-n"]);
+    assert.isTrue(definition.get("no").isBoolean());
+    assert.isTrue(definition.get("no").isTrue());
+    assert.isTrue(definition.get("n").isBoolean());
+    assert.isTrue(definition.get("n").isTrue());
+
+    definition = tester.parse(["--no-n"]);
+    assert.isTrue(definition.get("no").isBoolean());
+    assert.isTrue(definition.get("no").isFalse());
+    assert.isTrue(definition.get("n").isBoolean());
+    assert.isTrue(definition.get("n").isFalse());
+  });
+
+  test("f", ({ assert }) => {
+    let definition = tester.parse(["-f"]);
+    assert.isTrue(definition.get("force").isBoolean());
+    assert.isTrue(definition.get("force").isTrue());
+    assert.isTrue(definition.get("f").isBoolean());
+    assert.isTrue(definition.get("f").isTrue());
+
+    definition = tester.parse(["--no-f"]);
+    assert.isTrue(definition.get("force").isBoolean());
+    assert.isTrue(definition.get("force").isFalse());
+    assert.isTrue(definition.get("f").isBoolean());
+    assert.isTrue(definition.get("f").isFalse());
+  });
+
+  test("a", ({ assert }) => {
+    let definition = tester.parse(["-a"]);
+    assert.isTrue(definition.get("add").isBoolean());
+    assert.isTrue(definition.get("add").isTrue());
+    assert.isTrue(definition.get("a").isBoolean());
+    assert.isTrue(definition.get("a").isTrue());
+
+    definition = tester.parse(["--no-a"]);
+    assert.isTrue(definition.get("add").isBoolean());
+    assert.isTrue(definition.get("add").isFalse());
+    assert.isTrue(definition.get("a").isBoolean());
+    assert.isTrue(definition.get("a").isFalse());
+  });
+
+  test("i", ({ assert }) => {
+    let definition = tester.parse(["-i"]);
+    assert.isTrue(definition.get("install").isBoolean());
+    assert.isTrue(definition.get("install").isTrue());
+    assert.isTrue(definition.get("i").isBoolean());
+    assert.isTrue(definition.get("i").isTrue());
+
+    definition = tester.parse(["--no-i"]);
+    assert.isTrue(definition.get("install").isBoolean());
+    assert.isTrue(definition.get("install").isFalse());
+    assert.isTrue(definition.get("i").isBoolean());
+    assert.isTrue(definition.get("i").isFalse());
   });
 });
