@@ -26,6 +26,7 @@ fix: install
 
 build: fix
 	pnpm build
+	pnpm build.create-qwikdev-astro
 
 pr-release: test
 	pnpx pkg-pr-new publish ./libs/* --template ./libs/create-qwikdev-astro/stubs/templates/default/*

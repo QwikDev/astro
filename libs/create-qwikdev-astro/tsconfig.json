@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "include": ["src"],
+  "include": ["src", "pt.js"],
   "exclude": ["node_modules", "dist/**/*"],
   "compilerOptions": {
     "strict": true,
@@ -16,6 +16,8 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "stripInternal": true,
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node", "fs-extra"],
     "noEmit": false,
     "allowImportingTsExtensions": false
   }
