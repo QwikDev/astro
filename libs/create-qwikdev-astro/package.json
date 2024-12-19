@@ -72,12 +72,6 @@
       "require": "./dist/process.cjs",
       "default": "./dist/process.js"
     },
-    "./pty": {
-      "types": "./dist/pty.d.ts",
-      "import": "./dist/pty.js",
-      "require": "./dist/pty.cjs",
-      "default": "./dist/pty.js"
-    },
     "./tester": {
       "types": "./dist/tester.d.ts",
       "import": "./dist/tester.js",
@@ -135,8 +129,6 @@
     "@types/which": "^3.0.4",
     "@types/which-pm-runs": "^1.0.2",
     "@types/yargs": "^17.0.33",
-    "node-pty": "^1.0.0",
-    "strip-ansi": "^7.1.0",
     "tslib": "^2.8.1",
     "tsm": "^2.3.0",
     "tsup": "^8.3.5",
