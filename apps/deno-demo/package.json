@@ -13,12 +13,12 @@
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/deno": "^5.0.1",
-    "@astrojs/react": "^4.1.0",
+    "@astrojs/react": "^4.1.1",
     "@builder.io/qwik": "^1.11.0",
     "@qwikdev/astro": "workspace:*",
-    "@types/react": "^18.3.16",
+    "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.5",
-    "astro": "^5.0.5",
+    "astro": "^5.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.7.2"
