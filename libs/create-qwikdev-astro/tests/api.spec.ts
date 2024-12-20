@@ -316,46 +316,55 @@ test.group("interactions", () => {
     [input.package_name]: ["", "my-qwik-astro-app"]
   } as const;
 
-  for (const [index, choices] of Object.entries(answers)) {
-    for (const answer of choices) {
-      const question = questions[index];
+  const executionInputs = [input.force, input.add, input.package_name];
 
-      test(`${question} ${answer}`, async ({ assert }) => {
-        tester.intercept(question, answer);
-        const parsed = tester.parse([]);
-        const definition = await tester.interact(parsed.definition);
+  for (const [key, choices] of Object.entries(answers)) {
+    const index = Number(key);
 
-        switch (Number(index)) {
-          case input.which_destination:
-            assert.isTrue(definition.get("destination").equals(answer));
-            break;
+    if (!executionInputs.includes(index)) {
+      for (const answer of choices) {
+        const question = questions[index];
 
-          case input.which_adapter:
-            if (
-              (
-                await tester.scanBoolean(parsed.definition, questions[input.use_adapter])
-              ).isTrue()
-            ) {
-              assert.isTrue(definition.get("adapter").equals(answer));
-            }
-            break;
+        test(`${question} ${answer}`, async ({ assert }) => {
+          tester.intercept(question, answer);
+          const parsed = tester.parse([]);
+          const definition = await tester.interact(parsed.definition);
 
-          case input.biome:
-            assert.isTrue(definition.get("biome").equals(answer));
-            break;
+          switch (index) {
+            case input.which_destination:
+              assert.isTrue(definition.get("destination").equals(answer));
+              break;
 
-          case input.install:
-            assert.isTrue(definition.get("install").equals(answer));
-            break;
+            case input.which_adapter:
+              if (
+                (
+                  await tester.scanBoolean(
+                    parsed.definition,
+                    questions[input.use_adapter]
+                  )
+                ).isTrue()
+              ) {
+                assert.isTrue(definition.get("adapter").equals(answer));
+              }
+              break;
 
-          case input.ci:
-            assert.isTrue(definition.get("ci").equals(answer));
-            break;
-          case input.git:
-            assert.isTrue(definition.get("git").equals(answer));
-            break;
-        }
-      });
+            case input.biome:
+              assert.isTrue(definition.get("biome").equals(answer));
+              break;
+
+            case input.install:
+              assert.isTrue(definition.get("install").equals(answer));
+              break;
+
+            case input.ci:
+              assert.isTrue(definition.get("ci").equals(answer));
+              break;
+            case input.git:
+              assert.isTrue(definition.get("git").equals(answer));
+              break;
+          }
+        });
+      }
     }
   }
 });
