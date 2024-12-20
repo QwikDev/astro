@@ -39,7 +39,7 @@ test.group("default definition", () => {
   });
 
   test("adapter", ({ assert }) => {
-    assert.isTrue(definition.get("adapter").isUndefined());
+    assert.isTrue(definition.get("adapter").isString());
     assert.isTrue(definition.get("adapter").equals(defaultDefinition.adapter));
   });
 
@@ -80,14 +80,14 @@ test.group("arguments", () => {
 
     assert.isTrue(definition.get("destination").isString());
     assert.isTrue(definition.get("destination").equals("."));
-    assert.isTrue(definition.get("adapter").isUndefined());
+    assert.isTrue(definition.get("adapter").equals("none"));
   });
 
   test("one argument", ({ assert }) => {
     const definition = tester.parse(["qapp"]);
     assert.isTrue(definition.get("destination").isString());
     assert.isTrue(definition.get("destination").equals("qapp"));
-    assert.isTrue(definition.get("adapter").isUndefined());
+    assert.isTrue(definition.get("adapter").equals("none"));
   });
 
   test("two arguments", ({ assert }) => {
@@ -306,7 +306,7 @@ test.group("interactions", () => {
   const answers = {
     [input.which_destination]: [".", "my-qwik-astro-app"],
     [input.use_adapter]: [true, false],
-    [input.which_adapter]: ["default", "node", "deno"],
+    [input.which_adapter]: ["none", "node", "deno"],
     [input.biome]: [true, false],
     [input.force]: [true, false],
     [input.add]: [true, false],
@@ -328,6 +328,17 @@ test.group("interactions", () => {
         switch (Number(index)) {
           case input.which_destination:
             assert.isTrue(definition.get("destination").equals(answer));
+            break;
+
+          case input.which_adapter:
+            console.log(`${question} ${answer} => ${definition.get("adapter").value}`);
+            if (
+              (
+                await tester.scanBoolean(parsed.definition, questions[input.use_adapter])
+              ).isTrue()
+            ) {
+              assert.isTrue(definition.get("adapter").equals(answer));
+            }
             break;
 
           case input.biome:

@@ -20,7 +20,7 @@ import {
 
 export type Definition = BaseDefinition & {
   destination: string;
-  adapter?: Adapter;
+  adapter: Adapter;
   force?: boolean;
   install?: boolean;
   biome?: boolean;
@@ -34,7 +34,7 @@ export type UserDefinition = Partial<Definition>;
 
 export const defaultDefinition = {
   destination: ".",
-  adapter: undefined,
+  adapter: "none",
   force: undefined,
   install: undefined,
   biome: undefined,
@@ -47,7 +47,7 @@ export const defaultDefinition = {
   add: undefined
 } as const;
 
-export type Adapter = "node" | "deno" | "default";
+export type Adapter = "node" | "deno" | "none";
 
 export function defineDefinition(definition: UserDefinition): Definition {
   return { ...defaultDefinition, ...definition };
@@ -76,7 +76,7 @@ export class Application extends Program<Definition> {
         type: "string",
         default: defaultDefinition.adapter,
         desc: "Server adapter",
-        choices: ["deno", "node"]
+        choices: ["deno", "node", "none"]
       })
       .option("add", {
         alias: "a",
@@ -154,12 +154,11 @@ export class Application extends Program<Definition> {
 
   async scanAdapter(definition: Definition): Promise<Adapter> {
     const adapter =
-      (definition.it &&
-        (await this.scanBoolean(
-          definition,
-          "Would you like to use a server adapter?",
-          false
-        )) &&
+      ((await this.scanBoolean(
+        definition,
+        "Would you like to use a server adapter?",
+        false
+      )) &&
         (await this.scanChoice(
           definition,
           "Which adapter do you prefer?",
@@ -171,13 +170,17 @@ export class Application extends Program<Definition> {
             {
               value: "deno",
               label: "Deno"
+            },
+            {
+              value: "none",
+              label: "None"
             }
           ],
           definition.adapter
         ))) ||
-      "default";
+      "none";
 
-    ensureString<Adapter>(adapter);
+    ensureString(adapter, (v): v is Adapter => ["none", "node", "deno"].includes(v));
 
     return adapter;
   }
@@ -287,7 +290,7 @@ export class Application extends Program<Definition> {
   }
 
   async create(definition: Definition) {
-    let starterKit = definition.adapter ?? "default";
+    let starterKit = definition.adapter;
 
     if (definition.biome) {
       starterKit += "-biome";
