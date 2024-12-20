@@ -302,10 +302,8 @@ export abstract class Program<T extends Definition> {
     */
   }
 
-  intercept(prompt: string, input: string): this {
-    this.interactions.set(prompt, input);
-
-    return this;
+  intercept<T>(question: string, answer: T): this {
+    return this.setInteraction(question, answer);
   }
 
   async interact(definition: T): Promise<T> {
@@ -384,14 +382,30 @@ export abstract class Program<T extends Definition> {
     argv.example(command, description);
   }
 
+  getInteraction(message: string): unknown {
+    for (const question of this.interactions.keys()) {
+      if (message.includes(question)) {
+        return this.interactions.get(question);
+      }
+    }
+
+    return undefined;
+  }
+
+  setInteraction<T>(question: string, answer: T): this {
+    this.interactions.set(question, answer);
+
+    return this;
+  }
+
   async scanBoolean(
     definition: T,
     message: string,
     initialValue?: boolean
   ): Promise<boolean> {
-    if (this.interactions.has(message)) {
-      const value = this.interactions.get(message);
+    const value = this.getInteraction(message);
 
+    if (value !== undefined) {
       ensureBoolean(value);
 
       return value;
@@ -411,9 +425,9 @@ export abstract class Program<T extends Definition> {
     message: string,
     initialValue?: string
   ): Promise<string> {
-    if (this.interactions.has(message)) {
-      const value = this.interactions.get(message);
+    const value = this.getInteraction(message);
 
+    if (value !== undefined) {
       ensureString(value);
 
       return value;
@@ -428,9 +442,9 @@ export abstract class Program<T extends Definition> {
     options: { value: string; label: string }[],
     initialValue?: string
   ): Promise<string> {
-    if (this.interactions.has(message)) {
-      const value = this.interactions.get(message);
+    const value = this.getInteraction(message);
 
+    if (value !== undefined) {
       ensureString(
         value,
         (v): v is string => options.find((o) => o.value === v) !== undefined

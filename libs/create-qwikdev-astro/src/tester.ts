@@ -10,8 +10,56 @@ export class ProgramTester<T extends Definition> {
     return new ResultTester(result);
   }
 
+  intercept<T>(question: string, answer: T): this {
+    this.program.intercept(question, answer);
+
+    return this;
+  }
+
+  async scanString(
+    definition: T,
+    message: string,
+    initialValue?: string
+  ): Promise<ValueTester> {
+    definition.it = false;
+
+    const value = await this.program.scanString(definition, message, initialValue);
+
+    return new ValueTester(value);
+  }
+
+  async scanBoolean(
+    definition: T,
+    message: string,
+    initialValue?: boolean
+  ): Promise<ValueTester> {
+    definition.it = false;
+
+    const value = await this.program.scanBoolean(definition, message, initialValue);
+
+    return new ValueTester(value);
+  }
+
+  async scanChoice(
+    definition: T,
+    message: string,
+    initialValue: { value: string; label: string }[]
+  ): Promise<ValueTester> {
+    definition.it = false;
+
+    const value = await this.program.scanChoice(definition, message, initialValue);
+
+    return new ValueTester(value);
+  }
+
   parse(args: string[]): DefinitionTester<T> {
     return new DefinitionTester<T>(this.program.parse(args));
+  }
+
+  async interact(definition: T): Promise<DefinitionTester<T>> {
+    definition.it = false;
+
+    return new DefinitionTester<T>(await this.program.interact(definition));
   }
 }
 

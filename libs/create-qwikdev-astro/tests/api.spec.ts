@@ -2,6 +2,7 @@ import { test } from "@japa/runner";
 import { name, version } from "../package.json";
 import { Application, defaultDefinition } from "../src/app";
 import { ProgramTester } from "../src/tester";
+import { getPackageManager } from "../src/utils";
 
 const app = new Application(name, version);
 const tester = new ProgramTester(app);
@@ -273,4 +274,63 @@ test.group("aliases", () => {
     assert.isTrue(definition.get("i").isBoolean());
     assert.isTrue(definition.get("i").isFalse());
   });
+});
+
+test.group("interactions", () => {
+  enum input {
+    which_destination,
+    use_adapter,
+    which_adapter,
+    biome,
+    force,
+    add,
+    install,
+    ci,
+    git,
+    package_name
+  }
+
+  const questions = {
+    [input.which_destination]: "Where would you like to create your new project?",
+    [input.use_adapter]: "Would you like to use a server adapter?",
+    [input.which_adapter]: "Which adapter do you prefer?",
+    [input.biome]: "Would you prefer Biome over ESLint/Prettier?",
+    [input.force]: "What would you like to overwrite it?",
+    [input.add]: "Do you want to add @QwikDev/astro to your existing project?",
+    [input.install]: `Would you like to install ${getPackageManager()} dependencies?`,
+    [input.ci]: "Would you like to add CI workflow?",
+    [input.git]: "Would you like to initialize Git?",
+    [input.package_name]: "What should be the name of this package?"
+  } as const;
+
+  const answers = {
+    [input.which_destination]: [".", "my-qwik-astro-app"],
+    [input.use_adapter]: [true, false],
+    [input.which_adapter]: ["default", "node", "deno"],
+    [input.biome]: [true, false],
+    [input.force]: [true, false],
+    [input.add]: [true, false],
+    [input.install]: [true, false],
+    [input.ci]: [true, false],
+    [input.git]: [true, false],
+    [input.package_name]: ["", "my-qwik-astro-app"]
+  } as const;
+
+  for (const [index, choices] of Object.entries(answers)) {
+    for (const answer of choices) {
+      const question = questions[index];
+
+      test(`${question} => ${answer}`, async ({ assert }) => {
+        tester.intercept(question, answer);
+        const parsed = tester.parse([]);
+        const definition = await tester.interact(parsed.definition);
+
+        switch (Number(index)) {
+          case input.which_destination:
+            assert.isTrue(definition.get("destination").equals(answer));
+            break;
+        }
+      });
+    }
+  }
 });
