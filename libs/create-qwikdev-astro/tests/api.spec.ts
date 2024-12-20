@@ -320,7 +320,7 @@ test.group("interactions", () => {
     for (const answer of choices) {
       const question = questions[index];
 
-      test(`${question} => ${answer}`, async ({ assert }) => {
+      test(`${question} ${answer}`, async ({ assert }) => {
         tester.intercept(question, answer);
         const parsed = tester.parse([]);
         const definition = await tester.interact(parsed.definition);
@@ -328,6 +328,21 @@ test.group("interactions", () => {
         switch (Number(index)) {
           case input.which_destination:
             assert.isTrue(definition.get("destination").equals(answer));
+            break;
+
+          case input.biome:
+            assert.isTrue(definition.get("biome").equals(answer));
+            break;
+
+          case input.install:
+            assert.isTrue(definition.get("install").equals(answer));
+            break;
+
+          case input.ci:
+            assert.isTrue(definition.get("ci").equals(answer));
+            break;
+          case input.git:
+            assert.isTrue(definition.get("git").equals(answer));
             break;
         }
       });
