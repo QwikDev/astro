@@ -331,7 +331,6 @@ test.group("interactions", () => {
             break;
 
           case input.which_adapter:
-            console.log(`${question} ${answer} => ${definition.get("adapter").value}`);
             if (
               (
                 await tester.scanBoolean(parsed.definition, questions[input.use_adapter])
