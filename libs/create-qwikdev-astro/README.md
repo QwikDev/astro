@@ -86,10 +86,10 @@
     createProject(config);
     ```
 
-  **Project configuration type:**
+  **User configuration type:**
 
   ```typescript
-  export type ProjectConfig = {
+  export type UserConfig = {
     project: string;
     adapter?: "deno" | "node";
     force?: boolean;
@@ -97,12 +97,30 @@
     biome?: boolean;
     git?: boolean;
     ci?: boolean;
-    yes: boolean;
-    no: boolean;
-    it: boolean;
-    dryRun: boolean;
+    yes?: boolean;
+    no?: boolean;
+    it?: boolean;
+    dryRun?: boolean;
   };
   ```
+
+**Default configuration options:**
+
+```typescript
+export const defaultConfig = {
+  project: ".",
+  adapter: undefined,
+  force: undefined,
+  install: undefined,
+  biome: undefined,
+  git: undefined,
+  ci: undefined,
+  it: undefined,
+  yes: undefined,
+  no: undefined,
+  dryRun: undefined
+} as const;
+```
 
 ## 🌍 Community
 

@@ -16,6 +16,8 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "stripInternal": true,
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node", "fs-extra"],
     "noEmit": false,
     "allowImportingTsExtensions": false
   }
