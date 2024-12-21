@@ -1,7 +1,10 @@
-import createQwikAstroProject from "@qwikdev/create-astro";
-import { expect, it } from "vitest";
+import app from "@qwikdev/create-astro/app";
+import { describe, expect, it } from "vitest";
 
-it("should run with no args", async () => {
-  const project = await createQwikAstroProject();
-  expect(project).toBe(true);
+describe(`${app.name}@${app.version}`, () => {
+  it("should create a new app", async () => {
+    const result = await app.run(["pnpm", "create", "my-qwik-astro-app"]);
+
+    expect(result).toBe(0);
+  });
 });
