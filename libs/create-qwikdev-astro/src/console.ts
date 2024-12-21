@@ -277,7 +277,7 @@ export async function scanString(
   return value;
 }
 
-export async function scanChoice<const T extends string>(
+export async function scanChoice<T extends string>(
   message: string,
   options: { value: string; label: string }[],
   initialValue?: T,
