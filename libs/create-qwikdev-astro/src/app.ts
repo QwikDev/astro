@@ -130,7 +130,9 @@ export class Application extends Program<Definition> {
       .usage("npm create @qwikdev/astro [destination] [adapter] [...options]");
   }
 
-  async scanDestination(definition: Definition): Promise<string> {
+  async scanDestination(
+    definition: Definition
+  ): Promise<string | typeof definition.destination> {
     return this.scanString(
       definition,
       `Where would you like to create your new project? ${this.gray(
@@ -140,7 +142,7 @@ export class Application extends Program<Definition> {
     );
   }
 
-  async scanAdd(definition: Definition): Promise<boolean> {
+  async scanAdd(definition: Definition): Promise<boolean | typeof definition.add> {
     if (this.#outDir(definition.destination) === process.cwd()) {
       return await this.scanBoolean(
         definition,
@@ -185,7 +187,9 @@ export class Application extends Program<Definition> {
     return adapter;
   }
 
-  async scanPreferBiome(definition: Definition): Promise<boolean> {
+  async scanPreferBiome(
+    definition: Definition
+  ): Promise<boolean | typeof definition.biome> {
     return this.scanBoolean(
       definition,
       "Would you prefer Biome over ESLint/Prettier?",
@@ -193,7 +197,7 @@ export class Application extends Program<Definition> {
     );
   }
 
-  async scanForce(definition: Definition): Promise<boolean> {
+  async scanForce(definition: Definition): Promise<boolean | typeof definition.force> {
     return this.scanBoolean(
       definition,
       `Directory "./${resolveRelativeDir(
@@ -203,7 +207,7 @@ export class Application extends Program<Definition> {
     );
   }
 
-  async scanCI(definition: Definition): Promise<boolean> {
+  async scanCI(definition: Definition): Promise<boolean | typeof definition.ci> {
     return this.scanBoolean(
       definition,
       "Would you like to add CI workflow?",
@@ -211,7 +215,9 @@ export class Application extends Program<Definition> {
     );
   }
 
-  async scanInstall(definition: Definition): Promise<boolean> {
+  async scanInstall(
+    definition: Definition
+  ): Promise<boolean | typeof definition.install> {
     return this.scanBoolean(
       definition,
       `Would you like to install ${this.#packageManger} dependencies?`,
@@ -219,7 +225,7 @@ export class Application extends Program<Definition> {
     );
   }
 
-  async scanGit(definition: Definition): Promise<boolean> {
+  async scanGit(definition: Definition): Promise<boolean | typeof definition.git> {
     return this.scanBoolean(
       definition,
       "Would you like to initialize Git?",

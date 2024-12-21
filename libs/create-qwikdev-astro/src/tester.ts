@@ -4,50 +4,50 @@ import type { Definition, Program } from "./core";
 export class ProgramTester<T extends Definition> {
   constructor(readonly program: Program<T>) {}
 
-  async run(args: string[]): Promise<ResultTester> {
-    const result = await this.program.run(args);
-
-    return new ResultTester(result);
-  }
-
   intercept<T>(question: string, answer: T): this {
     this.program.intercept(question, answer);
 
     return this;
   }
 
-  async scanString(
+  async scanString<const V extends string | undefined = undefined>(
     definition: T,
     message: string,
-    initialValue?: string
+    initialValue: V
   ): Promise<ValueTester> {
     definition.it = false;
 
-    const value = await this.program.scanString(definition, message, initialValue);
+    const value = await this.program.scanString<V>(definition, message, initialValue);
 
     return new ValueTester(value);
   }
 
-  async scanBoolean(
+  async scanBoolean<const V extends boolean | undefined = undefined>(
     definition: T,
     message: string,
-    initialValue?: boolean
+    initialValue: V
   ): Promise<ValueTester> {
     definition.it = false;
 
-    const value = await this.program.scanBoolean(definition, message, initialValue);
+    const value = await this.program.scanBoolean<V>(definition, message, initialValue);
 
     return new ValueTester(value);
   }
 
-  async scanChoice(
+  async scanChoice<V extends string | undefined = undefined>(
     definition: T,
     message: string,
-    initialValue: { value: string; label: string }[]
+    options: { value: string; label: string }[],
+    initialValue: V
   ): Promise<ValueTester> {
     definition.it = false;
 
-    const value = await this.program.scanChoice(definition, message, initialValue);
+    const value = await this.program.scanChoice<V>(
+      definition,
+      message,
+      options,
+      initialValue
+    );
 
     return new ValueTester(value);
   }
@@ -60,6 +60,20 @@ export class ProgramTester<T extends Definition> {
     definition.it = false;
 
     return new DefinitionTester<T>(await this.program.interact(definition));
+  }
+
+  async execute(definition: T): Promise<ResultTester> {
+    definition.it = false;
+
+    const result = await this.program.execute(definition);
+
+    return new ResultTester(result);
+  }
+
+  async run(args: string[]): Promise<ResultTester> {
+    const result = await this.program.run(args);
+
+    return new ResultTester(result);
   }
 }
 

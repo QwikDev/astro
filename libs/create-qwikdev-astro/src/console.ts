@@ -258,49 +258,53 @@ export function newLine(count = 1): string {
   return "\n".repeat(count);
 }
 
-export async function scanString(
+export async function scanString<const T extends string | undefined = undefined>(
   message: string,
-  initialValue?: string,
+  initialValue: T,
   it?: boolean
-): Promise<string> {
-  const input = !it
+): Promise<string | typeof initialValue> {
+  const value = !it
     ? initialValue
     : (await text({
         message,
         placeholder: initialValue
       })) || initialValue;
 
-  ensureString(input);
+  if (value !== initialValue) {
+    ensureString(value);
+  }
 
-  return input;
+  return value as T;
 }
 
-export async function scanChoice(
+export async function scanChoice<const T extends string | undefined = undefined>(
   message: string,
   options: { value: string; label: string }[],
-  initialValue?: string,
+  initialValue: T,
   it?: boolean
-): Promise<string> {
-  const input = !it
+): Promise<string | typeof initialValue> {
+  const value = !it
     ? initialValue
     : (await select({
         message,
         options
       })) || initialValue;
 
-  ensureString(input);
+  if (value !== initialValue) {
+    ensureString(value);
+  }
 
-  return input;
+  return value as T;
 }
 
-export async function scanBoolean(
+export async function scanBoolean<const T extends boolean | undefined = undefined>(
   message: string,
-  initialValue?: boolean,
+  initialValue: T,
   it?: boolean,
   yes?: boolean,
   no?: boolean
-): Promise<boolean> {
-  const input =
+): Promise<typeof initialValue> {
+  const value =
     no && !initialValue
       ? false
       : (yes && initialValue !== false) ||
@@ -311,9 +315,11 @@ export async function scanBoolean(
             initialValue
           })));
 
-  ensureBoolean(input);
+  if (value !== initialValue) {
+    ensureBoolean(value);
+  }
 
-  return input;
+  return value as T;
 }
 
 export function ensureString<T extends string>(

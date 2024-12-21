@@ -398,11 +398,11 @@ export abstract class Program<T extends Definition> {
     return this;
   }
 
-  async scanBoolean(
+  async scanBoolean<const V extends boolean | undefined = undefined>(
     definition: T,
     message: string,
-    initialValue?: boolean
-  ): Promise<boolean> {
+    initialValue: V
+  ): Promise<boolean | typeof initialValue> {
     const value = this.getInteraction(message);
 
     if (value !== undefined) {
@@ -420,11 +420,11 @@ export abstract class Program<T extends Definition> {
     );
   }
 
-  async scanString(
+  async scanString<const V extends string | undefined = undefined>(
     definition: T,
     message: string,
-    initialValue?: string
-  ): Promise<string> {
+    initialValue: V
+  ): Promise<string | typeof initialValue> {
     const value = this.getInteraction(message);
 
     if (value !== undefined) {
@@ -436,12 +436,12 @@ export abstract class Program<T extends Definition> {
     return scanString(message, initialValue, this.#it && definition.it);
   }
 
-  async scanChoice(
+  async scanChoice<const V extends string | undefined = undefined>(
     definition: T,
     message: string,
     options: { value: string; label: string }[],
-    initialValue?: string
-  ): Promise<string> {
+    initialValue: V
+  ): Promise<string | typeof initialValue> {
     const value = this.getInteraction(message);
 
     if (value !== undefined) {
