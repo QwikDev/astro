@@ -1,7 +1,6 @@
 import { mkdirSync, rmSync } from "node:fs";
-import { afterEach } from "node:test";
 import app from "@qwikdev/create-astro/app";
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const rootDir = "tests/apps";
 const projectName = "test-app";
