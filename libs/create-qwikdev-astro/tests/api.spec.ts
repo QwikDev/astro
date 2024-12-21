@@ -1,4 +1,7 @@
+import { mkdtempSync } from "node:fs";
+import { join } from "node:path";
 import { test } from "@japa/runner";
+import { ensureDirSync } from "fs-extra/esm";
 import { name, version } from "../package.json";
 import { Application, defaultDefinition } from "../src/app";
 import { ProgramTester } from "../src/tester";
@@ -6,6 +9,92 @@ import { getPackageManager } from "../src/utils";
 
 const app = new Application(name, version);
 const tester = new ProgramTester(app);
+
+const rootDir = "tests/apps";
+const projectName = "test-app";
+
+const generatedFiles = [
+  ".vscode/extensions.json",
+  ".vscode/launch.json",
+  "public/favicon.svg",
+  "src/assets/astro.svg",
+  "src/qwik.svg",
+  "src/components/counter.module.css",
+  "src/components/counter.tsx",
+  "src/layouts/Layout.astro",
+  "src/pages/index.astro",
+  "src/styles/global.css",
+  "src/env.d.ts",
+  ".gitignore",
+  "README.md",
+  "astro.config.ts",
+  "package.json",
+  "tsconfig.json"
+] as const;
+
+const eslintFiles = [".eslintignore", ".eslintrc.cjs"];
+
+const prettierFiles = [".prettierignore", "prettier.config.cjs"];
+
+const biomeFiles = ["biome.json"];
+
+const dependenciesDir = "node_modules";
+const ciFile = ".github/workflows/ci.yml";
+
+enum lockFile {
+  npm = "package-lock.json",
+  pnpm = "pnpm-lock.yaml",
+  yarn = "yarn.lock",
+  bun = "bun.lockb"
+}
+
+const tempAppDir = (name = projectName) => {
+  return mkdtempSync(join(rootDir, `${name}-`), { encoding: "utf-8" });
+};
+
+ensureDirSync(rootDir);
+process.chdir(rootDir);
+
+enum input {
+  which_destination,
+  use_adapter,
+  which_adapter,
+  biome,
+  install,
+  ci,
+  git,
+  add,
+  force,
+  package_name
+}
+
+const executionInputs = [input.force, input.add, input.package_name];
+
+const questions = {
+  [input.which_destination]: "Where would you like to create your new project?",
+  [input.use_adapter]: "Would you like to use a server adapter?",
+  [input.which_adapter]: "Which adapter do you prefer?",
+  [input.biome]: "Would you prefer Biome over ESLint/Prettier?",
+  [input.install]: `Would you like to install ${getPackageManager()} dependencies?`,
+  [input.ci]: "Would you like to add CI workflow?",
+  [input.git]: "Would you like to initialize Git?",
+  [input.add]: "Do you want to add @QwikDev/astro to your existing project?",
+  [input.force]: "What would you like to overwrite it?",
+  [input.package_name]: "What should be the name of this package?"
+} as const;
+
+const answers = {
+  [input.which_destination]: [".", "my-qwik-astro-app"],
+  [input.use_adapter]: [true, false],
+  [input.which_adapter]: ["none", "node", "deno"],
+  [input.biome]: [true, false],
+  [input.install]: [true, false],
+  [input.ci]: [true, false],
+  [input.git]: [true, false],
+  [input.add]: [true, false],
+  [input.force]: [true, false],
+  [input.package_name]: ["my-qwik-astro-app", ""]
+} as const;
 
 test.group(`${name}@${version}`, () => {
   test("constructor", ({ assert }) => {
@@ -84,15 +173,15 @@ test.group("arguments", () => {
   });
 
   test("one argument", ({ assert }) => {
-    const definition = tester.parse(["qapp"]);
+    const definition = tester.parse([projectName]);
     assert.isTrue(definition.get("destination").isString());
-    assert.isTrue(definition.get("destination").equals("qapp"));
+    assert.isTrue(definition.get("destination").equals(projectName));
     assert.isTrue(definition.get("adapter").equals("none"));
   });
 
   test("two arguments", ({ assert }) => {
-    let definition = tester.parse(["my-qwik-astro-app", "node"]);
-    assert.isTrue(definition.get("destination").equals("my-qwik-astro-app"));
+    let definition = tester.parse([projectName, "node"]);
+    assert.isTrue(definition.get("destination").equals(projectName));
     assert.isTrue(definition.get("adapter").isString());
     assert.isTrue(definition.get("adapter").equals("node"));
 
@@ -276,60 +365,18 @@ test.group("aliases", () => {
   });
 });
 
-test.group("interactions", () => {
-  enum input {
-    which_destination,
-    use_adapter,
-    which_adapter,
-    biome,
-    force,
-    add,
-    install,
-    ci,
-    git,
-    package_name
-  }
+for (const [key, choices] of Object.entries(answers)) {
+  const index = Number(key);
 
-  const questions = {
-    [input.which_destination]: "Where would you like to create your new project?",
-    [input.use_adapter]: "Would you like to use a server adapter?",
-    [input.which_adapter]: "Which adapter do you prefer?",
-    [input.biome]: "Would you prefer Biome over ESLint/Prettier?",
-    [input.force]: "What would you like to overwrite it?",
-    [input.add]: "Do you want to add @QwikDev/astro to your existing project?",
-    [input.install]: `Would you like to install ${getPackageManager()} dependencies?`,
-    [input.ci]: "Would you like to add CI workflow?",
-    [input.git]: "Would you like to initialize Git?",
-    [input.package_name]: "What should be the name of this package?"
-  } as const;
+  test.group(`${executionInputs.includes(index) ? "executions" : "interactions"}`, () => {
+    for (const answer of choices) {
+      const question = questions[index];
+      tester.intercept(question, answer);
+      const parsed = tester.parse(["test-qwik-astro-app"]);
 
-  const answers = {
-    [input.which_destination]: [".", "my-qwik-astro-app"],
-    [input.use_adapter]: [true, false],
-    [input.which_adapter]: ["none", "node", "deno"],
-    [input.biome]: [true, false],
-    [input.force]: [true, false],
-    [input.add]: [true, false],
-    [input.install]: [true, false],
-    [input.ci]: [true, false],
-    [input.git]: [true, false],
-    [input.package_name]: ["", "my-qwik-astro-app"]
-  } as const;
-
-  const executionInputs = [input.force, input.add, input.package_name];
-
-  for (const [key, choices] of Object.entries(answers)) {
-    const index = Number(key);
-
-    if (!executionInputs.includes(index)) {
-      for (const answer of choices) {
-        const question = questions[index];
-
+      if (!executionInputs.includes(index)) {
         test(`${question} ${answer}`, async ({ assert }) => {
-          tester.intercept(question, answer);
-          const parsed = tester.parse([]);
           const definition = await tester.interact(parsed.definition);
-
           switch (index) {
             case input.which_destination:
               assert.isTrue(definition.get("destination").equals(answer));
@@ -366,5 +413,5 @@ test.group("interactions", () => {
         });
       }
     }
-  }
-});
+  });
+}
