@@ -316,17 +316,6 @@ export class Application extends Program<Definition> {
       if (definition.force) {
         if (!definition.dryRun) {
           await clearDir(outDir);
-
-          const templatePath = path.join(
-            __dirname,
-            "..",
-            "stubs",
-            "templates",
-            starterKit
-          );
-
-          this.step(`Creating new project in ${this.bgBlue(` ${outDir} `)} ... 🐇`);
-          this.copyTemplate(definition, templatePath);
         }
       } else {
         this.error(`Directory "${outDir}" already exists.`);
@@ -337,6 +326,11 @@ export class Application extends Program<Definition> {
         process.exit(1);
       }
     }
+
+    const templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
+
+    this.step(`Creating new project in ${this.bgBlue(` ${outDir} `)} ... 🐇`);
+    this.copyTemplate(definition, templatePath);
   }
 
   async start(definition: Definition): Promise<boolean> {
