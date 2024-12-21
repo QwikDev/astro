@@ -13,7 +13,8 @@ export default defineConfig((options) => {
       "src/core.ts",
       "src/index.ts",
       "src/process.ts",
-      "src/tester.ts"
+      "src/tester.ts",
+      "src/utils.ts"
     ]
   };
 });
