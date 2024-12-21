@@ -130,16 +130,14 @@ export class Application extends Program<Definition> {
       .usage("npm create @qwikdev/astro [destination] [adapter] [...options]");
   }
 
-  async scanDestination(
-    definition: Definition
-  ): Promise<string | typeof definition.destination> {
+  async scanDestination(definition: Definition): Promise<typeof definition.destination> {
     return this.scanString(
       definition,
       `Where would you like to create your new project? ${this.gray(
         `(Use '.' or './' for current directory)`
       )}`,
       definition.destination
-    );
+    ) as Promise<typeof definition.destination>;
   }
 
   async scanAdd(definition: Definition): Promise<boolean | typeof definition.add> {
@@ -398,7 +396,7 @@ export class Application extends Program<Definition> {
       getPackageJson(outDir).name ?? defaultPackageName
     );
 
-    updatePackageName(packageName, outDir);
+    updatePackageName(packageName as string, outDir);
     this.info(`Updated package name to "${packageName}" 📦️`);
 
     if (getPackageManager() !== "npm") {

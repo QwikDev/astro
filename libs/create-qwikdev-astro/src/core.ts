@@ -398,11 +398,19 @@ export abstract class Program<T extends Definition> {
     return this;
   }
 
-  async scanBoolean<const V extends boolean | undefined = undefined>(
+  async scanBoolean(
     definition: T,
     message: string,
-    initialValue: V
-  ): Promise<boolean | typeof initialValue> {
+    initialValue?: boolean
+  ): Promise<
+    typeof definition.it extends true
+      ? boolean
+      : typeof definition.no extends true
+        ? false
+        : typeof definition.yes extends true
+          ? true
+          : typeof initialValue
+  > {
     const value = this.getInteraction(message);
 
     if (value !== undefined) {
@@ -420,11 +428,11 @@ export abstract class Program<T extends Definition> {
     );
   }
 
-  async scanString<const V extends string | undefined = undefined>(
+  async scanString(
     definition: T,
     message: string,
-    initialValue: V
-  ): Promise<string | typeof initialValue> {
+    initialValue?: string
+  ): Promise<typeof definition.it extends true ? string : typeof initialValue> {
     const value = this.getInteraction(message);
 
     if (value !== undefined) {
@@ -436,18 +444,18 @@ export abstract class Program<T extends Definition> {
     return scanString(message, initialValue, this.#it && definition.it);
   }
 
-  async scanChoice<const V extends string | undefined = undefined>(
+  async scanChoice<V extends string>(
     definition: T,
     message: string,
     options: { value: string; label: string }[],
-    initialValue: V
-  ): Promise<string | typeof initialValue> {
+    initialValue?: V
+  ): Promise<typeof definition.it extends true ? V : typeof initialValue> {
     const value = this.getInteraction(message);
 
     if (value !== undefined) {
-      ensureString(
+      ensureString<V>(
         value,
-        (v): v is string => options.find((o) => o.value === v) !== undefined
+        (v): v is V => options.find((o) => o.value === v) !== undefined
       );
 
       return value;

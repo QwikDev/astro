@@ -10,39 +10,39 @@ export class ProgramTester<T extends Definition> {
     return this;
   }
 
-  async scanString<const V extends string | undefined = undefined>(
+  async scanString(
     definition: T,
     message: string,
-    initialValue: V
+    initialValue?: string
   ): Promise<ValueTester> {
     definition.it = false;
 
-    const value = await this.program.scanString<V>(definition, message, initialValue);
+    const value = await this.program.scanString(definition, message, initialValue);
 
     return new ValueTester(value);
   }
 
-  async scanBoolean<const V extends boolean | undefined = undefined>(
+  async scanBoolean(
     definition: T,
     message: string,
-    initialValue: V
+    initialValue?: boolean
   ): Promise<ValueTester> {
     definition.it = false;
 
-    const value = await this.program.scanBoolean<V>(definition, message, initialValue);
+    const value = await this.program.scanBoolean(definition, message, initialValue);
 
     return new ValueTester(value);
   }
 
-  async scanChoice<V extends string | undefined = undefined>(
+  async scanChoice(
     definition: T,
     message: string,
     options: { value: string; label: string }[],
-    initialValue: V
+    initialValue?: string
   ): Promise<ValueTester> {
     definition.it = false;
 
-    const value = await this.program.scanChoice<V>(
+    const value = await this.program.scanChoice(
       definition,
       message,
       options,

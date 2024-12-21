@@ -258,11 +258,11 @@ export function newLine(count = 1): string {
   return "\n".repeat(count);
 }
 
-export async function scanString<const T extends string | undefined = undefined>(
+export async function scanString(
   message: string,
-  initialValue: T,
+  initialValue?: string,
   it?: boolean
-): Promise<string | typeof initialValue> {
+): Promise<typeof it extends true ? string : typeof initialValue> {
   const value = !it
     ? initialValue
     : (await text({
@@ -274,15 +274,15 @@ export async function scanString<const T extends string | undefined = undefined>
     ensureString(value);
   }
 
-  return value as T;
+  return value;
 }
 
-export async function scanChoice<const T extends string | undefined = undefined>(
+export async function scanChoice<const T extends string>(
   message: string,
   options: { value: string; label: string }[],
-  initialValue: T,
+  initialValue?: T,
   it?: boolean
-): Promise<string | typeof initialValue> {
+): Promise<typeof it extends true ? T : typeof initialValue> {
   const value = !it
     ? initialValue
     : (await select({
@@ -294,16 +294,24 @@ export async function scanChoice<const T extends string | undefined = undefined>
     ensureString(value);
   }
 
-  return value as T;
+  return value as T | undefined;
 }
 
-export async function scanBoolean<const T extends boolean | undefined = undefined>(
+export async function scanBoolean(
   message: string,
-  initialValue: T,
+  initialValue?: boolean,
   it?: boolean,
   yes?: boolean,
   no?: boolean
-): Promise<typeof initialValue> {
+): Promise<
+  typeof it extends true
+    ? boolean
+    : typeof no extends true
+      ? false
+      : typeof yes extends true
+        ? true
+        : typeof initialValue
+> {
   const value =
     no && !initialValue
       ? false
@@ -319,7 +327,7 @@ export async function scanBoolean<const T extends boolean | undefined = undefine
     ensureBoolean(value);
   }
 
-  return value as T;
+  return value;
 }
 
 export function ensureString<T extends string>(
