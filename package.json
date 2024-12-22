@@ -29,14 +29,7 @@
     "test:cli": "pnpm -C ./libs/create-qwikdev-astro test",
     "test:e2e": "playwright test --pass-with-no-tests",
     "test:e2e.ui": "playwright test --ui",
-    "test:e2e.report": "playwright show-report",
-    "test:unit": "vitest",
-    "test:unit.coverage": "vitest run --coverage",
-    "test:unit.dev": "vitest watch",
-    "test:unit.prod": "vitest run",
-    "test:unit.ui": "vitest --ui",
-    "test:unit.report": "pnpx vite preview --outDir tests/unit/report/html",
-    "report": "conc \"pnpm test:e2e.report\" \"pnpm test:unit.report\""
+    "test:e2e.report": "playwright show-report"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
@@ -46,12 +39,8 @@
     "@playwright/test": "^1.49.1",
     "@qwikdev/create-astro": "workspace:*",
     "@types/node": "^22.10.2",
-    "@vitest/coverage-v8": "^2.1.8",
-    "@vitest/ui": "^2.1.8",
     "astro": "5.0.3",
-    "concurrently": "^9.1.0",
     "lefthook": "^1.10.0",
-    "pkg-pr-new": "^0.0.35",
-    "vitest": "^2.1.8"
+    "pkg-pr-new": "^0.0.35"
   }
 }
