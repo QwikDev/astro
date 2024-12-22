@@ -1,8 +1,6 @@
-import { existsSync, readdir, readdirSync, realpath } from "node:fs";
 import { test } from "@japa/runner";
 import app from "@qwikdev/create-astro/app";
 import { PathTester } from "@qwikdev/create-astro/tester";
-import { resolveAbsoluteDir } from "@qwikdev/create-astro/utils";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 
 const rootDir = "tests/apps";
