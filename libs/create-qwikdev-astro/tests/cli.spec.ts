@@ -1,6 +1,5 @@
 import { test } from "@japa/runner";
 import app from "@qwikdev/create-astro/app";
-import { PathTester } from "@qwikdev/create-astro/tester";
 import { getPackageManager } from "@qwikdev/create-astro/utils";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 
@@ -67,21 +66,20 @@ test.group(`${app.name}@${app.version} CLI`, (group) => {
     return () => emptyDirSync(rootDir);
   });
 
-  test("should create a new app", async ({ assert }) => {
+  test("should create a new app", async ({ assert, path }) => {
     const result = await app.run(["pnpm", "create", `${rootDir}/${projectName}`]);
 
     assert.equal(result, 0);
 
-    const appDir = `${rootDir}/${projectName}`;
-    const appDirTester = new PathTester(appDir);
+    const dir = `${rootDir}/${projectName}`;
+    const testDir = path(dir);
 
-    assert.isTrue(appDirTester.exists());
-    assert.isTrue(appDirTester.isDir());
+    assert.isTrue(testDir.exists());
+    assert.isTrue(testDir.isDir());
 
     for (const file of getGeneratedFiles()) {
-      const path = `${appDir}/${file}`;
-      const pathTester = new PathTester(path);
-      assert.isTrue(pathTester.exists());
+      const testFile = path(`${dir}/${file}`);
+      assert.isTrue(testFile.exists());
     }
   });
 });
