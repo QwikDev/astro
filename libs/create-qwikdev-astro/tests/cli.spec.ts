@@ -1,6 +1,7 @@
 import { test } from "@japa/runner";
 import app from "@qwikdev/create-astro/app";
 import { PathTester } from "@qwikdev/create-astro/tester";
+import { getPackageManager } from "@qwikdev/create-astro/utils";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 
 const rootDir = "tests/apps";
@@ -25,21 +26,39 @@ const generatedFiles = [
   "tsconfig.json"
 ] as const;
 
-const eslintFiles = [".eslintignore", ".eslintrc.cjs"];
+type GeneratedOptions = {
+  biome: boolean;
+  install: boolean;
+  ci: boolean;
+  git: boolean;
+};
 
-const prettierFiles = [".prettierignore", "prettier.config.cjs"];
+const getGeneratedFiles = (options: Partial<GeneratedOptions> = {}): string[] => {
+  let files = [
+    ...generatedFiles,
+    ...(options.biome
+      ? ["biome.json"]
+      : [".eslintignore", ".eslintrc.cjs", ".prettierignore", "prettier.config.cjs"])
+  ];
 
-const biomeFiles = ["biome.json"];
+  if (options.install) {
+    const lockFile = {
+      npm: "package-lock.json",
+      pnpm: "pnpm-lock.yaml",
+      yarn: "yarn.lock",
+      bun: "bun.lockb"
+    };
+    const pm = getPackageManager();
 
-const dependenciesDir = "node_modules";
-const ciFile = ".github/workflows/ci.yml";
+    files.push(pm in lockFile ? lockFile[pm] : lockFile.npm);
+  }
 
-enum lockFile {
-  npm = "package-lock.json",
-  pnpm = "pnpm-lock.yaml",
-  yarn = "yarn.lock",
-  bun = "bun.lockb"
-}
+  if (options.ci) {
+    files.push(".github/workflows/ci.yml");
+  }
+
+  return files;
+};
 
 test.group(`${app.name}@${app.version} CLI`, (group) => {
   group.setup(() => {
@@ -59,7 +78,7 @@ test.group(`${app.name}@${app.version} CLI`, (group) => {
     assert.isTrue(appDirTester.exists());
     assert.isTrue(appDirTester.isDir());
 
-    for (const file of [...generatedFiles, ...eslintFiles, ...prettierFiles]) {
+    for (const file of getGeneratedFiles()) {
       const path = `${appDir}/${file}`;
       const pathTester = new PathTester(path);
       assert.isTrue(pathTester.exists());
