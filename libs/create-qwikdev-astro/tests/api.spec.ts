@@ -1,8 +1,8 @@
 import { test } from "@japa/runner";
-import { name, version } from "../package.json";
-import { Application, defaultDefinition } from "../src/app";
-import { ProgramTester } from "../src/tester";
-import { getPackageManager } from "../src/utils";
+import { Application, defaultDefinition } from "@qwikdev/create-astro/app";
+import { name, version } from "@qwikdev/create-astro/package.json";
+import { ProgramTester } from "@qwikdev/create-astro/tester";
+import { getPackageManager } from "@qwikdev/create-astro/utils";
 
 const app = new Application(name, version);
 const tester = new ProgramTester(app);
