@@ -64,5 +64,11 @@ test.group(`${app.name}@${app.version} CLI`, (group) => {
       const pathTester = new PathTester(path);
       assert.isTrue(pathTester.exists());
     }
+
+    for (const file of [...eslintFiles, ...prettierFiles]) {
+      const path = `${appDir}/${file}`;
+      const pathTester = new PathTester(path);
+      assert.isTrue(pathTester.exists());
+    }
   });
 });
