@@ -322,12 +322,11 @@ for (const [key, choices] of Object.entries(answers)) {
 
   test.group(`${executionInputs.includes(index) ? "executions" : "interactions"}`, () => {
     for (const answer of choices) {
-      const question = questions[index];
-      tester.intercept(question, answer);
-      const parsed = tester.parse([projectName]);
-
       if (!executionInputs.includes(index)) {
+        const question = questions[index];
         test(`${question} ${answer}`, async ({ assert }) => {
+          tester.intercept(question, answer);
+          const parsed = tester.parse([projectName]);
           const definition = await tester.interact(parsed.definition);
           switch (index) {
             case input.which_destination:
