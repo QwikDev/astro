@@ -1,5 +1,6 @@
 import { test } from "@japa/runner";
 import { app, run } from "@qwikdev/create-astro";
+import { name, version } from "@qwikdev/create-astro/package.json";
 import { getPackageManager } from "@qwikdev/create-astro/utils";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 
@@ -87,6 +88,11 @@ const getGeneratedDirs = (options: GeneratedOptions = {}): string[] => {
 
   return dirs;
 };
+
+test("application name and version", ({ assert }) => {
+  assert.equal(app.name, name);
+  assert.equal(app.version, version);
+});
 
 test.group(`${app.name}@${app.version} CLI`, (group) => {
   group.setup(() => {
