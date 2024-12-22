@@ -6,6 +6,17 @@ import { emptyDirSync, ensureDirSync } from "fs-extra";
 const rootDir = "tests/apps";
 const projectName = "test-app";
 
+const generatedDirs = [
+  ".vscode",
+  "public",
+  "src",
+  "src/assets",
+  "src/components",
+  "src/layouts",
+  "src/pages",
+  "src/styles"
+];
+
 const generatedFiles = [
   ".vscode/extensions.json",
   ".vscode/launch.json",
@@ -25,15 +36,15 @@ const generatedFiles = [
   "tsconfig.json"
 ] as const;
 
-type GeneratedOptions = {
+type GeneratedOptions = Partial<{
   biome: boolean;
   install: boolean;
   ci: boolean;
   git: boolean;
-};
+}>;
 
-const getGeneratedFiles = (options: Partial<GeneratedOptions> = {}): string[] => {
-  let files = [
+const getGeneratedFiles = (options: GeneratedOptions = {}): string[] => {
+  const files = [
     ...generatedFiles,
     ...(options.biome
       ? ["biome.json"]
@@ -59,6 +70,24 @@ const getGeneratedFiles = (options: Partial<GeneratedOptions> = {}): string[] =>
   return files;
 };
 
+const getGeneratedDirs = (options: GeneratedOptions = {}): string[] => {
+  const dirs = generatedDirs;
+
+  if (options.install) {
+    dirs.push("node_modules");
+  }
+
+  if (options.ci) {
+    dirs.push(...[".github", ".github/workflows"]);
+  }
+
+  if (options.git) {
+    dirs.push(".git");
+  }
+
+  return dirs;
+};
+
 test.group(`${app.name}@${app.version} CLI`, (group) => {
   group.setup(() => {
     ensureDirSync(rootDir);
@@ -71,15 +100,22 @@ test.group(`${app.name}@${app.version} CLI`, (group) => {
 
     assert.equal(result, 0);
 
-    const dir = `${rootDir}/${projectName}`;
-    const testDir = path(dir);
+    const projectDir = `${rootDir}/${projectName}`;
+    const testProjectDir = path(projectDir);
 
-    assert.isTrue(testDir.exists());
-    assert.isTrue(testDir.isDir());
+    assert.isTrue(testProjectDir.exists());
+    assert.isTrue(testProjectDir.isDir());
+
+    for (const dir of getGeneratedDirs()) {
+      const testDir = path(`${projectDir}/${dir}`);
+      assert.isTrue(testDir.exists());
+      assert.isTrue(testDir.isDir());
+    }
 
     for (const file of getGeneratedFiles()) {
-      const testFile = path(`${dir}/${file}`);
+      const testFile = path(`${projectDir}/${file}`);
       assert.isTrue(testFile.exists());
+      assert.isTrue(testFile.isFile());
     }
   });
 });
