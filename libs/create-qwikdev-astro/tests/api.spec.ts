@@ -1,10 +1,9 @@
 import { test } from "@japa/runner";
-import { Application, defaultDefinition } from "@qwikdev/create-astro/app";
+import app, { defaultDefinition } from "@qwikdev/create-astro/app";
 import { name, version } from "@qwikdev/create-astro/package.json";
 import { ProgramTester } from "@qwikdev/create-astro/tester";
 import { getPackageManager } from "@qwikdev/create-astro/utils";
 
-const app = new Application(name, version);
 const tester = new ProgramTester(app);
 const projectName = "my-qwik-astro-app";
 

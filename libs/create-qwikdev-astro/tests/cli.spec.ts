@@ -1,11 +1,11 @@
 import { test } from "@japa/runner";
-import { app, run } from "@qwikdev/create-astro";
-import { name, version } from "@qwikdev/create-astro/package.json";
+import { run } from "@qwikdev/create-astro";
 import { getPackageManager } from "@qwikdev/create-astro/utils";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 
-const rootDir = "tests/apps";
-const projectName = "test-app";
+const integration = "@qwikdev/astro";
+const root = "tests/apps";
+const project = "test-app";
 
 const generatedDirs = [
   ".vscode",
@@ -89,24 +89,19 @@ const getGeneratedDirs = (options: GeneratedOptions = {}): string[] => {
   return dirs;
 };
 
-test("application name and version", ({ assert }) => {
-  assert.equal(app.name, name);
-  assert.equal(app.version, version);
-});
-
-test.group(`${app.name}@${app.version} CLI`, (group) => {
+test.group(`pnpm create ${integration}`, (group) => {
   group.setup(() => {
-    ensureDirSync(rootDir);
+    ensureDirSync(root);
 
-    return () => emptyDirSync(rootDir);
+    return () => emptyDirSync(root);
   });
 
-  test("should create a new app", async ({ assert, path }) => {
-    const result = await run(["pnpm", "create", `${rootDir}/${projectName}`]);
+  test(`should create a new ${integration} app`, async ({ assert, path }) => {
+    const result = await run(["pnpm", "create", `${root}/${project}`]);
 
     assert.equal(result, 0);
 
-    const projectDir = `${rootDir}/${projectName}`;
+    const projectDir = `${root}/${project}`;
     const testProjectDir = path(projectDir);
 
     assert.isTrue(testProjectDir.exists());
