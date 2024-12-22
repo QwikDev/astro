@@ -326,7 +326,9 @@ for (const [key, choices] of Object.entries(answers)) {
         const question = questions[index];
         test(`${question} ${answer}`, async ({ assert }) => {
           tester.intercept(question, answer);
-          const parsed = tester.parse([projectName]);
+          const parsed = tester.parse(
+            index === input.which_destination ? [] : [projectName]
+          );
           const definition = await tester.interact(parsed.definition);
           switch (index) {
             case input.which_destination:
