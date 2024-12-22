@@ -1,5 +1,5 @@
 import { test } from "@japa/runner";
-import app from "@qwikdev/create-astro/app";
+import { app, run } from "@qwikdev/create-astro";
 import { getPackageManager } from "@qwikdev/create-astro/utils";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 
@@ -96,7 +96,7 @@ test.group(`${app.name}@${app.version} CLI`, (group) => {
   });
 
   test("should create a new app", async ({ assert, path }) => {
-    const result = await app.run(["pnpm", "create", `${rootDir}/${projectName}`]);
+    const result = await run(["pnpm", "create", `${rootDir}/${projectName}`]);
 
     assert.equal(result, 0);
 

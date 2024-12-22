@@ -1,14 +1,12 @@
 import app from "./app";
 
+export { app };
+
 /** @param args Pass here process.argv */
-export async function runCreate(...args: string[]) {
-  app.run(args);
+export async function run(args: string[]): Promise<number> {
+  return app.run(args);
 }
 
-export default async function (args = process.argv) {
-  try {
-    await runCreate(...args);
-  } catch (err: any) {
-    app.panic(err.message || err);
-  }
+export default async function (): Promise<number> {
+  return run(process.argv);
 }
