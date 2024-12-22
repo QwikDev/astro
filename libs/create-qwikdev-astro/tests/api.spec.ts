@@ -324,7 +324,7 @@ for (const [key, choices] of Object.entries(answers)) {
     for (const answer of choices) {
       const question = questions[index];
       tester.intercept(question, answer);
-      const parsed = tester.parse(["test-qwik-astro-app"]);
+      const parsed = tester.parse([projectName]);
 
       if (!executionInputs.includes(index)) {
         test(`${question} ${answer}`, async ({ assert }) => {
