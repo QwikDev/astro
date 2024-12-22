@@ -160,21 +160,18 @@ export class ResultTester {
 }
 
 export class PathTester {
-  #stat;
-  constructor(readonly path: string) {
-    this.#stat = statSync(path);
-  }
+  constructor(readonly path: string) {}
 
   isFile(): boolean {
-    return this.#stat.isFile();
+    return statSync(this.path).isFile();
   }
 
   isDir(): boolean {
-    return this.#stat.isDirectory();
+    return statSync(this.path).isDirectory();
   }
 
   isSymbolicLink(): boolean {
-    return this.#stat.isSymbolicLink();
+    return statSync(this.path).isSymbolicLink();
   }
 
   exists(): boolean {

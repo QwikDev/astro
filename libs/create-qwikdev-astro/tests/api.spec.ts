@@ -1,7 +1,4 @@
-import { mkdtempSync } from "node:fs";
-import { join } from "node:path";
 import { test } from "@japa/runner";
-import { ensureDirSync } from "fs-extra/esm";
 import { name, version } from "../package.json";
 import { Application, defaultDefinition } from "../src/app";
 import { ProgramTester } from "../src/tester";
@@ -9,51 +6,7 @@ import { getPackageManager } from "../src/utils";
 
 const app = new Application(name, version);
 const tester = new ProgramTester(app);
-
-const rootDir = "tests/apps";
-const projectName = "test-app";
-
-const generatedFiles = [
-  ".vscode/extensions.json",
-  ".vscode/launch.json",
-  "public/favicon.svg",
-  "src/assets/astro.svg",
-  "src/qwik.svg",
-  "src/components/counter.module.css",
-  "src/components/counter.tsx",
-  "src/layouts/Layout.astro",
-  "src/pages/index.astro",
-  "src/styles/global.css",
-  "src/env.d.ts",
-  ".gitignore",
-  "README.md",
-  "astro.config.ts",
-  "package.json",
-  "tsconfig.json"
-] as const;
-
-const eslintFiles = [".eslintignore", ".eslintrc.cjs"];
-
-const prettierFiles = [".prettierignore", "prettier.config.cjs"];
-
-const biomeFiles = ["biome.json"];
-
-const dependenciesDir = "node_modules";
-const ciFile = ".github/workflows/ci.yml";
-
-enum lockFile {
-  npm = "package-lock.json",
-  pnpm = "pnpm-lock.yaml",
-  yarn = "yarn.lock",
-  bun = "bun.lockb"
-}
-
-const tempAppDir = (name = projectName) => {
-  return mkdtempSync(join(rootDir, `${name}-`), { encoding: "utf-8" });
-};
-
-ensureDirSync(rootDir);
-process.chdir(rootDir);
+const projectName = "my-qwik-astro-app";
 
 enum input {
   which_destination,
@@ -67,8 +20,6 @@ enum input {
   force,
   package_name
 }
-
-const executionInputs = [input.force, input.add, input.package_name];
 
 const questions = {
   [input.which_destination]: "Where would you like to create your new project?",
@@ -84,7 +35,7 @@ const questions = {
 } as const;
 
 const answers = {
-  [input.which_destination]: [".", "my-qwik-astro-app"],
+  [input.which_destination]: [".", projectName],
   [input.use_adapter]: [true, false],
   [input.which_adapter]: ["none", "node", "deno"],
   [input.biome]: [true, false],
@@ -93,10 +44,12 @@ const answers = {
   [input.git]: [true, false],
   [input.add]: [true, false],
   [input.force]: [true, false],
-  [input.package_name]: ["my-qwik-astro-app", ""]
+  [input.package_name]: [projectName, ""]
 } as const;
 
-test.group(`${name}@${version}`, () => {
+const executionInputs = [input.force, input.add, input.package_name];
+
+test.group(`${name}@${version} API`, () => {
   test("constructor", ({ assert }) => {
     assert.equal(app.name, name);
     assert.equal(app.version, version);
