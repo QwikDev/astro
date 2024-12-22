@@ -319,12 +319,12 @@ test.group("aliases", () => {
 
 for (const [key, choices] of Object.entries(answers)) {
   const index = Number(key);
+  const question = questions[index];
 
-  test.group(`${executionInputs.includes(index) ? "executions" : "interactions"}`, () => {
+  test.group(`${question}`, () => {
     for (const answer of choices) {
       if (!executionInputs.includes(index)) {
-        const question = questions[index];
-        test(`${question} ${answer}`, async ({ assert }) => {
+        test(`${answer}`, async ({ assert }) => {
           tester.intercept(question, answer);
           const parsed = tester.parse(
             index === input.which_destination ? [] : [projectName]
