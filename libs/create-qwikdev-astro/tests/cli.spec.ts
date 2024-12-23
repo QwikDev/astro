@@ -1,4 +1,5 @@
 import { test } from "@japa/runner";
+import { TestContext } from "@japa/runner/core";
 import { run } from "@qwikdev/create-astro";
 import { getPackageManager } from "@qwikdev/create-astro/utils";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
@@ -90,33 +91,66 @@ const getGeneratedDirs = (options: GeneratedOptions = {}): string[] => {
 };
 
 test.group(`pnpm create ${integration}`, (group) => {
-  group.setup(() => {
+  group.each.setup(() => {
     ensureDirSync(root);
 
     return () => emptyDirSync(root);
   });
 
-  test(`should create a new ${integration} app`, async ({ assert, path }) => {
-    const result = await run(["pnpm", "create", `${root}/${project}`]);
-
-    assert.equal(result, 0);
-
-    const projectDir = `${root}/${project}`;
-    const testProjectDir = path(projectDir);
-
-    assert.isTrue(testProjectDir.exists());
-    assert.isTrue(testProjectDir.isDir());
-
-    for (const dir of getGeneratedDirs()) {
-      const testDir = path(`${projectDir}/${dir}`);
-      assert.isTrue(testDir.exists());
-      assert.isTrue(testDir.isDir());
-    }
-
-    for (const file of getGeneratedFiles()) {
-      const testFile = path(`${projectDir}/${file}`);
-      assert.isTrue(testFile.exists());
-      assert.isTrue(testFile.isFile());
-    }
+  test(`should create a new ${integration} app`, async (context) => {
+    return testRun([], context);
   });
 });
+
+async function testRun(
+  args: string[],
+  context: TestContext,
+  options: GeneratedOptions = {}
+): Promise<void> {
+  const { assert } = context;
+  const destination = `${root}/${project}`;
+
+  const result = await run(["pnpm", "create", `${destination}`, ...args]);
+  assert.equal(result, 0);
+
+  testProject(destination, context, options);
+}
+
+function testProject(
+  project: string,
+  context: TestContext,
+  options: GeneratedOptions = {}
+): void {
+  const { assert, path } = context;
+  const testProject = path(project);
+
+  assert.isTrue(testProject.exists());
+  assert.isTrue(testProject.isDir());
+
+  testProjectDirs(project, context, options);
+  testProjectFiles(project, context, options);
+}
+
+function testProjectDirs(
+  project: string,
+  { assert, path }: TestContext,
+  options: GeneratedOptions = {}
+): void {
+  for (const dir of getGeneratedDirs(options)) {
+    const testDir = path(`${project}/${dir}`);
+    assert.isTrue(testDir.exists());
+    assert.isTrue(testDir.isDir());
+  }
+}
+
+function testProjectFiles(
+  project: string,
+  { assert, path }: TestContext,
+  options: GeneratedOptions = {}
+): void {
+  for (const file of getGeneratedFiles(options)) {
+    const testFile = path(`${project}/${file}`);
+    assert.isTrue(testFile.exists());
+    assert.isTrue(testFile.isFile());
+  }
+}
