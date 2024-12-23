@@ -260,6 +260,16 @@ export function newLine(count = 1): string {
 
 export async function scanString(
   message: string,
+  initialValue: undefined,
+  it?: boolean
+): Promise<typeof it extends true ? string : undefined>;
+export async function scanString(
+  message: string,
+  initialValue: string,
+  it?: boolean
+): Promise<string>;
+export async function scanString(
+  message: string,
   initialValue?: string,
   it?: boolean
 ): Promise<typeof it extends true ? string : typeof initialValue> {
@@ -280,6 +290,18 @@ export async function scanString(
 export async function scanChoice<T extends string>(
   message: string,
   options: { value: string; label: string }[],
+  initialValue: undefined,
+  it?: boolean
+): Promise<typeof it extends true ? T : undefined>;
+export async function scanChoice<T extends string>(
+  message: string,
+  options: { value: string; label: string }[],
+  initialValue: T,
+  it?: boolean
+): Promise<T>;
+export async function scanChoice<T extends string>(
+  message: string,
+  options: { value: string; label: string }[],
   initialValue?: T,
   it?: boolean
 ): Promise<typeof it extends true ? T : typeof initialValue> {
@@ -297,6 +319,28 @@ export async function scanChoice<T extends string>(
   return value as T | undefined;
 }
 
+export async function scanBoolean(
+  message: string,
+  initialValue: undefined,
+  it?: boolean,
+  yes?: boolean,
+  no?: boolean
+): Promise<
+  typeof it extends true
+    ? boolean
+    : typeof no extends true
+      ? false
+      : typeof yes extends true
+        ? true
+        : undefined
+>;
+export async function scanBoolean(
+  message: string,
+  initialValue: boolean,
+  it?: boolean,
+  yes?: boolean,
+  no?: boolean
+): Promise<typeof no extends true ? false : typeof yes extends true ? true : boolean>;
 export async function scanBoolean(
   message: string,
   initialValue?: boolean,

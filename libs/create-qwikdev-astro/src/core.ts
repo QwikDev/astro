@@ -136,15 +136,16 @@ export type Definition = {
   it?: boolean;
   yes?: boolean;
   no?: boolean;
-  dryRun?: boolean;
 };
 
-export abstract class Program<T extends Definition> {
+export abstract class Program<
+  T extends Definition,
+  U extends Required<Omit<T, "it" | "yes" | "no">>
+> {
   #strict = false;
-  #it = false;
-  #yes = false;
-  #no = false;
-  #dryRun = false;
+  #interactive = false;
+  #useYes = false;
+  #useNo = false;
   readonly commands = new Set<Command>();
   readonly aliases = new Set<Alias>();
   readonly interactions = new Map<string, unknown>();
@@ -161,7 +162,7 @@ export abstract class Program<T extends Definition> {
   addCommand(signature: string, description: string): Command {
     const _command = new Command(signature, description);
 
-    if (this.#yes) {
+    if (this.#useYes) {
       _command.option("yes", {
         alias: "y",
         type: "boolean",
@@ -169,7 +170,7 @@ export abstract class Program<T extends Definition> {
       });
     }
 
-    if (this.#no) {
+    if (this.#useNo) {
       _command.option("no", {
         alias: "n",
         type: "boolean",
@@ -177,17 +178,10 @@ export abstract class Program<T extends Definition> {
       });
     }
 
-    if (this.#it) {
+    if (this.#interactive) {
       _command.option("it", {
         type: "boolean",
         desc: "Execute actions interactively"
-      });
-    }
-
-    if (this.#dryRun) {
-      _command.option("dryRun", {
-        type: "boolean",
-        desc: "Walk through steps without executing"
       });
     }
 
@@ -224,26 +218,20 @@ export abstract class Program<T extends Definition> {
     return this;
   }
 
-  it(enabled = true): this {
-    this.#it = enabled;
+  interactive(enabled = true): this {
+    this.#interactive = enabled;
 
     return this;
   }
 
-  dryRun(enabled = true): this {
-    this.#dryRun = enabled;
+  useYes(enabled = true): this {
+    this.#useYes = enabled;
 
     return this;
   }
 
-  yes(enabled = true): this {
-    this.#yes = enabled;
-
-    return this;
-  }
-
-  no(enabled = true): this {
-    this.#no = enabled;
+  useNo(enabled = true): this {
+    this.#useNo = enabled;
 
     return this;
   }
@@ -275,41 +263,37 @@ export abstract class Program<T extends Definition> {
     return this.aliases.values().toArray();
   }
 
-  abstract execute(definition: T): number | Promise<number>;
+  abstract execute(
+    input: ReturnType<typeof this.interact> | ReturnType<typeof this.validate>
+  ): number | Promise<number>;
 
-  /** @param args Pass here process.argv */
-  async run(args = process.argv): Promise<number> {
-    let definition = this.parse(hideBin(args));
+  /** @param argv Pass here process.argv */
+  async run(argv = process.argv): Promise<number> {
+    const args = hideBin(argv);
 
-    const it = this.#it && (definition.it || args.length === 0);
+    const definition = this.parse(args);
+
+    const it = this.#interactive && (definition.it || args.length === 0);
+
+    let input: U;
 
     if (it) {
-      definition = await this.interact(definition);
+      input = await this.interact(definition);
+    } else {
+      input = this.validate(definition);
     }
 
-    this.validate(definition);
-
-    return await this.execute(definition);
+    return await this.execute(input);
   }
 
-  validate(definition: T): asserts definition is T {
-    /*
-    for (const [name, value] of Object.entries(definition)) {
-      if (value === undefined) {
-        this.panic(`${name} cannot be undefined`);
-      }
-    }
-    */
-  }
+  abstract validate(definition: T): U;
 
-  intercept<T>(question: string, answer: T): this {
+  intercept(question: string, answer: unknown): this {
     return this.setInteraction(question, answer);
   }
 
-  async interact(definition: T): Promise<T> {
-    this.validate(definition);
-
-    return definition;
+  async interact(definition: T): Promise<U> {
+    return this.validate(definition);
   }
 
   parse(args: string[]): T {
@@ -321,7 +305,7 @@ export abstract class Program<T extends Definition> {
       _yargs.strict();
     }
 
-    if (this.#yes && this.#no) {
+    if (this.#useYes && this.#useNo) {
       _yargs.conflicts("yes", "no");
     }
 
@@ -400,6 +384,29 @@ export abstract class Program<T extends Definition> {
 
   async scanBoolean(
     definition: T,
+    message: string
+  ): Promise<
+    typeof definition.it extends true
+      ? boolean
+      : typeof definition.no extends true
+        ? false
+        : typeof definition.yes extends true
+          ? true
+          : undefined
+  >;
+  async scanBoolean(
+    definition: T,
+    message: string,
+    initialValue: boolean
+  ): Promise<
+    typeof definition.no extends true
+      ? false
+      : typeof definition.yes extends true
+        ? true
+        : typeof initialValue
+  >;
+  async scanBoolean(
+    definition: T,
     message: string,
     initialValue?: boolean
   ): Promise<
@@ -419,15 +426,28 @@ export abstract class Program<T extends Definition> {
       return value;
     }
 
-    return scanBoolean(
-      message,
-      initialValue,
-      this.#it && definition.it,
-      this.#yes && definition.yes,
-      this.#no && definition.no
-    );
+    return initialValue
+      ? scanBoolean(
+          message,
+          initialValue,
+          this.#interactive && definition.it,
+          this.#useYes && definition.yes,
+          this.#useNo && definition.no
+        )
+      : scanBoolean(
+          message,
+          undefined,
+          this.#interactive && definition.it,
+          this.#useYes && definition.yes,
+          this.#useNo && definition.no
+        );
   }
 
+  async scanString(
+    definition: T,
+    message: string
+  ): Promise<typeof definition.it extends true ? string : undefined>;
+  async scanString(definition: T, message: string, initialValue: string): Promise<string>;
   async scanString(
     definition: T,
     message: string,
@@ -441,9 +461,22 @@ export abstract class Program<T extends Definition> {
       return value;
     }
 
-    return scanString(message, initialValue, this.#it && definition.it);
+    return initialValue
+      ? scanString(message, initialValue, this.#interactive && definition.it)
+      : scanString(message, undefined, this.#interactive && definition.it);
   }
 
+  async scanChoice<V extends string>(
+    definition: T,
+    message: string,
+    options: { value: string; label: string }[]
+  ): Promise<typeof definition.it extends true ? V : undefined>;
+  async scanChoice<V extends string>(
+    definition: T,
+    message: string,
+    options: { value: string; label: string }[],
+    initialValue: V
+  ): Promise<typeof definition.it extends true ? V : undefined>;
   async scanChoice<V extends string>(
     definition: T,
     message: string,
@@ -461,7 +494,9 @@ export abstract class Program<T extends Definition> {
       return value;
     }
 
-    return scanChoice(message, options, initialValue, this.#it && definition.it);
+    return initialValue
+      ? scanChoice(message, options, initialValue, this.#interactive && definition.it)
+      : scanChoice(message, options, undefined, this.#interactive && definition.it);
   }
 
   panic(message: string): never {

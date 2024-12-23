@@ -3,10 +3,13 @@ import { pathExistsSync } from "fs-extra/esm";
 import { isBoolean, isNumber, isString } from "./console";
 import type { Definition, Program } from "./core";
 
-export class ProgramTester<T extends Definition> {
-  constructor(readonly program: Program<T>) {}
+export class ProgramTester<
+  T extends Definition,
+  U extends Required<Omit<T, "it" | "yes" | "no">>
+> {
+  constructor(readonly program: Program<T, U>) {}
 
-  intercept<T>(question: string, answer: T): this {
+  intercept(question: string, answer: unknown): this {
     this.program.intercept(question, answer);
 
     return this;
@@ -19,7 +22,10 @@ export class ProgramTester<T extends Definition> {
   ): Promise<ValueTester> {
     definition.it = false;
 
-    const value = await this.program.scanString(definition, message, initialValue);
+    const value =
+      initialValue === undefined
+        ? await this.program.scanString(definition, message)
+        : await this.program.scanString(definition, message, initialValue);
 
     return new ValueTester(value);
   }
@@ -31,7 +37,10 @@ export class ProgramTester<T extends Definition> {
   ): Promise<ValueTester> {
     definition.it = false;
 
-    const value = await this.program.scanBoolean(definition, message, initialValue);
+    const value =
+      initialValue === undefined
+        ? await this.program.scanBoolean(definition, message)
+        : await this.program.scanBoolean(definition, message, initialValue);
 
     return new ValueTester(value);
   }
@@ -44,12 +53,10 @@ export class ProgramTester<T extends Definition> {
   ): Promise<ValueTester> {
     definition.it = false;
 
-    const value = await this.program.scanChoice(
-      definition,
-      message,
-      options,
-      initialValue
-    );
+    const value =
+      initialValue === undefined
+        ? await this.program.scanChoice(definition, message, options)
+        : await this.program.scanChoice(definition, message, options, initialValue);
 
     return new ValueTester(value);
   }
@@ -58,16 +65,14 @@ export class ProgramTester<T extends Definition> {
     return new DefinitionTester<T>(this.program.parse(args));
   }
 
-  async interact(definition: T): Promise<DefinitionTester<T>> {
+  async interact(definition: T): Promise<DefinitionTester<U>> {
     definition.it = false;
 
-    return new DefinitionTester<T>(await this.program.interact(definition));
+    return new DefinitionTester<U>(await this.program.interact(definition));
   }
 
-  async execute(definition: T): Promise<ResultTester> {
-    definition.it = false;
-
-    const result = await this.program.execute(definition);
+  async execute(input: U): Promise<ResultTester> {
+    const result = await this.program.execute(input);
 
     return new ResultTester(result);
   }

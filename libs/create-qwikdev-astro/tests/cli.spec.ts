@@ -91,7 +91,7 @@ const getGeneratedDirs = (options: GeneratedOptions = {}): string[] => {
 };
 
 test.group(`pnpm create ${integration}`, (group) => {
-  group.each.setup(() => {
+  group.setup(() => {
     ensureDirSync(root);
 
     return () => emptyDirSync(root);

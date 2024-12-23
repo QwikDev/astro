@@ -46,8 +46,6 @@ const answers = {
   [input.package_name]: [projectName, ""]
 } as const;
 
-const executionInputs = [input.force, input.add, input.package_name];
-
 test.group(`${name}@${version} API`, () => {
   test("constructor", ({ assert }) => {
     assert.equal(app.name, name);
@@ -323,48 +321,43 @@ for (const [key, choices] of Object.entries(answers)) {
 
   test.group(`${question}`, () => {
     for (const answer of choices) {
-      if (!executionInputs.includes(index)) {
-        test(`${answer}`, async ({ assert }) => {
-          tester.intercept(question, answer);
-          const parsed = tester.parse(
-            index === input.which_destination ? [] : [projectName]
-          );
-          const definition = await tester.interact(parsed.definition);
-          switch (index) {
-            case input.which_destination:
-              assert.isTrue(definition.get("destination").equals(answer));
-              break;
+      test(`${answer}`, async ({ assert }) => {
+        tester.intercept(question, answer);
+        const parsed = tester.parse(
+          index === input.which_destination ? [] : [projectName]
+        );
+        const definition = await tester.interact(parsed.definition);
+        switch (index) {
+          case input.which_destination:
+            assert.isTrue(definition.get("destination").equals(answer));
+            break;
 
-            case input.which_adapter:
-              if (
-                (
-                  await tester.scanBoolean(
-                    parsed.definition,
-                    questions[input.use_adapter]
-                  )
-                ).isTrue()
-              ) {
-                assert.isTrue(definition.get("adapter").equals(answer));
-              }
-              break;
+          case input.which_adapter:
+            if (
+              (
+                await tester.scanBoolean(parsed.definition, questions[input.use_adapter])
+              ).isTrue()
+            ) {
+              assert.isTrue(definition.get("adapter").equals(answer));
+            }
+            break;
 
-            case input.biome:
-              assert.isTrue(definition.get("biome").equals(answer));
-              break;
+          case input.biome:
+            assert.isTrue(definition.get("biome").equals(answer));
+            break;
 
-            case input.install:
-              assert.isTrue(definition.get("install").equals(answer));
-              break;
+          case input.install:
+            assert.isTrue(definition.get("install").equals(answer));
+            break;
 
-            case input.ci:
-              assert.isTrue(definition.get("ci").equals(answer));
-              break;
-            case input.git:
-              assert.isTrue(definition.get("git").equals(answer));
-              break;
-          }
-        });
-      }
+          case input.ci:
+            assert.isTrue(definition.get("ci").equals(answer));
+            break;
+          case input.git:
+            assert.isTrue(definition.get("git").equals(answer));
+            break;
+        }
+      });
     }
   });
 }
