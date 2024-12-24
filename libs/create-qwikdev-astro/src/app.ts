@@ -69,6 +69,7 @@ export class Application extends Program<Definition, Input> {
       .alias("h", "help")
       .useYes()
       .useNo()
+      .conflict("add", "force")
       .command(
         "* [destination] [adapter]",
         "Create a new project powered by QwikDev/astro"

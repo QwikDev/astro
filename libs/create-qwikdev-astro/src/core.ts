@@ -146,6 +146,7 @@ export abstract class Program<
   #interactive = false;
   #useYes = false;
   #useNo = false;
+  #conflicts: Record<string, string> = {};
   readonly commands = new Set<Command>();
   readonly aliases = new Set<Alias>();
   readonly interactions = new Map<string, unknown>();
@@ -214,6 +215,12 @@ export abstract class Program<
 
   strict(enabled = true): this {
     this.#strict = enabled;
+
+    return this;
+  }
+
+  conflict(key: string, value: string): this {
+    this.#conflicts[key] = value;
 
     return this;
   }
@@ -312,6 +319,10 @@ export abstract class Program<
     this.#parseCommands(_yargs);
 
     _yargs.version(this.version);
+
+    for (const [key, value] of Object.entries(this.#conflicts)) {
+      _yargs.conflicts(key, value);
+    }
 
     for (const { shortName, longName } of this.aliases) {
       _yargs.alias(shortName, longName);
