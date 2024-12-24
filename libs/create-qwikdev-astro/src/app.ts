@@ -174,9 +174,35 @@ export class Application extends Program<Definition, Input> {
           )
         : definition.destination;
 
+    const outDir = resolveAbsoluteDir(destination.trim());
+    const exists = notEmptyDir(outDir);
+
+    const add =
+      definition.add === undefined
+        ? exists &&
+          (await this.scanBoolean(
+            definition,
+            "Do you want to add @QwikDev/astro to your existing project?",
+            false
+          ))
+        : definition.add;
+
+    const force =
+      definition.force === undefined
+        ? exists &&
+          !add &&
+          (await this.scanBoolean(
+            definition,
+            `Directory "./${resolveRelativeDir(
+              outDir
+            )}" already exists and is not empty. What would you like to overwrite it?`,
+            false
+          ))
+        : false;
+
     let adapter: Adapter;
 
-    if (definition.adapter === defaultDefinition.adapter) {
+    if (!add && definition.adapter === defaultDefinition.adapter) {
       const adapterInput =
         ((await this.scanBoolean(
           definition,
@@ -214,13 +240,13 @@ export class Application extends Program<Definition, Input> {
     }
 
     const biome =
-      definition.biome === undefined
+      !add && definition.biome === undefined
         ? await this.scanBoolean(
             definition,
             "Would you prefer Biome over ESLint/Prettier?",
             false
           )
-        : definition.biome;
+        : !!definition.biome;
 
     const ci =
       definition.ci === undefined
@@ -240,32 +266,6 @@ export class Application extends Program<Definition, Input> {
       definition.git === undefined
         ? await this.scanBoolean(definition, "Would you like to initialize Git?", false)
         : definition.git;
-
-    const outDir = resolveAbsoluteDir(destination.trim());
-    const exists = notEmptyDir(outDir);
-
-    const add =
-      definition.add === undefined
-        ? exists &&
-          (await this.scanBoolean(
-            definition,
-            "Do you want to add @QwikDev/astro to your existing project?",
-            false
-          ))
-        : definition.add;
-
-    const force =
-      definition.force === undefined
-        ? exists &&
-          !add &&
-          (await this.scanBoolean(
-            definition,
-            `Directory "./${resolveRelativeDir(
-              outDir
-            )}" already exists and is not empty. What would you like to overwrite it?`,
-            false
-          ))
-        : false;
 
     const dryRun = !!definition.dryRun;
 
@@ -316,19 +316,7 @@ export class Application extends Program<Definition, Input> {
   }
 
   async runCreate(input: Input) {
-    let starterKit = input.adapter;
-
-    if (input.biome) {
-      starterKit += "-biome";
-    }
-
     const outDir = input.outDir;
-
-    if (input.add) {
-      await this.runAdd(input);
-
-      return;
-    }
 
     if (notEmptyDir(outDir)) {
       if (input.force) {
@@ -344,6 +332,12 @@ export class Application extends Program<Definition, Input> {
         this.cancel();
         process.exit(1);
       }
+    }
+
+    let starterKit = input.adapter;
+
+    if (input.biome) {
+      starterKit += "-biome";
     }
 
     const templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
