@@ -5,7 +5,7 @@ import { getPackageManager } from "@qwikdev/create-astro/utils";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 
 const integration = "@qwikdev/astro";
-const root = "tests/apps";
+const root = "labs";
 const project = "test-app";
 
 const setup = () => {
@@ -108,7 +108,7 @@ test.group(`create ${integration}`, (group) => {
   });
 });
 
-test.group(`create ${integration} with yes or no options`, (group) => {
+test.group(`create ${integration} with yes and no options`, (group) => {
   group.setup(setup);
 
   test(`--no option`, async (context) => {

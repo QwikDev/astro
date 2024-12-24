@@ -3,6 +3,7 @@ node_modules/
 .history
 **/.vite-inspect
 **/dist
+**/labs/*
 /test-results/
 /playwright-report/
 /blob-report/
