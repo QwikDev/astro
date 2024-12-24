@@ -35,8 +35,6 @@ export class ProgramTester<
     message: string,
     initialValue?: boolean
   ): Promise<ValueTester> {
-    definition.it = false;
-
     const value =
       initialValue === undefined
         ? await this.program.scanBoolean(definition, message)
@@ -51,8 +49,6 @@ export class ProgramTester<
     options: { value: string; label: string }[],
     initialValue?: string
   ): Promise<ValueTester> {
-    definition.it = false;
-
     const value =
       initialValue === undefined
         ? await this.program.scanChoice(definition, message, options)
@@ -66,8 +62,6 @@ export class ProgramTester<
   }
 
   async interact(definition: T): Promise<DefinitionTester<U>> {
-    definition.it = false;
-
     return new DefinitionTester<U>(await this.program.interact(definition));
   }
 

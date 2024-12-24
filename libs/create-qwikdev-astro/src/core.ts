@@ -293,7 +293,7 @@ export abstract class Program<
   }
 
   isIt(definition: T): boolean {
-    return this.#interactive && (definition.it || !(isCI() || isTest()));
+    return this.#interactive && (definition.it || !(isTest() || isCI()));
   }
 
   abstract validate(definition: T): U;

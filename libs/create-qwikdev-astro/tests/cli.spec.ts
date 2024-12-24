@@ -4,6 +4,9 @@ import { run } from "@qwikdev/create-astro";
 import { getPackageManager } from "@qwikdev/create-astro/utils";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 
+process.env.NODE_ENV = "test";
+process.env.CI = "1";
+
 const integration = "@qwikdev/astro";
 const root = "labs";
 const project = "test-app";

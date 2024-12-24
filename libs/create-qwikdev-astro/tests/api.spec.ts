@@ -4,6 +4,9 @@ import { name, version } from "@qwikdev/create-astro/package.json";
 import { ProgramTester } from "@qwikdev/create-astro/tester";
 import { getPackageManager } from "@qwikdev/create-astro/utils";
 
+process.env.NODE_ENV = "test";
+process.env.CI = "1";
+
 const tester = new ProgramTester(app);
 const projectName = "my-qwik-astro-app";
 
