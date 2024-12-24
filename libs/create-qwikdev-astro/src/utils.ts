@@ -20,6 +20,14 @@ export function getModuleFilename(): string {
   return filename || fileURLToPath(import.meta.url);
 }
 
+export function isCI(): boolean {
+  return Boolean(process.env.CI || process.env.GITHUB_ACTIONS);
+}
+
+export function isTest(): boolean {
+  return process.env.NODE_ENV === "test";
+}
+
 export function isHome(dir: string): boolean {
   return dir.startsWith(process.env.HOME ?? "~/");
 }

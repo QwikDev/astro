@@ -25,6 +25,7 @@ import {
   spinner,
   style
 } from "./console";
+import { isCI, isTest } from "./utils";
 
 export type Alias = { shortName: string; longName: string };
 
@@ -280,7 +281,7 @@ export abstract class Program<
 
     const definition = this.parse(args);
 
-    const it = this.#interactive && (definition.it || args.length === 0);
+    const it = this.#interactive && (definition.it || !(isCI() || isTest()));
 
     let input: U;
 
