@@ -44,7 +44,6 @@
   | Name                                   | Description                              |
   | :--------------------------------------| :----------------------------------------|
   | `--help` (`-h`)                            | Display available flags.                 |
-  | `--it`                                   | Execute actions interactively.           |
   | `--dry-run`                              | Walk through steps without executing.    |
   | `--force` / `--no-force` (`-f` / `--no-f`)     | Overwrite target directory if it exists. |
   | `--add` / `--no-add` (`-a` / `--no-a`) | Add QwikDev/astro to existing project.   |
@@ -70,7 +69,7 @@
     ```typescript
     import { run } from '@qwikdev/create-astro';
 
-    run(["./qwik-astro-app", "node", "--it"]);
+    run(["./qwik-astro-app", "node"]);
     ```
 
   **Definition type:**
@@ -87,7 +86,6 @@
     ci?: boolean;
     yes?: boolean;
     no?: boolean;
-    it?: boolean;
     dryRun?: boolean;
   };
   ```
@@ -104,7 +102,6 @@ export const defaultDefinition = {
   biome: undefined,
   git: undefined,
   ci: undefined,
-  it: undefined,
   yes: undefined,
   no: undefined,
   dryRun: undefined

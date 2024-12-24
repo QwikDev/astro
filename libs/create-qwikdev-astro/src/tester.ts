@@ -15,17 +15,11 @@ export class ProgramTester<
     return this;
   }
 
-  async scanString(
-    definition: T,
-    message: string,
-    initialValue?: string
-  ): Promise<ValueTester> {
-    definition.it = false;
-
+  async scanString(message: string, initialValue?: string): Promise<ValueTester> {
     const value =
       initialValue === undefined
-        ? await this.program.scanString(definition, message)
-        : await this.program.scanString(definition, message, initialValue);
+        ? await this.program.scanString(message)
+        : await this.program.scanString(message, initialValue);
 
     return new ValueTester(value);
   }
@@ -44,15 +38,14 @@ export class ProgramTester<
   }
 
   async scanChoice(
-    definition: T,
     message: string,
     options: { value: string; label: string }[],
     initialValue?: string
   ): Promise<ValueTester> {
     const value =
       initialValue === undefined
-        ? await this.program.scanChoice(definition, message, options)
-        : await this.program.scanChoice(definition, message, options, initialValue);
+        ? await this.program.scanChoice(message, options)
+        : await this.program.scanChoice(message, options, initialValue);
 
     return new ValueTester(value);
   }

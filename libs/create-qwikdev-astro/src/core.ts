@@ -134,7 +134,6 @@ export class Command {
 }
 
 export type Definition = {
-  it?: boolean;
   yes?: boolean;
   no?: boolean;
 };
@@ -177,13 +176,6 @@ export abstract class Program<
         alias: "n",
         type: "boolean",
         desc: "Skip all prompts by declining defaults"
-      });
-    }
-
-    if (this.#interactive) {
-      _command.option("it", {
-        type: "boolean",
-        desc: "Execute actions interactively"
       });
     }
 
@@ -283,7 +275,7 @@ export abstract class Program<
 
     let input: U;
 
-    if (this.isIt(definition)) {
+    if (this.isIt()) {
       input = await this.interact(definition);
     } else {
       input = this.validate(definition);
@@ -292,8 +284,8 @@ export abstract class Program<
     return await this.execute(input);
   }
 
-  isIt(definition: T): boolean {
-    return this.#interactive && (definition.it || !(isTest() || isCI()));
+  isIt(): boolean {
+    return this.#interactive && !(isTest() || isCI());
   }
 
   abstract validate(definition: T): U;
@@ -400,13 +392,11 @@ export abstract class Program<
     definition: T,
     message: string
   ): Promise<
-    typeof definition.it extends true
-      ? boolean
-      : typeof definition.no extends true
-        ? false
-        : typeof definition.yes extends true
-          ? true
-          : undefined
+    typeof definition.no extends true
+      ? false
+      : typeof definition.yes extends true
+        ? true
+        : undefined
   >;
   async scanBoolean(
     definition: T,
@@ -417,20 +407,18 @@ export abstract class Program<
       ? false
       : typeof definition.yes extends true
         ? true
-        : typeof initialValue
+        : boolean
   >;
   async scanBoolean(
     definition: T,
     message: string,
     initialValue?: boolean
   ): Promise<
-    typeof definition.it extends true
-      ? boolean
-      : typeof definition.no extends true
-        ? false
-        : typeof definition.yes extends true
-          ? true
-          : typeof initialValue
+    typeof definition.no extends true
+      ? false
+      : typeof definition.yes extends true
+        ? true
+        : typeof initialValue
   > {
     const value = this.getInteraction(message);
 
@@ -444,29 +432,25 @@ export abstract class Program<
       ? scanBoolean(
           message,
           initialValue,
-          this.isIt(definition),
+          this.isIt(),
           this.#useYes && definition.yes,
           this.#useNo && definition.no
         )
       : scanBoolean(
           message,
           undefined,
-          this.isIt(definition),
+          this.isIt(),
           this.#useYes && definition.yes,
           this.#useNo && definition.no
         );
   }
 
+  async scanString(message: string): Promise<string | undefined>;
+  async scanString(message: string, initialValue: string): Promise<string>;
   async scanString(
-    definition: T,
-    message: string
-  ): Promise<typeof definition.it extends true ? string : undefined>;
-  async scanString(definition: T, message: string, initialValue: string): Promise<string>;
-  async scanString(
-    definition: T,
     message: string,
     initialValue?: string
-  ): Promise<typeof definition.it extends true ? string : typeof initialValue> {
+  ): Promise<string | typeof initialValue> {
     const value = this.getInteraction(message);
 
     if (value !== undefined) {
@@ -476,27 +460,24 @@ export abstract class Program<
     }
 
     return initialValue
-      ? scanString(message, initialValue, this.isIt(definition))
-      : scanString(message, undefined, this.isIt(definition));
+      ? scanString(message, initialValue, this.isIt())
+      : scanString(message, undefined, this.isIt());
   }
 
   async scanChoice<V extends string>(
-    definition: T,
     message: string,
     options: { value: string; label: string }[]
-  ): Promise<typeof definition.it extends true ? V : undefined>;
+  ): Promise<V | undefined>;
   async scanChoice<V extends string>(
-    definition: T,
     message: string,
     options: { value: string; label: string }[],
     initialValue: V
-  ): Promise<typeof definition.it extends true ? V : undefined>;
+  ): Promise<V>;
   async scanChoice<V extends string>(
-    definition: T,
     message: string,
     options: { value: string; label: string }[],
     initialValue?: V
-  ): Promise<typeof definition.it extends true ? V : typeof initialValue> {
+  ): Promise<V | typeof initialValue> {
     const value = this.getInteraction(message);
 
     if (value !== undefined) {
@@ -509,8 +490,8 @@ export abstract class Program<
     }
 
     return initialValue
-      ? scanChoice(message, options, initialValue, this.isIt(definition))
-      : scanChoice(message, options, undefined, this.isIt(definition));
+      ? scanChoice(message, options, initialValue, this.isIt())
+      : scanChoice(message, options, undefined, this.isIt());
   }
 
   panic(message: string): never {

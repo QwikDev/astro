@@ -42,7 +42,6 @@ export const defaultDefinition = {
   biome: undefined,
   git: undefined,
   ci: undefined,
-  it: undefined,
   yes: undefined,
   no: undefined,
   dryRun: undefined,
@@ -51,7 +50,7 @@ export const defaultDefinition = {
 
 export type Adapter = "node" | "deno" | "none";
 
-export type Input = Required<Omit<Definition, "it" | "yes" | "no">> & {
+export type Input = Required<Omit<Definition, "yes" | "no">> & {
   outDir: string;
   packageName: string;
 };
@@ -166,7 +165,6 @@ export class Application extends Program<Definition, Input> {
     const destination =
       definition.destination === defaultDefinition.destination
         ? await this.scanString(
-            definition,
             `Where would you like to create your new project? ${this.gray(
               `(Use '.' or './' for current directory)`
             )}`,
@@ -211,7 +209,6 @@ export class Application extends Program<Definition, Input> {
           false
         )) &&
           (await this.scanChoice(
-            definition,
             "Which adapter do you prefer?",
             [
               {
@@ -273,7 +270,6 @@ export class Application extends Program<Definition, Input> {
     packageName = definition.yes
       ? packageName
       : await this.scanString(
-          definition,
           "What should be the name of this package?",
           exists && !force ? (getPackageJson(outDir).name ?? packageName) : packageName
         );
