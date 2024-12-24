@@ -277,7 +277,8 @@ export async function scanString(
     ? initialValue
     : (await text({
         message,
-        placeholder: initialValue
+        placeholder: initialValue,
+        defaultValue: initialValue
       })) || initialValue;
 
   if (value !== initialValue) {
@@ -309,7 +310,8 @@ export async function scanChoice<T extends string>(
     ? initialValue
     : (await select({
         message,
-        options
+        options,
+        initialValue
       })) || initialValue;
 
   if (value !== initialValue) {
