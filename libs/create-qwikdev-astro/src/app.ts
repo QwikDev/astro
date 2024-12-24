@@ -150,7 +150,7 @@ export class Application extends Program<Definition, Input> {
       destination: definition.destination,
       adapter: definition.adapter,
       force: definition.force ?? (!!definition.yes && !definition.no),
-      add: definition.add ?? (!!definition.yes && !definition.no),
+      add: !!definition.add,
       biome: definition.biome ?? (!!definition.yes && !definition.no),
       install: definition.install ?? (!!definition.yes && !definition.no),
       ci: definition.ci ?? (!!definition.yes && !definition.no),
