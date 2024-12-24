@@ -294,8 +294,8 @@ export class Application extends Program<Definition, Input> {
   async execute(input: Input): Promise<number> {
     try {
       const ranInstall = await this.start(input);
-      await this.updatePackageJson(input);
-      await this.runCI(input);
+      this.updatePackageJson(input);
+      this.runCI(input);
       await this.runGitInit(input);
       this.end(input, ranInstall);
       return 0;
@@ -398,7 +398,7 @@ export class Application extends Program<Definition, Input> {
     this.outro("Happy coding! 💻🎉");
   }
 
-  async updatePackageJson(input: Input) {
+  updatePackageJson(input: Input): void {
     const { outDir, packageName } = input;
 
     updatePackageName(packageName as string, outDir);
@@ -410,7 +410,7 @@ export class Application extends Program<Definition, Input> {
     }
   }
 
-  async runCI(input: Input): Promise<void> {
+  runCI(input: Input): void {
     if (input.ci) {
       this.step("Adding CI workflow...");
 
