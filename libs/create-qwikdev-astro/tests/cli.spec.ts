@@ -8,6 +8,12 @@ const integration = "@qwikdev/astro";
 const root = "tests/apps";
 const project = "test-app";
 
+const setup = () => {
+  ensureDirSync(root);
+
+  return () => emptyDirSync(root);
+};
+
 const generatedDirs = [
   ".vscode",
   "public",
@@ -53,6 +59,7 @@ const getGeneratedFiles = (options: GeneratedOptions = {}): string[] => {
       : [".eslintignore", ".eslintrc.cjs", ".prettierignore", "prettier.config.cjs"])
   ];
 
+  /*
   if (options.install) {
     const lockFile = {
       npm: "package-lock.json",
@@ -64,6 +71,7 @@ const getGeneratedFiles = (options: GeneratedOptions = {}): string[] => {
 
     files.push(pm in lockFile ? lockFile[pm] : lockFile.npm);
   }
+  */
 
   if (options.ci) {
     files.push(".github/workflows/ci.yml");
@@ -75,9 +83,11 @@ const getGeneratedFiles = (options: GeneratedOptions = {}): string[] => {
 const getGeneratedDirs = (options: GeneratedOptions = {}): string[] => {
   const dirs = generatedDirs;
 
+  /*
   if (options.install) {
     dirs.push("node_modules");
   }
+  */
 
   if (options.ci) {
     dirs.push(...[".github", ".github/workflows"]);
@@ -90,16 +100,29 @@ const getGeneratedDirs = (options: GeneratedOptions = {}): string[] => {
   return dirs;
 };
 
-test.group(`pnpm create ${integration}`, (group) => {
-  group.setup(() => {
-    ensureDirSync(root);
-
-    return () => emptyDirSync(root);
-  });
+test.group(`create ${integration}`, (group) => {
+  group.setup(setup);
 
   test(`should create a new ${integration} app`, async (context) => {
     return testRun([], context);
   });
+});
+
+test.group(`create ${integration} with yes or no options`, (group) => {
+  group.setup(setup);
+
+  test(`--no option`, async (context) => {
+    return testRun(["--no"], context);
+  });
+
+  test(`--yes option`, async (context) => {
+    return testRun(["--yes"], context, {
+      biome: true,
+      // install: true,
+      ci: true,
+      git: true
+    });
+  }).disableTimeout();
 });
 
 async function testRun(
