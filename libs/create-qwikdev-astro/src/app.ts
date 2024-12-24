@@ -149,12 +149,12 @@ export class Application extends Program<Definition, Input> {
     return {
       destination: definition.destination,
       adapter: definition.adapter,
-      force: definition.force ?? definition.yes ?? !definition.no,
-      add: definition.add ?? definition.yes ?? !definition.no,
-      biome: definition.biome ?? definition.yes ?? !definition.no,
-      install: definition.install ?? definition.yes ?? !definition.no,
-      ci: definition.ci ?? definition.yes ?? !definition.no,
-      git: definition.git ?? definition.yes ?? !definition.no,
+      force: definition.force ?? (!!definition.yes && !definition.no),
+      add: definition.add ?? (!!definition.yes && !definition.no),
+      biome: definition.biome ?? (!!definition.yes && !definition.no),
+      install: definition.install ?? (!!definition.yes && !definition.no),
+      ci: definition.ci ?? (!!definition.yes && !definition.no),
+      git: definition.git ?? (!!definition.yes && !definition.no),
       dryRun: !!definition.dryRun,
       outDir: resolveAbsoluteDir(definition.destination),
       packageName: sanitizePackageName(definition.destination)

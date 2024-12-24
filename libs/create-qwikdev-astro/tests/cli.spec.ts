@@ -99,7 +99,7 @@ test.group(`pnpm create ${integration}`, (group) => {
 
   test(`should create a new ${integration} app`, async (context) => {
     return testRun([], context);
-  }).disableTimeout();
+  });
 });
 
 async function testRun(
