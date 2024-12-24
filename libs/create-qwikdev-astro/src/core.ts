@@ -281,17 +281,19 @@ export abstract class Program<
 
     const definition = this.parse(args);
 
-    const it = this.#interactive && (definition.it || !(isCI() || isTest()));
-
     let input: U;
 
-    if (it) {
+    if (this.isIt(definition)) {
       input = await this.interact(definition);
     } else {
       input = this.validate(definition);
     }
 
     return await this.execute(input);
+  }
+
+  isIt(definition: T): boolean {
+    return this.#interactive && (definition.it || !(isCI() || isTest()));
   }
 
   abstract validate(definition: T): U;
@@ -442,14 +444,14 @@ export abstract class Program<
       ? scanBoolean(
           message,
           initialValue,
-          this.#interactive && definition.it,
+          this.isIt(definition),
           this.#useYes && definition.yes,
           this.#useNo && definition.no
         )
       : scanBoolean(
           message,
           undefined,
-          this.#interactive && definition.it,
+          this.isIt(definition),
           this.#useYes && definition.yes,
           this.#useNo && definition.no
         );
@@ -474,8 +476,8 @@ export abstract class Program<
     }
 
     return initialValue
-      ? scanString(message, initialValue, this.#interactive && definition.it)
-      : scanString(message, undefined, this.#interactive && definition.it);
+      ? scanString(message, initialValue, this.isIt(definition))
+      : scanString(message, undefined, this.isIt(definition));
   }
 
   async scanChoice<V extends string>(
@@ -507,8 +509,8 @@ export abstract class Program<
     }
 
     return initialValue
-      ? scanChoice(message, options, initialValue, this.#interactive && definition.it)
-      : scanChoice(message, options, undefined, this.#interactive && definition.it);
+      ? scanChoice(message, options, initialValue, this.isIt(definition))
+      : scanChoice(message, options, undefined, this.isIt(definition));
   }
 
   panic(message: string): never {
