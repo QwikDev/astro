@@ -2,6 +2,8 @@
 "@qwikdev/astro": minor
 ---
 
+## 🎄 Qwik Astro Holiday Update! (0.7) 🎅
+
 ### ✨ What's New
 
 - 🚀 Added support for Astro 5
