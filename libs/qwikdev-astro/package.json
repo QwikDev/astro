@@ -40,12 +40,7 @@
     "./utils": "./src/utils.ts",
     "./q-astro-manifest.json": "./q-astro-manifest.json"
   },
-  "files": [
-    "src",
-    "src/index.ts",
-    "server.ts",
-    "env.d.ts"
-  ],
+  "files": ["src", "src/index.ts", "server.ts", "env.d.ts"],
   "keywords": [
     "astro-integration",
     "astro-component",
@@ -65,7 +60,7 @@
   },
   "devDependencies": {
     "@builder.io/qwik": "^1.12.0",
-    "astro": "5.1.1",
+    "astro": "^5.1",
     "vite": "^5.4.11"
   },
   "peerDependencies": {
