@@ -337,6 +337,7 @@ export class Application extends Program<Definition, Input> {
 
     this.step(`Creating new project in ${this.bgBlue(` ${outDir} `)} ... 🐇`);
     this.copyTemplate(input, templatePath);
+    this.copyGitignore(input);
   }
 
   async start(input: Input): Promise<boolean> {
@@ -468,6 +469,16 @@ export class Application extends Program<Definition, Input> {
           );
         }
       }
+    }
+  }
+
+  copyGitignore(input: Input) {
+    this.step("Copying `.gitignore` file...");
+
+    if (!input.dryRun) {
+      const gitignore = path.join(__dirname, "..", "stubs", "gitignore");
+      const dotGitignore = path.join(input.outDir, ".gitignore");
+      cpSync(gitignore, dotGitignore, { force: true });
     }
   }
 
