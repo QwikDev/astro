@@ -351,7 +351,7 @@ export async function scanBoolean(
   no?: boolean
 ): Promise<
   typeof it extends true
-    ? boolean
+    ? typeof initialValue
     : typeof no extends true
       ? false
       : typeof yes extends true
@@ -359,15 +359,13 @@ export async function scanBoolean(
         : typeof initialValue
 > {
   const value =
-    no && !initialValue
+    no === true && initialValue === undefined
       ? false
-      : (yes && initialValue !== false) ||
-        initialValue ||
-        (it &&
-          (await confirm({
-            message,
-            initialValue
-          })));
+      : yes === true && initialValue === undefined
+        ? true
+        : it
+          ? await confirm({ message, initialValue })
+          : initialValue;
 
   if (value !== initialValue) {
     ensureBoolean(value);

@@ -428,7 +428,7 @@ export abstract class Program<
       return value;
     }
 
-    return initialValue
+    return initialValue !== undefined
       ? scanBoolean(
           message,
           initialValue,
