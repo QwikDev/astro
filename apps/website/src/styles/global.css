@@ -1,3 +1,53 @@
+:root {
+  /* colors */
+  --off-black: #0A0A0A;
+  --purple-50: #f1f3fc;
+  --purple-100: #e6e8f9;
+  --purple-200: #d1d4f4;
+  --purple-300: #b5b7ec;
+  --purple-400: #9996e3;
+  --purple-500: #867cd8;
+  --purple-600: #7461c8;
+  --purple-700: #6552b0;
+  --purple-800: #52458e;
+  --purple-900: #463d72;
+  --purple-950: #2a2442;
+
+  --rose-50: #fff1f2;
+  --rose-100: #ffe4e6;
+  --rose-200: #fecdd3;
+  --rose-300: #fda4af;
+  --rose-400: #fb7185;
+  --rose-500: #f43f5e;
+  --rose-600: #e11d48;
+  --rose-700: #be123c;
+  --rose-800: #9f1239;
+  --rose-900: #881337;
+  --rose-950: #4c0519;
+
+  --neutral-50: #f6f6f6;
+  --neutral-100: #e7e7e7;
+  --neutral-200: #d1d1d1;
+  --neutral-300: #b0b0b0;
+  --neutral-400: #888888;
+  --neutral-500: #6d6d6d;
+  --neutral-600: #5d5d5d;
+  --neutral-700: #4f4f4f;
+  --neutral-800: #454545;
+  --neutral-900: #3d3d3d;
+  --neutral-950: #222222;
+
+  /* typography */
+  --step--2: clamp(0.7813rem, 0.7747rem + 0.0326vw, 0.8rem);
+  --step--1: clamp(0.9375rem, 0.9158rem + 0.1087vw, 1rem);
+  --step-0: clamp(1.125rem, 1.0815rem + 0.2174vw, 1.25rem);
+  --step-1: clamp(1.35rem, 1.2761rem + 0.3696vw, 1.5625rem);
+  --step-2: clamp(1.62rem, 1.5041rem + 0.5793vw, 1.9531rem);
+  --step-3: clamp(1.944rem, 1.771rem + 0.8651vw, 2.4414rem);
+  --step-4: clamp(2.3328rem, 2.0827rem + 1.2504vw, 3.0518rem);
+  --step-5: clamp(2.7994rem, 2.4462rem + 1.7658vw, 3.8147rem);
+}
+
 *,
 *::before,
 *::after {
@@ -7,11 +57,23 @@
 * {
   margin: 0;
 }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Unbounded Variable", sans-serif;
+}
+
 body {
   /* 3. Add accessible line-height */
   line-height: 1.5;
   /* 4. Improve text rendering */
   -webkit-font-smoothing: antialiased;
+  background-color: var(--off-black);
+  color: var(--purple-50);
   font-family: "Unbounded Variable", sans-serif;
 }
 /* 5. Improve media defaults */
