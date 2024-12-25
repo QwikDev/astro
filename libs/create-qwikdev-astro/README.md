@@ -7,25 +7,25 @@
   - **With `NPM`**:
 
     ```bash
-    npm create @qwikdev/astro@latest [project] [adapter] [...options]
+    npm create @qwikdev/astro@latest [destination] [adapter] [...options]
     ```
 
   - **With `Yarn`**:
 
     ```bash
-    yarn create @qwikdev/astro [project] [adapter] [...options]
+    yarn create @qwikdev/astro [destination] [adapter] [...options]
     ```
 
   - **With `PNPM`**:
 
     ```bash
-    pnpm create @qwikdev/astro [project] [adapter] [...options]
+    pnpm create @qwikdev/astro [destination] [adapter] [...options]
     ```
 
   - **With `Bun`**:
 
     ```bash
-    bun create @qwikdev/astro [project] [adapter] [...options]
+    bun create @qwikdev/astro [destination] [adapter] [...options]
     ```
 
   The `create @qwikdev/astro` command runs interactively without any arguments or options.

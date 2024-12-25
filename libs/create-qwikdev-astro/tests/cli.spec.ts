@@ -103,11 +103,37 @@ const getGeneratedDirs = (options: GeneratedOptions = {}): string[] => {
   return dirs;
 };
 
-test.group(`create ${integration}`, (group) => {
-  group.setup(setup);
+test.group(`create ${integration} app`, (group) => {
+  group.each.setup(setup);
 
-  test(`should create a new ${integration} app`, async (context) => {
+  test("without adapter", async (context) => {
     return testRun([], context);
+  });
+
+  test("without adpater and using Biome", async (context) => {
+    return testRun(["--biome"], context, {
+      biome: true
+    });
+  });
+
+  test("with Node.js adapter", async (context) => {
+    return testRun(["node"], context);
+  });
+
+  test("with Node.js adapter and using Biome", async (context) => {
+    return testRun(["node", "--biome"], context, {
+      biome: true
+    });
+  });
+
+  test("with Deno adapter", async (context) => {
+    return testRun(["deno"], context);
+  });
+
+  test("with Deno adapter and using Biome", async (context) => {
+    return testRun(["deno", "--biome"], context, {
+      biome: true
+    });
   });
 });
 
