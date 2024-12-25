@@ -7,6 +7,8 @@
   "scripts": {
     "check": "tsc --noEmit",
     "build": "pnpm check && tsup-node --env.NODE_ENV production",
+    "prepublishOnly": "node --loader tsm src/prepare.ts",
+    "postpublish": "node --loader tsm src/prepare.ts --restore",
     "start": "tsup-node --env.NODE_ENV development --watch",
     "test": "NODE_ENV=test node --loader tsm --enable-source-maps bin/test.ts"
   },
@@ -86,10 +88,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist",
-    "stubs"
-  ],
+  "files": ["dist", "stubs"],
   "bin": "./dist/cli.js",
   "keywords": [
     "astro-integration",
