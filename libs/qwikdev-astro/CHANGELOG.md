@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.7.2
+
+### Patch Changes
+
+- fa9e5a8: Added `.gitignore` file to the project and updated dependencies.
+
 ## 0.7.1
 
 ### Patch Changes
