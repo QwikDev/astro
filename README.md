@@ -13,25 +13,25 @@ To start a new Qwik Astro project, you can run the following command:
   - **With `NPM`**:
 
     ```bash
-    npm create @qwikdev/astro
+    npm create @qwikdev/astro@latest
     ```
 
   - **With `Yarn`**:
 
     ```bash
-    yarn create @qwikdev/astro
+    yarn create @qwikdev/astro@latest
     ```
 
   - **With `PNPM`**:
 
     ```bash
-    pnpm create @qwikdev/astro
+    pnpm create @qwikdev/astro@latest
     ```
 
   - **With `Bun`**:
 
     ```bash
-    bun create @qwikdev/astro
+    bun create @qwikdev/astro@latest
     ```
 
   For more advanced CLI configuration options, see the [@qwikdev/astro CLI documentation](https://github.com/QwikDev/astro/blob/main/libs/create-qwikdev-astro/README.md).
