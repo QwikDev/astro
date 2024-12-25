@@ -4,6 +4,8 @@
 
 ## 🎄 Qwik Astro Holiday Update! (0.7) 🎅
 
+Special thanks to [Luiz Ferraz (Fryuni)](https://github.com/Fryuni) for his help with this release!
+
 ### ✨ What's New
 
 - 🚀 Added support for Astro 5
@@ -16,10 +18,11 @@
 ### 🛠️ Under the Hood
 
 - ⚡️ Faster builds: Now using Vite for entrypoint detection
+- 🔧 Using latest version of Astro Integration Kit (18.0)
 - 🪟 Fixed Windows compatibility issues
 - 📁 Better `@astrojs/mdx` compatibility
 - 📁 A temp directory is no longer needed
-- 🌐 Full support for all deployment platforms ([#179](https://github.com/QwikDev/astro/issues/179)):
+- 🌐 Full support for all Astro deployment platforms ([#179](https://github.com/QwikDev/astro/issues/179)):
   - Netlify
   - Vercel
   - Cloudflare
