@@ -21,7 +21,8 @@
     "@astrojs/check": "^0.9.4",
     "@builder.io/qwik": "^1.12",
     "@qwikdev/astro": "^0.7",
-    "astro": "^5.1"
+    "astro": "^5.1",
+    "@fontsource-variable/unbounded": "^5.1.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.0"
