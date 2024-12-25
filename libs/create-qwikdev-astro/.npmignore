@@ -1,4 +1,3 @@
 scripts/
 src/
 tsconfig.json
-!stubs/**/.gitignore
