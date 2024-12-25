@@ -22,7 +22,7 @@
       "quoteProperties": "preserve",
       "quoteStyle": "double",
       "semicolons": "always",
-      "trailingComma": "none"
+      "trailingCommas": "none"
     }
   },
 

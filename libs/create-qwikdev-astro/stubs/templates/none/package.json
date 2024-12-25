@@ -14,9 +14,8 @@
     "fmt": "prettier --write .",
     "lint": "eslint --fix \"**/*.{js,jsx,ts,tsx,astro}\"",
     "lint.dry-run": "eslint --fix-dry-run \"**/*.{js,jsx,ts,tsx,astro}\"",
-    "preview": "npm run build && npm run serve",
+    "preview": "npm run build && astro preview",
     "prod": "npm run check && astro build",
-    "serve": "node ./dist/server/entry.mjs",
     "start": "astro dev --open"
   },
   "dependencies": {

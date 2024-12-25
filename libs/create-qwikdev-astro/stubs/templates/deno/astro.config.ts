@@ -1,7 +1,7 @@
 import { defineConfig, passthroughImageService } from "astro/config";
 
 import deno from "@astrojs/deno";
-import qwik from "@qwikdev/astro";
+import qwikdev from "@qwikdev/astro";
 
 // https://astro.build/config
 export default defineConfig({
@@ -10,5 +10,5 @@ export default defineConfig({
     service: passthroughImageService(),
   },
   adapter: deno(),
-  integrations: [qwik()],
+  integrations: [qwikdev()],
 });
