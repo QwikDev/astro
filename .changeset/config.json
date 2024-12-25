@@ -7,11 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "@qwikdev/astro-website",
-    "astro-deno-demo",
-    "astro-node-demo",
-    "astro-demo",
-    "demo-lib"
-  ]
+  "ignore": ["@qwikdev/astro-website", "astro-deno-demo", "astro-node-demo", "astro-demo"]
 }
