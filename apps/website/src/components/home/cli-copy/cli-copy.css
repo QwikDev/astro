@@ -5,6 +5,8 @@
     display: flex;
     align-items: center;
     gap: var(--space-3xs);
+    transition: background-color 0.35s;
+    transition-timing-function: var(--qa-hover);
 }
 
 .cli-copy:hover {

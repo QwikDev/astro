@@ -7,6 +7,7 @@ import Layout from "src/layouts/Layout.astro";
 <Layout title="Qwik + Astro">
   <div class="grid-line" aria-hidden="true"></div>
   <main>
+    <div class="background"></div>
     <div class="intro">
       <h1>
         {
@@ -39,6 +40,11 @@ import Layout from "src/layouts/Layout.astro";
 </Layout>
 
 <style>
+  .background {
+    height: 160px;
+    background: lightblue;
+  }
+
   h1 {
     margin-block: var(--space-m);
     display: flex;
@@ -89,7 +95,7 @@ import Layout from "src/layouts/Layout.astro";
     display: inline-block;
     opacity: 0;
     animation: fade-in 0.5s forwards;
-    animation-timing-function: var(--fade);
+    animation-timing-function: var(--qa-fade);
   }
 
   @keyframes fade-in {
