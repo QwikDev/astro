@@ -1,5 +1,7 @@
 ---
+import { CLICopy } from "@components/home/cli-copy/cli-copy";
 import { JSChunk } from "@components/home/js-chunk/js-chunk";
+import { Icon } from "astro-icon/components";
 import Layout from "src/layouts/Layout.astro";
 ---
 
@@ -20,7 +22,10 @@ import Layout from "src/layouts/Layout.astro";
       >
 
       <div>
-        <button>Copy CLI command</button>
+        <CLICopy>
+          <span data-copy-icon><Icon name="tabler:clipboard-text" /></span>
+          <span data-copy-success><Icon name="tabler:clipboard-check" /></span>
+        </CLICopy>
         <a href="/docs">Explore the docs</a>
       </div>
     </div>
@@ -58,11 +63,5 @@ import Layout from "src/layouts/Layout.astro";
 
   .intro span {
     font-size: var(--step-1);
-  }
-
-  .intro button {
-    background-color: transparent;
-    padding: var(--space-3xs);
-    border: var(--space-4xs) dotted var(--rose-500);
   }
 </style>
