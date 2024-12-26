@@ -1,4 +1,5 @@
 ---
+import { JSChunk } from "@components/home/js-chunk/js-chunk";
 import Layout from "src/layouts/Layout.astro";
 ---
 
@@ -11,7 +12,15 @@ import Layout from "src/layouts/Layout.astro";
         <span class="astro">ASTRO</span>
       </h1>
 
-      <span>The web's most efficient power couple.</span>
+      <JSChunk />
+
+      <span
+        >Zero hydration. Zero compromise. The only instantly interactive UI
+        framework that's HTML and server-first, just like Astro.</span
+      >
+
+      <button>npm create @qwikdev/astro@latest</button>
+      <a href="/docs">Explore the docs</a>
 
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Et nesciunt
@@ -40,7 +49,7 @@ import Layout from "src/layouts/Layout.astro";
 
   .intro {
     margin: 0 auto;
-    max-width: 600px;
+    max-width: 1240px;
     border-inline: 1px solid var(--neutral-950);
     padding: var(--space-m);
   }
