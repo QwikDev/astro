@@ -11,6 +11,10 @@
     display: none;
 }
 
+.cli-copy[data-interacted] {
+    border-color: var(--green-500);
+}
+
 .cli-copy[data-click-success="false"] [data-copy-success] {
     display: none;
 }
