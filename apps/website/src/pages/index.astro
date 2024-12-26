@@ -9,8 +9,16 @@ import Layout from "src/layouts/Layout.astro";
   <main>
     <div class="intro">
       <h1>
-        <span class="qwik">QWIK</span>
-        <span class="astro">ASTRO</span>
+        {
+          "QWIK ASTRO".split("").map((letter, i) => (
+            <span
+              class="letter"
+              style={`animation-delay: ${i * 0.15}s; ${letter === "K" && "margin-right: var(--space-s); display: block"}`}
+            >
+              {letter}
+            </span>
+          ))
+        }
       </h1>
 
       <span
@@ -33,6 +41,7 @@ import Layout from "src/layouts/Layout.astro";
 <style>
   h1 {
     margin-block: var(--space-m);
+    display: flex !important;
   }
 
   .grid-line {
@@ -59,18 +68,40 @@ import Layout from "src/layouts/Layout.astro";
 
   .intro h1 {
     display: flex;
-    gap: 20px;
   }
 
   .intro > span {
     font-size: var(--step-1);
     margin-block: var(--space-m);
     display: block;
+    animation: fade-in 0.5s forwards;
+    animation-delay: 2s;
+    opacity: 0;
   }
 
   .navigation {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-xs);
+  }
+
+  .letter {
+    display: inline-block;
+    opacity: 0;
+    animation: fade-in 0.5s forwards;
+    animation-timing-function: cubic-bezier(0.8, -0.4, 0.5, 1);
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(var(--space-xs));
+      filter: blur(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
   }
 </style>
