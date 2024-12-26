@@ -1,13 +1,14 @@
 ---
+import { Background } from "@components/home/background/background";
 import { CLICopy } from "@components/home/cli-copy/cli-copy";
 import { Icon } from "astro-icon/components";
 import Layout from "src/layouts/Layout.astro";
 ---
 
 <Layout title="Qwik + Astro">
-  <div class="grid-line" aria-hidden="true"></div>
   <main>
-    <div class="background"></div>
+    <Background />
+    <div class="grid-line" aria-hidden="true"></div>
     <div class="intro">
       <h1>
         {
@@ -40,11 +41,6 @@ import Layout from "src/layouts/Layout.astro";
 </Layout>
 
 <style>
-  .background {
-    height: 160px;
-    background: lightblue;
-  }
-
   h1 {
     margin-block: var(--space-m);
     display: flex;
