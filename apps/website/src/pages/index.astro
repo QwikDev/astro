@@ -18,7 +18,7 @@ import Layout from "src/layouts/Layout.astro";
         framework that's HTML and server-first, just like Astro.</span
       >
 
-      <div>
+      <div class="navigation">
         <CLICopy>
           <span data-copy-icon><Icon name="tabler:clipboard-text" /></span>
           <span data-copy-success><Icon name="tabler:clipboard-check" /></span>
@@ -31,6 +31,10 @@ import Layout from "src/layouts/Layout.astro";
 </Layout>
 
 <style>
+  h1 {
+    margin-block: var(--space-m);
+  }
+
   .grid-line {
     width: 100%;
     height: 1px;
@@ -58,7 +62,15 @@ import Layout from "src/layouts/Layout.astro";
     gap: 20px;
   }
 
-  .intro span {
+  .intro > span {
     font-size: var(--step-1);
+    margin-block: var(--space-m);
+    display: block;
+  }
+
+  .navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
   }
 </style>
