@@ -19,22 +19,10 @@ import Layout from "src/layouts/Layout.astro";
         framework that's HTML and server-first, just like Astro.</span
       >
 
-      <button>npm create @qwikdev/astro@latest</button>
-      <a href="/docs">Explore the docs</a>
-
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Et nesciunt
-        sapiente laboriosam repellendus, sint animi assumenda veniam cum
-        consectetur dicta quasi saepe inventore doloribus officia expedita
-        fugiat necessitatibus ad quo.
-      </p>
-
-      <p>
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque saepe
-        ad, accusamus necessitatibus cumque minima nihil quaerat laborum, sed
-        ratione nesciunt explicabo excepturi esse dolorem harum. Sequi odit
-        animi asperiores!
-      </p>
+      <div>
+        <button>Copy CLI command</button>
+        <a href="/docs">Explore the docs</a>
+      </div>
     </div>
   </main>
   <div class="grid-line" aria-hidden="true"></div>
@@ -70,5 +58,11 @@ import Layout from "src/layouts/Layout.astro";
 
   .intro span {
     font-size: var(--step-1);
+  }
+
+  .intro button {
+    background-color: transparent;
+    padding: var(--space-3xs);
+    border: var(--space-4xs) dotted var(--rose-500);
   }
 </style>

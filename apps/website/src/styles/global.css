@@ -48,6 +48,7 @@
   --step-5: clamp(2.7994rem, 2.4462rem + 1.7658vw, 3.8147rem);
 
   /* spacing */
+  --space-4xs: clamp(0.125rem, 0.125rem + 0vw, 0.125rem);
   --space-3xs: clamp(0.3125rem, 0.3125rem + 0vw, 0.3125rem);
   --space-2xs: clamp(0.5625rem, 0.5408rem + 0.1087vw, 0.625rem);
   --space-xs: clamp(0.875rem, 0.8533rem + 0.1087vw, 0.9375rem);
@@ -91,13 +92,20 @@ h6 {
   font-family: "Unbounded Variable", sans-serif;
 }
 
+body, p, button, a {
+  color: var(--purple-50);
+}
+
+button {
+  cursor: pointer;
+}
+
 body {
   /* 3. Add accessible line-height */
   line-height: 1.5;
   /* 4. Improve text rendering */
   -webkit-font-smoothing: antialiased;
   background-color: var(--off-black);
-  color: var(--purple-50);
   font-family: "Unbounded Variable", sans-serif;
 }
 /* 5. Improve media defaults */
