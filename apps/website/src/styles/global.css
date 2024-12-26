@@ -83,6 +83,10 @@
 
   /* Custom pairs */
   --space-s-l: clamp(1.125rem, 0.6467rem + 2.3913vw, 2.5rem);
+
+  /* Animations */
+  --fade: cubic-bezier(0.8, -0.4, 0.5, 1);
+
 }
 
 *,

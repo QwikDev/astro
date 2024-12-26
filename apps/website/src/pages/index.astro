@@ -41,7 +41,7 @@ import Layout from "src/layouts/Layout.astro";
 <style>
   h1 {
     margin-block: var(--space-m);
-    display: flex !important;
+    display: flex;
   }
 
   .grid-line {
@@ -89,7 +89,7 @@ import Layout from "src/layouts/Layout.astro";
     display: inline-block;
     opacity: 0;
     animation: fade-in 0.5s forwards;
-    animation-timing-function: cubic-bezier(0.8, -0.4, 0.5, 1);
+    animation-timing-function: var(--fade);
   }
 
   @keyframes fade-in {

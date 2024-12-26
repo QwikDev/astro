@@ -7,6 +7,10 @@
     gap: var(--space-3xs);
 }
 
+.cli-copy:hover {
+    background-color: var(--neutral-950);
+}
+
 .cli-copy[data-click-success="true"] [data-copy-icon] {
     display: none;
 }
