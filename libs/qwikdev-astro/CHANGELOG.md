@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.7.3
+
+### Patch Changes
+
+- 8d25080: refactor: improved errors for older node versions
+
 ## 0.7.2
 
 ### Patch Changes
