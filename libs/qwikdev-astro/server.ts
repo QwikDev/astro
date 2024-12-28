@@ -73,9 +73,18 @@ export async function renderToStaticMarkup(
       "q-astro-manifest.json"
     );
 
-    const integrationManifest = manifestPath
-      ? await import(/* @vite-ignore */ manifestPath, { with: { type: "json" } })
-      : null;
+    let integrationManifest = null;
+    if (manifestPath) {
+      try {
+        integrationManifest = await import(/* @vite-ignore */ manifestPath, {
+          with: { type: "json" }
+        });
+      } catch (error) {
+        throw new Error(
+          `@qwikdev/astro: This integration requires Node version 22 or higher. If this is local, check your node version with node -v. If this is a deployment, check your deployment provider's environment variables.`
+        );
+      }
+    }
 
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: { style: "display: contents" },
