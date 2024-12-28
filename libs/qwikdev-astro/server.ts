@@ -80,7 +80,6 @@ export async function renderToStaticMarkup(
           with: { type: "json" }
         });
       } catch (error) {
-        console.error(`Failed to load Qwik manifest from ${manifestPath}:`, error);
         throw new Error(
           `@qwikdev/astro: This integration requires Node version 22 or higher. If this is local, check your node version with node -v. If this is a deployment, check your deployment provider's environment variables.`
         );
