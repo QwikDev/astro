@@ -6,7 +6,8 @@
   "description": "Interactive CLI for create @QwikDev/astro projects.",
   "scripts": {
     "check": "tsc --noEmit",
-    "build": "pnpm check && tsup-node --env.NODE_ENV production",
+    "build": "tsup-node --env.NODE_ENV production",
+    "prod": "pnpm check && pnpm build",
     "start": "tsup-node --env.NODE_ENV development --watch",
     "test": "NODE_ENV=test node --loader tsm --enable-source-maps bin/test.ts"
   },
@@ -86,10 +87,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist",
-    "stubs"
-  ],
+  "files": ["dist", "stubs"],
   "bin": "./dist/cli.js",
   "keywords": [
     "astro-integration",
