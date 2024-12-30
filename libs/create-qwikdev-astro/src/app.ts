@@ -166,7 +166,7 @@ export class Application extends Program<Definition, Input> {
       definition.destination === defaultDefinition.destination
         ? await this.scanString(
             `Where would you like to create your new project? ${this.gray(
-              `(Use '.' or './' for current directory)`
+              `(Use '.' or 'qwik-astro-app' for current directory)`
             )}`,
             definition.destination
           )
@@ -193,13 +193,16 @@ export class Application extends Program<Definition, Input> {
             definition,
             `Directory "./${resolveRelativeDir(
               outDir
-            )}" already exists and is not empty. What would you like to overwrite it?`
+            )}" already exists and is not empty. What would you like to overwrite it?`,
+            false
           ))
         : false;
 
+    const ask = !exists || add || force;
+
     let adapter: Adapter;
 
-    if ((!add || force) && definition.adapter === defaultDefinition.adapter) {
+    if (ask && (!add || force) && definition.adapter === defaultDefinition.adapter) {
       const adapterInput =
         ((await this.scanBoolean(
           definition,
@@ -235,40 +238,34 @@ export class Application extends Program<Definition, Input> {
       adapter = definition.adapter;
     }
 
-    const biome =
-      !add && definition.biome === undefined
-        ? !!(await this.scanBoolean(
-            definition,
-            "Would you prefer Biome over ESLint/Prettier?"
-          ))
-        : !!definition.biome;
+    const biome = !!(ask && !add && definition.biome === undefined
+      ? await this.scanBoolean(definition, "Would you prefer Biome over ESLint/Prettier?")
+      : definition.biome);
 
-    const ci =
-      definition.ci === undefined
-        ? !!(await this.scanBoolean(definition, "Would you like to add CI workflow?"))
-        : definition.ci;
+    const ci = !!(ask && definition.ci === undefined
+      ? await this.scanBoolean(definition, "Would you like to add CI workflow?")
+      : definition.ci);
 
-    const install =
-      definition.install === undefined
-        ? !!(await this.scanBoolean(
-            definition,
-            `Would you like to install ${this.#packageManger} dependencies?`
-          ))
-        : definition.install;
+    const install = !!(ask && definition.install === undefined
+      ? await this.scanBoolean(
+          definition,
+          `Would you like to install ${this.#packageManger} dependencies?`
+        )
+      : definition.install);
 
-    const git =
-      definition.git === undefined
-        ? !!(await this.scanBoolean(definition, "Would you like to initialize Git?"))
-        : definition.git;
+    const git = !!(ask && definition.git === undefined
+      ? await this.scanBoolean(definition, "Would you like to initialize Git?")
+      : definition.git);
 
     const dryRun = !!definition.dryRun;
 
-    packageName = definition.yes
-      ? packageName
-      : await this.scanString(
-          "What should be the name of this package?",
-          exists && !force ? (getPackageJson(outDir).name ?? packageName) : packageName
-        );
+    packageName =
+      !ask || definition.yes
+        ? packageName
+        : await this.scanString(
+            "What should be the name of this package?",
+            exists && !force ? (getPackageJson(outDir).name ?? packageName) : packageName
+          );
 
     return {
       destination,
