@@ -259,7 +259,7 @@ export class Application extends Program<Definition, Input> {
       adapter = definition.adapter;
     }
 
-    const biome = !!(!template && ask && !add && definition.biome === undefined
+    const biome = !!(ask && !add && definition.biome === undefined
       ? await this.scanBoolean(definition, "Would you prefer Biome over ESLint/Prettier?")
       : definition.biome);
 
