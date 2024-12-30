@@ -8,6 +8,7 @@ import { $, $pmCreate, $pmInstall, $pmX } from "./process";
 import {
   __dirname,
   clearDir,
+  deepMergeJsonFile,
   getPackageJson,
   getPackageManager,
   notEmptyDir,
@@ -390,6 +391,29 @@ export class Application extends Program<Definition, Input> {
 
     await this.prepareDir(input);
     await $pmCreate(args.join(" "), process.cwd());
+
+    const projectPackageJsonFile = path.join(input.outDir, "package.json");
+    const projectTsconfigJsonFile = path.join(input.outDir, "tsconfig.json");
+    const templatePackageJsonFile = path.join(
+      __dirname,
+      "..",
+      "stubs",
+      "templates",
+      "none",
+      "package.json"
+    );
+    const templateTsconfigJsonFile = path.join(
+      __dirname,
+      "..",
+      "stubs",
+      "templates",
+      "none",
+      "tsconfig.json"
+    );
+
+    deepMergeJsonFile(projectPackageJsonFile, templatePackageJsonFile, true);
+    deepMergeJsonFile(projectTsconfigJsonFile, templateTsconfigJsonFile, true);
+
     return input.install;
   }
 

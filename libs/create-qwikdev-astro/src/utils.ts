@@ -7,6 +7,47 @@ import detectPackageManager from "which-pm-runs";
 export const __filename = getModuleFilename();
 export const __dirname = path.dirname(__filename);
 
+export function deepMergeJsonFile<T>(
+  targetJsonPath: string,
+  sourceJsonPath: string,
+  replace = false
+): T {
+  const deepMerge = deepMergeJson<T>(
+    fileGetContents(targetJsonPath),
+    fileGetContents(sourceJsonPath)
+  );
+
+  if (replace) {
+    putJson(targetJsonPath, deepMerge);
+  }
+
+  return deepMerge;
+}
+
+export function deepMergeJson<T>(targetJson: string, sourceJson: string): T {
+  return deepMerge(JSON.parse(targetJson), JSON.parse(sourceJson)) as unknown as T;
+}
+
+export function deepMerge<T>(target: T, source: Partial<T>): T {
+  for (const key of Object.keys(source) as (keyof T)[]) {
+    const targetValue = target[key];
+    const sourceValue = source[key] as Partial<T[keyof T]>;
+
+    if (isObject(targetValue) && isObject(sourceValue)) {
+      target[key] = deepMerge(targetValue, sourceValue);
+    } else if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
+      target[key] = Array.from(new Set([...targetValue, ...sourceValue])) as any;
+    } else {
+      target[key] = sourceValue as T[keyof T];
+    }
+  }
+  return target;
+}
+
+function isObject(item: unknown): item is Record<string, any> {
+  return item !== null && typeof item === "object" && !Array.isArray(item);
+}
+
 export function getModuleFilename(): string {
   const error = new Error();
   const stack = error.stack;
@@ -140,7 +181,11 @@ export function getPackageJson(dir: string): Record<string, any> {
 }
 
 export function setPackageJson(dir: string, json: Record<string, any>) {
-  filePutContents(getPackageJsonPath(dir), JSON.stringify(json, null, 2));
+  putJson(getPackageJsonPath(dir), json);
+}
+
+export function putJson<T>(path: string, json: T) {
+  filePutContents(path, JSON.stringify(json, null, 2));
 }
 
 export function updatePackageName(newName: string, dir = __dirname): void {
