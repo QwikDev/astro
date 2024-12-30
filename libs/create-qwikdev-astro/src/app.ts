@@ -35,7 +35,7 @@ export type EnsureRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T,
 export type UserDefinition = Partial<Definition>;
 
 export const defaultDefinition = {
-  destination: ".",
+  destination: "./qwik-astro-app",
   adapter: "none",
   force: undefined,
   install: undefined,

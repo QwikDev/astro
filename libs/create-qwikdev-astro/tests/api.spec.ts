@@ -76,7 +76,7 @@ test.group("default definition", () => {
 
   test("destination", ({ assert }) => {
     assert.isTrue(definition.get("destination").isString());
-    assert.isTrue(definition.get("destination").equals("."));
+    assert.isTrue(definition.get("destination").equals("./qwik-astro-app"));
     assert.isTrue(definition.get("destination").equals(defaultDefinition.destination));
   });
 
@@ -121,7 +121,7 @@ test.group("arguments", () => {
     let definition = tester.parse([]);
 
     assert.isTrue(definition.get("destination").isString());
-    assert.isTrue(definition.get("destination").equals("."));
+    assert.isTrue(definition.get("destination").equals("./qwik-astro-app"));
     assert.isTrue(definition.get("adapter").equals("none"));
   });
 

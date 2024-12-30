@@ -34,10 +34,10 @@
 
   **Types of arguments:**
 
-  | Name        | Type                       | Default value | Description                       |
-  | :-----------| :--------------------------| :-------------| :---------------------------------|
-  | destination | String                     | .             | Directory of the project.         |
-  | adapter     | "deno" or "node" or "none" | none          | Server adapter.                   |
+  | Name        | Type                       | Default value    | Description                       |
+  | :-----------| :--------------------------| :----------------| :---------------------------------|
+  | destination | String                     | ./qwik-astro-app | Directory of the project.         |
+  | adapter     | "deno" or "node" or "none" | none             | Server adapter.                   |
 
   **Types of options:**
 
@@ -94,7 +94,7 @@
 
 ```typescript
 export const defaultDefinition = {
-  destination: ".",
+  destination: "./qwik-astro-app",
   adapter: "none",
   force: undefined,
   add: undefined,
