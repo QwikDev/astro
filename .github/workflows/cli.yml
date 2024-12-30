@@ -51,11 +51,16 @@ jobs:
           bun-version: latest
 
       - name: ⚡️Install dependencies
-        if: matrix.runtime == 'node'
         run: |
-          corepack enable
-          corepack prepare ${{ matrix.package_manager }}@latest --activate
-          ${{ matrix.package_manager }} install
+          if [[ "${{ matrix.runtime }}" == "node" ]]; then
+            corepack enable
+            corepack prepare ${{ matrix.package_manager }}@latest --activate
+            ${{ matrix.package_manager }} install
+          elif [[ "${{ matrix.runtime }}" == "deno" ]]; then
+            deno install
+          elif [[ "${{ matrix.runtime }}" == "bun" ]]; then
+            bun install
+          fi
 
 
       - name: ✅ Test CLI
@@ -65,5 +70,5 @@ jobs:
           elif [[ "${{ matrix.runtime }}" == "deno" ]]; then
             deno task test
           elif [[ "${{ matrix.runtime }}" == "bun" ]]; then
-            bun install && bun run test
+            bun bun run test
           fi
