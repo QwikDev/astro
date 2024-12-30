@@ -374,16 +374,10 @@ export class Application extends Program<Definition, Input> {
       "--template",
       input.template,
       "--add",
-      "@qwikdev/astro"
+      "@qwikdev/astro",
+      input.install ? "--install" : "--no-install",
+      input.git ? "--git" : "--no-git"
     ];
-
-    if (input.install) {
-      args.push("--install");
-    }
-
-    if (input.git) {
-      args.push("--git");
-    }
 
     if (input.dryRun) {
       args.push("--dry-run");
