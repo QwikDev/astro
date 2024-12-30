@@ -198,9 +198,11 @@ export class Application extends Program<Definition, Input> {
           ))
         : false;
 
+    const ask = !exists || add || force;
+
     let adapter: Adapter;
 
-    if ((!add || force) && definition.adapter === defaultDefinition.adapter) {
+    if (ask && (!add || force) && definition.adapter === defaultDefinition.adapter) {
       const adapterInput =
         ((await this.scanBoolean(
           definition,
@@ -237,7 +239,7 @@ export class Application extends Program<Definition, Input> {
     }
 
     const biome =
-      !add && definition.biome === undefined
+      ask && !add && definition.biome === undefined
         ? !!(await this.scanBoolean(
             definition,
             "Would you prefer Biome over ESLint/Prettier?"
@@ -245,31 +247,32 @@ export class Application extends Program<Definition, Input> {
         : !!definition.biome;
 
     const ci =
-      definition.ci === undefined
+      ask && definition.ci === undefined
         ? !!(await this.scanBoolean(definition, "Would you like to add CI workflow?"))
-        : definition.ci;
+        : !!definition.ci;
 
     const install =
-      definition.install === undefined
+      ask && definition.install === undefined
         ? !!(await this.scanBoolean(
             definition,
             `Would you like to install ${this.#packageManger} dependencies?`
           ))
-        : definition.install;
+        : !!definition.install;
 
     const git =
-      definition.git === undefined
+      ask && definition.git === undefined
         ? !!(await this.scanBoolean(definition, "Would you like to initialize Git?"))
-        : definition.git;
+        : !!definition.git;
 
     const dryRun = !!definition.dryRun;
 
-    packageName = definition.yes
-      ? packageName
-      : await this.scanString(
-          "What should be the name of this package?",
-          exists && !force ? (getPackageJson(outDir).name ?? packageName) : packageName
-        );
+    packageName =
+      !ask || definition.yes
+        ? packageName
+        : await this.scanString(
+            "What should be the name of this package?",
+            exists && !force ? (getPackageJson(outDir).name ?? packageName) : packageName
+          );
 
     return {
       destination,
