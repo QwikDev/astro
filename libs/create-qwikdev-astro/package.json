@@ -9,7 +9,7 @@
     "build": "tsup-node --env.NODE_ENV production",
     "prod": "pnpm check && pnpm build",
     "start": "tsup-node --env.NODE_ENV development --watch",
-    "test": "NODE_ENV=test node --loader tsm --enable-source-maps bin/test.ts"
+    "test": "node --loader tsm --enable-source-maps bin/test.ts"
   },
   "contributors": [
     {
