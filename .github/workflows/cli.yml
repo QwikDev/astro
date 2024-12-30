@@ -62,6 +62,15 @@ jobs:
             bun install
           fi
 
+      - name: 📦️ Build the package
+        run: |
+          if [[ "${{ matrix.runtime }}" == "node" ]]; then
+            ${{ matrix.package_manager }} run build
+          elif [[ "${{ matrix.runtime }}" == "deno" ]]; then
+            deno task build
+          elif [[ "${{ matrix.runtime }}" == "bun" ]]; then
+            bun run build
+          fi
 
       - name: ✅ Test CLI
         run: |
