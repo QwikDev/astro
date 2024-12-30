@@ -1,0 +1,65 @@
+name: CLI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: 🧪 Test the CLI on ${{ matrix.runtime }} under ${{ matrix.os }} using ${{ matrix.package_manager }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        runtime: [node, deno, bun]
+        package_manager: [npm, pnpm, yarn]
+        exclude:
+          - runtime: deno
+            package_manager: yarn
+          - runtime: deno
+            package_manager: pnpm
+          - runtime: bun
+            package_manager: yarn
+          - runtime: bun
+            package_manager: pnpm
+    steps:
+      - name: 🚚 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        if: matrix.runtime == 'node'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Set up Deno
+        if: matrix.runtime == 'deno'
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Set up Bun
+        if: matrix.runtime == 'bun'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: ⚡️Install dependencies
+        if: matrix.runtime == 'node'
+        run: |
+          corepack enable
+          corepack prepare ${{ matrix.package_manager }}@latest --activate
+          ${{ matrix.package_manager }} install
+
+
+      - name: ✅ Test CLI
+        run: |
+          if [[ "${{ matrix.runtime }}" == "node" ]]; then
+            ${{ matrix.package_manager }} run test
+          elif [[ "${{ matrix.runtime }}" == "deno" ]]; then
+            deno task test
+          elif [[ "${{ matrix.runtime }}" == "bun" ]]; then
+            bun install && bun run test
+          fi
