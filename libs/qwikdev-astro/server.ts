@@ -180,6 +180,10 @@ export async function renderToStaticMarkup(
 
     await renderToStream(qwikComponentJSX, renderToStreamOpts);
 
+    const isClientRouter = Array.from(this.result._metadata.renderedScripts).some(
+      (path) => path.includes("ClientRouter.astro")
+    );
+
     /** With View Transitions, rerun so that signals work
      * https://docs.astro.build/en/guides/view-transitions/#data-astro-rerun
      */
@@ -188,8 +192,17 @@ export async function renderToStaticMarkup(
       '<script q:func="qwik/json" data-astro-rerun>'
     );
 
+    /** Adds support for visible tasks with Astro's client router */
+    const htmlWithObservers =
+      isClientRouter &&
+      isQwikLoaderNeeded &&
+      htmlWithRerun +
+        `
+      <script data-qwik-astro-client-router>document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>
+    `;
+
     return {
-      html: htmlWithRerun
+      html: isClientRouter ? htmlWithObservers : html
     };
   } catch (error) {
     console.error("Error in renderToStaticMarkup function of @qwikdev/astro: ", error);
