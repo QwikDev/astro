@@ -4,7 +4,7 @@ import { copySync, ensureDirSync } from "fs-extra/esm";
 import pkg from "../package.json";
 import { ensureString } from "./console";
 import { type Definition as BaseDefinition, Program } from "./core";
-import { $, $pmInstall, $pmX } from "./process";
+import { $, $pmCreate, $pmInstall, $pmX } from "./process";
 import {
   __dirname,
   clearDir,
@@ -22,12 +22,13 @@ import {
 export type Definition = BaseDefinition & {
   destination: string;
   adapter: Adapter;
-  force?: boolean;
+  template?: string;
   install?: boolean;
   biome?: boolean;
   git?: boolean;
   ci?: boolean;
   add?: boolean;
+  force?: boolean;
   dryRun?: boolean;
 };
 
@@ -37,15 +38,16 @@ export type UserDefinition = Partial<Definition>;
 export const defaultDefinition = {
   destination: "./qwik-astro-app",
   adapter: "none",
-  force: undefined,
-  install: undefined,
+  template: undefined,
   biome: undefined,
+  install: undefined,
   git: undefined,
   ci: undefined,
   yes: undefined,
   no: undefined,
-  dryRun: undefined,
-  add: undefined
+  add: undefined,
+  force: undefined,
+  dryRun: undefined
 } as const;
 
 export type Adapter = "node" | "deno" | "none";
@@ -83,6 +85,12 @@ export class Application extends Program<Definition, Input> {
         default: defaultDefinition.adapter,
         desc: "Server adapter",
         choices: ["deno", "node", "none"]
+      })
+      .argument("template", {
+        alias: "t",
+        type: "string",
+        default: defaultDefinition.template,
+        desc: "Start from an Astro template"
       })
       .option("add", {
         alias: "a",
@@ -148,6 +156,7 @@ export class Application extends Program<Definition, Input> {
     return {
       destination: definition.destination,
       adapter: definition.adapter,
+      template: definition.template ?? "",
       force:
         definition.force ?? (definition.add ? false : !!definition.yes && !definition.no),
       add: !!definition.add,
@@ -198,11 +207,22 @@ export class Application extends Program<Definition, Input> {
           ))
         : false;
 
+    const template: string =
+      definition.template === undefined &&
+      (await this.scanBoolean(definition, "Would you like to use a template?"))
+        ? await this.scanString("What template would you like to use?", "")
+        : (definition.template ?? "");
+
     const ask = !exists || add || force;
 
     let adapter: Adapter;
 
-    if (ask && (!add || force) && definition.adapter === defaultDefinition.adapter) {
+    if (
+      !template &&
+      ask &&
+      (!add || force) &&
+      definition.adapter === defaultDefinition.adapter
+    ) {
       const adapterInput =
         ((await this.scanBoolean(
           definition,
@@ -238,7 +258,7 @@ export class Application extends Program<Definition, Input> {
       adapter = definition.adapter;
     }
 
-    const biome = !!(ask && !add && definition.biome === undefined
+    const biome = !!(!template && ask && !add && definition.biome === undefined
       ? await this.scanBoolean(definition, "Would you prefer Biome over ESLint/Prettier?")
       : definition.biome);
 
@@ -270,6 +290,7 @@ export class Application extends Program<Definition, Input> {
     return {
       destination,
       adapter,
+      template,
       biome,
       ci,
       install,
@@ -305,7 +326,7 @@ export class Application extends Program<Definition, Input> {
     }
   }
 
-  async runCreate(input: Input) {
+  async prepareDir(input: Input) {
     const outDir = input.outDir;
 
     if (notEmptyDir(outDir)) {
@@ -323,6 +344,12 @@ export class Application extends Program<Definition, Input> {
         process.exit(1);
       }
     }
+  }
+
+  async runCreate(input: Input) {
+    const outDir = input.outDir;
+
+    await this.prepareDir(input);
 
     let starterKit = input.adapter;
 
@@ -337,12 +364,45 @@ export class Application extends Program<Definition, Input> {
     this.copyGitignore(input);
   }
 
+  async runTemplate(input: Input) {
+    const args = [
+      "astro",
+      input.destination,
+      "--",
+      "--skip-houston",
+      "--template",
+      input.template,
+      "--add",
+      "@qwikdev/astro"
+    ];
+
+    if (input.install) {
+      args.push("--install");
+    }
+
+    if (input.git) {
+      args.push("--git");
+    }
+
+    if (input.dryRun) {
+      args.push("--dry-run");
+    }
+
+    await this.prepareDir(input);
+    await $pmCreate(args.join(" "), process.cwd());
+    return input.install;
+  }
+
   async start(input: Input): Promise<boolean> {
-    this.intro(`Let's create a ${this.bgBlue(" QwikDev/astro App ")} ✨`);
+    this.intro(
+      `Let's create a ${this.bgBlue(" QwikDev")}${this.bgMagenta("Astro")} App ✨`
+    );
 
     let ranInstall: boolean;
 
-    if (input.add) {
+    if (input.template) {
+      ranInstall = await this.runTemplate(input);
+    } else if (input.add) {
       ranInstall = await this.runInstall(input);
       await this.runAdd(input);
     } else {
@@ -445,10 +505,10 @@ export class Application extends Program<Definition, Input> {
         try {
           if (!input.dryRun) {
             const res = [];
-            res.push(await $("git", ["init"], outDir).install);
-            res.push(await $("git", ["add", "-A"], outDir).install);
+            res.push(await $("git", ["init"], outDir).process);
+            res.push(await $("git", ["add", "-A"], outDir).process);
             res.push(
-              await $("git", ["commit", "-m", "Initial commit 🎉"], outDir).install
+              await $("git", ["commit", "-m", "Initial commit 🎉"], outDir).process
             );
 
             if (res.some((r) => r === false)) {

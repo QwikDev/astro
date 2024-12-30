@@ -14,7 +14,7 @@ export const isPackageManagerInstalled = (packageManager: string) => {
 export function $(cmd: string, args: string[], cwd: string) {
   let child: ChildProcess;
 
-  const install = new Promise<boolean>((resolve) => {
+  const process = new Promise<boolean>((resolve) => {
     try {
       child = spawn(cmd, args, {
         cwd,
@@ -42,7 +42,7 @@ export function $(cmd: string, args: string[], cwd: string) {
     }
   };
 
-  return { abort, install };
+  return { abort, process };
 }
 
 export const $pm = async (
@@ -95,6 +95,10 @@ export const $pmInstall = async (cwd: string) => {
 
 export const $pmRun = async (script: string, cwd: string) => {
   await $pm(["run", ...script.split(/\s+/)], cwd);
+};
+
+export const $pmCreate = async (script: string, cwd: string) => {
+  await $pm(["create", ...script.split(/\s+/)], cwd);
 };
 
 export const $pmExec = async (command: string, cwd: string) => {
