@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.7.4
+
+### Patch Changes
+
+- a22283f: fix: client router now executes Qwik's visible tasks correctly
+
 ## 0.7.3
 
 ### Patch Changes
