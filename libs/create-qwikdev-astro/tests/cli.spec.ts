@@ -10,6 +10,7 @@ process.env.CI = "1";
 const integration = "@qwikdev/astro";
 const root = "labs";
 const project = "test-app";
+const pm = getPackageManager();
 
 const setup = () => {
   ensureDirSync(root);
@@ -162,7 +163,7 @@ async function testRun(
   const { assert } = context;
   const destination = `${root}/${project}`;
 
-  const result = await run(["pnpm", "create", `${destination}`, ...args]);
+  const result = await run([pm, "create", `${destination}`, ...args]);
   assert.equal(result, 0);
 
   testProject(destination, context, options);
