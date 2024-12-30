@@ -6,6 +6,10 @@ on:
       - main
   pull_request:
 
+defaults:
+  run:
+    working-directory: ./libs/create-qwikdev-astro
+
 jobs:
   test:
     name: 🧪 Test the CLI on ${{ matrix.runtime }} under ${{ matrix.os }} using ${{ matrix.package_manager }}
