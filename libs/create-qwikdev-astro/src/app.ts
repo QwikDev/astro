@@ -392,24 +392,29 @@ export class Application extends Program<Definition, Input> {
     await this.prepareDir(input);
     await $pmCreate(args.join(" "), process.cwd());
 
-    const projectPackageJsonFile = path.join(input.outDir, "package.json");
-    const projectTsconfigJsonFile = path.join(input.outDir, "tsconfig.json");
-    const templatePackageJsonFile = path.join(
+    const outDir = input.outDir;
+    const stubPath = path.join(
       __dirname,
       "..",
       "stubs",
       "templates",
-      "none",
-      "package.json"
+      `none${input.biome ? "-biome" : ""}`
     );
-    const templateTsconfigJsonFile = path.join(
-      __dirname,
-      "..",
-      "stubs",
-      "templates",
-      "none",
-      "tsconfig.json"
-    );
+
+    const configFiles = input.biome
+      ? ["biome.json"]
+      : [".eslintignore", ".eslintrc.cjs", ".prettierignore", "prettier.config.cjs"];
+
+    const projectPackageJsonFile = path.join(outDir, "package.json");
+    const projectTsconfigJsonFile = path.join(outDir, "tsconfig.json");
+    const templatePackageJsonFile = path.join(stubPath, "package.json");
+    const templateTsconfigJsonFile = path.join(stubPath, "tsconfig.json");
+
+    for (const configFile of configFiles) {
+      cpSync(path.join(stubPath, configFile), path.join(outDir, configFile), {
+        force: true
+      });
+    }
 
     deepMergeJsonFile(projectPackageJsonFile, templatePackageJsonFile, true);
     deepMergeJsonFile(projectTsconfigJsonFile, templateTsconfigJsonFile, true);
