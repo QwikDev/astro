@@ -18,14 +18,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         runtime: [node, deno, bun]
-        package_manager: [npm, pnpm, yarn]
+        package_manager: [npm, pnpm]
         exclude:
           - runtime: deno
-            package_manager: yarn
-          - runtime: deno
             package_manager: pnpm
-          - runtime: bun
-            package_manager: yarn
           - runtime: bun
             package_manager: pnpm
     steps:
@@ -55,9 +51,6 @@ jobs:
           if [[ "${{ matrix.runtime }}" == "node" ]]; then
             corepack enable
             corepack prepare ${{ matrix.package_manager }}@latest --activate
-            rm -rf node_modules
-            rm -f yarn.lock
-            touch yarn.lock
             ${{ matrix.package_manager }} install
           elif [[ "${{ matrix.runtime }}" == "deno" ]]; then
             deno install
