@@ -238,31 +238,24 @@ export class Application extends Program<Definition, Input> {
       adapter = definition.adapter;
     }
 
-    const biome =
-      ask && !add && definition.biome === undefined
-        ? !!(await this.scanBoolean(
-            definition,
-            "Would you prefer Biome over ESLint/Prettier?"
-          ))
-        : !!definition.biome;
+    const biome = !!(ask && !add && definition.biome === undefined
+      ? await this.scanBoolean(definition, "Would you prefer Biome over ESLint/Prettier?")
+      : definition.biome);
 
-    const ci =
-      ask && definition.ci === undefined
-        ? !!(await this.scanBoolean(definition, "Would you like to add CI workflow?"))
-        : !!definition.ci;
+    const ci = !!(ask && definition.ci === undefined
+      ? await this.scanBoolean(definition, "Would you like to add CI workflow?")
+      : definition.ci);
 
-    const install =
-      ask && definition.install === undefined
-        ? !!(await this.scanBoolean(
-            definition,
-            `Would you like to install ${this.#packageManger} dependencies?`
-          ))
-        : !!definition.install;
+    const install = !!(ask && definition.install === undefined
+      ? await this.scanBoolean(
+          definition,
+          `Would you like to install ${this.#packageManger} dependencies?`
+        )
+      : definition.install);
 
-    const git =
-      ask && definition.git === undefined
-        ? !!(await this.scanBoolean(definition, "Would you like to initialize Git?"))
-        : !!definition.git;
+    const git = !!(ask && definition.git === undefined
+      ? await this.scanBoolean(definition, "Would you like to initialize Git?")
+      : definition.git);
 
     const dryRun = !!definition.dryRun;
 
