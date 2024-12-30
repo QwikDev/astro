@@ -70,5 +70,5 @@ jobs:
           elif [[ "${{ matrix.runtime }}" == "deno" ]]; then
             deno task test
           elif [[ "${{ matrix.runtime }}" == "bun" ]]; then
-            bun bun run test
+            bun run test
           fi
