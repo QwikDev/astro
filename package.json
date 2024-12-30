@@ -21,7 +21,7 @@
     "fix": "pnpm lint && pnpm format",
     "format": "biome format --write .",
     "lint": "biome check --write .",
-    "build.create-qwikdev-astro": "pnpm -C ./libs/create-qwikdev-astro build",
+    "build.create-qwikdev-astro": "pnpm -C ./libs/create-qwikdev-astro prod",
     "postinstall": "lefthook install && playwright install --with-deps",
     "changeset": "changeset",
     "release": "pnpm build.create-qwikdev-astro && changeset publish",
@@ -40,7 +40,7 @@
     "@qwikdev/create-astro": "workspace:*",
     "@types/node": "^22.10.2",
     "astro": "5.0.3",
-    "lefthook": "^1.10.0",
+    "lefthook": "^1.10.1",
     "pkg-pr-new": "^0.0.35"
   }
 }
