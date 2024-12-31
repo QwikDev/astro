@@ -377,7 +377,6 @@ for (const [key, choices] of Object.entries(answers)) {
             }
             break;
 
-
           case input.biome:
             assert.isTrue(definition.get("biome").equals(answer));
             break;
