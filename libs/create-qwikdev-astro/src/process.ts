@@ -57,8 +57,8 @@ export const $pm = async (
     const packageName = args[1];
     const parts = packageName.split("/", 2);
     const createCommand = parts[1]
-      ? `${parts[0]}/create-${parts[1]}`
-      : `create-${parts[0]}`;
+      ? `npm:${parts[0]}/create-${parts[1]}`
+      : `npm:create-${parts[0]}`;
     args = ["run", "-A", createCommand, ...args.slice(2)];
   } else if (["exec", "dlx"].includes(args[0])) {
     switch (packageManager) {
