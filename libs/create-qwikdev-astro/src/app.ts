@@ -186,14 +186,13 @@ export class Application extends Program<Definition, Input> {
     const outDir = resolveAbsoluteDir(destination.trim());
     const exists = notEmptyDir(outDir);
 
-    const add =
-      definition.add === undefined
-        ? exists &&
-          !!(await this.scanBoolean(
-            definition,
-            "Do you want to add @QwikDev/astro to your existing project?"
-          ))
-        : definition.add;
+    const add = !!(definition.add === undefined && !definition.force
+      ? exists &&
+        (await this.scanBoolean(
+          definition,
+          "Do you want to add @QwikDev/astro to your existing project?"
+        ))
+      : definition.add);
 
     const force =
       definition.force === undefined
@@ -206,7 +205,7 @@ export class Application extends Program<Definition, Input> {
             )}" already exists and is not empty. What would you like to overwrite it?`,
             false
           ))
-        : false;
+        : definition.force;
 
     const template: string =
       definition.template === undefined &&
