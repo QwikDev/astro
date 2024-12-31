@@ -23,7 +23,6 @@ const templateDirs = [".vscode", "src"];
 const templateFiles = [
   ".vscode/launch.json",
   ".vscode/extensions.json",
-  "astro.config.ts",
   "package.json",
   "tsconfig.json"
 ];
@@ -50,7 +49,8 @@ const generatedFiles = [
   "src/styles/global.css",
   "src/env.d.ts",
   ".gitignore",
-  "README.md"
+  "README.md",
+  "astro.config.ts"
 ] as const;
 
 type GeneratedOptions = Partial<{
