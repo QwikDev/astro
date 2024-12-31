@@ -8,7 +8,6 @@ import { $, $pmCreate, $pmInstall, $pmX } from "./process";
 import {
   __dirname,
   clearDir,
-  deepMergeJsonFile,
   getPackageJson,
   getPackageManager,
   mergeDotIgnoreFiles,
@@ -17,6 +16,7 @@ import {
   replacePackageJsonRunCommand,
   resolveAbsoluteDir,
   resolveRelativeDir,
+  safeCopy,
   sanitizePackageName,
   updatePackageName
 } from "./utils";
@@ -386,49 +386,17 @@ export class Application extends Program<Definition, Input> {
     await this.prepareDir(input);
     await $pmCreate(args.join(" "), process.cwd());
 
-    const outDir = input.outDir;
-    const stubPath = path.join(
-      __dirname,
-      "..",
-      "stubs",
-      "templates",
-      `none${input.biome ? "-biome" : ""}`
+    this.step(`Copying template files into ${this.bgBlue(` ${input.outDir} `)} ... 🐇`);
+    this.copyTemplate(
+      input,
+      path.join(
+        __dirname,
+        "..",
+        "stubs",
+        "templates",
+        `none${input.biome ? "-biome" : ""}`
+      )
     );
-
-    const configFiles = input.biome
-      ? ["biome.json"]
-      : [".eslintignore", ".eslintrc.cjs", ".prettierignore", "prettier.config.cjs"];
-
-    const vscodeDir = path.join(stubPath, ".vscode");
-    const vscodeFiles = ["extensions.json", "launch.json"];
-
-    const projectPackageJsonFile = path.join(outDir, "package.json");
-    const projectTsconfigJsonFile = path.join(outDir, "tsconfig.json");
-    const templatePackageJsonFile = path.join(stubPath, "package.json");
-    const templateTsconfigJsonFile = path.join(stubPath, "tsconfig.json");
-
-    this.step(`Copying template files into ${this.bgBlue(` ${outDir} `)} ... 🐇`);
-
-    for (const vscodeFile of vscodeFiles) {
-      const vscodeFilePath = path.join(vscodeDir, vscodeFile);
-      const projectVscodeFilePath = path.join(outDir, ".vscode", vscodeFile);
-
-      pathExistsSync(projectVscodeFilePath)
-        ? deepMergeJsonFile(projectVscodeFilePath, vscodeFilePath, true)
-        : cpSync(vscodeFilePath, projectVscodeFilePath, {
-            force: true
-          });
-    }
-
-    for (const configFile of configFiles) {
-      cpSync(path.join(stubPath, configFile), path.join(outDir, configFile), {
-        force: true
-      });
-    }
-
-    deepMergeJsonFile(projectPackageJsonFile, templatePackageJsonFile, true);
-    deepMergeJsonFile(projectTsconfigJsonFile, templateTsconfigJsonFile, true);
-
     this.makeGitignore(input);
 
     return this.runInstall(input);
@@ -607,7 +575,8 @@ export class Application extends Program<Definition, Input> {
       const outDir = input.outDir;
       try {
         ensureDirSync(outDir);
-        copySync(templatePath, outDir);
+
+        input.template ? safeCopy(templatePath, outDir) : copySync(templatePath, outDir);
       } catch (error) {
         this.error(this.red(`Template copy failed: ${error}`));
       }

@@ -1,11 +1,32 @@
-import fs from "node:fs";
+import fs, { readdirSync, statSync } from "node:fs";
 import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
 import detectPackageManager from "which-pm-runs";
 
 export const __filename = getModuleFilename();
 export const __dirname = path.dirname(__filename);
+
+export function safeCopy(source: string, target: string): void {
+  const files = readdirSync(source);
+
+  for (const file of files) {
+    const sourcePath = join(source, file);
+    const targetPath = join(target, file);
+
+    if (statSync(sourcePath).isDirectory()) {
+      ensureDirSync(targetPath);
+      safeCopy(sourcePath, targetPath);
+    } else if (!pathExistsSync(targetPath)) {
+      copySync(sourcePath, targetPath);
+    } else if (file.endsWith(".json")) {
+      deepMergeJsonFile(targetPath, sourcePath, true);
+    } else if (file.startsWith(".") && file.endsWith("ignore")) {
+      mergeDotIgnoreFiles(targetPath, sourcePath, true);
+    }
+  }
+}
 
 export function deepMergeJsonFile<T>(
   targetJsonPath: string,
