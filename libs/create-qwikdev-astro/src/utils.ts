@@ -48,6 +48,33 @@ function isObject(item: unknown): item is Record<string, any> {
   return item !== null && typeof item === "object" && !Array.isArray(item);
 }
 
+export function mergeDotIgnoreFiles(
+  target: string,
+  source: string,
+  replace = false
+): string {
+  const contents = mergeDotIgnoreContents(
+    fileGetContents(target),
+    fileGetContents(source)
+  );
+
+  if (replace) {
+    filePutContents(target, contents);
+  }
+
+  return contents;
+}
+
+export function mergeDotIgnoreContents(content1: string, content2: string): string {
+  return mergeDotIgnoreLines(content1.split("\n"), content2.split("\n")).join("\n");
+}
+
+export function mergeDotIgnoreLines(lines1: string[], lines2: string[]): string[] {
+  return Array.from(
+    new Set([...lines1.map((line) => line.trim()), ...lines2.map((line) => line.trim())])
+  ).filter((line) => line !== "");
+}
+
 export function getModuleFilename(): string {
   const error = new Error();
   const stack = error.stack;

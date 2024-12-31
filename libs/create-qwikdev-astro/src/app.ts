@@ -11,6 +11,7 @@ import {
   deepMergeJsonFile,
   getPackageJson,
   getPackageManager,
+  mergeDotIgnoreFiles,
   notEmptyDir,
   pmRunCommand,
   replacePackageJsonRunCommand,
@@ -361,7 +362,7 @@ export class Application extends Program<Definition, Input> {
 
     this.step(`Creating new project in ${this.bgBlue(` ${outDir} `)} ... 🐇`);
     this.copyTemplate(input, templatePath);
-    this.copyGitignore(input);
+    this.makeGitignore(input);
   }
 
   async runTemplate(input: Input) {
@@ -427,6 +428,8 @@ export class Application extends Program<Definition, Input> {
 
     deepMergeJsonFile(projectPackageJsonFile, templatePackageJsonFile, true);
     deepMergeJsonFile(projectTsconfigJsonFile, templateTsconfigJsonFile, true);
+
+    this.makeGitignore(input);
 
     return this.runInstall(input);
   }
@@ -582,13 +585,20 @@ export class Application extends Program<Definition, Input> {
     }
   }
 
-  copyGitignore(input: Input) {
-    this.step("Copying `.gitignore` file...");
+  makeGitignore(input: Input) {
+    const dotGitignore = path.join(input.outDir, ".gitignore");
+    const exists = pathExistsSync(dotGitignore);
+
+    this.step(`${exists ? "Merging" : "Copying"} \`.gitignore\` file...`);
 
     if (!input.dryRun) {
       const gitignore = path.join(__dirname, "..", "stubs", "gitignore");
-      const dotGitignore = path.join(input.outDir, ".gitignore");
-      cpSync(gitignore, dotGitignore, { force: true });
+
+      if (exists) {
+        mergeDotIgnoreFiles(dotGitignore, gitignore, true);
+      } else {
+        cpSync(gitignore, dotGitignore, { force: true });
+      }
     }
   }
 

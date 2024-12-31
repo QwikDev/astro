@@ -24,7 +24,8 @@ const templateFiles = [
   ".vscode/launch.json",
   ".vscode/extensions.json",
   "package.json",
-  "tsconfig.json"
+  "tsconfig.json",
+  ".gitignore"
 ];
 
 const generatedDirs = [
@@ -48,7 +49,6 @@ const generatedFiles = [
   "src/pages/index.astro",
   "src/styles/global.css",
   "src/env.d.ts",
-  ".gitignore",
   "README.md",
   "astro.config.ts"
 ] as const;
