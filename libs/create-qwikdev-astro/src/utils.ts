@@ -70,9 +70,29 @@ export function mergeDotIgnoreContents(content1: string, content2: string): stri
 }
 
 export function mergeDotIgnoreLines(lines1: string[], lines2: string[]): string[] {
-  return Array.from(
+  const lines = Array.from(
     new Set([...lines1.map((line) => line.trim()), ...lines2.map((line) => line.trim())])
   ).filter((line) => line !== "");
+
+  return formatLines(lines);
+}
+
+function formatLines(lines: string[]): string[] {
+  const formattedLines: string[] = [];
+  let previousWasComment = false;
+
+  lines.forEach((line, index) => {
+    const isComment = line.startsWith("#");
+
+    if (isComment && !previousWasComment && index !== 0) {
+      formattedLines.push("");
+    }
+
+    formattedLines.push(line);
+    previousWasComment = isComment;
+  });
+
+  return formattedLines;
 }
 
 export function getModuleFilename(): string {
