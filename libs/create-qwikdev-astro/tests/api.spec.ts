@@ -149,6 +149,15 @@ test.group("arguments", () => {
     assert.isTrue(definition.get("adapter").isString());
     assert.isTrue(definition.get("adapter").equals("deno"));
   });
+
+  test("template argument", ({ assert }) => {
+    let definition = tester.parse([projectName, "--template", "minimal"]);
+    assert.isTrue(definition.get("template").isString());
+    assert.isTrue(definition.get("template").equals("minimal"));
+
+    definition = tester.parse(["my-qwik-astro-app", "--template", "blog"]);
+    assert.isTrue(definition.get("template").equals("blog"));
+  });
 });
 
 test.group("options", () => {
