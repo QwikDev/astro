@@ -31,6 +31,7 @@ export type Definition = BaseDefinition & {
   ci?: boolean;
   add?: boolean;
   force?: boolean;
+  safe?: boolean;
   dryRun?: boolean;
 };
 
@@ -49,6 +50,7 @@ export const defaultDefinition = {
   no: undefined,
   add: undefined,
   force: undefined,
+  safe: undefined,
   dryRun: undefined
 } as const;
 
@@ -94,18 +96,6 @@ export class Application extends Program<Definition, Input> {
         default: defaultDefinition.template,
         desc: "Start from an Astro template"
       })
-      .option("add", {
-        alias: "a",
-        type: "boolean",
-        default: defaultDefinition.add,
-        desc: "Add QwikDev/astro to existing project"
-      })
-      .option("force", {
-        alias: "f",
-        type: "boolean",
-        default: defaultDefinition.force,
-        desc: "Overwrite target directory if it exists"
-      })
       .option("install", {
         alias: "i",
         type: "boolean",
@@ -126,6 +116,24 @@ export class Application extends Program<Definition, Input> {
         type: "boolean",
         default: defaultDefinition.ci,
         desc: "Add CI workflow"
+      })
+      .option("add", {
+        alias: "a",
+        type: "boolean",
+        default: defaultDefinition.add,
+        desc: "Add QwikDev/astro to existing project"
+      })
+      .option("force", {
+        alias: "f",
+        type: "boolean",
+        default: defaultDefinition.force,
+        desc: "Overwrite target directory if it exists"
+      })
+      .option("safe", {
+        alias: ["s", "soft"],
+        type: "boolean",
+        default: defaultDefinition.safe,
+        desc: "Copy files without overwriting"
       })
       .option("dryRun", {
         type: "boolean",
@@ -162,6 +170,7 @@ export class Application extends Program<Definition, Input> {
       force:
         definition.force ?? (definition.add ? false : !!definition.yes && !definition.no),
       add: !!definition.add,
+      safe: !!definition.safe,
       biome: definition.biome ?? (!!definition.yes && !definition.no),
       install: definition.install ?? (!!definition.yes && !definition.no),
       ci: definition.ci ?? (!!definition.yes && !definition.no),
@@ -207,6 +216,17 @@ export class Application extends Program<Definition, Input> {
             false
           ))
         : definition.force;
+
+    const safe =
+      force || add
+        ? definition.safe === undefined
+          ? await this.scanBoolean(
+              definition,
+              "Copy safely (without overwriting existing files)?",
+              true
+            )
+          : false
+        : !!definition.safe;
 
     const template: string =
       definition.template === undefined &&
@@ -298,6 +318,7 @@ export class Application extends Program<Definition, Input> {
       git,
       add,
       force,
+      safe,
       outDir,
       packageName,
       dryRun
