@@ -52,7 +52,7 @@ body:
     id: system-info
     attributes:
       label: System Info
-      description: Output of `npx envinfo --system --npmPackages '{vite,undici,typescript,@builder.io/*}' --binaries --browsers`
+      description: Output of `npx envinfo --system --npmPackages '{vite,undici,typescript,@builder.io, @qwikdev/astro/*}' --binaries --browsers`
       render: shell
       placeholder: System, Binaries, Browsers
     validations:
