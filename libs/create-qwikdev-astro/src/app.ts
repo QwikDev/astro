@@ -1,13 +1,14 @@
 import fs, { cpSync } from "node:fs";
 import path from "node:path";
-import { copySync, ensureDirSync } from "fs-extra/esm";
+import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
 import pkg from "../package.json";
 import { ensureString } from "./console";
 import { type Definition as BaseDefinition, Program } from "./core";
-import { $, $pmInstall, $pmX } from "./process";
+import { $, $pmCreate, $pmInstall, $pmX } from "./process";
 import {
   __dirname,
   clearDir,
+  deepMergeJsonFile,
   getPackageJson,
   getPackageManager,
   notEmptyDir,
@@ -22,12 +23,13 @@ import {
 export type Definition = BaseDefinition & {
   destination: string;
   adapter: Adapter;
-  force?: boolean;
+  template?: string;
   install?: boolean;
   biome?: boolean;
   git?: boolean;
   ci?: boolean;
   add?: boolean;
+  force?: boolean;
   dryRun?: boolean;
 };
 
@@ -37,15 +39,16 @@ export type UserDefinition = Partial<Definition>;
 export const defaultDefinition = {
   destination: "./qwik-astro-app",
   adapter: "none",
-  force: undefined,
-  install: undefined,
+  template: undefined,
   biome: undefined,
+  install: undefined,
   git: undefined,
   ci: undefined,
   yes: undefined,
   no: undefined,
-  dryRun: undefined,
-  add: undefined
+  add: undefined,
+  force: undefined,
+  dryRun: undefined
 } as const;
 
 export type Adapter = "node" | "deno" | "none";
@@ -83,6 +86,12 @@ export class Application extends Program<Definition, Input> {
         default: defaultDefinition.adapter,
         desc: "Server adapter",
         choices: ["deno", "node", "none"]
+      })
+      .argument("template", {
+        alias: "t",
+        type: "string",
+        default: defaultDefinition.template,
+        desc: "Start from an Astro template"
       })
       .option("add", {
         alias: "a",
@@ -148,6 +157,7 @@ export class Application extends Program<Definition, Input> {
     return {
       destination: definition.destination,
       adapter: definition.adapter,
+      template: definition.template ?? "",
       force:
         definition.force ?? (definition.add ? false : !!definition.yes && !definition.no),
       add: !!definition.add,
@@ -166,7 +176,7 @@ export class Application extends Program<Definition, Input> {
       definition.destination === defaultDefinition.destination
         ? await this.scanString(
             `Where would you like to create your new project? ${this.gray(
-              `(Use '.' or 'qwik-astro-app' for current directory)`
+              `(Use '.' for current directory)`
             )}`,
             definition.destination
           )
@@ -176,14 +186,13 @@ export class Application extends Program<Definition, Input> {
     const outDir = resolveAbsoluteDir(destination.trim());
     const exists = notEmptyDir(outDir);
 
-    const add =
-      definition.add === undefined
-        ? exists &&
-          !!(await this.scanBoolean(
-            definition,
-            "Do you want to add @QwikDev/astro to your existing project?"
-          ))
-        : definition.add;
+    const add = !!(definition.add === undefined && !definition.force
+      ? exists &&
+        (await this.scanBoolean(
+          definition,
+          "Do you want to add @QwikDev/astro to your existing project?"
+        ))
+      : definition.add);
 
     const force =
       definition.force === undefined
@@ -196,13 +205,24 @@ export class Application extends Program<Definition, Input> {
             )}" already exists and is not empty. What would you like to overwrite it?`,
             false
           ))
-        : false;
+        : definition.force;
+
+    const template: string =
+      definition.template === undefined &&
+      (await this.scanBoolean(definition, "Would you like to use a template?"))
+        ? await this.scanString("What template would you like to use?", "")
+        : (definition.template ?? "");
 
     const ask = !exists || add || force;
 
     let adapter: Adapter;
 
-    if (ask && (!add || force) && definition.adapter === defaultDefinition.adapter) {
+    if (
+      !template &&
+      ask &&
+      (!add || force) &&
+      definition.adapter === defaultDefinition.adapter
+    ) {
       const adapterInput =
         ((await this.scanBoolean(
           definition,
@@ -270,6 +290,7 @@ export class Application extends Program<Definition, Input> {
     return {
       destination,
       adapter,
+      template,
       biome,
       ci,
       install,
@@ -305,7 +326,7 @@ export class Application extends Program<Definition, Input> {
     }
   }
 
-  async runCreate(input: Input) {
+  async prepareDir(input: Input) {
     const outDir = input.outDir;
 
     if (notEmptyDir(outDir)) {
@@ -323,6 +344,12 @@ export class Application extends Program<Definition, Input> {
         process.exit(1);
       }
     }
+  }
+
+  async runCreate(input: Input) {
+    const outDir = input.outDir;
+
+    await this.prepareDir(input);
 
     let starterKit = input.adapter;
 
@@ -337,12 +364,83 @@ export class Application extends Program<Definition, Input> {
     this.copyGitignore(input);
   }
 
+  async runTemplate(input: Input) {
+    const args = [
+      "astro",
+      input.destination,
+      "--",
+      "--skip-houston",
+      "--template",
+      input.template,
+      "--add",
+      "@qwikdev/astro",
+      input.install ? "--install" : "--no-install",
+      input.git ? "--git" : "--no-git"
+    ];
+
+    if (input.dryRun) {
+      args.push("--dry-run");
+    }
+
+    await this.prepareDir(input);
+    await $pmCreate(args.join(" "), process.cwd());
+
+    const outDir = input.outDir;
+    const stubPath = path.join(
+      __dirname,
+      "..",
+      "stubs",
+      "templates",
+      `none${input.biome ? "-biome" : ""}`
+    );
+
+    const configFiles = input.biome
+      ? ["biome.json"]
+      : [".eslintignore", ".eslintrc.cjs", ".prettierignore", "prettier.config.cjs"];
+
+    const vscodeDir = path.join(stubPath, ".vscode");
+    const vscodeFiles = ["extensions.json", "launch.json"];
+
+    const projectPackageJsonFile = path.join(outDir, "package.json");
+    const projectTsconfigJsonFile = path.join(outDir, "tsconfig.json");
+    const templatePackageJsonFile = path.join(stubPath, "package.json");
+    const templateTsconfigJsonFile = path.join(stubPath, "tsconfig.json");
+
+    this.step(`Copying template files into ${this.bgBlue(` ${outDir} `)} ... 🐇`);
+
+    for (const vscodeFile of vscodeFiles) {
+      const vscodeFilePath = path.join(vscodeDir, vscodeFile);
+      const projectVscodeFilePath = path.join(outDir, ".vscode", vscodeFile);
+
+      pathExistsSync(projectVscodeFilePath)
+        ? deepMergeJsonFile(projectVscodeFilePath, vscodeFilePath, true)
+        : cpSync(vscodeFilePath, projectVscodeFilePath, {
+            force: true
+          });
+    }
+
+    for (const configFile of configFiles) {
+      cpSync(path.join(stubPath, configFile), path.join(outDir, configFile), {
+        force: true
+      });
+    }
+
+    deepMergeJsonFile(projectPackageJsonFile, templatePackageJsonFile, true);
+    deepMergeJsonFile(projectTsconfigJsonFile, templateTsconfigJsonFile, true);
+
+    return input.install;
+  }
+
   async start(input: Input): Promise<boolean> {
-    this.intro(`Let's create a ${this.bgBlue(" QwikDev/astro App ")} ✨`);
+    this.intro(
+      `Let's create a ${this.bgBlue(" QwikDev")}${this.bgMagenta("Astro")} App ✨`
+    );
 
     let ranInstall: boolean;
 
-    if (input.add) {
+    if (input.template) {
+      ranInstall = await this.runTemplate(input);
+    } else if (input.add) {
       ranInstall = await this.runInstall(input);
       await this.runAdd(input);
     } else {
@@ -445,10 +543,10 @@ export class Application extends Program<Definition, Input> {
         try {
           if (!input.dryRun) {
             const res = [];
-            res.push(await $("git", ["init"], outDir).install);
-            res.push(await $("git", ["add", "-A"], outDir).install);
+            res.push(await $("git", ["init"], outDir).process);
+            res.push(await $("git", ["add", "-A"], outDir).process);
             res.push(
-              await $("git", ["commit", "-m", "Initial commit 🎉"], outDir).install
+              await $("git", ["commit", "-m", "Initial commit 🎉"], outDir).process
             );
 
             if (res.some((r) => r === false)) {

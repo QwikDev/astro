@@ -43,16 +43,17 @@
 
   | Name                                   | Description                              |
   | :--------------------------------------| :----------------------------------------|
-  | `--help` (`-h`)                            | Display available flags.                 |
-  | `--dry-run`                              | Walk through steps without executing.    |
-  | `--force` / `--no-force` (`-f` / `--no-f`)     | Overwrite target directory if it exists. |
-  | `--add` / `--no-add` (`-a` / `--no-a`) | Add QwikDev/astro to existing project.   |
-  | `--install` / `--no-install` (`-i` / `--no-i`) | Install dependencies.                    |
+  | `--help` (`-h`)                        | Display available flags.                 |
+  | `--template` (`-t`)                    | Start from an Astro template.            |
   | `--biome` / `--no-biome`                   | Prefer Biome to ESLint/Prettier.         |
+  | `--install` / `--no-install` (`-i` / `--no-i`) | Install dependencies.                    |
   | `--git` / `--no-git`                       | Initialize Git repository.               |
   | `--ci` / `--no-ci`                         | Add CI workflow.                         |
   | `--yes` (`-y`)                             | Skip all prompts by accepting defaults.  |
   | `--no` (`-n`)                              | Skip all prompts by declining defaults.  |
+  | `--add` / `--no-add` (`-a` / `--no-a`) | Add QwikDev/astro to existing project.   |
+  | `--force` / `--no-force` (`-f` / `--no-f`)     | Overwrite target directory if it exists. |
+  | `--dry-run`                              | Walk through steps without executing.    |
 
 ### 📦 API
 
@@ -78,14 +79,15 @@
   export type Definition = {
     destination: string;
     adapter?: "deno" | "node" | "none";
-    force?: boolean;
-    add?: boolean;
-    install?: boolean;
+    template?: string;
     biome?: boolean;
+    install?: boolean;
     git?: boolean;
     ci?: boolean;
     yes?: boolean;
     no?: boolean;
+    add?: boolean;
+    force?: boolean;
     dryRun?: boolean;
   };
   ```
@@ -96,14 +98,15 @@
 export const defaultDefinition = {
   destination: "./qwik-astro-app",
   adapter: "none",
-  force: undefined,
-  add: undefined,
+  template: "",
   install: undefined,
   biome: undefined,
   git: undefined,
   ci: undefined,
   yes: undefined,
   no: undefined,
+  add: undefined,
+  force: undefined,
   dryRun: undefined
 } as const;
 ```
