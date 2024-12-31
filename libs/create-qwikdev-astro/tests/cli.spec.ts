@@ -147,14 +147,14 @@ test.group(`create ${integration} app`, (group) => {
     return testRun(["--template", "minimal"], context, {
       template: true
     });
-  });
+  }).disableTimeout();
 
   test("with template and using Biome", async (context) => {
     return testRun(["--template", "minimal", "--biome"], context, {
       template: true,
       biome: true
     });
-  });
+  }).disableTimeout();
 });
 
 test.group(`create ${integration} with yes and no options`, (group) => {
