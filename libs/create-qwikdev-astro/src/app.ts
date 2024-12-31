@@ -1,7 +1,6 @@
 import fs, { cpSync } from "node:fs";
 import path from "node:path";
-import { existsSync } from "fs-extra";
-import { copySync, ensureDirSync } from "fs-extra/esm";
+import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
 import pkg from "../package.json";
 import { ensureString } from "./console";
 import { type Definition as BaseDefinition, Program } from "./core";
@@ -413,7 +412,7 @@ export class Application extends Program<Definition, Input> {
       const vscodeFilePath = path.join(vscodeDir, vscodeFile);
       const projectVscodeFilePath = path.join(outDir, ".vscode", vscodeFile);
 
-      existsSync(projectVscodeFilePath)
+      pathExistsSync(projectVscodeFilePath)
         ? deepMergeJsonFile(projectVscodeFilePath, vscodeFilePath, true)
         : cpSync(vscodeFilePath, projectVscodeFilePath, {
             force: true
