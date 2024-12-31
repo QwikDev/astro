@@ -359,7 +359,7 @@ export async function scanBoolean(
         : typeof initialValue
 > {
   const value =
-    no === true && initialValue === undefined
+    no === true && !initialValue
       ? false
       : yes === true && initialValue === undefined
         ? true
