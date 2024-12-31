@@ -64,6 +64,7 @@ test.group("default definition", () => {
       definition.has(
         "destination",
         "adapter",
+        "template",
         "force",
         "install",
         "biome",
@@ -82,7 +83,13 @@ test.group("default definition", () => {
 
   test("adapter", ({ assert }) => {
     assert.isTrue(definition.get("adapter").isString());
+    assert.isTrue(definition.get("adapter").equals("none"));
     assert.isTrue(definition.get("adapter").equals(defaultDefinition.adapter));
+  });
+
+  test("template", ({ assert }) => {
+    assert.isTrue(definition.get("template").isUndefined());
+    assert.isTrue(definition.get("template").equals(defaultDefinition.template));
   });
 
   test("force", ({ assert }) => {
