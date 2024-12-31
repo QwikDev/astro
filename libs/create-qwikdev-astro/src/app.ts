@@ -428,7 +428,7 @@ export class Application extends Program<Definition, Input> {
     deepMergeJsonFile(projectPackageJsonFile, templatePackageJsonFile, true);
     deepMergeJsonFile(projectTsconfigJsonFile, templateTsconfigJsonFile, true);
 
-    return input.install;
+    return this.runInstall(input);
   }
 
   async start(input: Input): Promise<boolean> {
@@ -516,13 +516,16 @@ export class Application extends Program<Definition, Input> {
     }
   }
 
-  async runInstall(definition: Definition): Promise<boolean> {
+  async runInstall(input: Input): Promise<boolean> {
     let ranInstall = false;
-    if (definition.install) {
-      this.step("Installing dependencies...");
-      if (!definition.dryRun) {
-        await $pmInstall(definition.destination);
+
+    if (input.install) {
+      this.step(`Installing${input.template ? " new " : " "}dependencies...`);
+
+      if (!input.dryRun) {
+        await $pmInstall(input.destination);
       }
+
       ranInstall = true;
     }
 
