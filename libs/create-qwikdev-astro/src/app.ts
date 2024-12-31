@@ -1,5 +1,6 @@
 import fs, { cpSync } from "node:fs";
 import path from "node:path";
+import { existsSync } from "fs-extra";
 import { copySync, ensureDirSync } from "fs-extra/esm";
 import pkg from "../package.json";
 import { ensureString } from "./console";
@@ -398,10 +399,26 @@ export class Application extends Program<Definition, Input> {
       ? ["biome.json"]
       : [".eslintignore", ".eslintrc.cjs", ".prettierignore", "prettier.config.cjs"];
 
+    const vscodeDir = path.join(stubPath, ".vscode");
+    const vscodeFiles = ["extensions.json", "launch.json"];
+
     const projectPackageJsonFile = path.join(outDir, "package.json");
     const projectTsconfigJsonFile = path.join(outDir, "tsconfig.json");
     const templatePackageJsonFile = path.join(stubPath, "package.json");
     const templateTsconfigJsonFile = path.join(stubPath, "tsconfig.json");
+
+    this.step(`Copying template files into ${this.bgBlue(` ${outDir} `)} ... 🐇`);
+
+    for (const vscodeFile of vscodeFiles) {
+      const vscodeFilePath = path.join(vscodeDir, vscodeFile);
+      const projectVscodeFilePath = path.join(outDir, ".vscode", vscodeFile);
+
+      existsSync(projectVscodeFilePath)
+        ? deepMergeJsonFile(projectVscodeFilePath, vscodeFilePath, true)
+        : cpSync(vscodeFilePath, projectVscodeFilePath, {
+            force: true
+          });
+    }
 
     for (const configFile of configFiles) {
       cpSync(path.join(stubPath, configFile), path.join(outDir, configFile), {
