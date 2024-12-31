@@ -14,6 +14,8 @@ enum input {
   which_destination,
   use_adapter,
   which_adapter,
+  use_template,
+  what_template,
   biome,
   install,
   ci,
@@ -27,6 +29,8 @@ const questions = {
   [input.which_destination]: "Where would you like to create your new project?",
   [input.use_adapter]: "Would you like to use a server adapter?",
   [input.which_adapter]: "Which adapter do you prefer?",
+  [input.use_template]: "Would you like to use a template?",
+  [input.what_template]: "What template would you like to use?",
   [input.biome]: "Would you prefer Biome over ESLint/Prettier?",
   [input.install]: `Would you like to install ${getPackageManager()} dependencies?`,
   [input.ci]: "Would you like to add CI workflow?",
@@ -39,6 +43,8 @@ const questions = {
 const answers = {
   [input.which_destination]: [".", projectName],
   [input.use_adapter]: [true, false],
+  [input.what_template]: ["qwik", "astro"],
+  [input.use_template]: [true, false],
   [input.which_adapter]: ["none", "node", "deno"],
   [input.biome]: [true, false],
   [input.install]: [true, false],
@@ -360,6 +366,17 @@ for (const [key, choices] of Object.entries(answers)) {
               assert.isTrue(definition.get("adapter").equals(answer));
             }
             break;
+
+          case input.what_template:
+            if (
+              (
+                await tester.scanBoolean(parsed.definition, questions[input.use_template])
+              ).isTrue()
+            ) {
+              assert.isTrue(definition.get("template").equals(answer));
+            }
+            break;
+
 
           case input.biome:
             assert.isTrue(definition.get("biome").equals(answer));
