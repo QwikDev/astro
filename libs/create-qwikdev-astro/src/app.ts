@@ -537,34 +537,46 @@ export class Application extends Program<Definition, Input> {
       const s = this.spinner();
 
       const outDir = input.outDir;
+      const initialized = fs.existsSync(path.join(outDir, ".git"));
+      if (initialized) {
+        this.info("Git has already been initialized before.");
+      }
 
-      if (fs.existsSync(path.join(outDir, ".git"))) {
-        this.info("Git has already been initialized before. Skipping...");
-      } else {
-        s.start("Git initializing...");
+      s.start(`${initialized ? "Adding New Changes to" : "Initializing"} Git...`);
 
+      if (!input.dryRun) {
+        const res = [];
         try {
-          if (!input.dryRun) {
-            const res = [];
+          if (!initialized) {
             res.push(await $("git", ["init"], outDir).process);
-            res.push(await $("git", ["add", "-A"], outDir).process);
-            res.push(
-              await $("git", ["commit", "-m", "Initial commit 🎉"], outDir).process
-            );
+          }
+          res.push(await $("git", ["add", "-A"], outDir).process);
+          res.push(
+            await $(
+              "git",
+              [
+                "commit",
+                "-m",
+                `${initialized ? "➕ Add @qwikdev/astro" : "Initial commit 🎉"}`
+              ],
+              outDir
+            ).process
+          );
 
-            if (res.some((r) => r === false)) {
-              throw "";
-            }
+          if (res.some((r) => r === false)) {
+            throw "";
           }
 
-          s.stop("Git initialized 🎲");
+          s.stop(`${initialized ? "Changes added to Git ✨" : "Git initialized 🎲"}`);
         } catch (e) {
-          s.stop("Git failed to initialize");
-          this.error(
-            this.red(
-              "Git failed to initialize. You can do this manually by running: git init"
-            )
-          );
+          s.stop(`Git failed to ${initialized ? "add new changes" : "initialize"}`);
+          if (!initialized) {
+            this.error(
+              this.red(
+                "Git failed to initialize. You can do this manually by running: git init"
+              )
+            );
+          }
         }
       }
     }
