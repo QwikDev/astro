@@ -8,14 +8,15 @@ import { $, $pmCreate, $pmInstall, $pmX } from "./process";
 import {
   __dirname,
   clearDir,
-  deepMergeJsonFile,
   getPackageJson,
   getPackageManager,
+  mergeDotIgnoreFiles,
   notEmptyDir,
   pmRunCommand,
   replacePackageJsonRunCommand,
   resolveAbsoluteDir,
   resolveRelativeDir,
+  safeCopy,
   sanitizePackageName,
   updatePackageName
 } from "./utils";
@@ -209,7 +210,7 @@ export class Application extends Program<Definition, Input> {
 
     const template: string =
       definition.template === undefined &&
-      (await this.scanBoolean(definition, "Would you like to use a template?"))
+      (await this.scanBoolean(definition, "Would you like to use a template?", false))
         ? await this.scanString("What template would you like to use?", "")
         : (definition.template ?? "");
 
@@ -361,7 +362,7 @@ export class Application extends Program<Definition, Input> {
 
     this.step(`Creating new project in ${this.bgBlue(` ${outDir} `)} ... 🐇`);
     this.copyTemplate(input, templatePath);
-    this.copyGitignore(input);
+    this.makeGitignore(input);
   }
 
   async runTemplate(input: Input) {
@@ -385,50 +386,20 @@ export class Application extends Program<Definition, Input> {
     await this.prepareDir(input);
     await $pmCreate(args.join(" "), process.cwd());
 
-    const outDir = input.outDir;
-    const stubPath = path.join(
-      __dirname,
-      "..",
-      "stubs",
-      "templates",
-      `none${input.biome ? "-biome" : ""}`
+    this.step(`Copying template files into ${this.bgBlue(` ${input.outDir} `)} ... 🐇`);
+    this.copyTemplate(
+      input,
+      path.join(
+        __dirname,
+        "..",
+        "stubs",
+        "templates",
+        `none${input.biome ? "-biome" : ""}`
+      )
     );
+    this.makeGitignore(input);
 
-    const configFiles = input.biome
-      ? ["biome.json"]
-      : [".eslintignore", ".eslintrc.cjs", ".prettierignore", "prettier.config.cjs"];
-
-    const vscodeDir = path.join(stubPath, ".vscode");
-    const vscodeFiles = ["extensions.json", "launch.json"];
-
-    const projectPackageJsonFile = path.join(outDir, "package.json");
-    const projectTsconfigJsonFile = path.join(outDir, "tsconfig.json");
-    const templatePackageJsonFile = path.join(stubPath, "package.json");
-    const templateTsconfigJsonFile = path.join(stubPath, "tsconfig.json");
-
-    this.step(`Copying template files into ${this.bgBlue(` ${outDir} `)} ... 🐇`);
-
-    for (const vscodeFile of vscodeFiles) {
-      const vscodeFilePath = path.join(vscodeDir, vscodeFile);
-      const projectVscodeFilePath = path.join(outDir, ".vscode", vscodeFile);
-
-      pathExistsSync(projectVscodeFilePath)
-        ? deepMergeJsonFile(projectVscodeFilePath, vscodeFilePath, true)
-        : cpSync(vscodeFilePath, projectVscodeFilePath, {
-            force: true
-          });
-    }
-
-    for (const configFile of configFiles) {
-      cpSync(path.join(stubPath, configFile), path.join(outDir, configFile), {
-        force: true
-      });
-    }
-
-    deepMergeJsonFile(projectPackageJsonFile, templatePackageJsonFile, true);
-    deepMergeJsonFile(projectTsconfigJsonFile, templateTsconfigJsonFile, true);
-
-    return input.install;
+    return this.runInstall(input);
   }
 
   async start(input: Input): Promise<boolean> {
@@ -516,13 +487,16 @@ export class Application extends Program<Definition, Input> {
     }
   }
 
-  async runInstall(definition: Definition): Promise<boolean> {
+  async runInstall(input: Input): Promise<boolean> {
     let ranInstall = false;
-    if (definition.install) {
-      this.step("Installing dependencies...");
-      if (!definition.dryRun) {
-        await $pmInstall(definition.destination);
+
+    if (input.install) {
+      this.step(`Installing${input.template ? " new " : " "}dependencies...`);
+
+      if (!input.dryRun) {
+        await $pmInstall(input.destination);
       }
+
       ranInstall = true;
     }
 
@@ -534,46 +508,65 @@ export class Application extends Program<Definition, Input> {
       const s = this.spinner();
 
       const outDir = input.outDir;
+      const initialized = fs.existsSync(path.join(outDir, ".git"));
+      if (initialized) {
+        this.info("Git has already been initialized before.");
+      }
 
-      if (fs.existsSync(path.join(outDir, ".git"))) {
-        this.info("Git has already been initialized before. Skipping...");
-      } else {
-        s.start("Git initializing...");
+      s.start(`${initialized ? "Adding New Changes to" : "Initializing"} Git...`);
 
+      if (!input.dryRun) {
+        const res = [];
         try {
-          if (!input.dryRun) {
-            const res = [];
+          if (!initialized) {
             res.push(await $("git", ["init"], outDir).process);
-            res.push(await $("git", ["add", "-A"], outDir).process);
-            res.push(
-              await $("git", ["commit", "-m", "Initial commit 🎉"], outDir).process
-            );
+          }
+          res.push(await $("git", ["add", "-A"], outDir).process);
+          res.push(
+            await $(
+              "git",
+              [
+                "commit",
+                "-m",
+                `${initialized ? "➕ Add @qwikdev/astro" : "Initial commit 🎉"}`
+              ],
+              outDir
+            ).process
+          );
 
-            if (res.some((r) => r === false)) {
-              throw "";
-            }
+          if (res.some((r) => r === false)) {
+            throw "";
           }
 
-          s.stop("Git initialized 🎲");
+          s.stop(`${initialized ? "Changes added to Git ✨" : "Git initialized 🎲"}`);
         } catch (e) {
-          s.stop("Git failed to initialize");
-          this.error(
-            this.red(
-              "Git failed to initialize. You can do this manually by running: git init"
-            )
-          );
+          s.stop(`Git failed to ${initialized ? "add new changes" : "initialize"}`);
+          if (!initialized) {
+            this.error(
+              this.red(
+                "Git failed to initialize. You can do this manually by running: git init"
+              )
+            );
+          }
         }
       }
     }
   }
 
-  copyGitignore(input: Input) {
-    this.step("Copying `.gitignore` file...");
+  makeGitignore(input: Input) {
+    const dotGitignore = path.join(input.outDir, ".gitignore");
+    const exists = pathExistsSync(dotGitignore);
+
+    this.step(`${exists ? "Merging" : "Copying"} \`.gitignore\` file...`);
 
     if (!input.dryRun) {
       const gitignore = path.join(__dirname, "..", "stubs", "gitignore");
-      const dotGitignore = path.join(input.outDir, ".gitignore");
-      cpSync(gitignore, dotGitignore, { force: true });
+
+      if (exists) {
+        mergeDotIgnoreFiles(dotGitignore, gitignore, true);
+      } else {
+        cpSync(gitignore, dotGitignore, { force: true });
+      }
     }
   }
 
@@ -582,7 +575,8 @@ export class Application extends Program<Definition, Input> {
       const outDir = input.outDir;
       try {
         ensureDirSync(outDir);
-        copySync(templatePath, outDir);
+
+        input.template ? safeCopy(templatePath, outDir) : copySync(templatePath, outDir);
       } catch (error) {
         this.error(this.red(`Template copy failed: ${error}`));
       }

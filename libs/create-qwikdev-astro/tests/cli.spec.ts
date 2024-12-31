@@ -18,18 +18,10 @@ const setup = () => {
   return () => emptyDirSync(root);
 };
 
-const templateDirs = [".vscode", "src"];
-
-const templateFiles = [
-  ".vscode/launch.json",
-  ".vscode/extensions.json",
-  "package.json",
-  "tsconfig.json"
-];
-
 const generatedDirs = [
-  ...templateDirs,
+  ".vscode",
   "public",
+  "src",
   "src/assets",
   "src/components",
   "src/layouts",
@@ -38,7 +30,8 @@ const generatedDirs = [
 ];
 
 const generatedFiles = [
-  ...templateFiles,
+  ".vscode/extensions.json",
+  ".vscode/launch.json",
   "public/favicon.svg",
   "src/assets/astro.svg",
   "src/assets/qwik.svg",
@@ -50,11 +43,12 @@ const generatedFiles = [
   "src/env.d.ts",
   ".gitignore",
   "README.md",
-  "astro.config.ts"
+  "astro.config.ts",
+  "package.json",
+  "tsconfig.json"
 ] as const;
 
 type GeneratedOptions = Partial<{
-  template: boolean;
   biome: boolean;
   install: boolean;
   ci: boolean;
@@ -63,7 +57,7 @@ type GeneratedOptions = Partial<{
 
 const getGeneratedFiles = (options: GeneratedOptions = {}): string[] => {
   const files = [
-    ...(options.template ? templateFiles : generatedFiles),
+    ...generatedFiles,
     ...(options.biome
       ? ["biome.json"]
       : [".eslintignore", ".eslintrc.cjs", ".prettierignore", "prettier.config.cjs"])
@@ -91,7 +85,7 @@ const getGeneratedFiles = (options: GeneratedOptions = {}): string[] => {
 };
 
 const getGeneratedDirs = (options: GeneratedOptions = {}): string[] => {
-  const dirs = options.template ? templateDirs : generatedDirs;
+  const dirs = generatedDirs;
 
   /*
   if (options.install) {
@@ -144,14 +138,11 @@ test.group(`create ${integration} app`, (group) => {
   });
 
   test("with template", async (context) => {
-    return testRun(["--template", "minimal"], context, {
-      template: true
-    });
+    return testRun(["--template", "minimal"], context);
   }).disableTimeout();
 
   test("with template and using Biome", async (context) => {
     return testRun(["--template", "minimal", "--biome"], context, {
-      template: true,
       biome: true
     });
   }).disableTimeout();

@@ -1,11 +1,32 @@
-import fs from "node:fs";
+import fs, { readdirSync, statSync } from "node:fs";
 import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
 import detectPackageManager from "which-pm-runs";
 
 export const __filename = getModuleFilename();
 export const __dirname = path.dirname(__filename);
+
+export function safeCopy(source: string, target: string): void {
+  const files = readdirSync(source);
+
+  for (const file of files) {
+    const sourcePath = join(source, file);
+    const targetPath = join(target, file);
+
+    if (statSync(sourcePath).isDirectory()) {
+      ensureDirSync(targetPath);
+      safeCopy(sourcePath, targetPath);
+    } else if (!pathExistsSync(targetPath)) {
+      copySync(sourcePath, targetPath);
+    } else if (file.endsWith(".json")) {
+      deepMergeJsonFile(targetPath, sourcePath, true);
+    } else if (file.startsWith(".") && file.endsWith("ignore")) {
+      mergeDotIgnoreFiles(targetPath, sourcePath, true);
+    }
+  }
+}
 
 export function deepMergeJsonFile<T>(
   targetJsonPath: string,
@@ -46,6 +67,53 @@ export function deepMerge<T>(target: T, source: Partial<T>): T {
 
 function isObject(item: unknown): item is Record<string, any> {
   return item !== null && typeof item === "object" && !Array.isArray(item);
+}
+
+export function mergeDotIgnoreFiles(
+  target: string,
+  source: string,
+  replace = false
+): string {
+  const contents = mergeDotIgnoreContents(
+    fileGetContents(target),
+    fileGetContents(source)
+  );
+
+  if (replace) {
+    filePutContents(target, contents);
+  }
+
+  return contents;
+}
+
+export function mergeDotIgnoreContents(content1: string, content2: string): string {
+  return mergeDotIgnoreLines(content1.split("\n"), content2.split("\n")).join("\n");
+}
+
+export function mergeDotIgnoreLines(lines1: string[], lines2: string[]): string[] {
+  const lines = Array.from(
+    new Set([...lines1.map((line) => line.trim()), ...lines2.map((line) => line.trim())])
+  ).filter((line) => line !== "");
+
+  return formatLines(lines);
+}
+
+function formatLines(lines: string[]): string[] {
+  const formattedLines: string[] = [];
+  let previousWasComment = false;
+
+  lines.forEach((line, index) => {
+    const isComment = line.startsWith("#");
+
+    if (isComment && !previousWasComment && index !== 0) {
+      formattedLines.push("");
+    }
+
+    formattedLines.push(line);
+    previousWasComment = isComment;
+  });
+
+  return formattedLines;
 }
 
 export function getModuleFilename(): string {
