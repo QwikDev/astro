@@ -212,7 +212,7 @@ export class Application extends Program<Definition, Input> {
             definition,
             `Directory "./${resolveRelativeDir(
               outDir
-            )}" already exists and is not empty. What would you like to overwrite it?`,
+            )}" already exists and is not empty. Would you like to force the copy?`,
             false
           ))
         : definition.force;
