@@ -20,7 +20,7 @@ export const JSChunk = component$(() => {
             display: block;
           }
            
-        `
+        `,
   );
 
   return (

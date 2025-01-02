@@ -24,7 +24,8 @@
     "@iconify-json/tabler": "^1.2.13",
     "@qwikdev/astro": "^0.7",
     "astro": "^5.1",
-    "astro-icon": "^1.1.4"
+    "astro-icon": "^1.1.4",
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.0"

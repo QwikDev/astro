@@ -1,26 +1,26 @@
 .cli-copy {
-    background-color: transparent;
-    padding: var(--space-3xs);
-    border: var(--space-4xs) dotted var(--rose-500);
-    display: flex;
-    align-items: center;
-    gap: var(--space-3xs);
-    transition: background-color 0.35s;
-    transition-timing-function: var(--qa-hover);
+  background-color: transparent;
+  padding: var(--space-3xs);
+  border: var(--space-4xs) dotted var(--rose-500);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  transition: background-color 0.35s;
+  transition-timing-function: var(--qa-hover);
 }
 
 .cli-copy:hover {
-    background-color: var(--neutral-950);
+  background-color: var(--neutral-950);
 }
 
 .cli-copy[data-click-success="true"] [data-copy-icon] {
-    display: none;
+  display: none;
 }
 
 .cli-copy[data-interacted] {
-    border-color: var(--green-500);
+  border-color: var(--green-500);
 }
 
 .cli-copy[data-click-success="false"] [data-copy-success] {
-    display: none;
+  display: none;
 }

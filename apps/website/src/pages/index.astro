@@ -1,8 +1,10 @@
 ---
+import { Image } from "astro:assets";
 import { Background } from "@components/home/background/background";
 import { CLICopy } from "@components/home/cli-copy/cli-copy";
 import { Icon } from "astro-icon/components";
 import Layout from "src/layouts/Layout.astro";
+import heroImage from "../assets/q-astro-hero.png";
 ---
 
 <Layout title="Qwik + Astro">
@@ -10,6 +12,8 @@ import Layout from "src/layouts/Layout.astro";
     <Background />
     <div class="grid-line" aria-hidden="true"></div>
     <div class="intro">
+      <Image class="hero-image" src={heroImage} alt="Qwik + Astro" />
+
       <h1>
         {
           "QWIK ASTRO".split("").map((letter, i) => (
@@ -41,6 +45,12 @@ import Layout from "src/layouts/Layout.astro";
 </Layout>
 
 <style>
+  .hero-image {
+    object-fit: cover;
+    height: 200px;
+    border-radius: 8px;
+  }
+
   h1 {
     margin-block: var(--space-m);
     display: flex;

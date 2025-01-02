@@ -1,6 +1,6 @@
 :root {
   /* colors */
-  --off-black: #0A0A0A;
+  --off-black: #0a0a0a;
   --purple-50: #f1f3fc;
   --purple-100: #e6e8f9;
   --purple-200: #d1d4f4;
@@ -86,7 +86,18 @@
 
   /* Animations */
   --qa-fade: cubic-bezier(0.8, -0.4, 0.5, 1);
-  --qa-hover: linear(0, 0.417 25.5%, 0.867 49.4%, 1 57.7%, 0.925 65.1%, 0.908 68.6%, 0.902 72.2%, 0.916 78.2%, 0.988 92.1%, 1);
+  --qa-hover: linear(
+    0,
+    0.417 25.5%,
+    0.867 49.4%,
+    1 57.7%,
+    0.925 65.1%,
+    0.908 68.6%,
+    0.902 72.2%,
+    0.916 78.2%,
+    0.988 92.1%,
+    1
+  );
 }
 
 *,
@@ -108,7 +119,10 @@ h6 {
   font-family: "Unbounded Variable", sans-serif;
 }
 
-body, p, button, a {
+body,
+p,
+button,
+a {
   color: var(--purple-50);
 }
 
