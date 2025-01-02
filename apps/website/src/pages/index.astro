@@ -12,7 +12,10 @@ import heroImage from "../assets/q-astro-hero.png";
     <Background />
     <div class="grid-line" aria-hidden="true"></div>
     <div class="intro">
-      <Image class="hero-image" src={heroImage} alt="Qwik + Astro" />
+      
+      <div class="overlay">
+        <Image class="hero-image" src={heroImage} alt="Qwik + Astro" />
+      </div>
 
       <h1>
         {
@@ -49,6 +52,11 @@ import heroImage from "../assets/q-astro-hero.png";
     object-fit: cover;
     height: 200px;
     border-radius: 8px;
+    mask-image: radial-gradient(100% 100% at center, var(--off-black) 20%, transparent 100%);
+    -webkit-mask-image: radial-gradient(50% 100% at center, var(--off-black) 20%, transparent 100%);
+    animation: fade-in 0.75s forwards;
+    animation-delay: 2.25s;
+    opacity: 0;
   }
 
   h1 {
