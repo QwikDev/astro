@@ -352,7 +352,7 @@ export class Application extends Program<Definition, Input> {
     const outDir = input.outDir;
 
     if (notEmptyDir(outDir)) {
-      if (input.force) {
+      if (input.force && !input.safe) {
         if (!input.dryRun) {
           await clearDir(outDir);
         }
@@ -597,7 +597,9 @@ export class Application extends Program<Definition, Input> {
       try {
         ensureDirSync(outDir);
 
-        input.template ? safeCopy(templatePath, outDir) : copySync(templatePath, outDir);
+        input.template || input.safe
+          ? safeCopy(templatePath, outDir)
+          : copySync(templatePath, outDir);
       } catch (error) {
         this.error(this.red(`Template copy failed: ${error}`));
       }
