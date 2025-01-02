@@ -36,7 +36,7 @@ const questions = {
   [input.ci]: "Would you like to add CI workflow?",
   [input.git]: "Would you like to initialize Git?",
   [input.add]: "Do you want to add @QwikDev/astro to your existing project?",
-  [input.force]: "What would you like to overwrite it?",
+  [input.force]: "Would you like to force the copy?",
   [input.package_name]: "What should be the name of this package?"
 } as const;
 
