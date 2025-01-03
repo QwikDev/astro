@@ -350,6 +350,7 @@ export class Application extends Program<Definition, Input> {
       if (!input.dryRun) {
         await $pmX("astro add @qwikdev/astro", input.outDir);
       }
+      this.copyTemplate(input);
     } catch (e: any) {
       this.panic(`${e.message ?? e}: . Please try it manually.`);
     }
@@ -380,21 +381,8 @@ export class Application extends Program<Definition, Input> {
   }
 
   async runCreate(input: Input) {
-    const outDir = input.outDir;
-
     await this.prepareDir(input);
-
-    let starterKit = input.adapter;
-
-    if (input.biome) {
-      starterKit += "-biome";
-    }
-
-    const templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
-
-    this.step(`Creating new project in ${this.bgBlue(` ${outDir} `)} ... 🐇`);
-    this.copyTemplate(input, templatePath);
-    this.makeGitignore(input);
+    this.copyTemplate(input);
   }
 
   async runTemplate(input: Input) {
@@ -418,7 +406,6 @@ export class Application extends Program<Definition, Input> {
     await this.prepareDir(input);
     await $pmCreate(args.join(" "), process.cwd());
 
-    this.step(`Copying template files into ${this.bgBlue(` ${input.outDir} `)} ... 🐇`);
     this.copyTemplate(
       input,
       path.join(
@@ -429,7 +416,6 @@ export class Application extends Program<Definition, Input> {
         `none${input.biome ? "-biome" : ""}`
       )
     );
-    this.makeGitignore(input);
 
     return this.runInstall(input);
   }
@@ -589,7 +575,7 @@ export class Application extends Program<Definition, Input> {
     const dotGitignore = path.join(input.outDir, ".gitignore");
     const exists = pathExistsSync(dotGitignore);
 
-    this.step(`🙈 ${exists ? "Merging" : "Copying"} \`.gitignore\` file...`);
+    this.step(`${exists ? "Merging" : "Copying"} \`.gitignore\` file... 🙈`);
 
     if (!input.dryRun) {
       const gitignore = path.join(__dirname, "..", "stubs", "gitignore");
@@ -602,15 +588,31 @@ export class Application extends Program<Definition, Input> {
     }
   }
 
-  copyTemplate(input: Input, templatePath: string): void {
+  copyTemplate(input: Input, templatePath?: string): void {
+    this.step(
+      `${input.add || input.template ? "Copying template files into" : "Creating new project in"} ${this.bgBlue(` ${input.outDir} `)} ... 🐇`
+    );
+
     if (!input.dryRun) {
       const outDir = input.outDir;
       try {
         ensureDirSync(outDir);
 
-        input.template || input.safe
+        if (!templatePath) {
+          let starterKit = input.adapter;
+
+          if (input.biome) {
+            starterKit += "-biome";
+          }
+
+          templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
+        }
+
+        input.add || input.template || input.safe
           ? safeCopy(templatePath, outDir)
           : copySync(templatePath, outDir);
+
+        this.makeGitignore(input);
       } catch (error) {
         this.error(this.red(`Template copy failed: ${error}`));
       }
