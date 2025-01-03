@@ -347,7 +347,9 @@ export class Application extends Program<Definition, Input> {
   async runAdd(input: Input) {
     this.info("Adding @QwikDev/astro...");
     try {
-      await $pmX("astro add @qwikdev/astro", input.outDir);
+      if (!input.dryRun) {
+        await $pmX("astro add @qwikdev/astro", input.outDir);
+      }
     } catch (e: any) {
       this.panic(`${e.message ?? e}: . Please try it manually.`);
     }
