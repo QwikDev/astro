@@ -25,13 +25,13 @@ export type Definition = BaseDefinition & {
   destination: string;
   adapter: Adapter;
   template?: string;
-  install?: boolean;
-  biome?: boolean;
-  git?: boolean;
-  ci?: boolean;
   add?: boolean;
   force?: boolean;
   copy?: boolean;
+  biome?: boolean;
+  install?: boolean;
+  git?: boolean;
+  ci?: boolean;
   dryRun?: boolean;
 };
 
@@ -42,15 +42,15 @@ export const defaultDefinition = {
   destination: "./qwik-astro-app",
   adapter: "none",
   template: undefined,
+  add: undefined,
+  force: undefined,
+  copy: undefined,
   biome: undefined,
   install: undefined,
   git: undefined,
   ci: undefined,
   yes: undefined,
   no: undefined,
-  add: undefined,
-  force: undefined,
-  copy: undefined,
   dryRun: undefined
 } as const;
 
@@ -96,6 +96,24 @@ export class Application extends Program<Definition, Input> {
         default: defaultDefinition.template,
         desc: "Start from an Astro template"
       })
+      .option("add", {
+        alias: "a",
+        type: "boolean",
+        default: defaultDefinition.add,
+        desc: "Add QwikDev/astro to existing project"
+      })
+      .option("force", {
+        alias: "f",
+        type: "boolean",
+        default: defaultDefinition.force,
+        desc: "Overwrite target directory if it exists"
+      })
+      .option("copy", {
+        alias: "c",
+        type: "boolean",
+        default: defaultDefinition.copy,
+        desc: "Copy files without overwriting"
+      })
       .option("install", {
         alias: "i",
         type: "boolean",
@@ -116,24 +134,6 @@ export class Application extends Program<Definition, Input> {
         type: "boolean",
         default: defaultDefinition.ci,
         desc: "Add CI workflow"
-      })
-      .option("add", {
-        alias: "a",
-        type: "boolean",
-        default: defaultDefinition.add,
-        desc: "Add QwikDev/astro to existing project"
-      })
-      .option("force", {
-        alias: "f",
-        type: "boolean",
-        default: defaultDefinition.force,
-        desc: "Overwrite target directory if it exists"
-      })
-      .option("copy", {
-        alias: "c",
-        type: "boolean",
-        default: defaultDefinition.copy,
-        desc: "Copy files without overwriting"
       })
       .option("dryRun", {
         type: "boolean",
@@ -167,9 +167,9 @@ export class Application extends Program<Definition, Input> {
       destination: definition.destination,
       adapter: definition.adapter,
       template: definition.template ?? "",
+      add: !!definition.add,
       force:
         definition.force ?? (definition.add ? false : !!definition.yes && !definition.no),
-      add: !!definition.add,
       copy: !!definition.copy,
       biome: definition.biome ?? (!!definition.yes && !definition.no),
       install: definition.install ?? (!!definition.yes && !definition.no),

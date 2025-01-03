@@ -45,15 +45,15 @@
   | :--------------------------------------| :----------------------------------------|
   | `--help` (`-h`)                        | Display available flags.                 |
   | `--template` (`-t`)                    | Start from an Astro template.            |
+  | `--add` (`-a`) / `--no-add` (`--no-a`) | Add QwikDev/astro to existing project.   |
+  | `--force` (`-f`) / `--no-force` (`--no-f`)     | Overwrite target directory if it exists. |
+  | `--copy` (`-c`) / `--no-copy` (`--no-c`)     | Copy files without overwriting. |
   | `--biome` / `--no-biome`                   | Prefer Biome to ESLint/Prettier.         |
-  | `--install` / `--no-install` (`-i` / `--no-i`) | Install dependencies.                    |
+  | `--install` (`-i`) / `--no-install` (`--no-i`) | Install dependencies.                    |
   | `--git` / `--no-git`                       | Initialize Git repository.               |
   | `--ci` / `--no-ci`                         | Add CI workflow.                         |
   | `--yes` (`-y`)                             | Skip all prompts by accepting defaults.  |
   | `--no` (`-n`)                              | Skip all prompts by declining defaults.  |
-  | `--add` / `--no-add` (`-a` / `--no-a`) | Add QwikDev/astro to existing project.   |
-  | `--force` / `--no-force` (`-f` / `--no-f`)     | Overwrite target directory if it exists. |
-  | `--copy` / `--no-copy` (`-c` / `--no-c`)     | Copy files without overwriting. |
   | `--dry-run`                              | Walk through steps without executing.    |
 
 ### 📦 API
@@ -81,14 +81,15 @@
     destination: string;
     adapter?: "deno" | "node" | "none";
     template?: string;
+    add?: boolean;
+    force?: boolean;
+    copy?: boolean;
     biome?: boolean;
     install?: boolean;
     git?: boolean;
     ci?: boolean;
     yes?: boolean;
     no?: boolean;
-    add?: boolean;
-    force?: boolean;
     dryRun?: boolean;
   };
   ```
@@ -100,14 +101,15 @@ export const defaultDefinition = {
   destination: "./qwik-astro-app",
   adapter: "none",
   template: "",
-  install: undefined,
+  add: undefined,
+  force: undefined,
+  copy: undefined,
   biome: undefined,
+  install: undefined,
   git: undefined,
   ci: undefined,
   yes: undefined,
   no: undefined,
-  add: undefined,
-  force: undefined,
   dryRun: undefined
 } as const;
 ```
