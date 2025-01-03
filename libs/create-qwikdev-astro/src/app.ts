@@ -31,7 +31,7 @@ export type Definition = BaseDefinition & {
   ci?: boolean;
   add?: boolean;
   force?: boolean;
-  safe?: boolean;
+  copy?: boolean;
   dryRun?: boolean;
 };
 
@@ -50,7 +50,7 @@ export const defaultDefinition = {
   no: undefined,
   add: undefined,
   force: undefined,
-  safe: undefined,
+  copy: undefined,
   dryRun: undefined
 } as const;
 
@@ -129,10 +129,10 @@ export class Application extends Program<Definition, Input> {
         default: defaultDefinition.force,
         desc: "Overwrite target directory if it exists"
       })
-      .option("safe", {
-        alias: ["s", "soft"],
+      .option("copy", {
+        alias: "c",
         type: "boolean",
-        default: defaultDefinition.safe,
+        default: defaultDefinition.copy,
         desc: "Copy files without overwriting"
       })
       .option("dryRun", {
@@ -170,7 +170,7 @@ export class Application extends Program<Definition, Input> {
       force:
         definition.force ?? (definition.add ? false : !!definition.yes && !definition.no),
       add: !!definition.add,
-      safe: !!definition.safe,
+      copy: !!definition.copy,
       biome: definition.biome ?? (!!definition.yes && !definition.no),
       install: definition.install ?? (!!definition.yes && !definition.no),
       ci: definition.ci ?? (!!definition.yes && !definition.no),
@@ -216,16 +216,16 @@ export class Application extends Program<Definition, Input> {
           ))
         : definition.force;
 
-    const safe =
+    const copy =
       add || force
-        ? definition.safe === undefined
+        ? definition.copy === undefined
           ? await this.scanBoolean(
               definition,
               "Copy template files safely (without overwriting existing files)?",
               !add
             )
           : false
-        : !!definition.safe;
+        : !!definition.copy;
 
     const template: string =
       definition.template === undefined &&
@@ -304,7 +304,7 @@ export class Application extends Program<Definition, Input> {
     const dryRun = !!definition.dryRun;
 
     let packageName =
-      exists && (!force || safe)
+      exists && (!force || copy)
         ? getPackageJson(outDir).name
         : sanitizePackageName(destination);
 
@@ -323,7 +323,7 @@ export class Application extends Program<Definition, Input> {
       git,
       add,
       force,
-      safe,
+      copy,
       outDir,
       packageName,
       dryRun
@@ -351,7 +351,7 @@ export class Application extends Program<Definition, Input> {
         await $pmX("astro add @qwikdev/astro", input.outDir);
       }
 
-      if (input.safe) {
+      if (input.copy) {
         this.copyTemplate(input);
       }
     } catch (e: any) {
@@ -364,7 +364,7 @@ export class Application extends Program<Definition, Input> {
 
     if (notEmptyDir(outDir)) {
       if (input.force) {
-        if (input.safe) {
+        if (input.copy) {
           this.info(`Directory "${outDir}" already exists. Copy safely...🚚`);
         } else {
           if (!input.dryRun) {
@@ -611,7 +611,7 @@ export class Application extends Program<Definition, Input> {
           templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
         }
 
-        input.add || input.template || input.safe
+        input.template || input.copy
           ? safeCopy(templatePath, outDir)
           : copySync(templatePath, outDir);
 

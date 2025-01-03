@@ -53,7 +53,7 @@
   | `--no` (`-n`)                              | Skip all prompts by declining defaults.  |
   | `--add` / `--no-add` (`-a` / `--no-a`) | Add QwikDev/astro to existing project.   |
   | `--force` / `--no-force` (`-f` / `--no-f`)     | Overwrite target directory if it exists. |
-  | `--safe` / `--no-safe` (`-s` / `--no-s`)     | Copy files without overwriting. |
+  | `--copy` / `--no-copy` (`-c` / `--no-c`)     | Copy files without overwriting. |
   | `--dry-run`                              | Walk through steps without executing.    |
 
 ### 📦 API
