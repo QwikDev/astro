@@ -356,11 +356,15 @@ export class Application extends Program<Definition, Input> {
     const outDir = input.outDir;
 
     if (notEmptyDir(outDir)) {
-      if (input.force && !input.safe) {
-        if (!input.dryRun) {
-          await clearDir(outDir);
+      if (input.force) {
+        if (input.safe) {
+          this.info(`Directory "${outDir}" already exists. Copy safely...🚚`);
+        } else {
+          if (!input.dryRun) {
+            await clearDir(outDir);
+          }
+          this.info(`Directory "${outDir}" successfully emptied 🔥`);
         }
-        this.info(`Directory "${outDir}" successfully emptied 🗑️`);
       } else {
         this.error(`Directory "${outDir}" already exists.`);
         this.info(
@@ -492,7 +496,7 @@ export class Application extends Program<Definition, Input> {
 
   runCI(input: Input): void {
     if (input.ci) {
-      this.step("Adding CI workflow...");
+      this.step("👷 Adding CI workflow...");
 
       if (!input.dryRun) {
         const starterCIPath = path.join(
@@ -582,7 +586,7 @@ export class Application extends Program<Definition, Input> {
     const dotGitignore = path.join(input.outDir, ".gitignore");
     const exists = pathExistsSync(dotGitignore);
 
-    this.step(`${exists ? "Merging" : "Copying"} \`.gitignore\` file...`);
+    this.step(`🙈 ${exists ? "Merging" : "Copying"} \`.gitignore\` file...`);
 
     if (!input.dryRun) {
       const gitignore = path.join(__dirname, "..", "stubs", "gitignore");
