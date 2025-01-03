@@ -75,7 +75,6 @@ export class Application extends Program<Definition, Input> {
       .useYes()
       .useNo()
       .conflict("add", "force")
-      .conflict("add", "safe")
       .command(
         "* [destination] [adapter]",
         "Create a new project powered by QwikDev/astro"
@@ -217,15 +216,16 @@ export class Application extends Program<Definition, Input> {
           ))
         : definition.force;
 
-    const safe = force
-      ? definition.safe === undefined
-        ? await this.scanBoolean(
-            definition,
-            "Copy safely (without overwriting existing files)?",
-            true
-          )
-        : false
-      : !!definition.safe;
+    const safe =
+      add || force
+        ? definition.safe === undefined
+          ? await this.scanBoolean(
+              definition,
+              "Copy template files safely (without overwriting existing files)?",
+              !add
+            )
+          : false
+        : !!definition.safe;
 
     const template: string =
       definition.template === undefined &&
@@ -350,7 +350,10 @@ export class Application extends Program<Definition, Input> {
       if (!input.dryRun) {
         await $pmX("astro add @qwikdev/astro", input.outDir);
       }
-      this.copyTemplate(input);
+
+      if (input.safe) {
+        this.copyTemplate(input);
+      }
     } catch (e: any) {
       this.panic(`${e.message ?? e}: . Please try it manually.`);
     }
