@@ -192,7 +192,6 @@ export class Application extends Program<Definition, Input> {
           )
         : definition.destination;
 
-    let packageName = sanitizePackageName(destination);
     const outDir = resolveAbsoluteDir(destination.trim());
     const exists = notEmptyDir(outDir);
 
@@ -304,13 +303,15 @@ export class Application extends Program<Definition, Input> {
 
     const dryRun = !!definition.dryRun;
 
+    let packageName =
+      exists && (!force || safe)
+        ? getPackageJson(outDir).name
+        : sanitizePackageName(destination);
+
     packageName =
       !ask || definition.yes
         ? packageName
-        : await this.scanString(
-            "What should be the name of this package?",
-            exists && !force ? (getPackageJson(outDir).name ?? packageName) : packageName
-          );
+        : await this.scanString("What should be the name of this package?", packageName);
 
     return {
       destination,
