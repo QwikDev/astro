@@ -29,7 +29,7 @@ const questions = {
   [input.which_destination]: "Where would you like to create your new project?",
   [input.use_adapter]: "Would you like to use a server adapter?",
   [input.which_adapter]: "Which adapter do you prefer?",
-  [input.use_template]: "Would you like to use a template?",
+  [input.use_template]: "Would you like to use the default template?",
   [input.what_template]: "What template would you like to use?",
   [input.biome]: "Would you prefer Biome over ESLint/Prettier?",
   [input.install]: `Would you like to install ${getPackageManager()} dependencies?`,

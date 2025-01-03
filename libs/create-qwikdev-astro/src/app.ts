@@ -230,9 +230,13 @@ export class Application extends Program<Definition, Input> {
 
     const template: string =
       definition.template === undefined &&
-      (await this.scanBoolean(definition, "Would you like to use a template?", false))
-        ? await this.scanString("What template would you like to use?", "")
-        : (definition.template ?? "");
+      (await this.scanBoolean(
+        definition,
+        "Would you like to use the default template?",
+        true
+      ))
+        ? (definition.template ?? "")
+        : await this.scanString("What template would you like to use?", "");
 
     const ask = !exists || add || force;
 
