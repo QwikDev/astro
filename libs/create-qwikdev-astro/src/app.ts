@@ -75,6 +75,7 @@ export class Application extends Program<Definition, Input> {
       .useYes()
       .useNo()
       .conflict("add", "force")
+      .conflict("add", "safe")
       .command(
         "* [destination] [adapter]",
         "Create a new project powered by QwikDev/astro"
@@ -216,16 +217,15 @@ export class Application extends Program<Definition, Input> {
           ))
         : definition.force;
 
-    const safe =
-      force || add
-        ? definition.safe === undefined
-          ? await this.scanBoolean(
-              definition,
-              "Copy safely (without overwriting existing files)?",
-              true
-            )
-          : false
-        : !!definition.safe;
+    const safe = force
+      ? definition.safe === undefined
+        ? await this.scanBoolean(
+            definition,
+            "Copy safely (without overwriting existing files)?",
+            true
+          )
+        : false
+      : !!definition.safe;
 
     const template: string =
       definition.template === undefined &&
