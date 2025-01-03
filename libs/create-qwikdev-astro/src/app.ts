@@ -237,7 +237,7 @@ export class Application extends Program<Definition, Input> {
         ? (definition.template ?? "")
         : await this.scanString("What template would you like to use?", "");
 
-    const ask = !exists || ((add || force) && !safe);
+    const ask = !exists || add || force;
 
     let adapter: Adapter;
 
