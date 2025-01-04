@@ -171,7 +171,7 @@ export async function renderToStaticMarkup(
         dangerouslySetInnerHTML: String(value),
         style: "display: contents",
         ...namedSlot,
-        "q:key": globalThis.hash
+        "q:key": Math.random().toString(26).split(".").pop()
       });
 
       if (key === "default") {

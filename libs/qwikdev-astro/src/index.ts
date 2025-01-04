@@ -15,7 +15,6 @@ import type { InlineConfig } from "vite";
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
-  var hash: string | undefined;
   var relativeClientPath: string;
   var qManifest: QwikManifest;
 }
@@ -83,7 +82,8 @@ export default defineIntegration({
         const { addRenderer, updateConfig, config, command } = setupProps;
         astroConfig = config;
 
-        const virtualModuleName = inlineModule({
+        // passes config values to other runtimes with a virtual module
+        inlineModule({
           constExports: {
             isNode: options?.isNode ?? true,
             qAstroManifestPath
@@ -239,8 +239,7 @@ export default defineIntegration({
               inlineMod(),
               astroQwikPlugin,
               qwikVite(qwikSetupConfig),
-              overrideEsbuildPlugin,
-              virtualModuleName
+              overrideEsbuildPlugin
             ]
           }
         });
