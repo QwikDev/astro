@@ -1,5 +1,4 @@
 import { writeFileSync } from "node:fs";
-import path from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
@@ -77,6 +76,7 @@ export default defineIntegration({
     let astroConfig: AstroConfig | null = null;
     const { resolve: resolver } = createResolver(import.meta.url);
     const filter = createFilter(options?.include, options?.exclude);
+    const qAstroManifestPath = resolver("../q-astro-manifest.json");
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
@@ -85,17 +85,14 @@ export default defineIntegration({
 
         const virtualModuleName = inlineModule({
           constExports: {
-            isNode: options?.isNode ?? true
+            isNode: options?.isNode ?? true,
+            qAstroManifestPath
           }
         });
 
         /* q-astro-manifest.json doesn't error in dev */
         if (command === "dev") {
-          writeFileSync(
-            path.join(resolver("../"), "q-astro-manifest.json"),
-            "{}",
-            "utf-8"
-          );
+          writeFileSync(qAstroManifestPath, "{}", "utf-8");
         }
 
         // integration HMR support
@@ -273,11 +270,7 @@ export default defineIntegration({
             outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
-              writeFileSync(
-                path.join(resolver("../"), "q-astro-manifest.json"),
-                JSON.stringify(manifest),
-                "utf-8"
-              );
+              writeFileSync(qAstroManifestPath, JSON.stringify(manifest), "utf-8");
             }
           },
           debug: options?.debug ?? false
@@ -299,8 +292,7 @@ export default defineIntegration({
             const isQwikPlugin =
               plugin.name === "vite-plugin-qwik" ||
               plugin.name === "vite-plugin-qwik-post" ||
-              plugin.name === "overrideEsbuild" ||
-              plugin.name === "qwik-astro-runtime-config";
+              plugin.name === "overrideEsbuild";
 
             if (isAllowedPlugin) {
               return true;

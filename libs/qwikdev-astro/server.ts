@@ -1,4 +1,4 @@
-import { isNode } from "inox:inline-mod:mod_0";
+import { isNode, qAstroManifestPath } from "inox:inline-mod:mod_0";
 import { type JSXNode, jsx } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
@@ -63,16 +63,6 @@ export async function renderToStaticMarkup(
 
     let html = "";
 
-    // Get the manifest from the integration directory
-    const qwikRenderer = this.result.renderers.find(
-      (r) => r.name === "@qwikdev/astro"
-    ) as any;
-
-    const manifestPath = qwikRenderer?.serverEntrypoint?.replace(
-      "server.ts",
-      "q-astro-manifest.json"
-    );
-
     let integrationManifest = null;
 
     /**
@@ -83,7 +73,7 @@ export async function renderToStaticMarkup(
     if (isNode) {
       try {
         const { readFileSync } = await import("node:fs");
-        const manifestContent = readFileSync(manifestPath, "utf-8");
+        const manifestContent = readFileSync(qAstroManifestPath, "utf-8");
         integrationManifest = JSON.parse(manifestContent);
       } catch (error) {
         throw new Error(
@@ -96,7 +86,7 @@ export async function renderToStaticMarkup(
       }
     } else {
       try {
-        integrationManifest = await import(/* @vite-ignore */ manifestPath, {
+        integrationManifest = await import(/* @vite-ignore */ qAstroManifestPath, {
           with: { type: "json" }
         });
       } catch (error) {
