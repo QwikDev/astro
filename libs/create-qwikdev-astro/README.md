@@ -1,64 +1,80 @@
 # Create @qwikdev/astro 🎉
 
-## Scaffolding for [QwikDev/astro](https://github.com/QwikDev/astro) projects
+## **The Ultimate Starter for QwikDev/Astro Projects**
 
-### 🛠️ CLI
+Seamlessly scaffold content-driven web projects with the power of [QwikDev/Astro](https://github.com/QwikDev/astro).
+Whether you're building blazing-fast blogs, portfolios, or scalable applications,
+this CLI has you covered.
 
-  - **With `NPM`**:
+---
 
-    ```bash
-    npm create @qwikdev/astro@latest [destination] [adapter] [...options]
-    ```
+## 🚀 **Installation & Usage**
 
-  - **With `Yarn`**:
+### 🧑‍💻 CLI
 
-    ```bash
-    yarn create @qwikdev/astro [destination] [adapter] [...options]
-    ```
+Run the following command using your preferred package manager:
 
-  - **With `PNPM`**:
+- **With `NPM`**:
 
-    ```bash
-    pnpm create @qwikdev/astro [destination] [adapter] [...options]
-    ```
+  ```bash
+  npm create @qwikdev/astro@latest [destination] [adapter] [...options]
+  ```
 
-  - **With `Bun`**:
+- **With `Yarn`**:
 
-    ```bash
-    bun create @qwikdev/astro [destination] [adapter] [...options]
-    ```
+  ```bash
+  yarn create @qwikdev/astro [destination] [adapter] [...options]
+  ```
 
-  The `create @qwikdev/astro` command runs interactively without any arguments or options.
+- **With `PNPM`**:
 
-  However, it is possible to use the interactive mode as described below:
+  ```bash
+  pnpm create @qwikdev/astro [destination] [adapter] [...options]
+  ```
 
-  **Types of arguments:**
+- **With `Bun`**:
+
+  ```bash
+  bun create @qwikdev/astro [destination] [adapter] [...options]
+  ```
+
+### 🛠️ Arguments & Options
+
+#### Arguments
+
+  Customize the command with the following arguments:
 
   | Name        | Type                       | Default value    | Description                       |
   | :-----------| :--------------------------| :----------------| :---------------------------------|
   | destination | String                     | ./qwik-astro-app | Directory of the project.         |
   | adapter     | "deno" or "node" or "none" | none             | Server adapter.                   |
 
-  **Types of options:**
+#### Options
 
-  | Name                                   | Description                              |
-  | :--------------------------------------| :----------------------------------------|
-  | `--help` (`-h`)                        | Display available flags.                 |
-  | `--template` (`-t`)                    | Start from an Astro template.            |
-  | `--add` (`-a`) / `--no-add` (`--no-a`) | Add QwikDev/astro to existing project.   |
-  | `--force` (`-f`) / `--no-force` (`--no-f`)     | Overwrite target directory if it exists. |
-  | `--copy` (`-c`) / `--no-copy` (`--no-c`)     | Copy files without overwriting. |
-  | `--biome` / `--no-biome`                   | Prefer Biome to ESLint/Prettier.         |
-  | `--install` (`-i`) / `--no-install` (`--no-i`) | Install dependencies.                    |
-  | `--git` / `--no-git`                       | Initialize Git repository.               |
-  | `--ci` / `--no-ci`                         | Add CI workflow.                         |
-  | `--yes` (`-y`)                             | Skip all prompts by accepting defaults.  |
-  | `--no` (`-n`)                              | Skip all prompts by declining defaults.  |
-  | `--dry-run`                              | Walk through steps without executing.    |
+  Enhance your project setup with these additional flags:
+
+  | Name                         | Shortcut        | Description                                    |
+  | :--------------------------- | :---------------| :----------------------------------------------|
+  | `--help`                     | `-h`            | Display all available options.                 |
+  | `--template`                 | `-t`            | Use an Astro template.                         |
+  | `--add` / `--no-add`         | `-a` / `--no-a` | Add QwikDev/astro to an existing project.      |
+  | `--force` / `--no-force`     | `-f` / `--no-f` | Overwrite target directory, if needed.         |
+  | `--copy` / `--no-copy`       | `-c` / `--no-c` | Copy files without overwriting.                |
+  | `--biome` / `--no-biome`     |                 | Use Biome instead of ESLint/Prettier.          |
+  | `--install` / `--no-install` | `-i` / `--no-i` | Automatically install dependencies.            |
+  | `--git` / `--no-git`         |                 | Initialize a Git repository.                   |
+  | `--ci` / `--no-ci`           |                 | Add CI workflow.                               |
+  | `--yes`                      | `-y`            | Accept all default configurations.             |
+  | `--no`                       | `-n`            | Decline all default configurations.            |
+  | `--dry-run`                  |                 | Simulate the setup process without executing.  |
 
 ### 📦 API
 
-  - Use the arguments provided in the command line:
+For developers looking to programmatically access the CLI functionality:
+
+1. Basic Usage
+
+    Run the CLI programmatically without arguments:
 
     ```typescript
     import createQwikAstro from '@qwikdev/create-astro';
@@ -66,7 +82,9 @@
     createQwikAstro();
     ```
 
-  - Specify the command line arguments to use:
+2. With Custom Arguments
+
+    Specify arguments directly:
 
     ```typescript
     import { run } from '@qwikdev/create-astro';
@@ -74,53 +92,58 @@
     run(["./qwik-astro-app", "node"]);
     ```
 
-  **Definition type:**
+3. Definition Types
 
-  ```typescript
-  export type Definition = {
-    destination: string;
-    adapter?: "deno" | "node" | "none";
-    template?: string;
-    add?: boolean;
-    force?: boolean;
-    copy?: boolean;
-    biome?: boolean;
-    install?: boolean;
-    git?: boolean;
-    ci?: boolean;
-    yes?: boolean;
-    no?: boolean;
-    dryRun?: boolean;
-  };
-  ```
+    Define the structure of the CLI options and arguments:
 
-**Default definition:**
+    ```typescript
+    export type Definition = {
+      destination: string;
+      adapter?: "deno" | "node" | "none";
+      template?: string;
+      add?: boolean;
+      force?: boolean;
+      copy?: boolean;
+      biome?: boolean;
+      install?: boolean;
+      git?: boolean;
+      ci?: boolean;
+      yes?: boolean;
+      no?: boolean;
+      dryRun?: boolean;
+    };
+    ```
 
-```typescript
-export const defaultDefinition = {
-  destination: "./qwik-astro-app",
-  adapter: "none",
-  template: "",
-  add: undefined,
-  force: undefined,
-  copy: undefined,
-  biome: undefined,
-  install: undefined,
-  git: undefined,
-  ci: undefined,
-  yes: undefined,
-  no: undefined,
-  dryRun: undefined
-} as const;
-```
+4. Default Settings
 
-## 🌍 Community
+    Here are the default configurations:
 
-- Follow us on [@QwikDev](https://twitter.com/QwikDev)
-- Ping us at [@QwikDev](https://twitter.com/QwikDev)
-- Join our [Discord](https://qwik.dev/chat) community
+    ```typescript
+    export const defaultDefinition = {
+      destination: "./qwik-astro-app",
+      adapter: "none",
+      template: "",
+      add: undefined,
+      force: undefined,
+      copy: undefined,
+      biome: undefined,
+      install: undefined,
+      git: undefined,
+      ci: undefined,
+      yes: undefined,
+      no: undefined,
+      dryRun: undefined
+    } as const;
+    ```
 
-## 🔗 Related
+## 🌐 Community
 
-- [Qwik](https://qwik.dev/)
-- [Astro](https://astro.build/)
+- 🐦 Ping [@QwikDev](https://twitter.com/QwikDev) on Twitter
+- 💬 Join our [Discord community](https://qwik.dev/chat) for discussions and support
+
+## 🔗 Related Links
+
+- 📖 [Qwik](https://qwik.dev/) – Build instantly-interactive web apps.
+- 📖 [Astro](https://astro.build/) – The web framework for content-rich websites.
+- 🌟 [Awesome Astro (Community Examples)](https://github.com/one-aalam/awesome-astro?tab=readme-ov-file#%E2%84%B9%EF%B8%8F-repositoriesstarter-kitscomponents)
+- 📚 [Full List of Templates](https://github.com/withastro/astro/tree/main/examples)
