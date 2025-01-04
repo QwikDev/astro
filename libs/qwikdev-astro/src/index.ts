@@ -277,18 +277,28 @@ export default defineIntegration({
             const isAllowedPlugin =
               plugin.name === "astro:transitions" || plugin.name.includes("virtual");
             const isAstroBuildPlugin = plugin.name.startsWith("astro:build");
+            const isQwikPlugin =
+              plugin.name === "vite-plugin-qwik" ||
+              plugin.name === "vite-plugin-qwik-post" ||
+              plugin.name === "overrideEsbuild";
 
             if (isAllowedPlugin) {
               return true;
             }
 
-            return !(isCoreBuildPlugin || isAstroInternalPlugin || isAstroBuildPlugin);
+            return !(
+              isCoreBuildPlugin ||
+              isAstroInternalPlugin ||
+              isAstroBuildPlugin ||
+              isQwikPlugin
+            );
           });
 
         // client build -> passed into server build
         await build({
           ...astroConfig?.vite,
           plugins: [...astroPlugins, qwikVite(qwikClientConfig)],
+          clearScreen: false,
           build: {
             ssr: false,
             outDir: finalDir,
