@@ -186,7 +186,7 @@ export class Application extends Program<Definition, Input> {
       definition.destination === defaultDefinition.destination
         ? await this.scanString(
             `Where would you like to create your new project? ${this.gray(
-              `(Use '.' for current directory)`
+              `(Use './' for current directory)`
             )}`,
             definition.destination
           )
