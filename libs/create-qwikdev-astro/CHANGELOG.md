@@ -1,5 +1,14 @@
 # @qwikdev/create-astro
 
+## 0.1.6
+
+### Patch Changes
+
+- 700151a: # CLI Enhancement
+
+  - Added `--copy` option to copy files safely
+  - Updated documentation with examples and use cases.
+
 ## 0.1.5
 
 ### Patch Changes
