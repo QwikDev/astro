@@ -1,5 +1,3 @@
-import { writeFileSync } from "node:fs";
-import path from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
@@ -73,17 +71,8 @@ export default defineIntegration({
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
-        const { addRenderer, updateConfig, config, command } = setupProps;
+        const { addRenderer, updateConfig, config } = setupProps;
         astroConfig = config;
-
-        /* q-astro-manifest.json doesn't error in dev */
-        if (command === "dev") {
-          writeFileSync(
-            path.join(resolver("../"), "q-astro-manifest.json"),
-            "{}",
-            "utf-8"
-          );
-        }
 
         // integration HMR support
         watchDirectory(setupProps, resolver());
@@ -235,21 +224,12 @@ export default defineIntegration({
       },
 
       "astro:build:setup": async ({ vite }) => {
-        console.log("vite: ", vite);
-
         // @ts-ignore
         astroVite = vite;
       },
 
       "astro:build:ssr": async () => {
         await entrypointsReady;
-
-        const transitionsPlugin = astroVite.plugins?.find(
-          (p) =>
-            p && typeof p === "object" && "name" in p && p.name === "astro:transitions"
-        );
-
-        console.log("transitionsPlugin: ", transitionsPlugin);
 
         // Astro's SSR build finished -> Now we can handle how Qwik normally builds
         const qwikClientConfig: QwikVitePluginOptions = {
@@ -261,15 +241,7 @@ export default defineIntegration({
           },
           client: {
             input: [...qwikEntrypoints, resolver("./root.tsx")],
-            outDir: finalDir,
-            manifestOutput: (manifest) => {
-              globalThis.qManifest = manifest;
-              writeFileSync(
-                path.join(resolver("../"), "q-astro-manifest.json"),
-                JSON.stringify(manifest),
-                "utf-8"
-              );
-            }
+            outDir: finalDir
           },
           debug: options?.debug ?? false
         };
@@ -292,12 +264,10 @@ export default defineIntegration({
                 !p.name.startsWith("astro:build"))
           );
 
-        console.log("astroPlugins: ", astroPlugins);
-
         // client build -> passed into server build
         await build({
           ...astroConfig?.vite,
-          plugins: [...astroPlugins, qwikVite(qwikClientConfig)],
+          plugins: [astroPlugins, qwikVite(qwikClientConfig)],
           build: {
             ssr: false,
             outDir: finalDir,

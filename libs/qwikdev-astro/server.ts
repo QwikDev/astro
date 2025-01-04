@@ -8,6 +8,7 @@ import {
   getQwikLoaderScript,
   renderToStream
 } from "@builder.io/qwik/server";
+import { manifest } from "@qwik-client-manifest";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 const modulePreloadScript = `window.addEventListener("load",()=>{(async()=>{window.requestIdleCallback||(window.requestIdleCallback=(e,t)=>{const n=t||{},o=1,i=n.timeout||o,a=performance.now();return setTimeout(()=>{e({get didTimeout(){return!n.timeout&&performance.now()-a-o>i},timeRemaining:()=>Math.max(0,o+(performance.now()-a))})},o)});const e=async()=>{const e=new Set,t=document.querySelectorAll('script[q\\\\:type="prefetch-bundles"]');t.forEach(t=>{if(!t.textContent)return;const n=t.textContent,o=n.match(/\\["prefetch","[/]build[/]","(.*?)"\\]/);o&&o[1]&&o[1].split('","').forEach(t=>{t.startsWith("q-")&&e.add(t)})}),document.querySelectorAll('script[type="qwik/json"]').forEach(t=>{if(!t.textContent)return;const n=t.textContent.match(/q-[A-Za-z0-9_-]+\\.js/g);n&&n.forEach(t=>e.add(t))}),e.forEach(e=>{const t=document.createElement("link");t.rel="modulepreload",t.href="/build/"+e,t.fetchPriority="low",document.head.appendChild(t)})};await requestIdleCallback(await e)})()});`;
@@ -63,29 +64,6 @@ export async function renderToStaticMarkup(
 
     let html = "";
 
-    // Get the manifest from the integration directory
-    const qwikRenderer = this.result.renderers.find(
-      (r) => r.name === "@qwikdev/astro"
-    ) as any;
-
-    const manifestPath = qwikRenderer?.serverEntrypoint?.replace(
-      "server.ts",
-      "q-astro-manifest.json"
-    );
-
-    let integrationManifest = null;
-    if (manifestPath) {
-      try {
-        integrationManifest = await import(/* @vite-ignore */ manifestPath, {
-          with: { type: "json" }
-        });
-      } catch (error) {
-        throw new Error(
-          `@qwikdev/astro: This integration requires Node version 22 or higher. If this is local, check your node version with node -v. If this is a deployment, check your deployment provider's environment variables.`
-        );
-      }
-    }
-
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: { style: "display: contents" },
       containerTagName: "div",
@@ -95,7 +73,7 @@ export async function renderToStaticMarkup(
             symbolMapper: globalThis.symbolMapperFn
           }
         : {
-            manifest: globalThis.qManifest || integrationManifest?.default
+            manifest
           }),
       serverData: props,
       qwikPrefetchServiceWorker: {
