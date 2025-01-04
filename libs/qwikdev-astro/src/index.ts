@@ -246,23 +246,26 @@ export default defineIntegration({
           debug: options?.debug ?? false
         };
 
+        // determine which plugins from core to keep
         const astroPlugins = (
           astroVite.plugins?.flatMap((p) => (Array.isArray(p) ? p : [p])) ?? []
         )
-          .filter(
-            (p): p is { name: string } & NonNullable<PluginOption> =>
-              p != null && typeof p === "object" && "name" in p
-          )
-          .filter(
-            (p) =>
-              // Remove the core build plugin but keep other astro plugins
-              p.name !== "astro:build" &&
-              !p.name.includes("@astro") &&
-              // Keep transitions and other astro plugins
-              (p.name === "astro:transitions" ||
-                p.name.includes("virtual") ||
-                !p.name.startsWith("astro:build"))
-          );
+          .filter((plugin): plugin is { name: string } & NonNullable<PluginOption> => {
+            return plugin != null && typeof plugin === "object" && "name" in plugin;
+          })
+          .filter((plugin) => {
+            const isCoreBuildPlugin = plugin.name === "astro:build";
+            const isAstroInternalPlugin = plugin.name.includes("@astro");
+            const isAllowedPlugin =
+              plugin.name === "astro:transitions" || plugin.name.includes("virtual");
+            const isAstroBuildPlugin = plugin.name.startsWith("astro:build");
+
+            if (isAllowedPlugin) {
+              return true;
+            }
+
+            return !(isCoreBuildPlugin || isAstroInternalPlugin || isAstroBuildPlugin);
+          });
 
         // client build -> passed into server build
         await build({
