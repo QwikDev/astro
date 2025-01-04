@@ -224,8 +224,7 @@ export default defineIntegration({
       },
 
       "astro:build:setup": async ({ vite }) => {
-        // @ts-ignore
-        astroVite = vite;
+        astroVite = vite as InlineConfig;
       },
 
       "astro:build:ssr": async () => {
