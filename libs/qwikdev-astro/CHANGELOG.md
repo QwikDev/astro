@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.7.7
+
+### Patch Changes
+
+- 911821a: fix: q-manifest gets added into the bundled code at build time
+
 ## 0.7.6
 
 ### Patch Changes
