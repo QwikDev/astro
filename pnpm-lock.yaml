@@ -201,6 +201,9 @@ importers:
 
   libs/qwikdev-astro:
     dependencies:
+      '@inox-tools/inline-mod':
+        specifier: ^2.0.2
+        version: 2.0.2(vite@5.4.11(@types/node@22.10.2))
       astro-integration-kit:
         specifier: ^0.18.0
         version: 0.18.0(astro@5.1.1(@types/node@22.10.2)(jiti@2.4.2)(rollup@4.29.1)(typescript@5.7.2)(yaml@2.6.1))
@@ -1165,6 +1168,14 @@ packages:
 
   '@inox-tools/astro-tests@0.2.1':
     resolution: {integrity: sha512-Yg7ZuCw58mLwjscgLjgNdNgpY+n1gpLcpAWo2nLZQW61QjT6msBdLGM4GCgUDb0fBkeDhe332c/bTkVYLoc58A==}
+
+  '@inox-tools/inline-mod@2.0.2':
+    resolution: {integrity: sha512-TLzqeZ0/IBaszyhylg2Q4J6+5S704YpWKUrWvoCvkCnOxH0j7EcFWBphB4TCfIZnsXhswuhZkUTRWwdvaArT0w==}
+    peerDependencies:
+      vite: ^4 || ^5 || ^6
+    peerDependenciesMeta:
+      vite:
+        optional: true
 
   '@inox-tools/utils@0.3.0':
     resolution: {integrity: sha512-2Brt/vpn3Likf0L7qydvxoBw5yZFBrqO4tF5HhB1fMC4DYsgk+lQn4pB7RBdqVFqy52GjzXj7j2i5EFh1I/EPw==}
@@ -6030,6 +6041,16 @@ snapshots:
       - tsx
       - typescript
       - yaml
+
+  '@inox-tools/inline-mod@2.0.2(vite@5.4.11(@types/node@22.10.2))':
+    dependencies:
+      '@inox-tools/utils': 0.3.0
+      debug: 4.4.0
+      typescript: 5.7.2
+    optionalDependencies:
+      vite: 5.4.11(@types/node@22.10.2)
+    transitivePeerDependencies:
+      - supports-color
 
   '@inox-tools/utils@0.3.0': {}
 

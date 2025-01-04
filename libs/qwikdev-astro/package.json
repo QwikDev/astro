@@ -40,7 +40,12 @@
     "./utils": "./src/utils.ts",
     "./q-astro-manifest.json": "./q-astro-manifest.json"
   },
-  "files": ["src", "src/index.ts", "server.ts", "env.d.ts"],
+  "files": [
+    "src",
+    "src/index.ts",
+    "server.ts",
+    "env.d.ts"
+  ],
   "keywords": [
     "astro-integration",
     "astro-component",
@@ -56,6 +61,7 @@
   },
   "bugs": "https://github.com/thejackshelton/@qwikdev/astro/issues",
   "dependencies": {
+    "@inox-tools/inline-mod": "^2.0.2",
     "astro-integration-kit": "^0.18.0"
   },
   "devDependencies": {

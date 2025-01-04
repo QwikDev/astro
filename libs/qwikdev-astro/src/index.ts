@@ -6,6 +6,8 @@ import type {
   QwikVitePluginOptions,
   SymbolMapperFn
 } from "@builder.io/qwik/optimizer";
+import { inlineModule } from "@inox-tools/inline-mod/vite";
+import inlineMod from "@inox-tools/inline-mod/vite";
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
@@ -53,7 +55,7 @@ export default defineIntegration({
       /**
        * Use node's readFileSync to read the manifest. Common for deployment providers that don't support dynamic json imports. When false, please ensure your deployment provider supports dynamic json imports, through environment variables or other means.
        */
-      node: z.boolean().optional().default(true)
+      isNode: z.boolean().optional().default(true)
     })
     .optional(),
 
@@ -80,6 +82,12 @@ export default defineIntegration({
       "astro:config:setup": async (setupProps) => {
         const { addRenderer, updateConfig, config, command } = setupProps;
         astroConfig = config;
+
+        const virtualModuleName = inlineModule({
+          constExports: {
+            isNode: options?.isNode ?? true
+          }
+        });
 
         /* q-astro-manifest.json doesn't error in dev */
         if (command === "dev") {
@@ -230,7 +238,13 @@ export default defineIntegration({
                 }
               }
             },
-            plugins: [astroQwikPlugin, qwikVite(qwikSetupConfig), overrideEsbuildPlugin]
+            plugins: [
+              inlineMod(),
+              astroQwikPlugin,
+              qwikVite(qwikSetupConfig),
+              overrideEsbuildPlugin,
+              virtualModuleName
+            ]
           }
         });
       },
@@ -285,7 +299,8 @@ export default defineIntegration({
             const isQwikPlugin =
               plugin.name === "vite-plugin-qwik" ||
               plugin.name === "vite-plugin-qwik-post" ||
-              plugin.name === "overrideEsbuild";
+              plugin.name === "overrideEsbuild" ||
+              plugin.name === "qwik-astro-runtime-config";
 
             if (isAllowedPlugin) {
               return true;

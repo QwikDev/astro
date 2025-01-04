@@ -1,3 +1,4 @@
+import { isNode } from "inox:inline-mod:mod_0";
 import { type JSXNode, jsx } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
@@ -49,10 +50,6 @@ async function check(this: RendererContext, component: unknown) {
   }
 }
 
-interface QwikAstroConfig {
-  useNode?: boolean; // defaults to true
-}
-
 export async function renderToStaticMarkup(
   this: RendererContext,
   component: any,
@@ -71,8 +68,6 @@ export async function renderToStaticMarkup(
       (r) => r.name === "@qwikdev/astro"
     ) as any;
 
-    console.log("qwikRenderer", qwikRenderer);
-
     const manifestPath = qwikRenderer?.serverEntrypoint?.replace(
       "server.ts",
       "q-astro-manifest.json"
@@ -81,27 +76,35 @@ export async function renderToStaticMarkup(
     let integrationManifest = null;
 
     /**
-     * fall back to dynamic import if node is false. Node is preferred because  most deployment providers still use older versions of node by default, so dynamic json imports will fail.
+     * fallback to dynamic import if node is false. Node is preferred because  most deployment providers still use older versions of node by default, so dynamic json imports will fail.
      *
-     * Until this improves, we'll use node's readFileSync, with dynamic json imports to those not using node.
+     * Until this improves, we'll use node's readFileSync, with dynamic json imports for those not using node.
      */
-
-    console.log("qwik renderer: ", this.result);
-
-    if (manifestPath) {
+    if (isNode) {
       try {
-        if (qwikRenderer.config?.useNode !== false) {
-          const { readFileSync } = await import("node:fs");
-          const manifestContent = readFileSync(manifestPath, "utf-8");
-          integrationManifest = JSON.parse(manifestContent);
-        } else {
-          integrationManifest = await import(/* @vite-ignore */ manifestPath, {
-            with: { type: "json" }
-          });
-        }
+        const { readFileSync } = await import("node:fs");
+        const manifestContent = readFileSync(manifestPath, "utf-8");
+        integrationManifest = JSON.parse(manifestContent);
       } catch (error) {
-        console.error(`@qwikdev/astro: Failed to load manifest: ${error.message}`);
-        throw error;
+        throw new Error(
+          `@qwikdev/astro: Failed to read the q-astro-manifest.json file. This file is required for the @qwikdev/astro integration to work. 
+          
+          It seems like you're using node. If this is not the case, please set the isNode option to false in the integration options in astro.config.mjs.
+          
+          Also make sure this is the case with both your local and deployed environment.`
+        );
+      }
+    } else {
+      try {
+        integrationManifest = await import(/* @vite-ignore */ manifestPath, {
+          with: { type: "json" }
+        });
+      } catch (error) {
+        throw new Error(
+          `@qwikdev/astro: Failed to read the q-astro-manifest.json file. This file is required for the @qwikdev/astro integration to work. 
+          
+          Because isNode is set to false, the integration will use dynamic json imports to read the q-astro-manifest.json file. Check to make sure this environment supports dynamic json imports.`
+        );
       }
     }
 
