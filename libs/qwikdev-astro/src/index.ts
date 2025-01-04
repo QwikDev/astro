@@ -1,5 +1,5 @@
 import { writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
@@ -84,19 +84,19 @@ export default defineIntegration({
         astroConfig = config;
 
         /** Relative paths, as the Qwik optimizer handles normalization */
-        srcDir = getRelativePath(astroConfig.root.pathname, astroConfig.srcDir.pathname);
+        srcDir = relative(astroConfig.root.pathname, astroConfig.srcDir.pathname);
 
-        clientDir = getRelativePath(
+        clientDir = relative(
           astroConfig.root.pathname,
           astroConfig.build.client.pathname
         );
 
-        serverDir = getRelativePath(
+        serverDir = relative(
           astroConfig.root.pathname,
           astroConfig.build.server.pathname
         );
 
-        outDir = getRelativePath(astroConfig.root.pathname, astroConfig.outDir.pathname);
+        outDir = relative(astroConfig.root.pathname, astroConfig.outDir.pathname);
 
         if (astroConfig.adapter) {
           finalDir = clientDir;
@@ -104,8 +104,9 @@ export default defineIntegration({
           finalDir = outDir;
         }
 
-        qAstroManifestPath = resolver(
-          join(astroConfig.root.pathname + finalDir, "q-astro-manifest.json")
+        qAstroManifestPath = relative(
+          astroConfig.root.pathname,
+          join(finalDir, "q-astro-manifest.json")
         );
 
         // passes config values to other runtimes with a virtual module
@@ -328,7 +329,3 @@ export default defineIntegration({
     };
   }
 });
-
-function getRelativePath(from: string, to: string) {
-  return to.replace(from, "") || ".";
-}
