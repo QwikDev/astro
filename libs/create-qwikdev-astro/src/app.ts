@@ -25,12 +25,13 @@ export type Definition = BaseDefinition & {
   destination: string;
   adapter: Adapter;
   template?: string;
-  install?: boolean;
-  biome?: boolean;
-  git?: boolean;
-  ci?: boolean;
   add?: boolean;
   force?: boolean;
+  copy?: boolean;
+  biome?: boolean;
+  install?: boolean;
+  git?: boolean;
+  ci?: boolean;
   dryRun?: boolean;
 };
 
@@ -41,14 +42,15 @@ export const defaultDefinition = {
   destination: "./qwik-astro-app",
   adapter: "none",
   template: undefined,
+  add: undefined,
+  force: undefined,
+  copy: undefined,
   biome: undefined,
   install: undefined,
   git: undefined,
   ci: undefined,
   yes: undefined,
   no: undefined,
-  add: undefined,
-  force: undefined,
   dryRun: undefined
 } as const;
 
@@ -106,6 +108,12 @@ export class Application extends Program<Definition, Input> {
         default: defaultDefinition.force,
         desc: "Overwrite target directory if it exists"
       })
+      .option("copy", {
+        alias: "c",
+        type: "boolean",
+        default: defaultDefinition.copy,
+        desc: "Copy files without overwriting"
+      })
       .option("install", {
         alias: "i",
         type: "boolean",
@@ -159,9 +167,10 @@ export class Application extends Program<Definition, Input> {
       destination: definition.destination,
       adapter: definition.adapter,
       template: definition.template ?? "",
+      add: !!definition.add,
       force:
         definition.force ?? (definition.add ? false : !!definition.yes && !definition.no),
-      add: !!definition.add,
+      copy: !!definition.copy,
       biome: definition.biome ?? (!!definition.yes && !definition.no),
       install: definition.install ?? (!!definition.yes && !definition.no),
       ci: definition.ci ?? (!!definition.yes && !definition.no),
@@ -183,7 +192,6 @@ export class Application extends Program<Definition, Input> {
           )
         : definition.destination;
 
-    let packageName = sanitizePackageName(destination);
     const outDir = resolveAbsoluteDir(destination.trim());
     const exists = notEmptyDir(outDir);
 
@@ -203,16 +211,31 @@ export class Application extends Program<Definition, Input> {
             definition,
             `Directory "./${resolveRelativeDir(
               outDir
-            )}" already exists and is not empty. What would you like to overwrite it?`,
+            )}" already exists and is not empty. Would you like to force the copy?`,
             false
           ))
         : definition.force;
 
+    const copy =
+      add || force
+        ? definition.copy === undefined
+          ? await this.scanBoolean(
+              definition,
+              "Copy template files safely (without overwriting existing files)?",
+              !add
+            )
+          : false
+        : !!definition.copy;
+
     const template: string =
       definition.template === undefined &&
-      (await this.scanBoolean(definition, "Would you like to use a template?", false))
-        ? await this.scanString("What template would you like to use?", "")
-        : (definition.template ?? "");
+      (await this.scanBoolean(
+        definition,
+        "Would you like to use the default template?",
+        true
+      ))
+        ? (definition.template ?? "")
+        : await this.scanString("What template would you like to use?", "");
 
     const ask = !exists || add || force;
 
@@ -280,13 +303,15 @@ export class Application extends Program<Definition, Input> {
 
     const dryRun = !!definition.dryRun;
 
+    let packageName =
+      exists && (!force || copy)
+        ? getPackageJson(outDir).name
+        : sanitizePackageName(destination);
+
     packageName =
       !ask || definition.yes
         ? packageName
-        : await this.scanString(
-            "What should be the name of this package?",
-            exists && !force ? (getPackageJson(outDir).name ?? packageName) : packageName
-          );
+        : await this.scanString("What should be the name of this package?", packageName);
 
     return {
       destination,
@@ -298,6 +323,7 @@ export class Application extends Program<Definition, Input> {
       git,
       add,
       force,
+      copy,
       outDir,
       packageName,
       dryRun
@@ -321,7 +347,13 @@ export class Application extends Program<Definition, Input> {
   async runAdd(input: Input) {
     this.info("Adding @QwikDev/astro...");
     try {
-      await $pmX("astro add @qwikdev/astro", input.outDir);
+      if (!input.dryRun) {
+        await $pmX("astro add @qwikdev/astro", input.outDir);
+      }
+
+      if (input.copy) {
+        this.copyTemplate(input);
+      }
     } catch (e: any) {
       this.panic(`${e.message ?? e}: . Please try it manually.`);
     }
@@ -332,10 +364,14 @@ export class Application extends Program<Definition, Input> {
 
     if (notEmptyDir(outDir)) {
       if (input.force) {
-        if (!input.dryRun) {
-          await clearDir(outDir);
+        if (input.copy) {
+          this.info(`Directory "${outDir}" already exists. Copy safely...🚚`);
+        } else {
+          if (!input.dryRun) {
+            await clearDir(outDir);
+          }
+          this.info(`Directory "${outDir}" successfully emptied 🔥`);
         }
-        this.info(`Directory "${outDir}" successfully emptied 🗑️`);
       } else {
         this.error(`Directory "${outDir}" already exists.`);
         this.info(
@@ -348,21 +384,8 @@ export class Application extends Program<Definition, Input> {
   }
 
   async runCreate(input: Input) {
-    const outDir = input.outDir;
-
     await this.prepareDir(input);
-
-    let starterKit = input.adapter;
-
-    if (input.biome) {
-      starterKit += "-biome";
-    }
-
-    const templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
-
-    this.step(`Creating new project in ${this.bgBlue(` ${outDir} `)} ... 🐇`);
-    this.copyTemplate(input, templatePath);
-    this.makeGitignore(input);
+    this.copyTemplate(input);
   }
 
   async runTemplate(input: Input) {
@@ -386,7 +409,6 @@ export class Application extends Program<Definition, Input> {
     await this.prepareDir(input);
     await $pmCreate(args.join(" "), process.cwd());
 
-    this.step(`Copying template files into ${this.bgBlue(` ${input.outDir} `)} ... 🐇`);
     this.copyTemplate(
       input,
       path.join(
@@ -397,7 +419,6 @@ export class Application extends Program<Definition, Input> {
         `none${input.biome ? "-biome" : ""}`
       )
     );
-    this.makeGitignore(input);
 
     return this.runInstall(input);
   }
@@ -467,7 +488,7 @@ export class Application extends Program<Definition, Input> {
 
   runCI(input: Input): void {
     if (input.ci) {
-      this.step("Adding CI workflow...");
+      this.step("👷 Adding CI workflow...");
 
       if (!input.dryRun) {
         const starterCIPath = path.join(
@@ -557,7 +578,7 @@ export class Application extends Program<Definition, Input> {
     const dotGitignore = path.join(input.outDir, ".gitignore");
     const exists = pathExistsSync(dotGitignore);
 
-    this.step(`${exists ? "Merging" : "Copying"} \`.gitignore\` file...`);
+    this.step(`${exists ? "Merging" : "Copying"} \`.gitignore\` file... 🙈`);
 
     if (!input.dryRun) {
       const gitignore = path.join(__dirname, "..", "stubs", "gitignore");
@@ -570,13 +591,31 @@ export class Application extends Program<Definition, Input> {
     }
   }
 
-  copyTemplate(input: Input, templatePath: string): void {
+  copyTemplate(input: Input, templatePath?: string): void {
+    this.step(
+      `${input.add || input.template ? "Copying template files into" : "Creating new project in"} ${this.bgBlue(` ${input.outDir} `)} ... 🐇`
+    );
+
     if (!input.dryRun) {
       const outDir = input.outDir;
       try {
         ensureDirSync(outDir);
 
-        input.template ? safeCopy(templatePath, outDir) : copySync(templatePath, outDir);
+        if (!templatePath) {
+          let starterKit = input.adapter;
+
+          if (input.biome) {
+            starterKit += "-biome";
+          }
+
+          templatePath = path.join(__dirname, "..", "stubs", "templates", starterKit);
+        }
+
+        input.template || input.copy
+          ? safeCopy(templatePath, outDir)
+          : copySync(templatePath, outDir);
+
+        this.makeGitignore(input);
       } catch (error) {
         this.error(this.red(`Template copy failed: ${error}`));
       }
