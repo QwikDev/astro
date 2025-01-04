@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.7.5
+
+### Patch Changes
+
+- 4d34b2b: fix: support for Astro navigate function and virtual modules
+
 ## 0.7.4
 
 ### Patch Changes
