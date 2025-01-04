@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.7.6
+
+### Patch Changes
+
+- 87f657e: fix: improved manifest handling for deployment providers using older node versions
+
 ## 0.7.5
 
 ### Patch Changes
