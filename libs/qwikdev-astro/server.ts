@@ -72,8 +72,11 @@ export async function renderToStaticMarkup(
      */
     if (isNode) {
       try {
+        console.log("BEFORE NODE IMPORT");
         const { readFileSync } = await import("node:fs");
+        console.log("qAstroManifestPath", qAstroManifestPath);
         const manifestContent = readFileSync(qAstroManifestPath, "utf-8");
+        console.log("manifestContent", manifestContent);
         integrationManifest = JSON.parse(manifestContent);
       } catch (error) {
         throw new Error(
