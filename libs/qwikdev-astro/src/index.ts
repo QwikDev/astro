@@ -294,21 +294,14 @@ export default defineIntegration({
             );
           });
 
-        // client build -> passed into server build
         await build({
           ...astroConfig?.vite,
           plugins: [...astroPlugins, qwikVite(qwikClientConfig)],
-          clearScreen: false,
           build: {
+            ...astroConfig?.vite?.build,
             ssr: false,
             outDir: finalDir,
-            emptyOutDir: false,
-            rollupOptions: {
-              output: {
-                inlineDynamicImports: false
-              }
-            },
-            ...astroConfig?.vite?.build
+            emptyOutDir: false
           }
         } as InlineConfig);
       }
