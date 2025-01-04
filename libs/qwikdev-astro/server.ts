@@ -1,4 +1,3 @@
-import { isNode, qAstroManifestPath } from "inox:inline-mod:mod_0";
 import { type JSXNode, jsx } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
@@ -63,46 +62,6 @@ export async function renderToStaticMarkup(
 
     let html = "";
 
-    let integrationManifest = null;
-
-    /**
-     * fallback to dynamic import if node is false. Node is preferred because  most deployment providers still use older versions of node by default, so dynamic json imports will fail.
-     *
-     * Until this improves, we'll use node's readFileSync, with dynamic json imports for those not using node.
-     */
-    if (isNode) {
-      try {
-        console.log("BEFORE NODE IMPORT");
-        const { readFileSync } = await import("node:fs");
-        console.log("qAstroManifestPath", qAstroManifestPath);
-        const manifestContent = readFileSync(qAstroManifestPath, "utf-8");
-        console.log("manifestContent", manifestContent);
-        integrationManifest = JSON.parse(manifestContent);
-      } catch (error) {
-        console.log("ERROR", error);
-
-        throw new Error(
-          `@qwikdev/astro: Failed to read the q-astro-manifest.json file. This file is required for the @qwikdev/astro integration to work. 
-          
-          It seems like you're using node. If this is not the case, please set the isNode option to false in the integration options in astro.config.mjs.
-          
-          Also make sure this is the case with both your local and deployed environment.`
-        );
-      }
-    } else {
-      try {
-        integrationManifest = await import(/* @vite-ignore */ qAstroManifestPath, {
-          with: { type: "json" }
-        });
-      } catch (error) {
-        throw new Error(
-          `@qwikdev/astro: Failed to read the q-astro-manifest.json file. This file is required for the @qwikdev/astro integration to work. 
-          
-          Because isNode is set to false, the integration will use dynamic json imports to read the q-astro-manifest.json file. Check to make sure this environment supports dynamic json imports.`
-        );
-      }
-    }
-
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: { style: "display: contents" },
       containerTagName: "div",
@@ -112,8 +71,7 @@ export async function renderToStaticMarkup(
             symbolMapper: globalThis.symbolMapperFn
           }
         : {
-            manifest:
-              globalThis.qManifest || integrationManifest?.default || integrationManifest
+            manifest: JSON.parse(manifest)
           }),
       serverData: props,
       qwikPrefetchServiceWorker: {
@@ -234,3 +192,6 @@ export default {
   testing123: true,
   check
 };
+
+export const manifest =
+  '{"manifestHash":"ksjrps","symbols":{"s_0DHRa0FqCj4":{"origin":"../../../libs/qwikdev-astro/src/root.tsx","displayName":"root.tsx_root_component","canonicalFilename":"root.tsx_root_component_0DHRa0FqCj4","hash":"0DHRa0FqCj4","ctxKind":"function","ctxName":"component$","captures":false,"loc":[81,136]},"s_qY02pQHKSts":{"origin":"components/qwik/counter.tsx","displayName":"counter.tsx_Counter_component","canonicalFilename":"counter.tsx_Counter_component_qY02pQHKSts","hash":"qY02pQHKSts","ctxKind":"function","ctxName":"component$","captures":false,"loc":[121,322]},"s_WDqUvWziK5k":{"origin":"components/qwik/counter.tsx","displayName":"counter.tsx_Counter_component_Fragment_button_onClick","canonicalFilename":"counter.tsx_Counter_component_Fragment_button_onClick_WDqUvWziK5k","hash":"WDqUvWziK5k","ctxKind":"eventHandler","ctxName":"onClick$","captures":true,"parent":"s_qY02pQHKSts","loc":[235,256]}},"mapping":{"s_0DHRa0FqCj4":"q-CXpka_yH.js","s_qY02pQHKSts":"q-4LT-psvh.js","s_WDqUvWziK5k":"q-Cf-M9i3S.js"},"bundles":{"q-4LT-psvh.js":{"size":88,"imports":["q-Cf-M9i3S.js","q-CXpka_yH.js"],"symbols":["s_qY02pQHKSts"]},"q-Cf-M9i3S.js":{"size":1635,"imports":["q-CXpka_yH.js"],"origins":["src/components/qwik/counter.tsx_Counter_component_Fragment_button_onClick_WDqUvWziK5k.js","src/components/qwik/counter.tsx_Counter_component_qY02pQHKSts.js"],"symbols":["s_WDqUvWziK5k"]},"q-CXpka_yH.js":{"size":61657,"origins":["../../libs/qwikdev-astro/src/root.tsx_root_component_0DHRa0FqCj4.js","../../node_modules/.pnpm/@builder.io+qwik@1.12.0_vite@6.0.6_@types+node@22.10.2_jiti@2.4.2_yaml@2.6.1_/node_modules/@builder.io/qwik/dist/core.prod.mjs","@builder.io/qwik/build"],"symbols":["s_0DHRa0FqCj4"]},"q-FfniopH8.js":{"size":184,"imports":["q-Cf-M9i3S.js","q-CXpka_yH.js"],"dynamicImports":["q-CXpka_yH.js"],"origins":["../../libs/qwikdev-astro/src/root.tsx"]},"q-fzuY5JUw.js":{"size":171,"imports":["q-Cf-M9i3S.js","q-CXpka_yH.js"],"dynamicImports":["q-4LT-psvh.js"],"origins":["src/components/qwik/counter.tsx"]}},"injections":[],"version":"1","options":{"target":"client","buildMode":"production","entryStrategy":{"type":"smart"}},"platform":{"qwik":"1.12.0","vite":"","rollup":"4.29.1","env":"node","os":"darwin","node":"22.12.0"}}';

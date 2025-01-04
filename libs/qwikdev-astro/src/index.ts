@@ -1,4 +1,4 @@
-import { writeFileSync } from "node:fs";
+import fs, { writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
@@ -276,6 +276,25 @@ export default defineIntegration({
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
               writeFileSync(qAstroManifestPath, JSON.stringify(manifest), "utf-8");
+              const serverFilePath = resolver("../server.ts");
+              const serverContent = fs.readFileSync(serverFilePath, "utf-8");
+
+              const manifestExport = `\n\nexport const manifest = '${JSON.stringify(manifest)}';\n`;
+
+              // Replace existing manifest or append new one
+              const newContent = serverContent.includes("export const manifest =")
+                ? serverContent.replace(
+                    /export const manifest =[\s\S]*?';/,
+                    manifestExport.trim()
+                  )
+                : serverContent + manifestExport;
+
+              try {
+                fs.writeFileSync(serverFilePath, newContent, "utf-8");
+                console.log("Manifest updated in server.ts");
+              } catch (e) {
+                console.error("Failed to update manifest in server.ts:", e);
+              }
             }
           },
           debug: options?.debug ?? false
