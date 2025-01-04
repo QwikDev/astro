@@ -1,4 +1,3 @@
-import { isNode, qAstroManifestPath } from "inox:inline-mod:mod_0";
 import { type JSXNode, jsx } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
@@ -63,41 +62,6 @@ export async function renderToStaticMarkup(
 
     let html = "";
 
-    let integrationManifest = null;
-
-    /**
-     * fallback to dynamic import if node is false. Node is preferred because  most deployment providers still use older versions of node by default, so dynamic json imports will fail.
-     *
-     * Until this improves, we'll use node's readFileSync, with dynamic json imports for those not using node.
-     */
-    if (isNode) {
-      try {
-        const { readFileSync } = await import("node:fs");
-        const manifestContent = readFileSync(qAstroManifestPath, "utf-8");
-        integrationManifest = JSON.parse(manifestContent);
-      } catch (error) {
-        throw new Error(
-          `@qwikdev/astro: Failed to read the q-astro-manifest.json file. This file is required for the @qwikdev/astro integration to work. 
-          
-          It seems like you're using node. If this is not the case, please set the isNode option to false in the integration options in astro.config.mjs.
-          
-          Also make sure this is the case with both your local and deployed environment.`
-        );
-      }
-    } else {
-      try {
-        integrationManifest = await import(/* @vite-ignore */ qAstroManifestPath, {
-          with: { type: "json" }
-        });
-      } catch (error) {
-        throw new Error(
-          `@qwikdev/astro: Failed to read the q-astro-manifest.json file. This file is required for the @qwikdev/astro integration to work. 
-          
-          Because isNode is set to false, the integration will use dynamic json imports to read the q-astro-manifest.json file. Check to make sure this environment supports dynamic json imports.`
-        );
-      }
-    }
-
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: { style: "display: contents" },
       containerTagName: "div",
@@ -107,8 +71,7 @@ export async function renderToStaticMarkup(
             symbolMapper: globalThis.symbolMapperFn
           }
         : {
-            manifest:
-              globalThis.qManifest || integrationManifest?.default || integrationManifest
+            manifest: globalThis.qManifest
           }),
       serverData: props,
       qwikPrefetchServiceWorker: {
@@ -226,6 +189,5 @@ export async function renderToStaticMarkup(
 export default {
   renderToStaticMarkup,
   supportsAstroStaticSlot: true,
-  testing123: true,
   check
 };

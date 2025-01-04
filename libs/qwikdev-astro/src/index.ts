@@ -1,12 +1,11 @@
-import { writeFileSync } from "node:fs";
+import fs from "node:fs";
+import { join } from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
   QwikVitePluginOptions,
   SymbolMapperFn
 } from "@builder.io/qwik/optimizer";
-import { inlineModule } from "@inox-tools/inline-mod/vite";
-import inlineMod from "@inox-tools/inline-mod/vite";
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
@@ -75,25 +74,11 @@ export default defineIntegration({
     let astroConfig: AstroConfig | null = null;
     const { resolve: resolver } = createResolver(import.meta.url);
     const filter = createFilter(options?.include, options?.exclude);
-    const qAstroManifestPath = resolver("../q-astro-manifest.json");
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
-        const { addRenderer, updateConfig, config, command } = setupProps;
+        const { addRenderer, updateConfig, config } = setupProps;
         astroConfig = config;
-
-        // passes config values to other runtimes with a virtual module
-        inlineModule({
-          constExports: {
-            isNode: options?.isNode ?? true,
-            qAstroManifestPath
-          }
-        });
-
-        /* q-astro-manifest.json doesn't error in dev */
-        if (command === "dev") {
-          writeFileSync(qAstroManifestPath, "{}", "utf-8");
-        }
 
         // integration HMR support
         watchDirectory(setupProps, resolver());
@@ -235,12 +220,7 @@ export default defineIntegration({
                 }
               }
             },
-            plugins: [
-              inlineMod(),
-              astroQwikPlugin,
-              qwikVite(qwikSetupConfig),
-              overrideEsbuildPlugin
-            ]
+            plugins: [astroQwikPlugin, qwikVite(qwikSetupConfig), overrideEsbuildPlugin]
           }
         });
       },
@@ -269,7 +249,28 @@ export default defineIntegration({
             outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
-              writeFileSync(qAstroManifestPath, JSON.stringify(manifest), "utf-8");
+
+              if (astroConfig?.adapter) {
+                const serverChunksDir = join(serverDir, "chunks");
+                const files = fs.readdirSync(serverChunksDir);
+                const serverFile = files.find(
+                  (f) => f.startsWith("server_") && f.endsWith(".mjs")
+                );
+
+                if (serverFile) {
+                  const serverPath = join(serverChunksDir, serverFile);
+                  const content = fs.readFileSync(serverPath, "utf-8");
+
+                  // Replace the manifest handling in the bundled code
+                  const manifestJson = JSON.stringify(manifest);
+                  const newContent = content.replace(
+                    "globalThis.qManifest",
+                    `globalThis.qManifest || ${manifestJson}`
+                  );
+
+                  fs.writeFileSync(serverPath, newContent);
+                }
+              }
             }
           },
           debug: options?.debug ?? false
