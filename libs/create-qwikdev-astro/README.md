@@ -10,7 +10,7 @@ this CLI has you covered.
 
 ## 🚀 **Installation & Usage**
 
-### 🧑‍💻 CLI
+### 🧑‍💻 Usage
 
 Run the following command using your preferred package manager:
 
@@ -38,7 +38,7 @@ Run the following command using your preferred package manager:
   bun create @qwikdev/astro [destination] [adapter] [...options]
   ```
 
-### 🛠️ Arguments & Options
+### 🛠️ Flags
 
 #### Arguments
 
@@ -67,6 +67,80 @@ Run the following command using your preferred package manager:
   | `--yes`                      | `-y`            | Accept all default configurations.             |
   | `--no`                       | `-n`            | Decline all default configurations.            |
   | `--dry-run`                  |                 | Simulate the setup process without executing.  |
+
+### 💡 Examples
+
+The easiest way to explore [QwikDev/Astro](https://github.com/QwikDev/astro)
+on your machine is by running the following command:
+
+```bash
+npm create @qwikdev/astro@latest
+```
+
+1. Start Without Any Template
+
+    You can create a project with no template to keep it minimal
+    or customize it from scratch.
+    This approach uses only the default starter kit provided by the integration:
+
+    ```bash
+    npm create @qwikdev/astro@latest my-project
+    ```
+
+   To skip all prompts and initialize without a template automatically:
+
+   ```bash
+   npm create @qwikdev/astro@latest my-project --yes
+   ```
+
+2. Add **Qwik/Astro** to an Existing Project**
+
+    If you already have an existing project
+    and want to integrate QwikDev/Astro without creating a new project,
+    you can use the `--add` option:
+
+    ```bash
+    npm create @qwikdev/astro@latest my-existing-project --add
+    ```
+
+3. Use an Official Template
+
+   You can initialize a project with a pre-built template
+   (e.g., minimal, portfolio, starlight, blog, etc.):
+
+   ```bash
+   npm create @qwikdev/astro@latest --template <name>
+   ```
+
+   [The full list of templates is quite long](https://github.com/withastro/astro/tree/main/examples),
+   so make sure to check it out to find one that fits your project needs.
+
+4. Clone a Specific GitHub Repository
+
+    You can use any GitHub repository as a template:
+
+    ```bash
+    npm create @qwikdev/astro@latest --template <user>/<repo>
+    ```
+
+    For a broader range of community-provided templates,
+    visit the [Awesome Astro repository](https://github.com/one-aalam/awesome-astro?tab=readme-ov-file#%E2%84%B9%EF%B8%8F-repositoriesstarter-kitscomponents). 
+
+5. Use Nested GitHub Examples
+
+    Paths to examples nested inside a GitHub repository are also supported:
+
+    ```bash
+    npm create @qwikdev/astro@latest --template <user>/<repo>/path/to/example
+    ```
+
+6. Advanced Use Cases
+
+    You can combine multiple flags to set up your project exactly as needed:
+
+    ```bash
+    npm create @qwikdev/astro my-existing-project --add --copy --template portfolio --yes --no-git --no-ci
+    ```
 
 ### 📦 API
 
