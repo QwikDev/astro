@@ -79,6 +79,8 @@ export async function renderToStaticMarkup(
         console.log("manifestContent", manifestContent);
         integrationManifest = JSON.parse(manifestContent);
       } catch (error) {
+        console.log("ERROR", error);
+
         throw new Error(
           `@qwikdev/astro: Failed to read the q-astro-manifest.json file. This file is required for the @qwikdev/astro integration to work. 
           
