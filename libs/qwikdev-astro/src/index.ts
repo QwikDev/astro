@@ -48,7 +48,12 @@ export default defineIntegration({
       /**
        * Enable debug mode with the qwikVite plugin.
        */
-      debug: z.boolean().optional()
+      debug: z.boolean().optional(),
+
+      /**
+       * Use node's readFileSync to read the manifest. Common for deployment providers that don't support dynamic json imports. When false, please ensure your deployment provider supports dynamic json imports, through environment variables or other means.
+       */
+      node: z.boolean().optional().default(true)
     })
     .optional(),
 
