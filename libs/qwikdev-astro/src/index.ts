@@ -58,6 +58,7 @@ export default defineIntegration({
     let serverDir = "";
     let outDir = "";
     let finalDir = "";
+    let astroVite: InlineConfig;
 
     let resolveEntrypoints: () => void;
     const entrypointsReady = new Promise<void>((resolve) => {
@@ -233,6 +234,10 @@ export default defineIntegration({
         astroConfig = config;
       },
 
+      "astro:build:setup": async ({ vite }) => {
+        astroVite = vite as InlineConfig;
+      },
+
       "astro:build:ssr": async () => {
         await entrypointsReady;
 
@@ -259,10 +264,39 @@ export default defineIntegration({
           debug: options?.debug ?? false
         };
 
-        // client build -> passed into server build
+        // determine which plugins from core to keep
+        const astroPlugins = (
+          astroVite.plugins?.flatMap((p) => (Array.isArray(p) ? p : [p])) ?? []
+        )
+          .filter((plugin): plugin is { name: string } & NonNullable<PluginOption> => {
+            return plugin != null && typeof plugin === "object" && "name" in plugin;
+          })
+          .filter((plugin) => {
+            const isCoreBuildPlugin = plugin.name === "astro:build";
+            const isAstroInternalPlugin = plugin.name.includes("@astro");
+            const isAllowedPlugin =
+              plugin.name === "astro:transitions" || plugin.name.includes("virtual");
+            const isAstroBuildPlugin = plugin.name.startsWith("astro:build");
+            const isQwikPlugin =
+              plugin.name === "vite-plugin-qwik" ||
+              plugin.name === "vite-plugin-qwik-post" ||
+              plugin.name === "overrideEsbuild";
+
+            if (isAllowedPlugin) {
+              return true;
+            }
+
+            return !(
+              isCoreBuildPlugin ||
+              isAstroInternalPlugin ||
+              isAstroBuildPlugin ||
+              isQwikPlugin
+            );
+          });
+
         await build({
           ...astroConfig?.vite,
-          plugins: [qwikVite(qwikClientConfig)],
+          plugins: [...astroPlugins, qwikVite(qwikClientConfig)],
           build: {
             ...astroConfig?.vite?.build,
             ssr: false,
