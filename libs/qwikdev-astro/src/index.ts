@@ -1,11 +1,12 @@
 import { writeFileSync } from "node:fs";
-import path from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
   QwikVitePluginOptions,
   SymbolMapperFn
 } from "@builder.io/qwik/optimizer";
+import { inlineModule } from "@inox-tools/inline-mod/vite";
+import inlineMod from "@inox-tools/inline-mod/vite";
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
@@ -14,7 +15,6 @@ import type { InlineConfig } from "vite";
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
-  var hash: string | undefined;
   var relativeClientPath: string;
   var qManifest: QwikManifest;
 }
@@ -48,7 +48,12 @@ export default defineIntegration({
       /**
        * Enable debug mode with the qwikVite plugin.
        */
-      debug: z.boolean().optional()
+      debug: z.boolean().optional(),
+
+      /**
+       * Use node's readFileSync to read the manifest. Common for deployment providers that don't support dynamic json imports. When false, please ensure your deployment provider supports dynamic json imports, through environment variables or other means.
+       */
+      isNode: z.boolean().optional().default(true)
     })
     .optional(),
 
@@ -70,19 +75,24 @@ export default defineIntegration({
     let astroConfig: AstroConfig | null = null;
     const { resolve: resolver } = createResolver(import.meta.url);
     const filter = createFilter(options?.include, options?.exclude);
+    const qAstroManifestPath = resolver("../q-astro-manifest.json");
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
         const { addRenderer, updateConfig, config, command } = setupProps;
         astroConfig = config;
 
+        // passes config values to other runtimes with a virtual module
+        inlineModule({
+          constExports: {
+            isNode: options?.isNode ?? true,
+            qAstroManifestPath
+          }
+        });
+
         /* q-astro-manifest.json doesn't error in dev */
         if (command === "dev") {
-          writeFileSync(
-            path.join(resolver("../"), "q-astro-manifest.json"),
-            "{}",
-            "utf-8"
-          );
+          writeFileSync(qAstroManifestPath, "{}", "utf-8");
         }
 
         // integration HMR support
@@ -225,7 +235,12 @@ export default defineIntegration({
                 }
               }
             },
-            plugins: [astroQwikPlugin, qwikVite(qwikSetupConfig), overrideEsbuildPlugin]
+            plugins: [
+              inlineMod(),
+              astroQwikPlugin,
+              qwikVite(qwikSetupConfig),
+              overrideEsbuildPlugin
+            ]
           }
         });
       },
@@ -254,11 +269,7 @@ export default defineIntegration({
             outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
-              writeFileSync(
-                path.join(resolver("../"), "q-astro-manifest.json"),
-                JSON.stringify(manifest),
-                "utf-8"
-              );
+              writeFileSync(qAstroManifestPath, JSON.stringify(manifest), "utf-8");
             }
           },
           debug: options?.debug ?? false

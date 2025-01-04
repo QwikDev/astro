@@ -1,5 +1,4 @@
-import type { SSRResult } from "astro";
-
+import { isNode, qAstroManifestPath } from "inox:inline-mod:mod_0";
 import { type JSXNode, jsx } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
@@ -8,6 +7,7 @@ import {
   getQwikLoaderScript,
   renderToStream
 } from "@builder.io/qwik/server";
+import type { SSRResult } from "astro";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 const modulePreloadScript = `window.addEventListener("load",()=>{(async()=>{window.requestIdleCallback||(window.requestIdleCallback=(e,t)=>{const n=t||{},o=1,i=n.timeout||o,a=performance.now();return setTimeout(()=>{e({get didTimeout(){return!n.timeout&&performance.now()-a-o>i},timeRemaining:()=>Math.max(0,o+(performance.now()-a))})},o)});const e=async()=>{const e=new Set,t=document.querySelectorAll('script[q\\\\:type="prefetch-bundles"]');t.forEach(t=>{if(!t.textContent)return;const n=t.textContent,o=n.match(/\\["prefetch","[/]build[/]","(.*?)"\\]/);o&&o[1]&&o[1].split('","').forEach(t=>{t.startsWith("q-")&&e.add(t)})}),document.querySelectorAll('script[type="qwik/json"]').forEach(t=>{if(!t.textContent)return;const n=t.textContent.match(/q-[A-Za-z0-9_-]+\\.js/g);n&&n.forEach(t=>e.add(t))}),e.forEach(e=>{const t=document.createElement("link");t.rel="modulepreload",t.href="/build/"+e,t.fetchPriority="low",document.head.appendChild(t)})};await requestIdleCallback(await e)})()});`;
@@ -63,25 +63,37 @@ export async function renderToStaticMarkup(
 
     let html = "";
 
-    // Get the manifest from the integration directory
-    const qwikRenderer = this.result.renderers.find(
-      (r) => r.name === "@qwikdev/astro"
-    ) as any;
-
-    const manifestPath = qwikRenderer?.serverEntrypoint?.replace(
-      "server.ts",
-      "q-astro-manifest.json"
-    );
-
     let integrationManifest = null;
-    if (manifestPath) {
+
+    /**
+     * fallback to dynamic import if node is false. Node is preferred because  most deployment providers still use older versions of node by default, so dynamic json imports will fail.
+     *
+     * Until this improves, we'll use node's readFileSync, with dynamic json imports for those not using node.
+     */
+    if (isNode) {
       try {
-        integrationManifest = await import(/* @vite-ignore */ manifestPath, {
+        const { readFileSync } = await import("node:fs");
+        const manifestContent = readFileSync(qAstroManifestPath, "utf-8");
+        integrationManifest = JSON.parse(manifestContent);
+      } catch (error) {
+        throw new Error(
+          `@qwikdev/astro: Failed to read the q-astro-manifest.json file. This file is required for the @qwikdev/astro integration to work. 
+          
+          It seems like you're using node. If this is not the case, please set the isNode option to false in the integration options in astro.config.mjs.
+          
+          Also make sure this is the case with both your local and deployed environment.`
+        );
+      }
+    } else {
+      try {
+        integrationManifest = await import(/* @vite-ignore */ qAstroManifestPath, {
           with: { type: "json" }
         });
       } catch (error) {
         throw new Error(
-          `@qwikdev/astro: This integration requires Node version 22 or higher. If this is local, check your node version with node -v. If this is a deployment, check your deployment provider's environment variables.`
+          `@qwikdev/astro: Failed to read the q-astro-manifest.json file. This file is required for the @qwikdev/astro integration to work. 
+          
+          Because isNode is set to false, the integration will use dynamic json imports to read the q-astro-manifest.json file. Check to make sure this environment supports dynamic json imports.`
         );
       }
     }
@@ -95,7 +107,8 @@ export async function renderToStaticMarkup(
             symbolMapper: globalThis.symbolMapperFn
           }
         : {
-            manifest: globalThis.qManifest || integrationManifest?.default
+            manifest:
+              globalThis.qManifest || integrationManifest?.default || integrationManifest
           }),
       serverData: props,
       qwikPrefetchServiceWorker: {
@@ -158,7 +171,7 @@ export async function renderToStaticMarkup(
         dangerouslySetInnerHTML: String(value),
         style: "display: contents",
         ...namedSlot,
-        "q:key": globalThis.hash
+        "q:key": Math.random().toString(26).split(".").pop()
       });
 
       if (key === "default") {
@@ -213,5 +226,6 @@ export async function renderToStaticMarkup(
 export default {
   renderToStaticMarkup,
   supportsAstroStaticSlot: true,
+  testing123: true,
   check
 };
