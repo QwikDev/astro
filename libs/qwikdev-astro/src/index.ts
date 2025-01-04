@@ -58,6 +58,7 @@ export default defineIntegration({
     let serverDir = "";
     let outDir = "";
     let finalDir = "";
+    let astroVite: InlineConfig;
 
     let resolveEntrypoints: () => void;
     const entrypointsReady = new Promise<void>((resolve) => {
@@ -233,8 +234,22 @@ export default defineIntegration({
         astroConfig = config;
       },
 
+      "astro:build:setup": async ({ vite }) => {
+        console.log("vite: ", vite);
+
+        // @ts-ignore
+        astroVite = vite;
+      },
+
       "astro:build:ssr": async () => {
         await entrypointsReady;
+
+        const transitionsPlugin = astroVite.plugins?.find(
+          (p) =>
+            p && typeof p === "object" && "name" in p && p.name === "astro:transitions"
+        );
+
+        console.log("transitionsPlugin: ", transitionsPlugin);
 
         // Astro's SSR build finished -> Now we can handle how Qwik normally builds
         const qwikClientConfig: QwikVitePluginOptions = {
@@ -259,15 +274,35 @@ export default defineIntegration({
           debug: options?.debug ?? false
         };
 
+        const astroPlugins = (
+          astroVite.plugins?.flatMap((p) => (Array.isArray(p) ? p : [p])) ?? []
+        )
+          .filter(
+            (p): p is { name: string } & NonNullable<PluginOption> =>
+              p != null && typeof p === "object" && "name" in p
+          )
+          .filter(
+            (p) =>
+              // Remove the core build plugin but keep other astro plugins
+              p.name !== "astro:build" &&
+              !p.name.includes("@astro") &&
+              // Keep transitions and other astro plugins
+              (p.name === "astro:transitions" ||
+                p.name.includes("virtual") ||
+                !p.name.startsWith("astro:build"))
+          );
+
+        console.log("astroPlugins: ", astroPlugins);
+
         // client build -> passed into server build
         await build({
           ...astroConfig?.vite,
-          plugins: [qwikVite(qwikClientConfig)],
+          plugins: [...astroPlugins, qwikVite(qwikClientConfig)],
           build: {
-            ...astroConfig?.vite?.build,
             ssr: false,
             outDir: finalDir,
-            emptyOutDir: false
+            emptyOutDir: false,
+            ...astroConfig?.vite?.build
           }
         } as InlineConfig);
       }
