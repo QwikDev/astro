@@ -266,7 +266,6 @@ export default defineIntegration({
             return !(isCoreBuildPlugin || isAstroInternalPlugin || isAstroBuildPlugin);
           });
 
-        // client build -> passed into server build
         await build({
           ...astroConfig?.vite,
           plugins: [astroPlugins, qwikVite(qwikClientConfig)],
