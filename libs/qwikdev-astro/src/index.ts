@@ -1,4 +1,5 @@
 import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
@@ -75,33 +76,12 @@ export default defineIntegration({
     let astroConfig: AstroConfig | null = null;
     const { resolve: resolver } = createResolver(import.meta.url);
     const filter = createFilter(options?.include, options?.exclude);
-    const qAstroManifestPath = resolver("../q-astro-manifest.json");
+    let qAstroManifestPath = "";
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
         const { addRenderer, updateConfig, config, command } = setupProps;
         astroConfig = config;
-
-        // passes config values to other runtimes with a virtual module
-        inlineModule({
-          constExports: {
-            isNode: options?.isNode ?? true,
-            qAstroManifestPath
-          }
-        });
-
-        /* q-astro-manifest.json doesn't error in dev */
-        if (command === "dev") {
-          writeFileSync(qAstroManifestPath, "{}", "utf-8");
-        }
-
-        // integration HMR support
-        watchDirectory(setupProps, resolver());
-
-        addRenderer({
-          name: "@qwikdev/astro",
-          serverEntrypoint: resolver("../server.ts")
-        });
 
         /** Relative paths, as the Qwik optimizer handles normalization */
         srcDir = getRelativePath(astroConfig.root.pathname, astroConfig.srcDir.pathname);
@@ -123,6 +103,31 @@ export default defineIntegration({
         } else {
           finalDir = outDir;
         }
+
+        qAstroManifestPath = resolver(
+          join(astroConfig.root.pathname + finalDir, "q-astro-manifest.json")
+        );
+
+        // passes config values to other runtimes with a virtual module
+        inlineModule({
+          constExports: {
+            isNode: options?.isNode ?? true,
+            qAstroManifestPath
+          }
+        });
+
+        /* q-astro-manifest.json doesn't error in dev */
+        if (command === "dev") {
+          writeFileSync(qAstroManifestPath, "{}", "utf-8");
+        }
+
+        // integration HMR support
+        watchDirectory(setupProps, resolver());
+
+        addRenderer({
+          name: "@qwikdev/astro",
+          serverEntrypoint: resolver("../server.ts")
+        });
 
         /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
         const fileFilter = (id: string, hook: string) => {
