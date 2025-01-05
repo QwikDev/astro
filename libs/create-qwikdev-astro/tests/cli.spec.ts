@@ -12,6 +12,8 @@ const root = "labs";
 const project = "test-app";
 const pm = getPackageManager();
 
+delete process.env.npm_config_user_agent;
+
 const setup = () => {
   ensureDirSync(root);
 
