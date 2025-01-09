@@ -7,7 +7,7 @@ import type {
   SymbolMapperFn
 } from "@builder.io/qwik/optimizer";
 import type { AstroConfig, AstroIntegration } from "astro";
-import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
+import { createResolver, defineIntegration } from "astro-integration-kit";
 import { z } from "astro/zod";
 import { type PluginOption, build, createFilter } from "vite";
 import type { InlineConfig } from "vite";
@@ -79,9 +79,6 @@ export default defineIntegration({
       "astro:config:setup": async (setupProps) => {
         const { addRenderer, updateConfig, config } = setupProps;
         astroConfig = config;
-
-        // integration HMR support
-        watchDirectory(setupProps, resolver());
 
         addRenderer({
           name: "@qwikdev/astro",
