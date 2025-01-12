@@ -134,11 +134,10 @@ export default defineIntegration({
             resolveEntrypoints();
           },
           async resolveId(id, importer) {
-            // only grab the imports of Astro files
-            const isAstroFile =
-              importer?.endsWith(".astro") || importer?.endsWith(".mdx");
-
-            if (!isAstroFile) {
+            const isFromAstro = importer?.endsWith('.astro') || importer?.endsWith('.mdx');
+            const isFromTrackedFile = potentialEntries.has(importer ?? '');
+            
+            if (!isFromAstro && !isFromTrackedFile) {
               return null;
             }
 
@@ -147,18 +146,12 @@ export default defineIntegration({
               throw new Error(`Could not resolve ${id} from ${importer}`);
             }
 
-            const isPotentialEntry = /\.(tsx|jsx|ts|js|qwik\.)/.test(resolved.id);
-            if (!isPotentialEntry) {
+            if (resolved.id.includes(".qwik.")) {
+              qwikEntrypoints.add(resolved.id);
               return null;
             }
 
-            // add Qwik libraries
-            if (resolved.id.includes(".qwik.")) {
-              qwikEntrypoints.add(resolved.id);
-            } else {
-              potentialEntries.add(resolved.id);
-            }
-
+            potentialEntries.add(resolved.id);
             return null;
           },
           async transform(code, id) {
@@ -174,8 +167,6 @@ export default defineIntegration({
              *  @qwik.dev/core
              *  @qwik.dev/react
              */
-
-            // TODO: use parser here (vite gives it)
             const qwikImportsRegex =
               /@builder\.io\/qwik(-react)?|qwik\.dev\/(core|react)/;
 
