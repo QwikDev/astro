@@ -1,0 +1,10 @@
+.overlay-container {
+    position: relative;
+  }
+
+  .overlay {
+    z-index: 100;
+    position: absolute;
+    inset: 0;
+    animation: fade-gradient 0.5s forwards;
+  }

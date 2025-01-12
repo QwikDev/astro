@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import { Background } from "@components/home/background/background";
 import { CLICopy } from "@components/home/cli-copy/cli-copy";
+import { MouseOverlay } from "@components/home/mouse-overlay/mouse-overlay";
 import { Icon } from "astro-icon/components";
 import Layout from "src/layouts/Layout.astro";
 import heroImage from "../assets/q-astro-hero.png";
@@ -13,9 +14,9 @@ import heroImage from "../assets/q-astro-hero.png";
     <div class="grid-line" aria-hidden="true"></div>
     <div class="intro">
       
-      <div class="overlay">
+      <MouseOverlay>
         <Image class="hero-image" src={heroImage} alt="Qwik + Astro" />
-      </div>
+      </MouseOverlay>
 
       <h1>
         {
@@ -50,13 +51,8 @@ import heroImage from "../assets/q-astro-hero.png";
 <style>
   .hero-image {
     object-fit: cover;
-    height: 200px;
+    height: 250px;
     border-radius: 8px;
-    mask-image: radial-gradient(100% 100% at center, var(--off-black) 20%, transparent 100%);
-    -webkit-mask-image: radial-gradient(50% 100% at center, var(--off-black) 20%, transparent 100%);
-    animation: fade-in 0.75s forwards;
-    animation-delay: 2.25s;
-    opacity: 0;
   }
 
   h1 {
