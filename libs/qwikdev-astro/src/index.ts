@@ -167,8 +167,6 @@ export default defineIntegration({
              *  @qwik.dev/core
              *  @qwik.dev/react
              */
-
-            // TODO: use parser here (vite gives it)
             const qwikImportsRegex =
               /@builder\.io\/qwik(-react)?|qwik\.dev\/(core|react)/;
 
