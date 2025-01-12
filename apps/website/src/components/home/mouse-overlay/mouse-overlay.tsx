@@ -1,63 +1,62 @@
-import { component$, Slot, useStyles$, useSignal, $ } from "@builder.io/qwik";
+import { $, Slot, component$, useSignal, useStyles$ } from "@builder.io/qwik";
 import styles from "./mouse-overlay.css?inline";
 
 export const MouseOverlay = component$(() => {
-    useStyles$(styles);
-    const xPos = useSignal(10);
-    const yPos = useSignal(50);
-    const overlayRef = useSignal<HTMLDivElement>();
-    const rectRef = useSignal<DOMRect>();
+  useStyles$(styles);
+  const xPos = useSignal(10);
+  const yPos = useSignal(50);
+  const overlayRef = useSignal<HTMLDivElement>();
+  const rectRef = useSignal<DOMRect>();
 
-    const onPointerEnter$ = $(() => {
-        if (!overlayRef.value) return;
-        overlayRef.value.classList.remove('leaving');
-        overlayRef.value.classList.add('entering');
-        setTimeout(() => {
-            overlayRef.value?.classList.remove('entering');
-        }, 10);
-        rectRef.value = overlayRef.value.getBoundingClientRect();
-    });
+  const onPointerEnter$ = $(() => {
+    if (!overlayRef.value) return;
+    overlayRef.value.classList.remove("leaving");
+    overlayRef.value.classList.add("entering");
+    rectRef.value = overlayRef.value.getBoundingClientRect();
+  });
 
-    const onPointerMove$ = $((e: PointerEvent) => {
-        if (!overlayRef.value) return;
-        if (!rectRef.value) return;
-        xPos.value = ((e.clientX - rectRef.value.left) / rectRef.value.width) * 100;
-        yPos.value = ((e.clientY - rectRef.value.top) / rectRef.value.height) * 100;
+  const onPointerMove$ = $((e: PointerEvent) => {
+    if (!overlayRef.value || !rectRef.value) return;
 
+    overlayRef.value.classList.remove("entering", "leaving");
+    overlayRef.value.classList.add("moving");
 
-        overlayRef.value.style.setProperty("--x-pos", `${xPos.value}%`);
-        overlayRef.value.style.setProperty("--y-pos", `${yPos.value}%`);
-    });
+    xPos.value = ((e.clientX - rectRef.value.left) / rectRef.value.width) * 100;
+    yPos.value = ((e.clientY - rectRef.value.top) / rectRef.value.height) * 100;
+    overlayRef.value.style.setProperty("--x-pos", `${xPos.value}%`);
+    overlayRef.value.style.setProperty("--y-pos", `${yPos.value}%`);
+  });
 
-    const onPointerLeave$ = $(() => {
-        console.log("leave");
-        if (!overlayRef.value) return;
+  const onPointerLeave$ = $(() => {
+    console.log("leave");
+    if (!overlayRef.value) return;
 
-        overlayRef.value.classList.add('leaving');
-        xPos.value = 10;
-        yPos.value = 50;
-        overlayRef.value.style.setProperty("--x-pos", `${xPos.value}%`);
-        overlayRef.value.style.setProperty("--y-pos", `${yPos.value}%`);
-    });
-    
-    return (
-        <div class="overlay-container">
-            <Slot />
-            <div 
-                ref={overlayRef}
-                class="overlay" 
-                onPointerEnter$={onPointerEnter$}
-                onPointerMove$={onPointerMove$}
-                onPointerLeave$={onPointerLeave$}
-                style={{
-                    background: `radial-gradient(
+    overlayRef.value.classList.add("leaving");
+    overlayRef.value.classList.remove("moving");
+    xPos.value = 10;
+    yPos.value = 50;
+    overlayRef.value.style.setProperty("--x-pos", `${xPos.value}%`);
+    overlayRef.value.style.setProperty("--y-pos", `${yPos.value}%`);
+  });
+
+  return (
+    <div class="overlay-container">
+      <Slot />
+      <div
+        ref={overlayRef}
+        class="overlay"
+        onPointerEnter$={onPointerEnter$}
+        onPointerMove$={onPointerMove$}
+        onPointerLeave$={onPointerLeave$}
+        style={{
+          background: `radial-gradient(
                         circle 150px at var(--x-pos) var(--y-pos),
                         transparent 0%,
                         transparent 30%,
                         var(--off-black) 70%
-                    )`
-                }}
-            />
-        </div>
-    )
+                    )`,
+        }}
+      />
+    </div>
+  );
 });
