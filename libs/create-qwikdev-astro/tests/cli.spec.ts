@@ -1,9 +1,8 @@
 import { test } from "@japa/runner";
 import { TestContext } from "@japa/runner/core";
 import { run } from "@qwikdev/create-astro";
-import { ensureDirSync } from "fs-extra";
+import { emptyDirSync, ensureDirSync } from "fs-extra";
 import pm from "panam";
-import { rimrafSync } from "rimraf";
 
 process.env.NODE_ENV = "test";
 process.env.CI = "1";
@@ -17,7 +16,7 @@ delete process.env.npm_config_user_agent;
 const setup = () => {
   ensureDirSync(root);
 
-  return () => rimrafSync(root, { glob: false });
+  return () => emptyDirSync(root);
 };
 
 const generatedDirs = [
