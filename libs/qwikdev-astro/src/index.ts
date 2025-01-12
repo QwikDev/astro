@@ -1,5 +1,5 @@
-import { writeFileSync } from "node:fs";
-import path from "node:path";
+import fs from "node:fs";
+import { join } from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
@@ -14,7 +14,6 @@ import type { InlineConfig } from "vite";
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
-  var hash: string | undefined;
   var relativeClientPath: string;
   var qManifest: QwikManifest;
 }
@@ -48,7 +47,12 @@ export default defineIntegration({
       /**
        * Enable debug mode with the qwikVite plugin.
        */
-      debug: z.boolean().optional()
+      debug: z.boolean().optional(),
+
+      /**
+       * Use node's readFileSync to read the manifest. Common for deployment providers that don't support dynamic json imports. When false, please ensure your deployment provider supports dynamic json imports, through environment variables or other means.
+       */
+      isNode: z.boolean().optional().default(true)
     })
     .optional(),
 
@@ -58,6 +62,7 @@ export default defineIntegration({
     let serverDir = "";
     let outDir = "";
     let finalDir = "";
+    let astroVite: InlineConfig;
 
     let resolveEntrypoints: () => void;
     const entrypointsReady = new Promise<void>((resolve) => {
@@ -72,17 +77,8 @@ export default defineIntegration({
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
-        const { addRenderer, updateConfig, config, command } = setupProps;
+        const { addRenderer, updateConfig, config } = setupProps;
         astroConfig = config;
-
-        /* q-astro-manifest.json doesn't error in dev */
-        if (command === "dev") {
-          writeFileSync(
-            path.join(resolver("../"), "q-astro-manifest.json"),
-            "{}",
-            "utf-8"
-          );
-        }
 
         // integration HMR support
         watchDirectory(setupProps, resolver());
@@ -233,6 +229,10 @@ export default defineIntegration({
         astroConfig = config;
       },
 
+      "astro:build:setup": async ({ vite }) => {
+        astroVite = vite as InlineConfig;
+      },
+
       "astro:build:ssr": async () => {
         await entrypointsReady;
 
@@ -249,20 +249,66 @@ export default defineIntegration({
             outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
-              writeFileSync(
-                path.join(resolver("../"), "q-astro-manifest.json"),
-                JSON.stringify(manifest),
-                "utf-8"
-              );
+
+              if (astroConfig?.adapter) {
+                const serverChunksDir = join(serverDir, "chunks");
+                const files = fs.readdirSync(serverChunksDir);
+                const serverFile = files.find(
+                  (f) => f.startsWith("server_") && f.endsWith(".mjs")
+                );
+
+                if (serverFile) {
+                  const serverPath = join(serverChunksDir, serverFile);
+                  const content = fs.readFileSync(serverPath, "utf-8");
+
+                  // Replace the manifest handling in the bundled code
+                  const manifestJson = JSON.stringify(manifest);
+                  const newContent = content.replace(
+                    "globalThis.qManifest",
+                    `globalThis.qManifest || ${manifestJson}`
+                  );
+
+                  fs.writeFileSync(serverPath, newContent);
+                }
+              }
             }
           },
           debug: options?.debug ?? false
         };
 
-        // client build -> passed into server build
+        // determine which plugins from core to keep
+        const astroPlugins = (
+          astroVite.plugins?.flatMap((p) => (Array.isArray(p) ? p : [p])) ?? []
+        )
+          .filter((plugin): plugin is { name: string } & NonNullable<PluginOption> => {
+            return plugin != null && typeof plugin === "object" && "name" in plugin;
+          })
+          .filter((plugin) => {
+            const isCoreBuildPlugin = plugin.name === "astro:build";
+            const isAstroInternalPlugin = plugin.name.includes("@astro");
+            const isAllowedPlugin =
+              plugin.name === "astro:transitions" || plugin.name.includes("virtual");
+            const isAstroBuildPlugin = plugin.name.startsWith("astro:build");
+            const isQwikPlugin =
+              plugin.name === "vite-plugin-qwik" ||
+              plugin.name === "vite-plugin-qwik-post" ||
+              plugin.name === "overrideEsbuild";
+
+            if (isAllowedPlugin) {
+              return true;
+            }
+
+            return !(
+              isCoreBuildPlugin ||
+              isAstroInternalPlugin ||
+              isAstroBuildPlugin ||
+              isQwikPlugin
+            );
+          });
+
         await build({
           ...astroConfig?.vite,
-          plugins: [qwikVite(qwikClientConfig)],
+          plugins: [...astroPlugins, qwikVite(qwikClientConfig)],
           build: {
             ...astroConfig?.vite?.build,
             ssr: false,

@@ -1,7 +1,7 @@
 {
   "name": "@qwikdev/astro",
   "description": "Use Qwik components and Resumability within Astro",
-  "version": "0.7.2",
+  "version": "0.7.7",
   "contributors": [
     {
       "name": "Jack Shelton",
@@ -61,6 +61,7 @@
   },
   "bugs": "https://github.com/thejackshelton/@qwikdev/astro/issues",
   "dependencies": {
+    "@inox-tools/inline-mod": "^2.0.2",
     "astro-integration-kit": "^0.18.0"
   },
   "devDependencies": {

@@ -2,13 +2,14 @@
   "name": "@qwikdev/create-astro",
   "type": "module",
   "license": "MIT",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "Interactive CLI for create @QwikDev/astro projects.",
   "scripts": {
     "check": "tsc --noEmit",
-    "build": "pnpm check && tsup-node --env.NODE_ENV production",
+    "build": "tsup-node --env.NODE_ENV production",
+    "prod": "pnpm check && pnpm build",
     "start": "tsup-node --env.NODE_ENV development --watch",
-    "test": "NODE_ENV=test node --loader tsm --enable-source-maps bin/test.ts"
+    "test": "node --loader tsm --enable-source-maps bin/test.ts"
   },
   "contributors": [
     {

@@ -10,6 +10,9 @@ process.env.CI = "1";
 const integration = "@qwikdev/astro";
 const root = "labs";
 const project = "test-app";
+const pm = getPackageManager();
+
+delete process.env.npm_config_user_agent;
 
 const setup = () => {
   ensureDirSync(root);
@@ -135,6 +138,16 @@ test.group(`create ${integration} app`, (group) => {
       biome: true
     });
   });
+
+  test("with template", async (context) => {
+    return testRun(["--template", "minimal"], context);
+  }).disableTimeout();
+
+  test("with template and using Biome", async (context) => {
+    return testRun(["--template", "minimal", "--biome"], context, {
+      biome: true
+    });
+  }).disableTimeout();
 });
 
 test.group(`create ${integration} with yes and no options`, (group) => {
@@ -162,7 +175,7 @@ async function testRun(
   const { assert } = context;
   const destination = `${root}/${project}`;
 
-  const result = await run(["pnpm", "create", `${destination}`, ...args]);
+  const result = await run([pm, "create", `${destination}`, ...args]);
   assert.equal(result, 0);
 
   testProject(destination, context, options);

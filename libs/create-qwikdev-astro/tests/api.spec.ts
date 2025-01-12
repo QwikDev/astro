@@ -14,12 +14,15 @@ enum input {
   which_destination,
   use_adapter,
   which_adapter,
+  use_template,
+  what_template,
+  add,
+  force,
+  copy,
   biome,
   install,
   ci,
   git,
-  add,
-  force,
   package_name
 }
 
@@ -27,25 +30,31 @@ const questions = {
   [input.which_destination]: "Where would you like to create your new project?",
   [input.use_adapter]: "Would you like to use a server adapter?",
   [input.which_adapter]: "Which adapter do you prefer?",
+  [input.use_template]: "Would you like to use the default template?",
+  [input.what_template]: "What template would you like to use?",
+  [input.add]: "Do you want to add @QwikDev/astro to your existing project?",
+  [input.force]: "Would you like to force the copy?",
+  [input.copy]: "Copy template files safely (without overwriting existing files)?",
   [input.biome]: "Would you prefer Biome over ESLint/Prettier?",
   [input.install]: `Would you like to install ${getPackageManager()} dependencies?`,
   [input.ci]: "Would you like to add CI workflow?",
   [input.git]: "Would you like to initialize Git?",
-  [input.add]: "Do you want to add @QwikDev/astro to your existing project?",
-  [input.force]: "What would you like to overwrite it?",
   [input.package_name]: "What should be the name of this package?"
 } as const;
 
 const answers = {
   [input.which_destination]: [".", projectName],
   [input.use_adapter]: [true, false],
+  [input.what_template]: ["qwik", "astro"],
+  [input.use_template]: [true, false],
   [input.which_adapter]: ["none", "node", "deno"],
+  [input.add]: [true, false],
+  [input.force]: [true, false],
+  [input.copy]: [true, false],
   [input.biome]: [true, false],
   [input.install]: [true, false],
   [input.ci]: [true, false],
   [input.git]: [true, false],
-  [input.add]: [true, false],
-  [input.force]: [true, false],
   [input.package_name]: [projectName, ""]
 } as const;
 
@@ -64,30 +73,48 @@ test.group("default definition", () => {
       definition.has(
         "destination",
         "adapter",
+        "template",
+        "add",
         "force",
+        "copy",
         "install",
         "biome",
         "git",
-        "ci",
-        "add"
+        "ci"
       )
     );
   });
 
   test("destination", ({ assert }) => {
     assert.isTrue(definition.get("destination").isString());
-    assert.isTrue(definition.get("destination").equals("."));
+    assert.isTrue(definition.get("destination").equals("./qwik-astro-app"));
     assert.isTrue(definition.get("destination").equals(defaultDefinition.destination));
   });
 
   test("adapter", ({ assert }) => {
     assert.isTrue(definition.get("adapter").isString());
+    assert.isTrue(definition.get("adapter").equals("none"));
     assert.isTrue(definition.get("adapter").equals(defaultDefinition.adapter));
+  });
+
+  test("template", ({ assert }) => {
+    assert.isTrue(definition.get("template").isUndefined());
+    assert.isTrue(definition.get("template").equals(defaultDefinition.template));
+  });
+
+  test("add", ({ assert }) => {
+    assert.isTrue(definition.get("add").isUndefined());
+    assert.isTrue(definition.get("add").equals(defaultDefinition.add));
   });
 
   test("force", ({ assert }) => {
     assert.isTrue(definition.get("force").isUndefined());
     assert.isTrue(definition.get("force").equals(defaultDefinition.force));
+  });
+
+  test("copy", ({ assert }) => {
+    assert.isTrue(definition.get("copy").isUndefined());
+    assert.isTrue(definition.get("copy").equals(defaultDefinition.copy));
   });
 
   test("install", ({ assert }) => {
@@ -109,11 +136,6 @@ test.group("default definition", () => {
     assert.isTrue(definition.get("ci").isUndefined());
     assert.isTrue(definition.get("ci").equals(defaultDefinition.ci));
   });
-
-  test("add", ({ assert }) => {
-    assert.isTrue(definition.get("add").isUndefined());
-    assert.isTrue(definition.get("add").equals(defaultDefinition.add));
-  });
 });
 
 test.group("arguments", () => {
@@ -121,7 +143,7 @@ test.group("arguments", () => {
     let definition = tester.parse([]);
 
     assert.isTrue(definition.get("destination").isString());
-    assert.isTrue(definition.get("destination").equals("."));
+    assert.isTrue(definition.get("destination").equals("./qwik-astro-app"));
     assert.isTrue(definition.get("adapter").equals("none"));
   });
 
@@ -141,6 +163,15 @@ test.group("arguments", () => {
     definition = tester.parse(["my-qwik-astro-app", "deno"]);
     assert.isTrue(definition.get("adapter").isString());
     assert.isTrue(definition.get("adapter").equals("deno"));
+  });
+
+  test("template argument", ({ assert }) => {
+    let definition = tester.parse([projectName, "--template", "minimal"]);
+    assert.isTrue(definition.get("template").isString());
+    assert.isTrue(definition.get("template").equals("minimal"));
+
+    definition = tester.parse(["my-qwik-astro-app", "--template", "blog"]);
+    assert.isTrue(definition.get("template").equals("blog"));
   });
 });
 
@@ -199,6 +230,20 @@ test.group("options", () => {
     assert.isTrue(definition.get("force").isFalse());
     assert.isTrue(definition.get("f").isBoolean());
     assert.isTrue(definition.get("f").isFalse());
+  });
+
+  test("copy", ({ assert }) => {
+    let definition = tester.parse(["--copy"]);
+    assert.isTrue(definition.get("copy").isBoolean());
+    assert.isTrue(definition.get("copy").isTrue());
+    assert.isTrue(definition.get("c").isBoolean());
+    assert.isTrue(definition.get("c").isTrue());
+
+    definition = tester.parse(["--no-copy"]);
+    assert.isTrue(definition.get("copy").isBoolean());
+    assert.isTrue(definition.get("copy").isFalse());
+    assert.isTrue(definition.get("c").isBoolean());
+    assert.isTrue(definition.get("c").isFalse());
   });
 
   test("install", ({ assert }) => {
@@ -275,6 +320,20 @@ test.group("aliases", () => {
     assert.isTrue(definition.get("n").isFalse());
   });
 
+  test("a", ({ assert }) => {
+    let definition = tester.parse(["-a"]);
+    assert.isTrue(definition.get("add").isBoolean());
+    assert.isTrue(definition.get("add").isTrue());
+    assert.isTrue(definition.get("a").isBoolean());
+    assert.isTrue(definition.get("a").isTrue());
+
+    definition = tester.parse(["--no-a"]);
+    assert.isTrue(definition.get("add").isBoolean());
+    assert.isTrue(definition.get("add").isFalse());
+    assert.isTrue(definition.get("a").isBoolean());
+    assert.isTrue(definition.get("a").isFalse());
+  });
+
   test("f", ({ assert }) => {
     let definition = tester.parse(["-f"]);
     assert.isTrue(definition.get("force").isBoolean());
@@ -289,18 +348,18 @@ test.group("aliases", () => {
     assert.isTrue(definition.get("f").isFalse());
   });
 
-  test("a", ({ assert }) => {
-    let definition = tester.parse(["-a"]);
-    assert.isTrue(definition.get("add").isBoolean());
-    assert.isTrue(definition.get("add").isTrue());
-    assert.isTrue(definition.get("a").isBoolean());
-    assert.isTrue(definition.get("a").isTrue());
+  test("c", ({ assert }) => {
+    let definition = tester.parse(["-c"]);
+    assert.isTrue(definition.get("copy").isBoolean());
+    assert.isTrue(definition.get("copy").isTrue());
+    assert.isTrue(definition.get("c").isBoolean());
+    assert.isTrue(definition.get("c").isTrue());
 
-    definition = tester.parse(["--no-a"]);
-    assert.isTrue(definition.get("add").isBoolean());
-    assert.isTrue(definition.get("add").isFalse());
-    assert.isTrue(definition.get("a").isBoolean());
-    assert.isTrue(definition.get("a").isFalse());
+    definition = tester.parse(["--no-c"]);
+    assert.isTrue(definition.get("copy").isBoolean());
+    assert.isTrue(definition.get("copy").isFalse());
+    assert.isTrue(definition.get("c").isBoolean());
+    assert.isTrue(definition.get("c").isFalse());
   });
 
   test("i", ({ assert }) => {
@@ -342,6 +401,16 @@ for (const [key, choices] of Object.entries(answers)) {
               ).isTrue()
             ) {
               assert.isTrue(definition.get("adapter").equals(answer));
+            }
+            break;
+
+          case input.what_template:
+            if (
+              (
+                await tester.scanBoolean(parsed.definition, questions[input.use_template])
+              ).isTrue()
+            ) {
+              assert.isTrue(definition.get("template").equals(answer));
             }
             break;
 

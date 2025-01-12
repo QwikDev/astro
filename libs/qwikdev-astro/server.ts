@@ -1,5 +1,3 @@
-import type { SSRResult } from "astro";
-
 import { type JSXNode, jsx } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
@@ -8,6 +6,7 @@ import {
   getQwikLoaderScript,
   renderToStream
 } from "@builder.io/qwik/server";
+import type { SSRResult } from "astro";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 const modulePreloadScript = `window.addEventListener("load",()=>{(async()=>{window.requestIdleCallback||(window.requestIdleCallback=(e,t)=>{const n=t||{},o=1,i=n.timeout||o,a=performance.now();return setTimeout(()=>{e({get didTimeout(){return!n.timeout&&performance.now()-a-o>i},timeRemaining:()=>Math.max(0,o+(performance.now()-a))})},o)});const e=async()=>{const e=new Set,t=document.querySelectorAll('script[q\\\\:type="prefetch-bundles"]');t.forEach(t=>{if(!t.textContent)return;const n=t.textContent,o=n.match(/\\["prefetch","[/]build[/]","(.*?)"\\]/);o&&o[1]&&o[1].split('","').forEach(t=>{t.startsWith("q-")&&e.add(t)})}),document.querySelectorAll('script[type="qwik/json"]').forEach(t=>{if(!t.textContent)return;const n=t.textContent.match(/q-[A-Za-z0-9_-]+\\.js/g);n&&n.forEach(t=>e.add(t))}),e.forEach(e=>{const t=document.createElement("link");t.rel="modulepreload",t.href="/build/"+e,t.fetchPriority="low",document.head.appendChild(t)})};await requestIdleCallback(await e)})()});`;
@@ -63,20 +62,6 @@ export async function renderToStaticMarkup(
 
     let html = "";
 
-    // Get the manifest from the integration directory
-    const qwikRenderer = this.result.renderers.find(
-      (r) => r.name === "@qwikdev/astro"
-    ) as any;
-
-    const manifestPath = qwikRenderer?.serverEntrypoint?.replace(
-      "server.ts",
-      "q-astro-manifest.json"
-    );
-
-    const integrationManifest = manifestPath
-      ? await import(/* @vite-ignore */ manifestPath, { with: { type: "json" } })
-      : null;
-
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: { style: "display: contents" },
       containerTagName: "div",
@@ -86,7 +71,7 @@ export async function renderToStaticMarkup(
             symbolMapper: globalThis.symbolMapperFn
           }
         : {
-            manifest: globalThis.qManifest || integrationManifest?.default
+            manifest: globalThis.qManifest
           }),
       serverData: props,
       qwikPrefetchServiceWorker: {
@@ -149,7 +134,7 @@ export async function renderToStaticMarkup(
         dangerouslySetInnerHTML: String(value),
         style: "display: contents",
         ...namedSlot,
-        "q:key": globalThis.hash
+        "q:key": Math.random().toString(26).split(".").pop()
       });
 
       if (key === "default") {
@@ -171,6 +156,10 @@ export async function renderToStaticMarkup(
 
     await renderToStream(qwikComponentJSX, renderToStreamOpts);
 
+    const isClientRouter = Array.from(this.result._metadata.renderedScripts).some(
+      (path) => path.includes("ClientRouter.astro")
+    );
+
     /** With View Transitions, rerun so that signals work
      * https://docs.astro.build/en/guides/view-transitions/#data-astro-rerun
      */
@@ -179,8 +168,17 @@ export async function renderToStaticMarkup(
       '<script q:func="qwik/json" data-astro-rerun>'
     );
 
+    /** Adds support for visible tasks with Astro's client router */
+    const htmlWithObservers =
+      isClientRouter &&
+      isQwikLoaderNeeded &&
+      htmlWithRerun +
+        `
+      <script data-qwik-astro-client-router>document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>
+    `;
+
     return {
-      html: htmlWithRerun
+      html: isClientRouter ? htmlWithObservers : html
     };
   } catch (error) {
     console.error("Error in renderToStaticMarkup function of @qwikdev/astro: ", error);

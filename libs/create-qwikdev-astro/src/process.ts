@@ -14,7 +14,7 @@ export const isPackageManagerInstalled = (packageManager: string) => {
 export function $(cmd: string, args: string[], cwd: string) {
   let child: ChildProcess;
 
-  const install = new Promise<boolean>((resolve) => {
+  const process = new Promise<boolean>((resolve) => {
     try {
       child = spawn(cmd, args, {
         cwd,
@@ -42,7 +42,7 @@ export function $(cmd: string, args: string[], cwd: string) {
     }
   };
 
-  return { abort, install };
+  return { abort, process };
 }
 
 export const $pm = async (
@@ -52,7 +52,15 @@ export const $pm = async (
 ) => {
   const packageManager = getPackageManager();
   args = Array.isArray(args) ? args : [args];
-  if (["exec", "dlx"].includes(args[0])) {
+
+  if (args[0] === "create" && packageManager === "deno") {
+    const packageName = args[1];
+    const parts = packageName.split("/", 2);
+    const createCommand = parts[1]
+      ? `npm:${parts[0]}/create-${parts[1]}`
+      : `npm:create-${parts[0]}`;
+    args = ["run", "-A", createCommand, ...args.slice(2)];
+  } else if (["exec", "dlx"].includes(args[0])) {
     switch (packageManager) {
       case "pnpm":
       case "yarn":
@@ -95,6 +103,10 @@ export const $pmInstall = async (cwd: string) => {
 
 export const $pmRun = async (script: string, cwd: string) => {
   await $pm(["run", ...script.split(/\s+/)], cwd);
+};
+
+export const $pmCreate = async (script: string, cwd: string) => {
+  await $pm(["create", ...script.split(/\s+/)], cwd);
 };
 
 export const $pmExec = async (command: string, cwd: string) => {

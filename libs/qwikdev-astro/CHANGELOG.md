@@ -1,5 +1,35 @@
 # @qwikdev/astro
 
+## 0.7.7
+
+### Patch Changes
+
+- 911821a: fix: q-manifest gets added into the bundled code at build time
+
+## 0.7.6
+
+### Patch Changes
+
+- 87f657e: fix: improved manifest handling for deployment providers using older node versions
+
+## 0.7.5
+
+### Patch Changes
+
+- 4d34b2b: fix: support for Astro navigate function and virtual modules
+
+## 0.7.4
+
+### Patch Changes
+
+- a22283f: fix: client router now executes Qwik's visible tasks correctly
+
+## 0.7.3
+
+### Patch Changes
+
+- 8d25080: refactor: improved errors for older node versions
+
 ## 0.7.2
 
 ### Patch Changes

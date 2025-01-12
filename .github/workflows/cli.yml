@@ -1,0 +1,35 @@
+name: CLI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: 🧪 Test the CLI on ${{ matrix.runtime }} under ${{ matrix.os }} using ${{ matrix.pm }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        experimental: [false]
+        runtime: [node, deno, bun]
+        pm: ["", pnpm, yarn]
+
+    steps:
+      - name: 🚚 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔥 Remove lockfile
+        run: rm pnpm-lock.yaml
+
+      - name: Setup Test Environment
+        uses: siguici/setup-js@v1
+        with:
+          runtime: ${{ matrix.runtime }}
+          pm: ${{ matrix.pm }}
+          scripts: build,test
+          cwd: ./libs/create-qwikdev-astro
