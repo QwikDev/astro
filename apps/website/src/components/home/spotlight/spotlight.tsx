@@ -1,7 +1,7 @@
 import { $, Slot, component$, useSignal, useStyles$ } from "@builder.io/qwik";
-import styles from "./mouse-overlay.css?inline";
+import styles from "./spotlight.css?inline";
 
-export const MouseOverlay = component$(() => {
+export const Spotlight = component$(() => {
   useStyles$(styles);
   const xPos = useSignal(10);
   const yPos = useSignal(50);

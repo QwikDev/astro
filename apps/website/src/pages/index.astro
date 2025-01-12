@@ -2,7 +2,7 @@
 import { Image } from "astro:assets";
 import { Background } from "@components/home/background/background";
 import { CLICopy } from "@components/home/cli-copy/cli-copy";
-import { MouseOverlay } from "@components/home/mouse-overlay/mouse-overlay";
+import { Spotlight } from "@components/home/spotlight/spotlight";
 import { Icon } from "astro-icon/components";
 import Layout from "src/layouts/Layout.astro";
 import heroImage from "../assets/q-astro-hero.png";
@@ -14,9 +14,9 @@ import heroImage from "../assets/q-astro-hero.png";
     <div class="grid-line" aria-hidden="true"></div>
     <div class="intro">
       
-      <MouseOverlay>
+      <Spotlight>
         <Image class="hero-image" src={heroImage} alt="Qwik + Astro" />
-      </MouseOverlay>
+      </Spotlight>
 
       <h1>
         {
