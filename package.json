@@ -35,12 +35,12 @@
     "@biomejs/biome": "1.9.4",
     "@builder.io/qwik": "^1.12.0",
     "@changesets/cli": "^2.27.11",
-    "@inox-tools/astro-tests": "^0.2.1",
+    "@inox-tools/astro-tests": "^0.2.2",
     "@playwright/test": "^1.49.1",
     "@qwikdev/create-astro": "workspace:*",
-    "@types/node": "^22.10.2",
+    "@types/node": "^22.10.5",
     "astro": "5.0.3",
-    "lefthook": "^1.10.1",
+    "lefthook": "^1.10.3",
     "pkg-pr-new": "^0.0.35"
   }
 }
