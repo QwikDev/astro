@@ -134,9 +134,10 @@ export default defineIntegration({
             resolveEntrypoints();
           },
           async resolveId(id, importer) {
-            const isFromAstro = importer?.endsWith('.astro') || importer?.endsWith('.mdx');
-            const isFromTrackedFile = potentialEntries.has(importer ?? '');
-            
+            const isFromAstro =
+              importer?.endsWith(".astro") || importer?.endsWith(".mdx");
+            const isFromTrackedFile = potentialEntries.has(importer ?? "");
+
             if (!isFromAstro && !isFromTrackedFile) {
               return null;
             }
