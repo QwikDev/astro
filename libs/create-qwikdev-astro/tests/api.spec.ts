@@ -2,7 +2,7 @@ import { test } from "@japa/runner";
 import app, { defaultDefinition } from "@qwikdev/create-astro/app";
 import { name, version } from "@qwikdev/create-astro/package.json";
 import { ProgramTester } from "@qwikdev/create-astro/tester";
-import { getPackageManager } from "@qwikdev/create-astro/utils";
+import pm from "panam";
 
 process.env.NODE_ENV = "test";
 process.env.CI = "1";
@@ -36,7 +36,7 @@ const questions = {
   [input.force]: "Would you like to force the copy?",
   [input.copy]: "Copy template files safely (without overwriting existing files)?",
   [input.biome]: "Would you prefer Biome over ESLint/Prettier?",
-  [input.install]: `Would you like to install ${getPackageManager()} dependencies?`,
+  [input.install]: `Would you like to install ${pm.name} dependencies?`,
   [input.ci]: "Would you like to add CI workflow?",
   [input.git]: "Would you like to initialize Git?",
   [input.package_name]: "What should be the name of this package?"

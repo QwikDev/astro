@@ -3,7 +3,7 @@ import os from "node:os";
 import path, { join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
-import detectPackageManager from "which-pm-runs";
+import pm from "panam";
 
 export const __filename = getModuleFilename();
 export const __dirname = path.dirname(__filename);
@@ -179,18 +179,6 @@ function fileReplaceContents(file: string, search: string | RegExp, replace: str
   filePutContents(file, contents);
 }
 
-export function getPackageManager() {
-  return detectPackageManager()?.name || "npm";
-}
-
-export function pmRunCommand(): string {
-  const pm = getPackageManager();
-  if (pm === "npm" || pm === "bun") {
-    return `${pm} run`;
-  }
-  return pm;
-}
-
 export function getPackageJsonPath(dir = __dirname): string {
   return join(dir, "package.json");
 }
@@ -200,7 +188,7 @@ function packageJsonReplace(dir: string, search: string | RegExp, replace: strin
 }
 
 export function replacePackageJsonRunCommand(dir: string) {
-  packageJsonReplace(dir, /npm run/g, pmRunCommand());
+  packageJsonReplace(dir, /npm run/g, pm.runCommand());
 }
 
 const npmPackageNamePattern =

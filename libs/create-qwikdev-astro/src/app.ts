@@ -1,18 +1,18 @@
 import fs, { cpSync } from "node:fs";
 import path from "node:path";
 import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
+import pm from "panam";
+import { defaultOptions } from "panam/process";
 import pkg from "../package.json";
 import { ensureString } from "./console";
 import { type Definition as BaseDefinition, Program } from "./core";
-import { $, $pmCreate, $pmInstall, $pmX } from "./process";
+import { $ } from "./process";
 import {
   __dirname,
   clearDir,
   getPackageJson,
-  getPackageManager,
   mergeDotIgnoreFiles,
   notEmptyDir,
-  pmRunCommand,
   replacePackageJsonRunCommand,
   resolveAbsoluteDir,
   resolveRelativeDir,
@@ -66,8 +66,6 @@ export function defineDefinition(definition: UserDefinition): Definition {
 }
 
 export class Application extends Program<Definition, Input> {
-  #packageManger = getPackageManager();
-
   configure(): void {
     this.strict()
       .interactive()
@@ -293,7 +291,7 @@ export class Application extends Program<Definition, Input> {
     const install = !!(ask && definition.install === undefined
       ? await this.scanBoolean(
           definition,
-          `Would you like to install ${this.#packageManger} dependencies?`
+          `Would you like to install ${pm.name} dependencies?`
         )
       : definition.install);
 
@@ -348,7 +346,7 @@ export class Application extends Program<Definition, Input> {
     this.info("Adding @QwikDev/astro...");
     try {
       if (!input.dryRun) {
-        await $pmX("astro add @qwikdev/astro", input.outDir);
+        await pm.x("astro add @qwikdev/astro", { ...defaultOptions, cwd: input.outDir });
       }
 
       if (input.copy) {
@@ -407,7 +405,7 @@ export class Application extends Program<Definition, Input> {
     }
 
     await this.prepareDir(input);
-    await $pmCreate(args.join(" "), process.cwd());
+    await pm.create(args.join(" "), { ...defaultOptions, cwd: input.outDir });
 
     this.copyTemplate(
       input,
@@ -465,9 +463,9 @@ export class Application extends Program<Definition, Input> {
       outString.push(`   cd ${relativeProjectPath}`);
     }
     if (!ranInstall) {
-      outString.push(`   ${getPackageManager()} install`);
+      outString.push(`   ${pm.name} install`);
     }
-    outString.push(`   ${getPackageManager()} start`);
+    outString.push(`   ${pm.name} start`);
 
     this.note(outString.join("\n"), "Ready to start 🚀");
 
@@ -480,8 +478,8 @@ export class Application extends Program<Definition, Input> {
     updatePackageName(packageName as string, outDir);
     this.info(`Updated package name to "${packageName}" 📦️`);
 
-    if (getPackageManager() !== "npm") {
-      this.info(`Replacing 'npm run' by '${pmRunCommand()}' in package.json...`);
+    if (!pm.isNpm()) {
+      this.info(`Replacing 'npm run' by '${pm.runCommand()}' in package.json...`);
       replacePackageJsonRunCommand(outDir);
     }
   }
@@ -496,11 +494,7 @@ export class Application extends Program<Definition, Input> {
           "..",
           "stubs",
           "workflows",
-          `${
-            ["npm", "yarn", "pnpm", "bun"].includes(getPackageManager())
-              ? getPackageManager()
-              : "npm"
-          }-ci.yml`
+          `${pm.in(["npm", "yarn", "pnpm", "bun"]) ? pm.name : "npm"}-ci.yml`
         );
         const projectCIPath = path.join(input.outDir, ".github", "workflows", "ci.yml");
         cpSync(starterCIPath, projectCIPath, { force: true });
@@ -515,7 +509,7 @@ export class Application extends Program<Definition, Input> {
       this.step(`Installing${input.template ? " new " : " "}dependencies...`);
 
       if (!input.dryRun) {
-        await $pmInstall(input.destination);
+        await pm.install({ ...defaultOptions, cwd: input.outDir });
       }
 
       ranInstall = true;
