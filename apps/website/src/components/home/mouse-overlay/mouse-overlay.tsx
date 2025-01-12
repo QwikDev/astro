@@ -10,15 +10,20 @@ export const MouseOverlay = component$(() => {
 
     const onPointerEnter$ = $(() => {
         if (!overlayRef.value) return;
+        overlayRef.value.classList.remove('leaving');
+        overlayRef.value.classList.add('entering');
+        setTimeout(() => {
+            overlayRef.value?.classList.remove('entering');
+        }, 10);
         rectRef.value = overlayRef.value.getBoundingClientRect();
     });
 
     const onPointerMove$ = $((e: PointerEvent) => {
+        if (!overlayRef.value) return;
         if (!rectRef.value) return;
         xPos.value = ((e.clientX - rectRef.value.left) / rectRef.value.width) * 100;
         yPos.value = ((e.clientY - rectRef.value.top) / rectRef.value.height) * 100;
 
-        if (!overlayRef.value) return;
 
         overlayRef.value.style.setProperty("--x-pos", `${xPos.value}%`);
         overlayRef.value.style.setProperty("--y-pos", `${yPos.value}%`);
@@ -28,6 +33,7 @@ export const MouseOverlay = component$(() => {
         console.log("leave");
         if (!overlayRef.value) return;
 
+        overlayRef.value.classList.add('leaving');
         xPos.value = 10;
         yPos.value = 50;
         overlayRef.value.style.setProperty("--x-pos", `${xPos.value}%`);
