@@ -1,10 +1,26 @@
+@property --x-pos {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 10%;
+}
+
+@property --y-pos {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 50%;
+}
+
 .overlay-container {
     position: relative;
   }
 
   .overlay {
+    --x-pos: 10%;
+    --y-pos: 50%;
     z-index: 100;
     position: absolute;
     inset: 0;
     animation: fade-gradient 0.5s forwards;
-  }
+    transition: --mouse-x 0.2s ease-out, --mouse-y 0.2s ease-out;
+}
+

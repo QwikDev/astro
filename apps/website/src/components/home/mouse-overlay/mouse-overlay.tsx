@@ -5,7 +5,7 @@ export const MouseOverlay = component$(() => {
     useStyles$(styles);
     const xPos = useSignal(10);
     const yPos = useSignal(50);
-    const overlayRef = useSignal<Element>();
+    const overlayRef = useSignal<HTMLDivElement>();
     const rectRef = useSignal<DOMRect>();
 
     const onPointerEnter$ = $(() => {
@@ -17,29 +17,21 @@ export const MouseOverlay = component$(() => {
         if (!rectRef.value) return;
         xPos.value = ((e.clientX - rectRef.value.left) / rectRef.value.width) * 100;
         yPos.value = ((e.clientY - rectRef.value.top) / rectRef.value.height) * 100;
+
+        if (!overlayRef.value) return;
+
+        overlayRef.value.style.setProperty("--x-pos", `${xPos.value}%`);
+        overlayRef.value.style.setProperty("--y-pos", `${yPos.value}%`);
     });
 
     const onPointerLeave$ = $(() => {
-        const startX = xPos.value;
-        const startY = yPos.value;
-        const endX = 10;
-        const endY = 50;
-        const duration = 300;
-        const startTime = performance.now();
+        console.log("leave");
+        if (!overlayRef.value) return;
 
-        const animate = (currentTime: number) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-
-            xPos.value = startX + (endX - startX) * progress;
-            yPos.value = startY + (endY - startY) * progress;
-
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-            }
-        };
-
-        requestAnimationFrame(animate);
+        xPos.value = 10;
+        yPos.value = 50;
+        overlayRef.value.style.setProperty("--x-pos", `${xPos.value}%`);
+        overlayRef.value.style.setProperty("--y-pos", `${yPos.value}%`);
     });
     
     return (
@@ -53,7 +45,7 @@ export const MouseOverlay = component$(() => {
                 onPointerLeave$={onPointerLeave$}
                 style={{
                     background: `radial-gradient(
-                        circle 150px at ${xPos.value}% ${yPos.value}%,
+                        circle 150px at var(--x-pos) var(--y-pos),
                         transparent 0%,
                         transparent 30%,
                         var(--off-black) 70%
