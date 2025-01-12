@@ -1,7 +1,8 @@
 import { test } from "@japa/runner";
 import { TestContext } from "@japa/runner/core";
 import { run } from "@qwikdev/create-astro";
-import { emptyDirSync, ensureDirSync } from "fs-extra";
+import { rmSync } from "node:fs";
+import { ensureDirSync } from "fs-extra";
 import pm from "panam";
 
 process.env.NODE_ENV = "test";
@@ -16,7 +17,7 @@ delete process.env.npm_config_user_agent;
 const setup = () => {
   ensureDirSync(root);
 
-  return () => emptyDirSync(root);
+  return () => rmSync(root, { recursive: true, force: true });
 };
 
 const generatedDirs = [
