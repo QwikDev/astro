@@ -1,7 +1,7 @@
 @property --x-pos {
-  syntax: "<percentage>";
+  syntax: "<length-percentage>";
   inherits: false;
-  initial-value: 10%;
+  initial-value: 48px;
 }
 
 @property --y-pos {
@@ -15,7 +15,7 @@
 }
 
 .overlay {
-  --x-pos: 10%;
+  --x-pos: 92px;
   --y-pos: 50%;
   --timing-function: linear(
     0,
@@ -46,11 +46,15 @@
 }
 
 .overlay.entering {
-  transition: --x-pos 0.3s var(--timing-function), --y-pos 0.3s
-    var(--timing-function);
+  transition: --x-pos 0.3s var(--timing-function), --y-pos 0.3s var(--timing-function);
 }
 
 .overlay.leaving {
-  transition: --x-pos 0.8s var(--timing-function), --y-pos 0.8s
-    var(--timing-function);
+  transition: --x-pos 0.8s var(--timing-function), --y-pos 0.8s var(--timing-function);
+}
+
+@media (min-width: 1024px) {
+  .overlay {
+    --x-pos: 10%;
+  }
 }

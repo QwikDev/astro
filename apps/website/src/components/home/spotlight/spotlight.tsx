@@ -50,11 +50,11 @@ export const Spotlight = component$(() => {
         onPointerLeave$={onPointerLeave$}
         style={{
           background: `radial-gradient(
-                        circle 150px at var(--x-pos) var(--y-pos),
+                        circle var(--space-4xl) at var(--x-pos) var(--y-pos),
                         transparent 0%,
                         transparent 30%,
                         var(--off-black) 70%
-                    )`,
+                    )`
         }}
       />
     </div>
