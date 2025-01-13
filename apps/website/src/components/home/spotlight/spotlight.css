@@ -1,7 +1,7 @@
 @property --x-pos {
   syntax: "<length-percentage>";
   inherits: false;
-  initial-value: 48px;
+  initial-value: 92px;
 }
 
 @property --y-pos {
