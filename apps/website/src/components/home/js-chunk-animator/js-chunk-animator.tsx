@@ -34,19 +34,23 @@ export const JSChunkAnimator = component$(() => {
     .animated-chunk {
       position: fixed;
       animation: 
+        fadeIn 0.4s linear forwards,
         popUpJS 0.3s cubic-bezier(0.2, 0.8, 0.3, 1) forwards,
         fallJS 0.9s cubic-bezier(0.33, 0.1, 0.17, 1) forwards;
-      animation-delay: 0s, 0.3s;
+      animation-delay: 0s, 0s, 0.3s;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
     }
 
     @keyframes popUpJS {
       0% {
         transform: translate(var(--x), var(--y)) scale(1) rotate(0deg);
-        opacity: 1;
       }
       100% {
         transform: translate(calc(var(--x) + var(--direction) * 0.3), calc(var(--y) + var(--height))) scale(1) rotate(72deg);
-        opacity: 1;
       }
     }
 
