@@ -33,10 +33,13 @@ export const Spotlight = component$(() => {
 
     overlayRef.value.classList.add("leaving");
     overlayRef.value.classList.remove("moving");
-    xPos.value = 10;
-    yPos.value = 50;
-    overlayRef.value.style.setProperty("--x-pos", `${xPos.value}%`);
-    overlayRef.value.style.setProperty("--y-pos", `${yPos.value}%`);
+    if (window.innerWidth <= 1024) {
+      overlayRef.value.style.setProperty("--x-pos", "92px");
+      overlayRef.value.style.setProperty("--y-pos", "50%");
+    } else {
+      overlayRef.value.style.setProperty("--x-pos", "10%");
+      overlayRef.value.style.setProperty("--y-pos", "50%");
+    }
   });
 
   return (
