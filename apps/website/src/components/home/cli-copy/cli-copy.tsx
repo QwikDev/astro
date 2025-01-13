@@ -4,7 +4,7 @@ import {
   component$,
   useSignal,
   useStyles$,
-  useTask$,
+  useTask$
 } from "@builder.io/qwik";
 import styles from "./cli-copy.css?inline";
 
@@ -34,6 +34,7 @@ export const CLICopy = component$((props: PropsOf<"button">) => {
       }}
       data-click-success={isCopied.value ? "true" : "false"}
       data-interacted={hasInteracted.value ? "" : undefined}
+      data-js
       {...props}
     >
       <span>{isCopied.value ? "Copied!" : "Copy CLI command"}</span>
