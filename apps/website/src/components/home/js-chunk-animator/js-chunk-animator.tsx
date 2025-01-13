@@ -9,7 +9,14 @@ import { JSChunk } from "../js-chunk/js-chunk";
 
 export const JSChunkAnimator = component$(() => {
   const chunks = useSignal<
-    { id: number; x: number; y: number; direction: number; rotation: number }[]
+    {
+      id: number;
+      x: number;
+      y: number;
+      direction: number;
+      height: number;
+      rotation: number;
+    }[]
   >([]);
   const nextId = useSignal(0);
 
@@ -26,16 +33,26 @@ export const JSChunkAnimator = component$(() => {
 
     .animated-chunk {
       position: fixed;
-      animation: popOutJS 1.2s linear(0, 1 37.8%, 0.883 44.2%, 0.855 47.1%, 0.846 50%, 0.853 52.7%, 0.875 55.5%, 1 65.5%, 0.967 69.4%, 0.957 73.1%, 0.964 76.5%, 1 84.5%, 0.993 89.3%, 1) forwards;
+      animation: 
+        popUpJS 0.3s cubic-bezier(0.2, 0.8, 0.3, 1) forwards,
+        fallJS 0.9s cubic-bezier(0.33, 0.1, 0.17, 1) forwards;
+      animation-delay: 0s, 0.3s;
     }
 
-    @keyframes popOutJS {
+    @keyframes popUpJS {
       0% {
         transform: translate(var(--x), var(--y)) scale(1) rotate(0deg);
         opacity: 1;
       }
-      70% {
-        transform: translate(calc(var(--x) + var(--direction)), calc(var(--y) + 50px)) scale(1.2) rotate(360deg);
+      100% {
+        transform: translate(calc(var(--x) + var(--direction) * 0.3), calc(var(--y) + var(--height))) scale(1) rotate(72deg);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fallJS {
+      0% {
+        transform: translate(calc(var(--x) + var(--direction) * 0.3), calc(var(--y) + var(--height))) scale(1) rotate(72deg);
         opacity: 1;
       }
       100% {
@@ -53,16 +70,18 @@ export const JSChunkAnimator = component$(() => {
       if (jsElement) {
         const rect = jsElement.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
+        const topY = rect.top - 30;
 
         const newChunks = Array.from({ length: 3 }, (_, i) => {
-          const direction = (i - 1) * 200;
+          const direction = (Math.random() - 0.5) * 400;
+          const height = i === 0 ? -180 : -120;
           return {
             id: nextId.value++,
             x: centerX,
-            y: centerY,
+            y: topY,
             direction,
-            rotation: direction > 0 ? 360 : -360
+            height,
+            rotation: Math.random() < 0.5 ? 360 : -360
           };
         });
 
@@ -81,6 +100,7 @@ export const JSChunkAnimator = component$(() => {
             "--x": `${chunk.x}px`,
             "--y": `${chunk.y}px`,
             "--direction": `${chunk.direction}px`,
+            "--height": `${chunk.height}px`,
             "--rotation": `${chunk.rotation}deg`
           }}
         >
