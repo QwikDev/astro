@@ -19,19 +19,30 @@ import heroImage from "../assets/q-astro-hero.png";
       </Spotlight>
 
       <h1>
-        {
-          "QWIK ASTRO".split("").map((letter, i) => (
+        <span>
+          {"QWIK".split("").map((letter, i) => (
             <span
               class="letter"
-              style={`animation-delay: ${i * 0.15}s; ${letter === "K" && "margin-right: var(--space-s); display: block"}`}
+              style={`animation-delay: ${i * 0.15}s;`}
             >
               {letter}
             </span>
-          ))
-        }
+          ))}
+        </span>
+        <span>
+          {"ASTRO".split("").map((letter, i) => (
+            <span
+              class="letter"
+              style={`animation-delay: ${(i + 5) * 0.15}s;`}
+            >
+              {letter}
+            </span>
+          ))}
+        </span>
       </h1>
 
       <span
+      
         >Zero hydration. Zero compromise. The only instantly interactive UI
         framework that's HTML and server-first, just like Astro.</span
       >
@@ -58,6 +69,9 @@ import heroImage from "../assets/q-astro-hero.png";
   h1 {
     margin-block: var(--space-m);
     display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    line-height: 1;
   }
 
   .grid-line {
@@ -73,17 +87,14 @@ import heroImage from "../assets/q-astro-hero.png";
     padding: var(--space-m);
   }
 
-  .intro .subheading {
-    font-size: var(--step-2);
-  }
-
   .intro h1 span {
     font-size: var(--step-5);
-    display: block;
+    display: flex;
   }
 
   .intro h1 {
     display: flex;
+    flex-wrap: wrap;
   }
 
   .intro > span {
