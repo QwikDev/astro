@@ -19,6 +19,7 @@ export const JSChunkAnimator = component$(() => {
     }[]
   >([]);
   const nextId = useSignal(0);
+  const hasInteracted = useSignal(false);
 
   useStylesScoped$(`
     .chunk-container {
@@ -72,6 +73,9 @@ export const JSChunkAnimator = component$(() => {
       const target = event.target as HTMLElement;
       const jsElement = target.closest("[data-js]");
       if (jsElement) {
+        if (hasInteracted.value) return;
+
+        hasInteracted.value = true;
         const rect = jsElement.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const topY = rect.top - 30;
