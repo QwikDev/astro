@@ -6,6 +6,7 @@ import { Spotlight } from "@components/home/spotlight/spotlight";
 import { Icon } from "astro-icon/components";
 import Layout from "src/layouts/Layout.astro";
 import heroImage from "../assets/q-astro-hero.png";
+import { Squiggle } from "@components/home/squiggle/squiggle";
 ---
 
 <Layout title="Qwik + Astro">
@@ -42,10 +43,18 @@ import heroImage from "../assets/q-astro-hero.png";
       </h1>
 
       <span
-      
-        >Zero hydration. Zero compromise. The only instantly interactive UI
-        framework that's HTML and server-first, just like Astro.</span
-      >
+        class="subtitle"
+        >Zero hydration. Zero compromise. The only 
+        <span class="squiggle-container">
+          <span>instantly interactive</span>
+          <Squiggle />
+        </span> UI
+        framework that's HTML and server-first, just like 
+        <span class="squiggle-container">
+          <span>Astro</span>
+          <Squiggle stroke="var(--rose-500)" stroke-width="12" style={{ transform: 'translateY(-2px)' }} />
+        </span>.
+      </span>
 
       <div class="navigation">
         <CLICopy>
@@ -117,6 +126,15 @@ import heroImage from "../assets/q-astro-hero.png";
     opacity: 0;
     animation: fade-in 0.5s forwards;
     animation-timing-function: var(--qa-fade);
+  }
+
+  .squiggle-container {
+    display: inline-block;
+    position: relative;
+  }
+
+  .subtitle {
+    line-height: 1.7;
   }
 
   @keyframes fade-in {
