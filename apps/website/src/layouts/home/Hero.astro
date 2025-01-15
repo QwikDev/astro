@@ -1,12 +1,13 @@
 ---
-import heroImage from "@assets/q-astro-hero.png";
 import { Image } from "astro:assets";
-import { Icon } from "astro-icon/components";
-import { LucidePlanet } from "@icons/lucide-planet";
+import heroImage from "@assets/q-astro-hero.png";
 import { Background } from "@components/home/background/background";
 import { CLICopy } from "@components/home/cli-copy/cli-copy";
+import { LogoHover } from "@components/home/logo-hover/logo-hover";
 import { Spotlight } from "@components/home/spotlight/spotlight";
 import { Squiggle } from "@components/home/squiggle/squiggle";
+import { LucidePlanet } from "@icons/lucide-planet";
+import { Icon } from "astro-icon/components";
 ---
 
 <Background />
@@ -65,9 +66,10 @@ import { Squiggle } from "@components/home/squiggle/squiggle";
     </a>
   </div>
 </div>
-</main>
 
 <div class="grid-line" aria-hidden="true"></div>
+
+<LogoHover />
 
 <style>
     .hero-image {

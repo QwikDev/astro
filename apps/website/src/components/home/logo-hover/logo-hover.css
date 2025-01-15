@@ -1,0 +1,6 @@
+.letter {
+  display: inline-block;
+  opacity: 0;
+  animation: fade-in 0.5s forwards;
+  animation-timing-function: var(--qa-fade);
+}
