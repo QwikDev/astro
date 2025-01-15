@@ -21,9 +21,7 @@ export const LogoHover = component$(() => {
             })}
             onMouseMove$={$(({ clientX, clientY }) => {
               if (!qwikLogoRef.value) return;
-              const x = clientX - qwikLogoRef.value.offsetWidth / 2;
-              const y = clientY - qwikLogoRef.value.offsetHeight / 2;
-              qwikLogoRef.value.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+              qwikLogoRef.value.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
             })}
             onMouseLeave$={$(() => {
               if (!qwikLogoRef.value) return;
@@ -44,7 +42,8 @@ export const LogoHover = component$(() => {
               astroLogoRef.value.style.scale = "1";
             })}
             onMouseMove$={$(({ clientX, clientY }) => {
-              console.log("hi");
+              if (!astroLogoRef.value) return;
+              astroLogoRef.value.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
             })}
             onMouseLeave$={$(() => {
               if (!astroLogoRef.value) return;

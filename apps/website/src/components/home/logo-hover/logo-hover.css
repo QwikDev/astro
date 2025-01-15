@@ -18,18 +18,6 @@
   animation-timing-function: var(--qa-fade);
 }
 
-.qwik-logo {
-  box-shadow: var(--shadow-elevation-medium);
-}
-
-.qwik-astro-logos {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: var(--space-l);
-  padding-block: var(--space-s);
-}
-
 .tooltip {
   position: absolute;
   padding-block: var(--space-3xs);
@@ -42,6 +30,10 @@
   transition: scale 200ms ease, opacity 200ms ease;
   pointer-events: none;
   top: 0;
+  background: var(--off-black);
+  border: 1px solid white;
+  border-radius: 9999999px;
+  box-shadow: var(--shadow-elevation-high);
 }
 
 .qwik-logo,
