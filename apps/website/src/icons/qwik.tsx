@@ -10,6 +10,7 @@ export const QwikIcon = component$((props: PropsOf<"svg">) => {
       xmlns="http://www.w3.org/2000/svg"
       role="img"
       class="qwik-logo"
+      {...props}
     >
       <title>Qwik Logo</title>
       <path

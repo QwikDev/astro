@@ -1,6 +1,50 @@
+.intro h1 {
+  margin-block: var(--space-m);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  line-height: 1;
+}
+
+.intro h1 span {
+  font-size: var(--step-5);
+  display: flex;
+}
+
 .letter {
   display: inline-block;
   opacity: 0;
   animation: fade-in 0.5s forwards;
   animation-timing-function: var(--qa-fade);
+}
+
+.qwik-logo {
+  box-shadow: var(--shadow-elevation-medium);
+}
+
+.qwik-astro-logos {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-l);
+  padding-block: var(--space-s);
+}
+
+.tooltip {
+  position: absolute;
+  padding-block: var(--space-3xs);
+  padding-inline: var(--space-2xs);
+  background: hsl(var(--dark));
+  border: 2px dotted hsl(var(--primary));
+  color: hsl(var(--light));
+  opacity: 0;
+  scale: 0;
+  transition: scale 200ms ease, opacity 200ms ease;
+  pointer-events: none;
+  top: 0;
+}
+
+.qwik-logo,
+.astro-logo {
+  will-change: transform;
 }
