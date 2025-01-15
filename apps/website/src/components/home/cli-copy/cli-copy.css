@@ -8,6 +8,7 @@
   transition: background-color 0.35s;
   transition-timing-function: var(--qa-hover);
   min-width: 221.65px;
+  box-shadow: var(--shadow-elevation-medium);
 }
 
 .cli-copy:hover {

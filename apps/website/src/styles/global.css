@@ -100,6 +100,27 @@
     0.988 92.1%,
     1
   );
+
+  /* Shadows */
+  --shadow-color: 0deg 0% 0%;
+  --shadow-elevation-low:
+    0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.34),
+    0.5px 0.9px 1.2px -1.2px hsl(var(--shadow-color) / 0.34),
+    1.3px 2.1px 2.8px -2.5px hsl(var(--shadow-color) / 0.34);
+  --shadow-elevation-medium:
+    0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.36),
+    1.1px 1.7px 2.3px -0.8px hsl(var(--shadow-color) / 0.36),
+    2.7px 4.4px 5.8px -1.7px hsl(var(--shadow-color) / 0.36),
+    6.6px 10.6px 14px -2.5px hsl(var(--shadow-color) / 0.36);
+  --shadow-elevation-high:
+    0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.34),
+    1.9px 3.1px 4.1px -0.4px hsl(var(--shadow-color) / 0.34),
+    3.6px 5.8px 7.7px -0.7px hsl(var(--shadow-color) / 0.34),
+    5.9px 9.5px 12.6px -1.1px hsl(var(--shadow-color) / 0.34),
+    9.5px 15.2px 20.2px -1.4px hsl(var(--shadow-color) / 0.34),
+    14.8px 23.7px 31.4px -1.8px hsl(var(--shadow-color) / 0.34),
+    22.5px 36.1px 47.9px -2.1px hsl(var(--shadow-color) / 0.34),
+    33.1px 53.1px 70.4px -2.5px hsl(var(--shadow-color) / 0.34);
 }
 
 *,
