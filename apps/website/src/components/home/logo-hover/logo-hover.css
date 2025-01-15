@@ -6,6 +6,11 @@
   line-height: 1;
 }
 
+.logo-hover {
+  position: relative;
+  width: fit-content;
+}
+
 .intro h1 span {
   font-size: var(--step-5);
   display: flex;
@@ -27,9 +32,10 @@
   color: hsl(var(--light));
   opacity: 0;
   scale: 0;
+  left: 50%;
+  top: 0;
   transition: scale 200ms ease, opacity 200ms ease;
   pointer-events: none;
-  top: 0;
   background: var(--off-black);
   border: 1px solid white;
   border-radius: 9999999px;

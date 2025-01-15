@@ -50,7 +50,7 @@ export const LogoHover = component$(() => {
   });
 
   return (
-    <>
+    <div class="logo-hover">
       <h1>
         <span
           onMouseEnter$={() => handleMouseEnter(qwikLogoRef, qwikRect)}
@@ -85,6 +85,6 @@ export const LogoHover = component$(() => {
       </h1>
       <QwikIcon ref={qwikLogoRef} class="qwik-logo tooltip" />
       <AstroIcon ref={astroLogoRef} class="astro-logo tooltip" />
-    </>
+    </div>
   );
 });
