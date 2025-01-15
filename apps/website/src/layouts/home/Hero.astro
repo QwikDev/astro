@@ -18,28 +18,7 @@ import { Icon } from "astro-icon/components";
  <Image loading="eager" class="hero-image" src={heroImage} alt="Qwik + Astro" />
 </Spotlight>
 
-  <h1>
-    <span>
-      {"QWIK".split("").map((letter, i) => (
-        <span
-          class="letter"
-          style={`animation-delay: ${i * 0.15}s;`}
-        >
-          {letter}
-        </span>
-      ))}
-    </span>
-    <span>
-      {"ASTRO".split("").map((letter, i) => (
-        <span
-          class="letter"
-          style={`animation-delay: ${(i + 5) * 0.15}s;`}
-        >
-          {letter}
-        </span>
-      ))}
-    </span>
-  </h1>
+<LogoHover />
 
   <span
     class="subtitle"
@@ -69,21 +48,11 @@ import { Icon } from "astro-icon/components";
 
 <div class="grid-line" aria-hidden="true"></div>
 
-<LogoHover />
-
 <style>
     .hero-image {
       object-fit: cover;
       height: 250px;
       border-radius: 8px;
-    }
-  
-    h1 {
-      margin-block: var(--space-m);
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-xs);
-      line-height: 1;
     }
   
     a {
