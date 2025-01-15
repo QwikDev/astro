@@ -5,7 +5,8 @@
     "paths": {
       "@components/*": ["./src/components/*"],
       "@icons/*": ["./src/icons/*"],
-      "@assets/*": ["./src/assets/*"]
+      "@assets/*": ["./src/assets/*"],
+      "@layouts/*": ["./src/layouts/*"]
     },
 
     "jsx": "react-jsx",
