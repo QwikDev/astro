@@ -37,8 +37,8 @@ export const CLICopy = component$((props: PropsOf<"button">) => {
       data-js
       {...props}
     >
+        <Slot />
       <span>{isCopied.value ? "Copied!" : "Copy CLI command"}</span>
-      <Slot />
     </button>
   );
 });

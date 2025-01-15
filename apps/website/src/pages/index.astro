@@ -7,6 +7,7 @@ import { Icon } from "astro-icon/components";
 import Layout from "src/layouts/Layout.astro";
 import heroImage from "../assets/q-astro-hero.png";
 import { Squiggle } from "@components/home/squiggle/squiggle";
+import { LucidePlanet } from "@icons/lucide-planet";
 ---
 
 <Layout title="Qwik + Astro">
@@ -58,10 +59,13 @@ import { Squiggle } from "@components/home/squiggle/squiggle";
 
       <div class="navigation">
         <CLICopy>
-          <span data-copy-icon><Icon name="tabler:clipboard-text" /></span>
-          <span data-copy-success><Icon name="tabler:clipboard-check" /></span>
+          <span data-copy-icon><Icon name="lucide:clipboard" /></span>
+          <span data-copy-success><Icon name="lucide:check" /></span>
         </CLICopy>
-        <a href="/docs">Explore the docs</a>
+        <a href="/docs">
+          <LucidePlanet />
+          <span>Explore the docs</span>
+        </a>
       </div>
     </div>
   </main>
@@ -81,6 +85,21 @@ import { Squiggle } from "@components/home/squiggle/squiggle";
     flex-wrap: wrap;
     gap: var(--space-xs);
     line-height: 1;
+  }
+
+  a {
+    text-decoration: none;
+    border: var(--space-4xs) solid var(--neutral-800);
+    padding: var(--space-3xs);
+    transition: background-color 0.35s;
+    transition-timing-function: var(--qa-hover);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+  }
+
+  a:hover {
+    background-color: var(--neutral-950);
   }
 
   .grid-line {
