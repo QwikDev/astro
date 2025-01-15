@@ -8,6 +8,8 @@ export const LogoHover = component$(() => {
 
   const astroLogoRef = useSignal<HTMLElement>();
   const qwikLogoRef = useSignal<HTMLElement>();
+  const qwikRect = useSignal<DOMRect>();
+  const astroRect = useSignal<DOMRect>();
 
   return (
     <>
@@ -17,10 +19,14 @@ export const LogoHover = component$(() => {
             if (!qwikLogoRef.value) return;
             qwikLogoRef.value.style.opacity = "1";
             qwikLogoRef.value.style.scale = "1";
+            qwikRect.value = qwikLogoRef.value.getBoundingClientRect();
           })}
           onMouseMove$={$(({ clientX, clientY }) => {
             if (!qwikLogoRef.value) return;
-            qwikLogoRef.value.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
+            if (!qwikRect.value) return;
+            const x = clientX - qwikRect.value.left + 10;
+            const y = clientY - qwikRect.value.top - 45;
+            qwikLogoRef.value.style.transform = `translate(${x}px, ${y}px)`;
           })}
           onMouseLeave$={$(() => {
             if (!qwikLogoRef.value) return;
@@ -39,6 +45,7 @@ export const LogoHover = component$(() => {
             if (!astroLogoRef.value) return;
             astroLogoRef.value.style.opacity = "1";
             astroLogoRef.value.style.scale = "1";
+            astroRect.value = astroLogoRef.value.getBoundingClientRect();
           })}
           onMouseMove$={$(({ clientX, clientY }) => {
             if (!astroLogoRef.value) return;

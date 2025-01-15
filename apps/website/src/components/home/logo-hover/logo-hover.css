@@ -34,6 +34,7 @@
   border: 1px solid white;
   border-radius: 9999999px;
   box-shadow: var(--shadow-elevation-high);
+  z-index: 1000;
 }
 
 .qwik-logo,
