@@ -7,6 +7,7 @@
   gap: var(--space-3xs);
   transition: background-color 0.35s;
   transition-timing-function: var(--qa-hover);
+  min-width: 221.65px;
 }
 
 .cli-copy:hover {

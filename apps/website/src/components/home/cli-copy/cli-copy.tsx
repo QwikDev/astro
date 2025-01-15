@@ -38,7 +38,7 @@ export const CLICopy = component$((props: PropsOf<"button">) => {
       {...props}
     >
         <Slot />
-      <span>{isCopied.value ? "Copied!" : "Copy CLI command"}</span>
+      <span>{isCopied.value ? "Command copied!" : "Copy CLI command"}</span>
     </button>
   );
 });
