@@ -38,9 +38,9 @@
     "@inox-tools/astro-tests": "^0.2.2",
     "@playwright/test": "^1.49.1",
     "@qwikdev/create-astro": "workspace:*",
-    "@types/node": "^22.10.5",
-    "astro": "5.1.5",
-    "lefthook": "^1.10.3",
+    "@types/node": "^22.10.7",
+    "astro": "5.1.7",
+    "lefthook": "^1.10.7",
     "pkg-pr-new": "^0.0.39"
   }
 }
