@@ -12,7 +12,6 @@ export default defineConfig((options) => {
       "src/console.ts",
       "src/core.ts",
       "src/index.ts",
-      "src/process.ts",
       "src/tester.ts",
       "src/utils.ts"
     ]

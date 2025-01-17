@@ -2,11 +2,11 @@ import fs, { cpSync } from "node:fs";
 import path from "node:path";
 import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
 import pm from "panam";
+import { $ } from "panam/process";
 import { defaultOptions } from "panam/process";
 import pkg from "../package.json";
 import { ensureString } from "./console";
 import { type Definition as BaseDefinition, Program } from "./core";
-import { $ } from "./process";
 import {
   __dirname,
   clearDir,
@@ -534,9 +534,9 @@ export class Application extends Program<Definition, Input> {
         const res = [];
         try {
           if (!initialized) {
-            res.push(await $("git", ["init"], outDir).process);
+            res.push(await $("git", ["init"], { cwd: outDir }).result);
           }
-          res.push(await $("git", ["add", "-A"], outDir).process);
+          res.push(await $("git", ["add", "-A"], { cwd: outDir }).result);
           res.push(
             await $(
               "git",
@@ -545,11 +545,11 @@ export class Application extends Program<Definition, Input> {
                 "-m",
                 `${initialized ? "➕ Add @qwikdev/astro" : "Initial commit 🎉"}`
               ],
-              outDir
-            ).process
+              { cwd: outDir }
+            ).result
           );
 
-          if (res.some((r) => r === false)) {
+          if (res.some((r) => r.status === false)) {
             throw "";
           }
 

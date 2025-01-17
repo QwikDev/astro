@@ -67,12 +67,6 @@
       "require": "./dist/core.cjs",
       "default": "./dist/core.js"
     },
-    "./process": {
-      "types": "./dist/process.d.ts",
-      "import": "./dist/process.js",
-      "require": "./dist/process.cjs",
-      "default": "./dist/process.js"
-    },
     "./tester": {
       "types": "./dist/tester.d.ts",
       "import": "./dist/tester.js",
