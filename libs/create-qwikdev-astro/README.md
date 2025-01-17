@@ -1,10 +1,30 @@
-# Create @qwikdev/astro 🎉
+# Create [@qwikdev/astro](https://github.com/QwikDev/astro) 🦾
 
 ## **The Ultimate Starter for QwikDev/Astro Projects**
 
 Seamlessly scaffold content-driven web projects with the power of [QwikDev/Astro](https://github.com/QwikDev/astro).
 Whether you're building blazing-fast blogs, portfolios, or scalable applications,
 this CLI has you covered.
+
+## Quickstart 🎉
+
+### Have an existing project?
+
+If you already have an existing Astro project and want to add the integration,
+you can do so with the following command:
+
+  ```bash
+  npm create @qwikdev/astro@latest --add
+  ```
+
+### Create a new project
+
+To create a brand new project,
+you can use the following command:
+
+  ```bash
+  npm create @qwikdev/astro@latest
+  ```
 
 ---
 
