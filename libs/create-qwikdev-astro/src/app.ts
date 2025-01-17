@@ -3,7 +3,6 @@ import path from "node:path";
 import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
 import pm from "panam";
 import { $ } from "panam/process";
-import { defaultOptions } from "panam/process";
 import pkg from "../package.json";
 import { ensureString } from "./console";
 import { type Definition as BaseDefinition, Program } from "./core";
@@ -346,7 +345,7 @@ export class Application extends Program<Definition, Input> {
     this.info("Adding @QwikDev/astro...");
     try {
       if (!input.dryRun) {
-        await pm.x("astro add @qwikdev/astro", { ...defaultOptions, cwd: input.outDir });
+        await pm.x("astro add @qwikdev/astro", { cwd: input.outDir });
       }
 
       if (input.copy) {
@@ -405,7 +404,7 @@ export class Application extends Program<Definition, Input> {
     }
 
     await this.prepareDir(input);
-    await pm.create(args.join(" "), { ...defaultOptions, cwd: input.outDir });
+    await pm.create(args.join(" "), { cwd: input.outDir });
 
     this.copyTemplate(
       input,
@@ -509,7 +508,7 @@ export class Application extends Program<Definition, Input> {
       this.step(`Installing${input.template ? " new " : " "}dependencies...`);
 
       if (!input.dryRun) {
-        await pm.install({ ...defaultOptions, cwd: input.outDir });
+        await pm.install({ cwd: input.outDir });
       }
 
       ranInstall = true;
