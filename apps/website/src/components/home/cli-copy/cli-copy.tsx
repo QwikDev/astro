@@ -4,7 +4,7 @@ import {
   component$,
   useSignal,
   useStyles$,
-  useTask$
+  useTask$,
 } from "@builder.io/qwik";
 import styles from "./cli-copy.css?inline";
 
@@ -37,7 +37,7 @@ export const CLICopy = component$((props: PropsOf<"button">) => {
       data-js
       {...props}
     >
-        <Slot />
+      <Slot />
       <span>{isCopied.value ? "Command copied!" : "Copy CLI command"}</span>
     </button>
   );

@@ -3,7 +3,7 @@ import {
   component$,
   useOnDocument,
   useSignal,
-  useStylesScoped$
+  useStylesScoped$,
 } from "@builder.io/qwik";
 import { JSChunk } from "../js-chunk/js-chunk";
 
@@ -89,13 +89,13 @@ export const JSChunkAnimator = component$(() => {
             y: topY,
             direction,
             height,
-            rotation: Math.random() < 0.5 ? 360 : -360
+            rotation: Math.random() < 0.5 ? 360 : -360,
           };
         });
 
         chunks.value = [...chunks.value, ...newChunks];
       }
-    })
+    }),
   );
 
   return (
@@ -109,7 +109,7 @@ export const JSChunkAnimator = component$(() => {
             "--y": `${chunk.y}px`,
             "--direction": `${chunk.direction}px`,
             "--height": `${chunk.height}px`,
-            "--rotation": `${chunk.rotation}deg`
+            "--rotation": `${chunk.rotation}deg`,
           }}
         >
           <JSChunk />
