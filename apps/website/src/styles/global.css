@@ -85,6 +85,7 @@
 
   /* Custom pairs */
   --space-s-l: clamp(1.125rem, 0.6467rem + 2.3913vw, 2.5rem);
+  --space-xl-3xl: clamp(3.375rem, 1.9402rem + 7.1739vw, 7.5rem);
 
   /* Animations */
   --qa-fade: cubic-bezier(0.8, -0.4, 0.5, 1);
@@ -100,6 +101,9 @@
     0.988 92.1%,
     1
   );
+
+  --breakpoint-sm: 640px;
+  --breakpoint-xl: 1240px;
 
   /* Shadows */
   --shadow-color: 0deg 0% 0%;

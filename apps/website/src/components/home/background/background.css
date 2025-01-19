@@ -16,15 +16,25 @@
 span {
   background: linear-gradient(to bottom, transparent 10%, var(--off-black) 100%);
   display: block;
-  height: 160px;
+  height: var(--space-xl-3xl);
   width: 100%;
   position: absolute;
   top: 0;
   z-index: 50;
 }
 
+@media (max-width: 640px) {
+  span {
+    display: none;
+  }
+
+  .background-wrapper > div {
+    display: none;
+  }
+}
+
 .background-wrapper > div {
-  height: 160px;
+  height: var(--space-xl-3xl);
   background: lightblue;
   animation: fade-background 3s forwards;
   opacity: 0;
