@@ -82,7 +82,7 @@ Run the following command using your preferred package manager:
   | `--copy` / `--no-copy`       | `-c` / `--no-c` | Copy files without overwriting.                |
   | `--biome` / `--no-biome`     |                 | Use Biome instead of ESLint/Prettier.          |
   | `--install` / `--no-install` | `-i` / `--no-i` | Automatically install dependencies.            |
-  | `--git` / `--no-git`         |                 | Initialize a Git repository.                   |
+  | `--git` / `--no-git`         |                 | Use Git to save changes.                       |
   | `--ci` / `--no-ci`           |                 | Add CI workflow.                               |
   | `--yes`                      | `-y`            | Accept all default configurations.             |
   | `--no`                       | `-n`            | Decline all default configurations.            |

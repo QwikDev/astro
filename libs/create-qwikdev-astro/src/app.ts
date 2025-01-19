@@ -125,7 +125,7 @@ export class Application extends Program<Definition, Input> {
       .option("git", {
         type: "boolean",
         default: defaultDefinition.git,
-        desc: "Initialize Git repository"
+        desc: "Use Git to save changes"
       })
       .option("ci", {
         type: "boolean",
@@ -295,7 +295,12 @@ export class Application extends Program<Definition, Input> {
       : definition.install);
 
     const git = !!(ask && definition.git === undefined
-      ? await this.scanBoolean(definition, "Would you like to initialize Git?")
+      ? await this.scanBoolean(
+          definition,
+          !exists || force
+            ? "Would you like to initialize Git?"
+            : "Would you like to save the changes with Git?"
+        )
       : definition.git);
 
     const dryRun = !!definition.dryRun;
@@ -523,11 +528,12 @@ export class Application extends Program<Definition, Input> {
 
       const outDir = input.outDir;
       const initialized = fs.existsSync(path.join(outDir, ".git"));
+      const addChanges = initialized || input.add;
       if (initialized) {
         this.info("Git has already been initialized before.");
       }
 
-      s.start(`${initialized ? "Adding New Changes to" : "Initializing"} Git...`);
+      s.start(`${addChanges ? "Adding New Changes to" : "Initializing"} Git...`);
 
       if (!input.dryRun) {
         const res = [];
@@ -542,7 +548,7 @@ export class Application extends Program<Definition, Input> {
               [
                 "commit",
                 "-m",
-                `${initialized ? "➕ Add @qwikdev/astro" : "Initial commit 🎉"}`
+                `${addChanges ? "➕ Add @qwikdev/astro" : "Initial commit 🎉"}`
               ],
               { cwd: outDir }
             ).result
@@ -552,14 +558,16 @@ export class Application extends Program<Definition, Input> {
             throw "";
           }
 
-          s.stop(`${initialized ? "Changes added to Git ✨" : "Git initialized 🎲"}`);
+          s.stop(`${addChanges ? "Changes added to Git ✨" : "Git initialized 🎲"}`);
         } catch (e) {
-          s.stop(`Git failed to ${initialized ? "add new changes" : "initialize"}`);
+          s.stop(`Git failed to ${addChanges ? "add new changes" : "initialize"}`);
           if (!initialized) {
             this.error(
-              this.red(
-                "Git failed to initialize. You can do this manually by running: git init"
-              )
+              "Git failed to initialize. You can do this manually by running: git init"
+            );
+          } else {
+            this.error(
+              "Git failed to add new changes. You can do this manually by running: git add -A && git commit"
             );
           }
         }
