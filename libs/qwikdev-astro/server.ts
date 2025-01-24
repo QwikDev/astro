@@ -15,13 +15,25 @@ type RendererContext = {
   result: SSRResult;
 };
 
+/**
+ *  Because inline components are very much like normal functions, it's hard to distinguish them from normal functions.
+ *
+ * We currently identify them through the jsx transform function call.
+ *
+ * In Qwik v1, the identifiers are _jsxq and _jsxc
+ *
+ * In Qwik v2, it is jsxsplit and I believe jsxSorted
+ *
+ */
 function isInlineComponent(component: unknown): boolean {
   if (typeof component !== "function") {
     return false;
   }
   const codeStr = component?.toString().toLowerCase();
   return (
-    (codeStr.includes("_jsxq") || codeStr.includes("jsxsplit")) &&
+    (codeStr.includes("_jsxq") ||
+      codeStr.includes("_jsxc") ||
+      codeStr.includes("jsxsplit")) &&
     component.name !== "QwikComponent"
   );
 }
