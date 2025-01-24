@@ -12,6 +12,7 @@ export const Squiggle = component$((props: PropsOf<"svg">) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
+      aria-hidden="true"
     >
       <path
         d="M2.50147 10.4772C140.69 52.2251 165.072 6.01877 246.585 19.0008C328.098 31.9828 327.794 -2.77817 421.562 7.01197C496.576 14.8441 561.181 7.78511 584.107 3.27661"

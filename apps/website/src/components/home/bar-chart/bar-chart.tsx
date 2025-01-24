@@ -1,4 +1,5 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useStylesScoped$ } from "@builder.io/qwik";
+import styles from "./bar-chart.css?inline";
 
 interface BarChartProps {
   data: { label: string; value: number }[];
@@ -8,6 +9,7 @@ interface BarChartProps {
 
 export const BarChart = component$((props: BarChartProps) => {
   const { data, width = 600, height = 400 } = props;
+  useStylesScoped$(styles);
 
   // Calculate dimensions
   const padding = 40;
@@ -64,6 +66,7 @@ export const BarChart = component$((props: BarChartProps) => {
           <g key={item.label}>
             {/* Bar */}
             <rect
+              class="bar-chart-bar"
               x={x + barWidth * 0.1}
               y={y}
               width={barWidth * 0.8}
