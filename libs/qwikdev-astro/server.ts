@@ -20,7 +20,7 @@ type RendererContext = {
  *
  * We currently identify them through the jsx transform function call.
  *
- * In Qwik v1, the identifiers are _jsxq and _jsxc
+ * In Qwik v1, the identifiers are _jsxQ - _jsxC - _jsxS
  *
  * In Qwik v2, it is jsxsplit and I believe jsxSorted
  *
@@ -30,12 +30,8 @@ function isInlineComponent(component: unknown): boolean {
     return false;
   }
   const codeStr = component?.toString().toLowerCase();
-  return (
-    (codeStr.includes("_jsxq") ||
-      codeStr.includes("_jsxc") ||
-      codeStr.includes("jsxsplit")) &&
-    component.name !== "QwikComponent"
-  );
+  const qwikJsxIdentifiers = ["_jsxq", "_jsxc", "_jsxs", "jsxsplit"];
+  return qwikJsxIdentifiers.some(id => codeStr.includes(id)) && component.name !== "QwikComponent";
 }
 
 function isQwikComponent(component: unknown) {
