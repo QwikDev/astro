@@ -1,5 +1,13 @@
 # @qwikdev/astro
 
+## 0.7.9
+
+### Patch Changes
+
+- 0013b58: fix: better handling for jsx transforms in inline components
+
+  fix: when in Astro client router, conditionally affect the string append rather than the html return for visible task support.
+
 ## 0.7.8
 
 ### Patch Changes
