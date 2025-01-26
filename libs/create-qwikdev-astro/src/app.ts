@@ -575,19 +575,37 @@ export class Application extends Program<Definition, Input> {
     }
   }
 
-  makeGitignore(input: Input) {
-    const dotGitignore = path.join(input.outDir, ".gitignore");
-    const exists = pathExistsSync(dotGitignore);
+  copyTools(input: Input) {
+    for (const filename of [
+      ...(input.biome
+        ? ["biome.json", "tsconfig.biome.json"]
+        : [
+            ".eslintignore",
+            ".eslintrc.cjs",
+            ".prettierignore",
+            "prettier.config.cjs",
+            "tsconfig.json"
+          ]),
+      "gitignore",
+      "README.md"
+    ]) {
+      let outfile = filename;
 
-    this.step(`${exists ? "Merging" : "Copying"} \`.gitignore\` file... 🙈`);
+      if (filename === "gitignore") {
+        outfile = ".gitignore";
+      }
+      if (filename.startsWith("tsconfig.")) {
+        outfile = "tsconfig.json";
+      }
+      const outpath = path.join(input.outDir, outfile);
+      const exists = pathExistsSync(outpath);
+      if (filename.startsWith(".") && filename.endsWith("ignore")) {
+        this.step(`${exists ? "Merging" : "Copying"} \`${outfile}\` file... 🙈`);
+      }
 
-    if (!input.dryRun) {
-      const gitignore = path.join(__dirname, "..", "stubs", "gitignore");
-
-      if (exists) {
-        mergeDotIgnoreFiles(dotGitignore, gitignore, true);
-      } else {
-        cpSync(gitignore, dotGitignore, { force: true });
+      if (!input.dryRun) {
+        const origin = path.join(__dirname, "..", "stubs", "tools", filename);
+        safeCopy(origin, outpath);
       }
     }
   }
@@ -616,7 +634,7 @@ export class Application extends Program<Definition, Input> {
           ? safeCopy(templatePath, outDir)
           : copySync(templatePath, outDir);
 
-        this.makeGitignore(input);
+        this.copyTools(input);
       } catch (error) {
         this.error(this.red(`Template copy failed: ${error}`));
       }

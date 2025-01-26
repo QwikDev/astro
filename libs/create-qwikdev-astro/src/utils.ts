@@ -1,6 +1,6 @@
 import fs, { readdirSync, statSync } from "node:fs";
 import os from "node:os";
-import path, { join, resolve, relative } from "node:path";
+import path, { join, resolve, relative, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
 import pm from "panam";
@@ -9,22 +9,29 @@ export const __filename = getModuleFilename();
 export const __dirname = path.dirname(__filename);
 
 export function safeCopy(source: string, target: string): void {
-  const files = readdirSync(source);
+  statSync(source).isDirectory()
+    ? safeCopyDir(source, target)
+    : safeCopyFile(source, target);
+}
+
+export function safeCopyDir(sourceDir: string, targetDir: string): void {
+  const files = readdirSync(sourceDir);
+  ensureDirSync(targetDir);
 
   for (const file of files) {
-    const sourcePath = join(source, file);
-    const targetPath = join(target, file);
+    safeCopy(join(sourceDir, file), join(targetDir, file));
+  }
+}
 
-    if (statSync(sourcePath).isDirectory()) {
-      ensureDirSync(targetPath);
-      safeCopy(sourcePath, targetPath);
-    } else if (!pathExistsSync(targetPath)) {
-      copySync(sourcePath, targetPath);
-    } else if (file.endsWith(".json")) {
-      deepMergeJsonFile(targetPath, sourcePath, true);
-    } else if (file.startsWith(".") && file.endsWith("ignore")) {
-      mergeDotIgnoreFiles(targetPath, sourcePath, true);
-    }
+export function safeCopyFile(sourceFile: string, targetFile: string): void {
+  const name = basename(sourceFile);
+
+  if (!pathExistsSync(targetFile)) {
+    copySync(sourceFile, targetFile);
+  } else if (name.endsWith(".json")) {
+    deepMergeJsonFile(targetFile, sourceFile, true);
+  } else if (name.startsWith(".") && name.endsWith("ignore")) {
+    mergeDotIgnoreFiles(targetFile, sourceFile, true);
   }
 }
 
