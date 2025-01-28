@@ -177,6 +177,7 @@ export async function renderToStaticMarkup(
 
     if (isQwikLoaderNeeded) {
       isQwikLoaderAddedMap.set(this.result, true);
+      renderToStreamOpts.containerAttributes!["q-astro-marker"] = "first";
     }
 
     await renderToStream(qwikComponentJSX, renderToStreamOpts);
