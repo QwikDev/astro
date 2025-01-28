@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.7.10
+
+### Patch Changes
+
+- 54ee1d1: dev mode: preloader support
+
 ## 0.7.9
 
 ### Patch Changes
