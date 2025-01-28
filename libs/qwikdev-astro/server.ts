@@ -84,8 +84,9 @@ export async function renderToStaticMarkup(
         ? {
             manifest: {} as QwikManifest,
             symbolMapper: (symbolName, mapper, parent) => {
-              const devUrl =
-                this.result.request.url.slice(0, -1) + parent + "_" + symbolName + ".js";
+              const requestUrl = new URL(this.result.request.url);
+              const origin = requestUrl.origin;
+              const devUrl = origin + parent + "_" + symbolName + ".js";
               devUrls.add(devUrl);
 
               // this determines if the container is the last one
