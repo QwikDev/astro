@@ -197,6 +197,12 @@ export async function renderToStaticMarkup(
         });
       </script>`;
 
+      // if there is one container, add the preloader script to the first one
+      if (html.includes('q-astro-marker="first"')) {
+        html += preloaderScript;
+      }
+
+      // if there is more than one container, add the preloader script to the last one
       if (html.includes('q-astro-marker="last"')) {
         html += preloaderScript;
       }
