@@ -15,13 +15,24 @@ type RendererContext = {
   result: SSRResult;
 };
 
+/**
+ *  Because inline components are very much like normal functions, it's hard to distinguish them from normal functions.
+ *
+ * We currently identify them through the jsx transform function call.
+ *
+ * In Qwik v1, the identifiers are _jsxQ - _jsxC - _jsxS
+ *
+ * In Qwik v2, it is jsxsplit and I believe jsxSorted
+ *
+ */
 function isInlineComponent(component: unknown): boolean {
   if (typeof component !== "function") {
     return false;
   }
   const codeStr = component?.toString().toLowerCase();
+  const qwikJsxIdentifiers = ["_jsxq", "_jsxc", "_jsxs", "jsxsplit"];
   return (
-    (codeStr.includes("_jsxq") || codeStr.includes("jsxsplit")) &&
+    qwikJsxIdentifiers.some((id) => codeStr.includes(id)) &&
     component.name !== "QwikComponent"
   );
 }
@@ -61,14 +72,28 @@ export async function renderToStaticMarkup(
     }
 
     let html = "";
+    const devUrls = new Set<string>();
 
     const renderToStreamOpts: RenderToStreamOptions = {
-      containerAttributes: { style: "display: contents" },
+      containerAttributes: {
+        style: "display: contents",
+        ...(isDev && { "q-astro-marker": "" })
+      },
       containerTagName: "div",
       ...(isDev
         ? {
             manifest: {} as QwikManifest,
-            symbolMapper: globalThis.symbolMapperFn
+            symbolMapper: (symbolName, mapper, parent) => {
+              const requestUrl = new URL(this.result.request.url);
+              const origin = requestUrl.origin;
+              const devUrl = origin + parent + "_" + symbolName + ".js";
+              devUrls.add(devUrl);
+
+              // this determines if the container is the last one
+              renderToStreamOpts.containerAttributes!["q-astro-marker"] = "last";
+
+              return globalThis.symbolMapperFn(symbolName, mapper, parent);
+            }
           }
         : {
             manifest: globalThis.qManifest
@@ -152,9 +177,36 @@ export async function renderToStaticMarkup(
 
     if (isQwikLoaderNeeded) {
       isQwikLoaderAddedMap.set(this.result, true);
+      renderToStreamOpts.containerAttributes!["q-astro-marker"] = "first";
     }
 
     await renderToStream(qwikComponentJSX, renderToStreamOpts);
+
+    // we only want to add the preloader script if the container is the last one
+    if (isDev && devUrls.size > 0) {
+      const preloaderScript = `<script q-astro-dev-preloader>
+        window.addEventListener("load",()=>{
+          const symbols = ${JSON.stringify(Array.from(devUrls))};
+          symbols.forEach(symbol => {
+            const link = document.createElement('link');
+            link.rel = 'modulepreload';
+            link.href = symbol;
+            link.fetchPriority = 'low';
+            document.head.appendChild(link);
+          });
+        });
+      </script>`;
+
+      // if there is one container, add the preloader script to the first one
+      if (html.includes('q-astro-marker="first"')) {
+        html += preloaderScript;
+      }
+
+      // if there is more than one container, add the preloader script to the last one
+      if (html.includes('q-astro-marker="last"')) {
+        html += preloaderScript;
+      }
+    }
 
     const isClientRouter = Array.from(this.result._metadata.renderedScripts).some(
       (path) => path.includes("ClientRouter.astro")
@@ -171,10 +223,9 @@ export async function renderToStaticMarkup(
     /** Adds support for visible tasks with Astro's client router */
     const htmlWithObservers =
       isClientRouter &&
-      isQwikLoaderNeeded &&
       htmlWithRerun +
         `
-      <script data-qwik-astro-client-router>document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>
+      ${isQwikLoaderNeeded ? `<script data-qwik-astro-client-router>document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>` : ""}
     `;
 
     return {
