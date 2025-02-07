@@ -394,7 +394,7 @@ export class Application extends Program<Definition, Input> {
   async runTemplate(input: Input) {
     const args = [
       "astro",
-      ".",
+      input.force ? "." : input.destination,
       "--",
       "--skip-houston",
       "--template",
@@ -410,7 +410,11 @@ export class Application extends Program<Definition, Input> {
     }
 
     await this.prepareDir(input);
-    await pm.create(args.join(" "), { cwd: input.outDir });
+
+    const res = await pm.create(args.join(" "), { cwd: input.outDir });
+    if (!res.status) {
+      this.panic(`Template creation failed: ${res.error}`);
+    }
 
     this.copyTemplate(
       input,
