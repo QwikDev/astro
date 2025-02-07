@@ -394,7 +394,7 @@ export class Application extends Program<Definition, Input> {
   async runTemplate(input: Input) {
     const args = [
       "astro",
-      input.destination,
+      ".",
       "--",
       "--skip-houston",
       "--template",
