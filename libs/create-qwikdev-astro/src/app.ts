@@ -10,7 +10,6 @@ import {
   __dirname,
   clearDir,
   getPackageJson,
-  mergeDotIgnoreFiles,
   notEmptyDir,
   replacePackageJsonRunCommand,
   resolveAbsoluteDir,
@@ -339,7 +338,7 @@ export class Application extends Program<Definition, Input> {
       const ranInstall = await this.start(input);
       this.updatePackageJson(input);
       this.runCI(input);
-      await this.runGitInit(input);
+      await this.runGit(input);
       this.end(input, ranInstall);
       return 0;
     } catch (err) {
@@ -524,7 +523,7 @@ export class Application extends Program<Definition, Input> {
     return ranInstall;
   }
 
-  async runGitInit(input: Input): Promise<void> {
+  async runGit(input: Input): Promise<void> {
     if (input.git) {
       const s = this.spinner();
 
