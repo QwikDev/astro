@@ -192,6 +192,18 @@ export class Application extends Program<Definition, Input> {
     const outDir = resolveAbsoluteDir(destination.trim());
     const exists = notEmptyDir(outDir);
 
+    const template: string =
+      definition.template === undefined &&
+      (await this.scanBoolean(
+        definition,
+        "Would you like to use the default template?",
+        true
+      ))
+        ? (definition.template ?? "")
+        : await this.scanString("What template would you like to use?", "");
+
+    const useTemplate = !!template;
+
     const add = !!(definition.add === undefined && !definition.force
       ? exists &&
         (await this.scanBoolean(
@@ -214,7 +226,7 @@ export class Application extends Program<Definition, Input> {
         : definition.force;
 
     const copy =
-      add || force
+      !useTemplate && (add || force)
         ? definition.copy === undefined
           ? await this.scanBoolean(
               definition,
@@ -224,22 +236,12 @@ export class Application extends Program<Definition, Input> {
           : false
         : !!definition.copy;
 
-    const template: string =
-      definition.template === undefined &&
-      (await this.scanBoolean(
-        definition,
-        "Would you like to use the default template?",
-        true
-      ))
-        ? (definition.template ?? "")
-        : await this.scanString("What template would you like to use?", "");
-
     const ask = !exists || add || force;
 
     let adapter: Adapter;
 
     if (
-      !template &&
+      !useTemplate &&
       ask &&
       (!add || force) &&
       definition.adapter === defaultDefinition.adapter
