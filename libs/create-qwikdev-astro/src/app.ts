@@ -199,8 +199,8 @@ export class Application extends Program<Definition, Input> {
         "Would you like to use the default template?",
         true
       ))
-        ? (definition.template ?? "")
-        : await this.scanString("What template would you like to use?", "");
+        ? await this.scanString("What template would you like to use?", "")
+        : (definition.template ?? "");
 
     const useTemplate = !!template;
 
