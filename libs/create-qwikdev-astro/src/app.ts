@@ -416,16 +416,7 @@ export class Application extends Program<Definition, Input> {
       this.panic(`Template creation failed: ${res.error}`);
     }
 
-    this.copyTemplate(
-      input,
-      path.join(
-        __dirname,
-        "..",
-        "stubs",
-        "templates",
-        `none${input.biome ? "-biome" : ""}`
-      )
-    );
+    this.copyTools(input);
 
     return this.runInstall(input);
   }
