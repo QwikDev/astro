@@ -52,7 +52,7 @@
       "recommended": true,
       "style": {
         "recommended": true,
-        "useBlockStatements": "error",
+        "useBlockStatements": "off",
         "useCollapsedElseIf": "warn",
         "useNamingConvention": {
           "level": "error",

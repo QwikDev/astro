@@ -1,0 +1,7 @@
+.bar-chart-bar {
+  transition: fill 0.2s var(--qa-hover);
+}
+
+.bar-chart-bar:hover {
+  fill: var(--purple-600);
+}

@@ -1,21 +1,33 @@
 {
-  "name": "@qwikdev/astro-website",
-  "private": true,
+  "name": "website",
   "type": "module",
-  "version": "0.0.1",
+  "private": true,
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev --open",
-    "build": "astro check && astro build",
-    "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "sync": "astro sync",
+    "build": "pnpm fix && astro build",
+    "check": "biome ci . && astro check",
+    "check.format": "biome format .",
+    "check.lint": "biome check .",
+    "dev": "astro dev --host",
+    "fix": "pnpm lint && pnpm format",
+    "format": "biome format --write .",
+    "lint": "biome check --apply-unsafe .",
+    "preview": "pnpm build && astro preview",
+    "prod": "pnpm check && astro build",
+    "start": "astro dev --open"
   },
   "dependencies": {
-    "@astrojs/check": "^0.5.10",
-    "@astrojs/starlight": "^0.21.5",
-    "@qwikdev/astro": "workspace:*",
-    "astro": "^4.16.18",
-    "sharp": "^0.32.6",
-    "typescript": "^5.7.2"
+    "@astrojs/check": "^0.9.4",
+    "@builder.io/qwik": "^1.12",
+    "@fontsource-variable/unbounded": "^5.1.1",
+    "@iconify-json/lucide": "^1.2.23",
+    "@qwikdev/astro": "^0.7",
+    "astro": "^5.1",
+    "astro-icon": "^1.1.4",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.7.0"
   }
 }

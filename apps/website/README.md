@@ -1,54 +1,69 @@
-# Starlight Starter Kit: Basics
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+# [@QwikDev/astro](https://github.com/QwikDev/astro) Starter Kit
 
-```
-npm create astro@latest -- --template starlight
-```
+## Overview
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/starlight/tree/main/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/starlight/tree/main/examples/basics)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwithastro%2Fstarlight%2Ftree%2Fmain%2Fexamples%2Fbasics&project-name=my-starlight-docs&repository-name=my-starlight-docs)
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Welcome to the [@QwikDev/astro](https://github.com/QwikDev/astro) starter kit! This kit enables seamless integration of Qwik components into your Astro projects, combining the efficiency of Qwik's component-based architecture with the flexibility of Astro's static site generation.
 
 ## 🚀 Project Structure
 
-Inside of your Astro + Starlight project, you'll see the following folders and files:
+Inside of your [Qwik](https://qwik.dev/) + [Astro](https://astro.build/) project, you'll see the following folders and files:
 
-```
-.
+```text
+/
 ├── public/
+│   └── favicon.svg
 ├── src/
 │   ├── assets/
-│   ├── content/
-│   │   ├── docs/
-│   │   └── config.ts
-│   └── env.d.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
+│   │   ├── astro.svg
+│   │   └── qwik.svg
+│   ├── components/
+│   │   ├── counter.module.css
+│   │   └── counter.tsx
+│   ├── layouts/
+│   │   └── Layout.astro
+│   ├── pages/
+│   │   └── index.astro
+│   └── styles/
+│       └── globals.css
+└── package.json
 ```
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+- **public/** : This directory contains static resources such as images, accessible from the root of your deployed site.
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+- **src/** : This directory is the core of your Qwik + Astro application. Here's an overview of its structure:
 
-Static assets, like favicons, can be placed in the `public/` directory.
+  - **assets/** : This directory is for resources such as images, SVG files, etc.
+  
+  - **components/** : Qwik components are stored here. Use this directory to organize and create reusable components for your application.
+  
+  - **layouts/** : Astro layouts reside in this directory. Layout files define the overall structure of your pages.
+  
+  - **pages/** : This directory contains the pages of your Astro application. Each file with the `.astro` or `.md` extension is exposed as a route based on its file name.
+  
+  - **styles/** : Global style files for your application are stored here, such as `globals.css`.
 
 ## 🧞 Commands
 
 All commands are run from the root of the project, from a terminal:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+| Command              | Action                                         |
+| :------------------- | :----------------------------------------------|
+| `pnpm install`         | Installs dependencies                          |
+| `pnpm start`           | Starts local dev server at `localhost:4321`      |
+| `pnpm build`           | Build your production site to `./dist/`          |
+| `pnpm preview`         | Preview your build locally, before deploying   |
+| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check`   |
+| `pnpm astro -- --help` | Get help using the Astro CLI                   |
 
-## 👀 Want to learn more?
+## 📚 References
 
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+- [Astro Documentation](https://astro.build/) - Explore more about Astro.
+
+- [Qwik Documentation](https://qwik.dev/) - Learn about Qwik and its features.
+
+- [Astro GitHub Repository](https://github.com/withastro/astro) - Contribute or report issues to the Astro project.
+
+- [Qwik GitHub Repository](https://github.com/BuilderIO/qwik) - Contribute or report issues to the Qwik project.
+
+- [Qwik + Astro GitHub Repository](https://github.com/QwikDev/astro) - Explore and contribute to the @QwikDev/astro integration project.

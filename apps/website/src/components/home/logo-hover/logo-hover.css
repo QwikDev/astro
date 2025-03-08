@@ -1,0 +1,66 @@
+.intro h1 {
+  margin-block: var(--space-m);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  line-height: 1;
+}
+
+.logo-hover {
+  position: relative;
+  width: fit-content;
+  --overshoot-easing-function: linear(
+    0,
+    0.402 7.4%,
+    0.711 15.3%,
+    0.929 23.7%,
+    1.008 28.2%,
+    1.067 33%,
+    1.099 36.9%,
+    1.12 41%,
+    1.13 45.4%,
+    1.13 50.1%,
+    1.111 58.5%,
+    1.019 83.2%,
+    1.004 91.3%,
+    1
+  );
+}
+
+.intro h1 span {
+  font-size: var(--step-5);
+  display: flex;
+}
+
+.letter {
+  display: inline-block;
+  opacity: 0;
+  animation: fade-in 0.5s forwards;
+  animation-timing-function: var(--qa-fade);
+}
+
+.tooltip {
+  position: absolute;
+  padding-block: var(--space-3xs);
+  padding-inline: var(--space-2xs);
+  background: hsl(var(--dark));
+  border: 2px dotted hsl(var(--primary));
+  color: hsl(var(--light));
+  opacity: 0;
+  scale: 0;
+  left: 50%;
+  top: 0;
+  transition: scale 500ms var(--overshoot-easing-function), opacity 200ms
+    var(--overshoot-easing-function);
+  pointer-events: none;
+  background: var(--off-black);
+  border: 1px solid white;
+  border-radius: 9999999px;
+  box-shadow: var(--shadow-elevation-high);
+  z-index: 1000;
+}
+
+.qwik-logo,
+.astro-logo {
+  will-change: transform;
+}

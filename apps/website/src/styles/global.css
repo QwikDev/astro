@@ -1,0 +1,205 @@
+:root {
+  /* colors */
+  --off-black: #0a0a0a;
+  --purple-50: #f1f3fc;
+  --purple-100: #e6e8f9;
+  --purple-200: #d1d4f4;
+  --purple-300: #b5b7ec;
+  --purple-400: #9996e3;
+  --purple-500: #867cd8;
+  --purple-600: #7461c8;
+  --purple-700: #6552b0;
+  --purple-800: #52458e;
+  --purple-900: #463d72;
+  --purple-950: #2a2442;
+
+  --rose-50: #fff1f2;
+  --rose-100: #ffe4e6;
+  --rose-200: #fecdd3;
+  --rose-300: #fda4af;
+  --rose-400: #fb7185;
+  --rose-500: #f43f5e;
+  --rose-600: #e11d48;
+  --rose-700: #be123c;
+  --rose-800: #9f1239;
+  --rose-900: #881337;
+  --rose-950: #4c0519;
+
+  --green-50: #effaf5;
+  --green-100: #d9f2e6;
+  --green-200: #b5e5d1;
+  --green-300: #6ac7a6;
+  --green-400: #51b695;
+  --green-500: #2f9a7b;
+  --green-600: #207b63;
+  --green-700: #196351;
+  --green-800: #164f41;
+  --green-900: #134137;
+  --green-950: #0a241f;
+
+  --neutral-50: #f6f6f6;
+  --neutral-100: #e7e7e7;
+  --neutral-200: #d1d1d1;
+  --neutral-300: #b0b0b0;
+  --neutral-400: #888888;
+  --neutral-500: #6d6d6d;
+  --neutral-600: #5d5d5d;
+  --neutral-700: #4f4f4f;
+  --neutral-800: #454545;
+  --neutral-900: #3d3d3d;
+  --neutral-950: #222222;
+
+  /* typography */
+  --step--2: clamp(0.7813rem, 0.7747rem + 0.0326vw, 0.8rem);
+  --step--1: clamp(0.9375rem, 0.9158rem + 0.1087vw, 1rem);
+  --step-0: clamp(1.125rem, 1.0815rem + 0.2174vw, 1.25rem);
+  --step-1: clamp(1.35rem, 1.2761rem + 0.3696vw, 1.5625rem);
+  --step-2: clamp(1.62rem, 1.5041rem + 0.5793vw, 1.9531rem);
+  --step-3: clamp(1.944rem, 1.771rem + 0.8651vw, 2.4414rem);
+  --step-4: clamp(2.3328rem, 2.0827rem + 1.2504vw, 3.0518rem);
+  --step-5: clamp(2.7994rem, 2.4462rem + 1.7658vw, 3.8147rem);
+
+  /* spacing */
+  --space-4xs: clamp(0.125rem, 0.125rem + 0vw, 0.125rem);
+  --space-3xs: clamp(0.3125rem, 0.3125rem + 0vw, 0.3125rem);
+  --space-2xs: clamp(0.5625rem, 0.5408rem + 0.1087vw, 0.625rem);
+  --space-xs: clamp(0.875rem, 0.8533rem + 0.1087vw, 0.9375rem);
+  --space-s: clamp(1.125rem, 1.0815rem + 0.2174vw, 1.25rem);
+  --space-m: clamp(1.6875rem, 1.6223rem + 0.3261vw, 1.875rem);
+  --space-l: clamp(2.25rem, 2.163rem + 0.4348vw, 2.5rem);
+  --space-xl: clamp(3.375rem, 3.2446rem + 0.6522vw, 3.75rem);
+  --space-2xl: clamp(4.5rem, 4.3261rem + 0.8696vw, 5rem);
+  --space-3xl: clamp(6.75rem, 6.4891rem + 1.3043vw, 7.5rem);
+  --space-4xl: clamp(7.875rem, 7.5707rem + 1.5217vw, 8.75rem);
+
+  /* One-up pairs */
+  --space-3xs-2xs: clamp(0.3125rem, 0.2038rem + 0.5435vw, 0.625rem);
+  --space-2xs-xs: clamp(0.5625rem, 0.4321rem + 0.6522vw, 0.9375rem);
+  --space-xs-s: clamp(0.875rem, 0.7446rem + 0.6522vw, 1.25rem);
+  --space-s-m: clamp(1.125rem, 0.8641rem + 1.3043vw, 1.875rem);
+  --space-m-l: clamp(1.6875rem, 1.4049rem + 1.413vw, 2.5rem);
+  --space-l-xl: clamp(2.25rem, 1.7283rem + 2.6087vw, 3.75rem);
+  --space-xl-2xl: clamp(3.375rem, 2.8098rem + 2.8261vw, 5rem);
+  --space-2xl-3xl: clamp(4.5rem, 3.4565rem + 5.2174vw, 7.5rem);
+  --space-3xl-4xl: clamp(6.75rem, 6.0543rem + 3.4783vw, 8.75rem);
+
+  /* Custom pairs */
+  --space-s-l: clamp(1.125rem, 0.6467rem + 2.3913vw, 2.5rem);
+  --space-xl-3xl: clamp(3.375rem, 1.9402rem + 7.1739vw, 7.5rem);
+
+  /* Animations */
+  --qa-fade: cubic-bezier(0.8, -0.4, 0.5, 1);
+  --qa-hover: linear(
+    0,
+    0.417 25.5%,
+    0.867 49.4%,
+    1 57.7%,
+    0.925 65.1%,
+    0.908 68.6%,
+    0.902 72.2%,
+    0.916 78.2%,
+    0.988 92.1%,
+    1
+  );
+
+  --breakpoint-sm: 640px;
+  --breakpoint-xl: 1240px;
+
+  /* Shadows */
+  --shadow-color: 0deg 0% 0%;
+  --shadow-elevation-low:
+    0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.34),
+    0.5px 0.9px 1.2px -1.2px hsl(var(--shadow-color) / 0.34),
+    1.3px 2.1px 2.8px -2.5px hsl(var(--shadow-color) / 0.34);
+  --shadow-elevation-medium:
+    0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.36),
+    1.1px 1.7px 2.3px -0.8px hsl(var(--shadow-color) / 0.36),
+    2.7px 4.4px 5.8px -1.7px hsl(var(--shadow-color) / 0.36),
+    6.6px 10.6px 14px -2.5px hsl(var(--shadow-color) / 0.36);
+  --shadow-elevation-high:
+    0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.34),
+    1.9px 3.1px 4.1px -0.4px hsl(var(--shadow-color) / 0.34),
+    3.6px 5.8px 7.7px -0.7px hsl(var(--shadow-color) / 0.34),
+    5.9px 9.5px 12.6px -1.1px hsl(var(--shadow-color) / 0.34),
+    9.5px 15.2px 20.2px -1.4px hsl(var(--shadow-color) / 0.34),
+    14.8px 23.7px 31.4px -1.8px hsl(var(--shadow-color) / 0.34),
+    22.5px 36.1px 47.9px -2.1px hsl(var(--shadow-color) / 0.34),
+    33.1px 53.1px 70.4px -2.5px hsl(var(--shadow-color) / 0.34);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+/* 2. Remove default margin */
+* {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Unbounded Variable", sans-serif;
+}
+
+body,
+p,
+button,
+a {
+  color: var(--purple-50);
+}
+
+button {
+  cursor: pointer;
+}
+
+body {
+  /* 3. Add accessible line-height */
+  line-height: 1.5;
+  /* 4. Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--off-black);
+  font-family: "Unbounded Variable", sans-serif;
+}
+/* 5. Improve media defaults */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+/* 6. Inherit fonts for form controls */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+/* 7. Avoid text overflows */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+/* 8. Improve line wrapping */
+p {
+  text-wrap: pretty;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
