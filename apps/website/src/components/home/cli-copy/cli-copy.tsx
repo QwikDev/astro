@@ -4,7 +4,7 @@ import {
   component$,
   useSignal,
   useStyles$,
-  useTask$,
+  useTask$
 } from "@builder.io/qwik";
 import styles from "./cli-copy.css?inline";
 

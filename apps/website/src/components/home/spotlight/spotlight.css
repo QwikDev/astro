@@ -46,13 +46,11 @@
 }
 
 .overlay.entering {
-  transition: --x-pos 0.3s var(--timing-function), --y-pos 0.3s
-    var(--timing-function);
+  transition: --x-pos 0.3s var(--timing-function), --y-pos 0.3s var(--timing-function);
 }
 
 .overlay.leaving {
-  transition: --x-pos 0.8s var(--timing-function), --y-pos 0.8s
-    var(--timing-function);
+  transition: --x-pos 0.8s var(--timing-function), --y-pos 0.8s var(--timing-function);
 }
 
 @media (min-width: 1024px) {

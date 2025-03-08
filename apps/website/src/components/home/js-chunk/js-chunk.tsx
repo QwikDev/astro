@@ -19,7 +19,7 @@ export const JSChunk = component$(() => {
       span {
         display: block;
       }
-    `,
+    `
   );
 
   return (

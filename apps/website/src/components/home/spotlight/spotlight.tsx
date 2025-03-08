@@ -16,7 +16,8 @@ export const Spotlight = component$(() => {
   });
 
   const onPointerMove$ = $((e: PointerEvent) => {
-    if (!overlayRef.value || !rectRef.value) return;
+    if (!overlayRef.value) return;
+    if (!rectRef.value) return;
 
     overlayRef.value.classList.remove("entering", "leaving");
     overlayRef.value.classList.add("moving");
@@ -57,7 +58,7 @@ export const Spotlight = component$(() => {
                         transparent 0%,
                         transparent 30%,
                         var(--off-black) 70%
-                    )`,
+                    )`
         }}
       />
     </div>
