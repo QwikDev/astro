@@ -1,4 +1,4 @@
-import { type PropsOf, component$ } from "@builder.io/qwik";
+import { type PropsOf, component$ } from "@qwik.dev/core";
 
 export const QwikIcon = component$((props: PropsOf<"svg">) => {
   return (

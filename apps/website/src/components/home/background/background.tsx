@@ -1,4 +1,4 @@
-import { component$, useStylesScoped$ } from "@builder.io/qwik";
+import { component$, useStylesScoped$ } from "@qwik.dev/core";
 import styles from "./background.css?inline";
 
 export const Background = component$(() => {

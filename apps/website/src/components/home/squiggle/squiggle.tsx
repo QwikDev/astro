@@ -1,4 +1,4 @@
-import { type PropsOf, component$, useStylesScoped$ } from "@builder.io/qwik";
+import { type PropsOf, component$, useStylesScoped$ } from "@qwik.dev/core";
 import styles from "./squiggle.css?inline";
 
 export const Squiggle = component$((props: PropsOf<"svg">) => {
