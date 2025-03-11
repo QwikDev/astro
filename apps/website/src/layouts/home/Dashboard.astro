@@ -1,0 +1,26 @@
+---
+import { BarChart } from "@components/home/bar-chart/bar-chart";
+
+const data = [
+  { label: "Jan", value: 45 },
+  { label: "Feb", value: 72 },
+  { label: "Mar", value: 38 },
+  { label: "Apr", value: 84 },
+  { label: "May", value: 63 }
+];
+---
+
+<div class="dashboard">
+  <h2>Dashboard</h2>
+  <BarChart data={data} />
+</div>
+
+<style>
+    .dashboard {
+      margin: 0 auto;
+      max-width: var(--breakpoint-xl);
+      border-inline: 1px solid var(--neutral-950);
+      padding: var(--space-m);
+      padding-block: var(--space-xl);
+    }
+</style>

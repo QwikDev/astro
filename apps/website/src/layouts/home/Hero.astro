@@ -1,0 +1,123 @@
+---
+import { Image } from "astro:assets";
+import heroImage from "@assets/q-astro-hero.png";
+import { Background } from "@components/home/background/background";
+import { CLICopy } from "@components/home/cli-copy/cli-copy";
+import { LogoHover } from "@components/home/logo-hover/logo-hover";
+import { Spotlight } from "@components/home/spotlight/spotlight";
+import { Squiggle } from "@components/home/squiggle/squiggle";
+import { LucidePlanet } from "@icons/lucide-planet";
+import { Icon } from "astro-icon/components";
+---
+
+<Background />
+<div class="grid-line" aria-hidden="true"></div>
+<div class="intro">
+  
+<Spotlight>
+ <Image loading="eager" class="hero-image" src={heroImage} alt="Qwik + Astro" />
+</Spotlight>
+
+<LogoHover />
+
+  <span
+    class="subtitle"
+    >Zero hydration. Zero compromise. The only 
+    <span class="squiggle-container">
+      <span>instantly interactive</span>
+      <Squiggle />
+    </span> UI
+    framework that's HTML and server-first, just like 
+    <span class="squiggle-container">
+      <span>Astro</span>
+      <Squiggle stroke="var(--rose-500)" stroke-width="12" style={{ transform: 'translateY(-2px)' }} />
+    </span>.
+  </span>
+
+  <div class="navigation">
+    <CLICopy>
+      <span data-copy-icon><Icon name="lucide:clipboard" /></span>
+      <span data-copy-success><Icon name="lucide:check" /></span>
+    </CLICopy>
+    <a href="/docs">
+      <LucidePlanet />
+      <span>Explore the docs</span>
+    </a>
+  </div>
+</div>
+
+<div class="grid-line" aria-hidden="true"></div>
+
+<style>
+    .hero-image {
+      object-fit: cover;
+      height: 250px;
+      border-radius: 8px;
+    }
+  
+    a {
+      text-decoration: none;
+      border: var(--space-4xs) solid var(--neutral-800);
+      padding: var(--space-3xs);
+      transition: background-color 0.35s;
+      transition-timing-function: var(--qa-hover);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3xs);
+      box-shadow: var(--shadow-elevation-medium);
+    }
+  
+    a:hover {
+      background-color: var(--neutral-950);
+    }
+  
+    .grid-line {
+      width: 100%;
+      height: 1px;
+      background-color: var(--neutral-950);
+    }
+  
+    .intro {
+      margin: 0 auto;
+      max-width: var(--breakpoint-xl);
+      border-inline: 1px solid var(--neutral-950);
+      padding: var(--space-m);
+    }
+  
+    .intro > span {
+      font-size: var(--step-1);
+      margin-block: var(--space-m);
+      display: block;
+      animation: fade-in 0.5s forwards;
+      animation-delay: 2s;
+      opacity: 0;
+    }
+  
+    .navigation {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+  
+    .squiggle-container {
+      display: inline-block;
+      position: relative;
+    }
+  
+    .subtitle {
+      line-height: 1.7;
+    }
+  
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(var(--space-xs));
+        filter: blur(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+</style>

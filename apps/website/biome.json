@@ -9,7 +9,7 @@
     "rules": {
       "recommended": true,
       "style": {
-        "useBlockStatements": "error",
+        "useBlockStatements": "off",
         "useShorthandArrayType": "error",
         "noShoutyConstants": "warn"
       }

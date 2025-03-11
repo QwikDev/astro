@@ -1,0 +1,5 @@
+svg {
+  position: absolute;
+  bottom: calc(calc(var(--space-s) - 6px) * -1);
+  transform: rotate(1deg);
+}

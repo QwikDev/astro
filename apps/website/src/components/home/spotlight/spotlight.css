@@ -1,0 +1,60 @@
+@property --x-pos {
+  syntax: "<length-percentage>";
+  inherits: false;
+  initial-value: 92px;
+}
+
+@property --y-pos {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 50%;
+}
+
+.overlay-container {
+  position: relative;
+}
+
+.overlay {
+  --x-pos: 92px;
+  --y-pos: 50%;
+  --timing-function: linear(
+    0,
+    0.008 1.1%,
+    0.031 2.2%,
+    0.129 4.8%,
+    0.257 7.2%,
+    0.671 14.2%,
+    0.789 16.5%,
+    0.881 18.6%,
+    0.957 20.7%,
+    1.019 22.9%,
+    1.063 25.1%,
+    1.094 27.4%,
+    1.114 30.7%,
+    1.112 34.5%,
+    1.018 49.9%,
+    0.99 59.1%,
+    1
+  );
+  z-index: 100;
+  position: absolute;
+  inset: 0;
+}
+
+.overlay.moving {
+  transition: none;
+}
+
+.overlay.entering {
+  transition: --x-pos 0.3s var(--timing-function), --y-pos 0.3s var(--timing-function);
+}
+
+.overlay.leaving {
+  transition: --x-pos 0.8s var(--timing-function), --y-pos 0.8s var(--timing-function);
+}
+
+@media (min-width: 1024px) {
+  .overlay {
+    --x-pos: 10%;
+  }
+}
