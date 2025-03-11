@@ -5,6 +5,6 @@
   "version": "0.0.1",
   "dependencies": {
     "@qwikdev/astro": "workspace:*",
-    "astro": "5.1.7"
+    "astro": "5.4.3"
   }
 }
