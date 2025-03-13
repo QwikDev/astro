@@ -1,4 +1,4 @@
-import { Slot, component$, sync$ } from "@builder.io/qwik";
+import { Slot, component$, sync$ } from "@qwik.dev/core";
 
 export const SayHi = component$(() => {
   return (
