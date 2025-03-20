@@ -103,6 +103,12 @@ export default defineIntegration({
 
         outDir = getRelativePath(astroConfig.root.pathname, astroConfig.outDir.pathname);
 
+        if (
+          astroConfig.output === "static" &&
+          astroConfig.adapter?.name === "@astrojs/vercel"
+        ) {
+          process.env.IS_SSR = "false";
+        }
         if (astroConfig.adapter) {
           finalDir = clientDir;
         } else {
@@ -159,7 +165,6 @@ export default defineIntegration({
             if (!potentialEntries.has(id)) {
               return null;
             }
-
             /**
              *  Qwik Entrypoints
              *  ---
