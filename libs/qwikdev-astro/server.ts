@@ -10,7 +10,7 @@ import { type SSRResult } from "astro";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
 
-const isSSR = process.env.IS_SSR;
+const isSSR = Boolean(process.env.IS_SSR);
 
 let buildLocation = "/build/";
 if (!isSSR) {
