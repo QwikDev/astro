@@ -134,9 +134,10 @@ export default defineIntegration({
             resolveEntrypoints();
           },
           async resolveId(id, importer) {
-            const isFromAstro = importer?.endsWith('.astro') || importer?.endsWith('.mdx');
-            const isFromTrackedFile = potentialEntries.has(importer ?? '');
-            
+            const isFromAstro =
+              importer?.endsWith(".astro") || importer?.endsWith(".mdx");
+            const isFromTrackedFile = potentialEntries.has(importer ?? "");
+
             if (!isFromAstro && !isFromTrackedFile) {
               return null;
             }
@@ -240,9 +241,17 @@ export default defineIntegration({
             outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
-
               if (astroConfig?.adapter) {
-                const serverChunksDir = join(serverDir, "chunks");
+                // depending on the adapter, the chunks folder might be in dist/server/ or dist/
+                let serverChunksDir = join(serverDir, "chunks");
+                if (!fs.existsSync(serverChunksDir)) {
+                  serverChunksDir = join(outDir, "chunks");
+                  if (!fs.existsSync(serverChunksDir)) {
+                    throw new Error(
+                      `Could not find server chunks directory at ${serverChunksDir}`
+                    );
+                  }
+                }
                 const files = fs.readdirSync(serverChunksDir);
                 const serverFile = files.find(
                   (f) => f.startsWith("server_") && f.endsWith(".mjs")
