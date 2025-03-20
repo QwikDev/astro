@@ -238,7 +238,7 @@ export default defineIntegration({
           },
           client: {
             input: [...qwikEntrypoints, resolver("./root.tsx")],
-            outDir: clientDir,
+            outDir: serverDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
               if (astroConfig?.adapter) {
