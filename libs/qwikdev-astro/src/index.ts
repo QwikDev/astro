@@ -107,7 +107,7 @@ export default defineIntegration({
           astroConfig.output === "static" &&
           astroConfig.adapter?.name === "@astrojs/vercel"
         ) {
-          process.env.IS_SSR = "false";
+          globalThis.setBuildLocation = true;
         }
         if (astroConfig.adapter) {
           finalDir = clientDir;
