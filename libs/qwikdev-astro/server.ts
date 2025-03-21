@@ -186,15 +186,20 @@ export async function renderToStaticMarkup(
       (path) => path.includes("ClientRouter.astro")
     );
 
+    const stateScript = html.replace(
+      '<script type="qwik/state"',
+      '<script type="qwik/state" data-astro-rerun>'
+    );
+
     /** With View Transitions, rerun so that signals work
      * https://docs.astro.build/en/guides/view-transitions/#data-astro-rerun
      */
-    const clientState = html.replace(
+    const signalState = stateScript.replace(
       '<script q:func="qwik/json"',
       '<script q:func="qwik/json" data-astro-rerun'
     );
 
-    const clientVNode = clientState.replace(
+    const clientVNode = signalState.replace(
       '<script type="qwik/vnode"',
       '<script type="qwik/vnode" data-astro-rerun'
     );
