@@ -60,12 +60,9 @@
     "astro-integration-kit": "^0.18.0"
   },
   "devDependencies": {
-    "@qwik.dev/core": "2.0.0-alpha.8",
+    "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@7435",
     "astro": "^5.1.1",
     "vite": "^5.4.11",
     "ts-morph": "latest"
-  },
-  "peerDependencies": {
-    "@qwik.dev/core": ">=2.0.0-alpha.8"
   }
 }
