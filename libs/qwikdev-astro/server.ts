@@ -204,10 +204,15 @@ export async function renderToStaticMarkup(
       '<script type="qwik/vnode" data-astro-rerun'
     );
 
+    const xQwikVNode = clientVNode.replace(
+      '<script type="x-qwik/vnode"',
+      '<script type="x-qwik/vnode" data-astro-rerun>'
+    );
+
     /** Adds support for visible tasks with Astro's client router */
     const htmlWithObservers =
       isClientRouter &&
-      clientVNode +
+      xQwikVNode +
         `
       ${isQwikLoaderNeeded ? `<script data-qwik-astro-client-router>document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>` : ""}
     `;
