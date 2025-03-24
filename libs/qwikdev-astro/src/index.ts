@@ -103,7 +103,7 @@ export default defineIntegration({
 
         outDir = getRelativePath(astroConfig.root.pathname, astroConfig.outDir.pathname);
 
-        if (astroConfig.adapter && !astroConfig.adapter.name.includes("vercel")) {
+        if (astroConfig.adapter) {
           finalDir = clientDir;
         } else {
           finalDir = outDir;
@@ -159,6 +159,7 @@ export default defineIntegration({
             if (!potentialEntries.has(id)) {
               return null;
             }
+
             /**
              *  Qwik Entrypoints
              *  ---
@@ -240,10 +241,11 @@ export default defineIntegration({
             outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
+
               if (astroConfig?.adapter) {
-                const serverChunksDir = join(finalDir, "chunks");
+                const serverChunksDir = join(serverDir, "chunks");
                 if (!fs.existsSync(serverChunksDir)) {
-                  fs.mkdirSync(serverChunksDir);
+                  fs.mkdirSync(serverChunksDir, { recursive: true });
                 }
                 const files = fs.readdirSync(serverChunksDir);
                 const serverFile = files.find(
