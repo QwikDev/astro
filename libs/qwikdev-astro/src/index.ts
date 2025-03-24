@@ -237,11 +237,11 @@ export default defineIntegration({
           },
           client: {
             input: [...qwikEntrypoints, resolver("./root.tsx")],
-            outDir: serverDir,
+            outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
               if (astroConfig?.adapter) {
-                const serverChunksDir = join(serverDir, "chunks");
+                const serverChunksDir = join(finalDir, "chunks");
                 if (!fs.existsSync(serverChunksDir)) {
                   fs.mkdirSync(serverChunksDir);
                 }
