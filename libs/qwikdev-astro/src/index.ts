@@ -103,7 +103,7 @@ export default defineIntegration({
 
         outDir = getRelativePath(astroConfig.root.pathname, astroConfig.outDir.pathname);
 
-        if (astroConfig.adapter) {
+        if (astroConfig.adapter && !astroConfig.adapter.name.includes("vercel")) {
           finalDir = clientDir;
         } else {
           finalDir = outDir;
@@ -241,15 +241,9 @@ export default defineIntegration({
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
               if (astroConfig?.adapter) {
-                // depending on the adapter, the chunks folder might be in dist/server/ or dist/
-                let serverChunksDir = join(serverDir, "chunks");
+                const serverChunksDir = join(serverDir, "chunks");
                 if (!fs.existsSync(serverChunksDir)) {
-                  serverChunksDir = join(outDir, "chunks");
-                  if (!fs.existsSync(serverChunksDir)) {
-                    throw new Error(
-                      `Could not find server chunks directory at ${serverChunksDir}`
-                    );
-                  }
+                  fs.mkdirSync(serverChunksDir);
                 }
                 const files = fs.readdirSync(serverChunksDir);
                 const serverFile = files.find(
