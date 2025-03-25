@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 0.7.11
+
+### Patch Changes
+
+- f324719: remove dev preloader
+
 ## 0.7.10
 
 ### Patch Changes
