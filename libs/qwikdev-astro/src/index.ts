@@ -1,5 +1,4 @@
 import fs from "node:fs";
-
 import { join } from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
@@ -108,13 +107,6 @@ export default defineIntegration({
           finalDir = clientDir;
         } else {
           finalDir = outDir;
-        }
-
-        if (
-          astroConfig.adapter?.name.includes("vercel") &&
-          finalDir.includes("/client/")
-        ) {
-          finalDir = finalDir.replace("/client/", "/");
         }
 
         /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
@@ -252,9 +244,6 @@ export default defineIntegration({
 
               if (astroConfig?.adapter) {
                 const serverChunksDir = join(serverDir, "chunks");
-                if (!fs.existsSync(serverChunksDir)) {
-                  fs.mkdirSync(serverChunksDir, { recursive: true });
-                }
                 const files = fs.readdirSync(serverChunksDir);
                 const serverFile = files.find(
                   (f) => f.startsWith("server_") && f.endsWith(".mjs")
