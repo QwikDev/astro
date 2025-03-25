@@ -110,6 +110,8 @@ export default defineIntegration({
           finalDir = outDir;
         }
 
+        finalDir = finalDir.replace("/client", "");
+
         /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
         const fileFilter = (id: string, hook: string) => {
           if (hook === "transform") {
@@ -225,14 +227,14 @@ export default defineIntegration({
       "astro:build:setup": async ({ vite }) => {
         astroVite = vite as InlineConfig;
       },
-      "astro:build:generated"(options) {
-        if (
-          astroConfig?.adapter?.name.includes("vercel") &&
-          fs.existsSync("dist/client/build")
-        ) {
-          copyFolderSync("dist/client/build", "dist/build");
-        }
-      },
+      // "astro:build:generated"(options) {
+      //   if (
+      //     astroConfig?.adapter?.name.includes("vercel") &&
+      //     fs.existsSync("dist/client/build")
+      //   ) {
+      //     copyFolderSync("dist/client/build", "dist/build");
+      //   }
+      // },
 
       "astro:build:ssr": async () => {
         await entrypointsReady;
