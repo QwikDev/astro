@@ -1,4 +1,4 @@
-import { $, Slot, component$, useSignal, useStyles$ } from "@builder.io/qwik";
+import { $, Slot, component$, useSignal, useStyles$ } from "@qwik.dev/core";
 import styles from "./spotlight.css?inline";
 
 export const Spotlight = component$(() => {

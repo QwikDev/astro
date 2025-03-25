@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import { join } from "node:path";
-import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
   QwikVitePluginOptions,
   SymbolMapperFn
 } from "@builder.io/qwik/optimizer";
+import { qwikVite, symbolMapper } from "@qwik.dev/core/optimizer";
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
@@ -134,9 +134,10 @@ export default defineIntegration({
             resolveEntrypoints();
           },
           async resolveId(id, importer) {
-            const isFromAstro = importer?.endsWith('.astro') || importer?.endsWith('.mdx');
-            const isFromTrackedFile = potentialEntries.has(importer ?? '');
-            
+            const isFromAstro =
+              importer?.endsWith(".astro") || importer?.endsWith(".mdx");
+            const isFromTrackedFile = potentialEntries.has(importer ?? "");
+
             if (!isFromAstro && !isFromTrackedFile) {
               return null;
             }

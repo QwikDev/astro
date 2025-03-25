@@ -14,7 +14,6 @@
     "@astrojs/check": "^0.9.4",
     "@astrojs/deno": "^5.0.1",
     "@astrojs/react": "^4.1.2",
-    "@builder.io/qwik": "^1.12.0",
     "@qwikdev/astro": "workspace:*",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
@@ -22,5 +21,8 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@qwik.dev/core": "2.0.0-alpha.8"
   }
 }

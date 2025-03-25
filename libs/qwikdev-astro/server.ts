@@ -1,11 +1,11 @@
-import { type JSXNode, jsx } from "@builder.io/qwik";
-import { isDev } from "@builder.io/qwik/build";
-import type { QwikManifest } from "@builder.io/qwik/optimizer";
+import { type JSXNode, type JSXOutput, jsx } from "@qwik.dev/core";
+import { isDev } from "@qwik.dev/core/build";
+import type { QwikManifest } from "@qwik.dev/core/optimizer";
 import {
   type RenderToStreamOptions,
   getQwikLoaderScript,
   renderToStream
-} from "@builder.io/qwik/server";
+} from "@qwik.dev/core/server";
 import type { SSRResult } from "astro";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
@@ -83,17 +83,7 @@ export async function renderToStaticMarkup(
       ...(isDev
         ? {
             manifest: {} as QwikManifest,
-            symbolMapper: (symbolName, mapper, parent) => {
-              const requestUrl = new URL(this.result.request.url);
-              const origin = requestUrl.origin;
-              const devUrl = origin + parent + "_" + symbolName + ".js";
-              devUrls.add(devUrl);
-
-              // this determines if the container is the last one
-              renderToStreamOpts.containerAttributes!["q-astro-marker"] = "last";
-
-              return globalThis.symbolMapperFn(symbolName, mapper, parent);
-            }
+            symbolMapper: globalThis.symbolMapperFn
           }
         : {
             manifest: globalThis.qManifest
@@ -103,7 +93,7 @@ export async function renderToStaticMarkup(
         include: false
       },
       stream: {
-        write: (chunk) => {
+        write: (chunk: string) => {
           html += chunk;
         }
       }
@@ -180,33 +170,7 @@ export async function renderToStaticMarkup(
       renderToStreamOpts.containerAttributes!["q-astro-marker"] = "first";
     }
 
-    await renderToStream(qwikComponentJSX, renderToStreamOpts);
-
-    // we only want to add the preloader script if the container is the last one
-    if (isDev && devUrls.size > 0) {
-      const preloaderScript = `<script q-astro-dev-preloader>
-        window.addEventListener("load",()=>{
-          const symbols = ${JSON.stringify(Array.from(devUrls))};
-          symbols.forEach(symbol => {
-            const link = document.createElement('link');
-            link.rel = 'modulepreload';
-            link.href = symbol;
-            link.fetchPriority = 'low';
-            document.head.appendChild(link);
-          });
-        });
-      </script>`;
-
-      // if there is one container, add the preloader script to the first one
-      if (html.includes('q-astro-marker="first"')) {
-        html += preloaderScript;
-      }
-
-      // if there is more than one container, add the preloader script to the last one
-      if (html.includes('q-astro-marker="last"')) {
-        html += preloaderScript;
-      }
-    }
+    await renderToStream(qwikComponentJSX as JSXOutput, renderToStreamOpts);
 
     const isClientRouter = Array.from(this.result._metadata.renderedScripts).some(
       (path) => path.includes("ClientRouter.astro")

@@ -19,15 +19,15 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@builder.io/qwik": "^1.12",
     "@fontsource-variable/unbounded": "^5.1.1",
     "@iconify-json/lucide": "^1.2.23",
-    "@qwikdev/astro": "^0.7",
+    "@qwikdev/astro": "workspace:*",
     "astro": "^5.1",
     "astro-icon": "^1.1.4",
     "sharp": "^0.33.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.7.0"
+    "@biomejs/biome": "^1.7.0",
+    "@qwik.dev/core": "2.0.0-alpha.8"
   }
 }
