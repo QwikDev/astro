@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import path from "node:path";
 import { join } from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
@@ -224,6 +225,14 @@ export default defineIntegration({
       "astro:build:setup": async ({ vite }) => {
         astroVite = vite as InlineConfig;
       },
+      "astro:build:generated"(options) {
+        if (
+          astroConfig?.adapter?.name.includes("vercel") &&
+          fs.existsSync("dist/client/build")
+        ) {
+          copyFolderSync("dist/client/build", "dist/build");
+        }
+      },
 
       "astro:build:ssr": async () => {
         await entrypointsReady;
@@ -244,6 +253,9 @@ export default defineIntegration({
 
               if (astroConfig?.adapter) {
                 const serverChunksDir = join(serverDir, "chunks");
+                if (!fs.existsSync(serverChunksDir)) {
+                  fs.mkdirSync(serverChunksDir, { recursive: true });
+                }
                 const files = fs.readdirSync(serverChunksDir);
                 const serverFile = files.find(
                   (f) => f.startsWith("server_") && f.endsWith(".mjs")
@@ -319,4 +331,23 @@ export default defineIntegration({
 
 function getRelativePath(from: string, to: string) {
   return to.replace(from, "") || ".";
+}
+
+function copyFolderSync(src: string, dest: string) {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
+
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+
+    if (entry.isDirectory()) {
+      copyFolderSync(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
 }
