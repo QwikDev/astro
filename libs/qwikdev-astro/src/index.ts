@@ -92,10 +92,7 @@ export default defineIntegration({
         /** Relative paths, as the Qwik optimizer handles normalization */
         srcDir = getRelativePath(astroConfig.root.pathname, astroConfig.srcDir.pathname);
 
-        clientDir = getRelativePath(
-          astroConfig.root.pathname,
-          astroConfig.build.client.pathname
-        );
+        clientDir = getRelativePath(astroConfig.root.pathname, "dist/");
 
         serverDir = getRelativePath(
           astroConfig.root.pathname,
@@ -225,14 +222,6 @@ export default defineIntegration({
       "astro:build:setup": async ({ vite }) => {
         astroVite = vite as InlineConfig;
       },
-      "astro:build:generated"(options) {
-        if (
-          astroConfig?.adapter?.name.includes("vercel") &&
-          fs.existsSync("dist/client/build")
-        ) {
-          copyFolderSync("dist/client/build", "dist/build");
-        }
-      },
 
       "astro:build:ssr": async () => {
         await entrypointsReady;
@@ -331,23 +320,4 @@ export default defineIntegration({
 
 function getRelativePath(from: string, to: string) {
   return to.replace(from, "") || ".";
-}
-
-function copyFolderSync(src: string, dest: string) {
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
-  }
-
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-
-    if (entry.isDirectory()) {
-      copyFolderSync(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  }
 }
