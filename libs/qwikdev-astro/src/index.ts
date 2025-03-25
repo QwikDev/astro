@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import path from "node:path";
+
 import { join } from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
@@ -330,23 +330,4 @@ export default defineIntegration({
 
 function getRelativePath(from: string, to: string) {
   return to.replace(from, "") || ".";
-}
-
-function copyFolderSync(src: string, dest: string) {
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
-  }
-
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-
-    if (entry.isDirectory()) {
-      copyFolderSync(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  }
 }
