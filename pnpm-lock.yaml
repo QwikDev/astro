@@ -23,6 +23,9 @@ importers:
       '@playwright/test':
         specifier: ^1.49.1
         version: 1.51.1
+      '@qwikdev/astro':
+        specifier: 0.7.11
+        version: 0.7.11(@builder.io/qwik@1.12.1(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0)))(astro@5.0.3(@types/node@22.13.13)(jiti@2.4.2)(rollup@4.37.0)(typescript@5.8.2)(yaml@2.7.0))(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0))
       '@qwikdev/create-astro':
         specifier: workspace:*
         version: link:libs/create-qwikdev-astro
@@ -132,8 +135,8 @@ importers:
         specifier: ^1.2.23
         version: 1.2.32
       '@qwikdev/astro':
-        specifier: ^0.7.10
-        version: 0.7.10(@builder.io/qwik@1.12.1(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0)))(astro@5.1.1(@types/node@22.13.13)(jiti@2.4.2)(rollup@4.37.0)(typescript@5.8.2)(yaml@2.7.0))(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0))
+        specifier: ^0.7.11
+        version: 0.7.11(@builder.io/qwik@1.12.1(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0)))(astro@5.1.1(@types/node@22.13.13)(jiti@2.4.2)(rollup@4.37.0)(typescript@5.8.2)(yaml@2.7.0))(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0))
       astro:
         specifier: ^5.1
         version: 5.1.1(@types/node@22.13.13)(jiti@2.4.2)(rollup@4.37.0)(typescript@5.8.2)(yaml@2.7.0)
@@ -1309,8 +1312,8 @@ packages:
     resolution: {integrity: sha512-ct43jurbe7lsUX5eIrj4ijO3j/6zIPp7CDnFWXDs7UPAbw1Pu1iH3oAmFdP4jcskKJBURH5M9oTtyeiUXyHX8Q==}
     engines: {node: '>=18.16.0'}
 
-  '@qwikdev/astro@0.7.10':
-    resolution: {integrity: sha512-F0ZJX13txor3Ulw6YZOy4wF4zmeBwzPFTArCG7zOIIZr3aHaZW9byKi8nP21pigzBw5mj8I/M3IcOW87C0alJQ==}
+  '@qwikdev/astro@0.7.11':
+    resolution: {integrity: sha512-N7yne+Xbxy3Xg6NO7jCbEYP0JAx5pt0n2gffKqKSdmiFnq8WGVwOZziZ1pUoM3MG4WhZIokQM3sv6OkcvLCQsA==}
     peerDependencies:
       '@builder.io/qwik': '>=1.9.0'
 
@@ -5849,7 +5852,17 @@ snapshots:
 
   '@poppinss/macroable@1.0.4': {}
 
-  '@qwikdev/astro@0.7.10(@builder.io/qwik@1.12.1(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0)))(astro@5.1.1(@types/node@22.13.13)(jiti@2.4.2)(rollup@4.37.0)(typescript@5.8.2)(yaml@2.7.0))(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0))':
+  '@qwikdev/astro@0.7.11(@builder.io/qwik@1.12.1(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0)))(astro@5.0.3(@types/node@22.13.13)(jiti@2.4.2)(rollup@4.37.0)(typescript@5.8.2)(yaml@2.7.0))(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0))':
+    dependencies:
+      '@builder.io/qwik': 1.12.1(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0))
+      '@inox-tools/inline-mod': 2.0.3(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0))
+      astro-integration-kit: 0.18.0(astro@5.0.3(@types/node@22.13.13)(jiti@2.4.2)(rollup@4.37.0)(typescript@5.8.2)(yaml@2.7.0))
+    transitivePeerDependencies:
+      - astro
+      - supports-color
+      - vite
+
+  '@qwikdev/astro@0.7.11(@builder.io/qwik@1.12.1(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0)))(astro@5.1.1(@types/node@22.13.13)(jiti@2.4.2)(rollup@4.37.0)(typescript@5.8.2)(yaml@2.7.0))(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0))':
     dependencies:
       '@builder.io/qwik': 1.12.1(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0))
       '@inox-tools/inline-mod': 2.0.3(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0))
@@ -6262,6 +6275,12 @@ snapshots:
     transitivePeerDependencies:
       - debug
       - supports-color
+
+  astro-integration-kit@0.18.0(astro@5.0.3(@types/node@22.13.13)(jiti@2.4.2)(rollup@4.37.0)(typescript@5.8.2)(yaml@2.7.0)):
+    dependencies:
+      astro: 5.0.3(@types/node@22.13.13)(jiti@2.4.2)(rollup@4.37.0)(typescript@5.8.2)(yaml@2.7.0)
+      pathe: 1.1.2
+      recast: 0.23.11
 
   astro-integration-kit@0.18.0(astro@5.1.1(@types/node@22.13.13)(jiti@2.4.2)(rollup@4.37.0)(typescript@5.8.2)(yaml@2.7.0)):
     dependencies:

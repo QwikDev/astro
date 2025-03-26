@@ -45,6 +45,7 @@
     "@types/node": "^22.10.2",
     "astro": "5.0.3",
     "lefthook": "^1.10.1",
-    "pkg-pr-new": "^0.0.35"
+    "pkg-pr-new": "^0.0.35",
+    "@qwikdev/astro": "0.7.11"
   }
 }
