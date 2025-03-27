@@ -189,7 +189,7 @@ export default defineIntegration({
           },
           client: {
             input: resolver("./root.tsx"),
-            outDir: outDir
+            outDir: finalDir
           },
           debug: options?.debug ?? false
         };
@@ -242,31 +242,30 @@ export default defineIntegration({
             outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
+              setTimeout(() => {
+                if (astroConfig?.adapter) {
+                  const serverChunksDir = join(serverDir, "chunks");
 
-              if (astroConfig?.adapter) {
-                const serverChunksDir = join(serverDir, "chunks");
-                if (!fs.existsSync(serverChunksDir)) {
-                  fs.mkdirSync(serverChunksDir, { recursive: true });
-                }
-                const files = fs.readdirSync(serverChunksDir);
-                const serverFile = files.find(
-                  (f) => f.startsWith("server_") && f.endsWith(".mjs")
-                );
-
-                if (serverFile) {
-                  const serverPath = join(serverChunksDir, serverFile);
-                  const content = fs.readFileSync(serverPath, "utf-8");
-
-                  // Replace the manifest handling in the bundled code
-                  const manifestJson = JSON.stringify(manifest);
-                  const newContent = content.replace(
-                    "globalThis.qManifest",
-                    `globalThis.qManifest || ${manifestJson}`
+                  const files = fs.readdirSync(serverChunksDir);
+                  const serverFile = files.find(
+                    (f) => f.startsWith("server_") && f.endsWith(".mjs")
                   );
 
-                  fs.writeFileSync(serverPath, newContent);
+                  if (serverFile) {
+                    const serverPath = join(serverChunksDir, serverFile);
+                    const content = fs.readFileSync(serverPath, "utf-8");
+
+                    // Replace the manifest handling in the bundled code
+                    const manifestJson = JSON.stringify(manifest);
+                    const newContent = content.replace(
+                      "globalThis.qManifest",
+                      `globalThis.qManifest || ${manifestJson}`
+                    );
+
+                    fs.writeFileSync(serverPath, newContent);
+                  }
                 }
-              }
+              }, 1000);
             }
           },
           debug: options?.debug ?? false
