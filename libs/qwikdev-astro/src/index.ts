@@ -263,7 +263,7 @@ export default defineIntegration({
                     fs.writeFileSync(serverPath, newContent);
                   }
                 }
-              }, 1000);
+              }, 0);
             }
           },
           debug: options?.debug ?? false
