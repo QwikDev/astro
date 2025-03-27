@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import path from "node:path";
 import { join } from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
@@ -242,30 +241,28 @@ export default defineIntegration({
             outDir: finalDir,
             manifestOutput: (manifest) => {
               globalThis.qManifest = manifest;
-              setTimeout(() => {
-                if (astroConfig?.adapter) {
-                  const serverChunksDir = join(serverDir, "chunks");
 
-                  const files = fs.readdirSync(serverChunksDir);
-                  const serverFile = files.find(
-                    (f) => f.startsWith("server_") && f.endsWith(".mjs")
+              if (astroConfig?.adapter) {
+                const serverChunksDir = join(serverDir, "chunks");
+                const files = fs.readdirSync(serverChunksDir);
+                const serverFile = files.find(
+                  (f) => f.startsWith("server_") && f.endsWith(".mjs")
+                );
+
+                if (serverFile) {
+                  const serverPath = join(serverChunksDir, serverFile);
+                  const content = fs.readFileSync(serverPath, "utf-8");
+
+                  // Replace the manifest handling in the bundled code
+                  const manifestJson = JSON.stringify(manifest);
+                  const newContent = content.replace(
+                    "globalThis.qManifest",
+                    `globalThis.qManifest || ${manifestJson}`
                   );
 
-                  if (serverFile) {
-                    const serverPath = join(serverChunksDir, serverFile);
-                    const content = fs.readFileSync(serverPath, "utf-8");
-
-                    // Replace the manifest handling in the bundled code
-                    const manifestJson = JSON.stringify(manifest);
-                    const newContent = content.replace(
-                      "globalThis.qManifest",
-                      `globalThis.qManifest || ${manifestJson}`
-                    );
-
-                    fs.writeFileSync(serverPath, newContent);
-                  }
+                  fs.writeFileSync(serverPath, newContent);
                 }
-              }, 1000);
+              }
             }
           },
           debug: options?.debug ?? false
@@ -322,23 +319,4 @@ export default defineIntegration({
 
 function getRelativePath(from: string, to: string) {
   return to.replace(from, "") || ".";
-}
-
-function copyFolderSync(src: string, dest: string) {
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
-  }
-
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-
-    if (entry.isDirectory()) {
-      copyFolderSync(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  }
 }
