@@ -189,7 +189,7 @@ export default defineIntegration({
           },
           client: {
             input: resolver("./root.tsx"),
-            outDir: finalDir
+            outDir: outDir
           },
           debug: options?.debug ?? false
         };
@@ -224,14 +224,6 @@ export default defineIntegration({
 
       "astro:build:setup": async ({ vite }) => {
         astroVite = vite as InlineConfig;
-      },
-      "astro:build:generated"(options) {
-        if (
-          astroConfig?.adapter?.name.includes("vercel") &&
-          fs.existsSync("dist/client/build")
-        ) {
-          copyFolderSync("dist/client/build", "dist/build");
-        }
       },
 
       "astro:build:ssr": async () => {
