@@ -10,6 +10,7 @@ import type {
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
+import { Logger } from "node_modules/astro/dist/core/logger/core";
 import { type PluginOption, build, createFilter } from "vite";
 import type { InlineConfig } from "vite";
 
@@ -314,9 +315,9 @@ export default defineIntegration({
           }
         } as InlineConfig);
       },
-      "astro:build:generated"() {
+      "astro:build:generated"({ logger }) {
         if (fs.existsSync(path.join(outDir, "build"))) {
-          //  if build folder is already there, we don't need to copy
+          logger.info("Build folder already exists, skipping copy");
           return;
         }
         if (!fs.existsSync(path.join(outDir, "build"))) {
