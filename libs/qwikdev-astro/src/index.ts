@@ -336,7 +336,7 @@ export default defineIntegration({
             if (!fs.existsSync(path.join(outDir, "build", qwikFile))) {
               validBuild = false;
               throw new Error(
-                `Qwik file ${qwikFile} not found in ${path.join(finalDir, "build")}`
+                `Qwik file ${qwikFile} not found in ${path.join(outDir, "build")}`
               );
             }
           }
