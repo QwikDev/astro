@@ -315,10 +315,33 @@ export default defineIntegration({
         } as InlineConfig);
       },
       "astro:build:generated"() {
+        if (fs.existsSync(path.join(outDir, "build"))) {
+          //  if build folder is already there, we don't need to copy
+          return;
+        }
         if (!fs.existsSync(path.join(outDir, "build"))) {
           if (fs.existsSync(path.join(clientDir, "build"))) {
             copyFolderSync(path.join(clientDir, "build"), path.join(outDir, "build"));
-            return;
+          }
+        }
+      },
+      "astro:build:done"({ logger }) {
+        if (fs.existsSync(path.join(finalDir, "q-manifest.json"))) {
+          const qManifestContents = JSON.parse(
+            fs.readFileSync(path.join(finalDir, "q-manifest.json"), "utf-8")
+          );
+          const qwikFiles = Object.keys(qManifestContents.bundles);
+          let validBuild = true;
+          for (const qwikFile of qwikFiles) {
+            if (!fs.existsSync(path.join(outDir, "build", qwikFile))) {
+              validBuild = false;
+              throw new Error(
+                `Qwik file ${qwikFile} not found in ${path.join(finalDir, "build")}`
+              );
+            }
+          }
+          if (validBuild) {
+            logger.info("Build Successful!");
           }
         }
       }
@@ -349,6 +372,9 @@ function copyFolderSync(src: string, dest: string) {
       copyFolderSync(srcPath, destPath);
     } else {
       fs.copyFileSync(srcPath, destPath);
+      if (fs.existsSync(srcPath) && fs.existsSync(destPath)) {
+        fs.unlinkSync(srcPath);
+      }
     }
   }
 }
