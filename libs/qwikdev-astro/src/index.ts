@@ -372,9 +372,6 @@ function copyFolderSync(src: string, dest: string) {
       copyFolderSync(srcPath, destPath);
     } else {
       fs.copyFileSync(srcPath, destPath);
-      if (fs.existsSync(srcPath) && fs.existsSync(destPath)) {
-        fs.unlinkSync(srcPath);
-      }
     }
   }
 }
