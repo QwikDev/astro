@@ -322,32 +322,11 @@ export default defineIntegration({
           );
           return;
         }
-        if (!fs.existsSync(path.join(outDir, "build"))) {
-          if (fs.existsSync(path.join(clientDir, "build"))) {
-            logger.info(`Moving static files to ${locationString} directory`);
-            const files = fs.readdirSync(path.join(clientDir, "build"));
-            for (const file of files) {
-              if (!file.startsWith("q-")) {
-                continue;
-              }
-              const oldPath = path.join(clientDir, "build", file);
-              const newPath = path.join(outDir, "build", file);
-              if (fs.existsSync(oldPath)) {
-                if (!fs.existsSync(path.join(outDir, "build"))) {
-                  fs.mkdirSync(path.join(outDir, "build"), { recursive: true });
-                }
-                moveStaticFiles(oldPath, newPath, (err: any) => {
-                  if (!err) {
-                    return;
-                  }
-                  const errorMessage = `Error moving static files: ${err}`;
-                  logger.error(errorMessage);
-                  throw new Error(errorMessage);
-                });
-              }
-            }
-          }
-        }
+        const srcPath = path.join(clientDir, "build");
+        const destPath = path.join(outDir, "build");
+        logger.info(`Copying static files from ${srcPath} to ${destPath}`);
+        copyFolderSync(srcPath, destPath);
+        logger.info(`Static files copied to ${locationString} directory`);
       }
     };
 
@@ -360,39 +339,28 @@ export default defineIntegration({
 function getRelativePath(from: string, to: string) {
   return to.replace(from, "") || ".";
 }
+function copyFolderSync(src: string, dest: string) {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
 
-/**
- * Move static files from oldPath to newPath.
- * If the move fails with EXDEV, copy the files instead.
- * @param oldPath - The source path of the static files.
- * @param newPath - The destination path for the static files.
- * @param callback - The callback function to call after the operation is complete.
- */
+  const entries = fs.readdirSync(src, { withFileTypes: true });
 
-function moveStaticFiles(oldPath: string, newPath: string, callback: any) {
-  fs.rename(oldPath, newPath, (err: any) => {
-    if (err) {
-      if (err.code === "EXDEV") {
-        copyStaticFiles();
-      } else {
-        callback(err);
-      }
-      return;
+  for (const entry of entries) {
+    if (!entry.name.startsWith("q-")) {
+      continue;
     }
-    callback();
-  });
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
 
-  function copyStaticFiles() {
-    const readStream = fs.createReadStream(oldPath);
-    const writeStream = fs.createWriteStream(newPath);
-
-    readStream.on("error", callback);
-    writeStream.on("error", callback);
-
-    readStream.on("close", () => {
-      fs.unlink(oldPath, callback);
-    });
-
-    readStream.pipe(writeStream);
+    if (entry.isDirectory()) {
+      copyFolderSync(srcPath, destPath);
+    } else {
+      try {
+        fs.copyFileSync(srcPath, destPath);
+      } catch (error) {
+        throw new Error(`Failed to copy file from ${srcPath} to ${destPath}: ${error}`);
+      }
+    }
   }
 }
