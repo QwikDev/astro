@@ -325,20 +325,27 @@ export default defineIntegration({
         if (!fs.existsSync(path.join(outDir, "build"))) {
           if (fs.existsSync(path.join(clientDir, "build"))) {
             logger.info(`Moving static files to ${locationString} directory`);
-            moveStaticFiles(
-              path.join(clientDir, "build"),
-              path.join(outDir, "build"),
-              (err: any) => {
-                if (!err) {
-                  const successMessage = `Static files moved to ${locationString} directory`;
-                  logger.info(successMessage);
-                  return;
-                }
-                const errorMessage = `Error moving static files: ${err}`;
-                logger.error(errorMessage);
-                throw new Error(errorMessage);
+            const files = fs.readdirSync(path.join(clientDir, "build"));
+            for (const file of files) {
+              if (!file.startsWith("q-")) {
+                continue;
               }
-            );
+              const oldPath = path.join(clientDir, "build", file);
+              const newPath = path.join(outDir, "build", file);
+              if (fs.existsSync(oldPath)) {
+                if (!fs.existsSync(path.join(outDir, "build"))) {
+                  fs.mkdirSync(path.join(outDir, "build"), { recursive: true });
+                }
+                moveStaticFiles(oldPath, newPath, (err: any) => {
+                  if (!err) {
+                    return;
+                  }
+                  const errorMessage = `Error moving static files: ${err}`;
+                  logger.error(errorMessage);
+                  throw new Error(errorMessage);
+                });
+              }
+            }
           }
         }
       }
