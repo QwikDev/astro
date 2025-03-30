@@ -314,11 +314,31 @@ export default defineIntegration({
           }
         } as InlineConfig);
       },
-      "astro:build:generated"() {
+      "astro:build:generated"({ logger }) {
+        const locationString = path.join(outDir, "build");
+        if (fs.existsSync(path.join(outDir, "build"))) {
+          logger.info(
+            `Static files already exist in ${locationString} directory - skipping move`
+          );
+          return;
+        }
         if (!fs.existsSync(path.join(outDir, "build"))) {
           if (fs.existsSync(path.join(clientDir, "build"))) {
-            copyFolderSync(path.join(clientDir, "build"), path.join(outDir, "build"));
-            return;
+            logger.info(`Moving static files to ${locationString} directory`);
+            moveStaticFiles(
+              path.join(clientDir, "build"),
+              path.join(outDir, "build"),
+              (err: any) => {
+                if (!err) {
+                  const successMessage = `Static files moved to ${locationString} directory`;
+                  logger.info(successMessage);
+                  return;
+                }
+                const errorMessage = `Error moving static files: ${err}`;
+                logger.error(errorMessage);
+                throw new Error(errorMessage);
+              }
+            );
           }
         }
       }
@@ -334,21 +354,38 @@ function getRelativePath(from: string, to: string) {
   return to.replace(from, "") || ".";
 }
 
-function copyFolderSync(src: string, dest: string) {
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
-  }
+/**
+ * Move static files from oldPath to newPath.
+ * If the move fails with EXDEV, copy the files instead.
+ * @param oldPath - The source path of the static files.
+ * @param newPath - The destination path for the static files.
+ * @param callback - The callback function to call after the operation is complete.
+ */
 
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-
-    if (entry.isDirectory()) {
-      copyFolderSync(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
+function moveStaticFiles(oldPath: string, newPath: string, callback: any) {
+  fs.rename(oldPath, newPath, (err: any) => {
+    if (err) {
+      if (err.code === "EXDEV") {
+        copyStaticFiles();
+      } else {
+        callback(err);
+      }
+      return;
     }
+    callback();
+  });
+
+  function copyStaticFiles() {
+    const readStream = fs.createReadStream(oldPath);
+    const writeStream = fs.createWriteStream(newPath);
+
+    readStream.on("error", callback);
+    writeStream.on("error", callback);
+
+    readStream.on("close", () => {
+      fs.unlink(oldPath, callback);
+    });
+
+    readStream.pipe(writeStream);
   }
 }
