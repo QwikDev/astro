@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { join } from "node:path";
+import { object } from "astro:schema";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
@@ -327,6 +328,49 @@ export default defineIntegration({
         logger.info(`Copying static files from ${srcPath} to ${destPath}`);
         copyFolderSync(srcPath, destPath);
         logger.info(`Static files copied to ${locationString} directory`);
+      },
+      "astro:build:done"({ logger }) {
+        let errorMessage = "";
+        logger.info(
+          `Qwik build finished. Check ${path.join(outDir, "build")} for static files`
+        );
+        if (!fs.existsSync(path.join(outDir, "build"))) {
+          errorMessage = `Static files not found in ${path.join(
+            outDir,
+            "build"
+          )} directory`;
+          logger.error(errorMessage);
+          throw new Error(errorMessage);
+        }
+        if (!fs.existsSync(path.join(finalDir, "q-manifest.json"))) {
+          errorMessage = `Manifest file not found in ${path.join(
+            outDir,
+            "build",
+            "qwik-manifest.json"
+          )}`;
+          logger.error(errorMessage);
+          throw new Error(errorMessage);
+        }
+        const manifestPath = path.join(finalDir, "q-manifest.json");
+        const manifest = fs.readFileSync(manifestPath, "utf-8");
+        const manifestJson = JSON.parse(manifest);
+        if (manifestJson) {
+          const manifestKeys = Object.keys(manifestJson.bundles);
+          if (manifestKeys.length) {
+            logger.info(`Manifest file found in ${path.join(outDir, "build")}`);
+            for (const key of manifestKeys) {
+              if (!fs.existsSync(path.join(outDir, "build", key))) {
+                errorMessage = `Manifest file ${key} not found in ${path.join(
+                  outDir,
+                  "build"
+                )} directory`;
+                logger.error(errorMessage);
+                throw new Error(errorMessage);
+              }
+            }
+          }
+        }
+        logger.info("Build completed successfully");
       }
     };
 
