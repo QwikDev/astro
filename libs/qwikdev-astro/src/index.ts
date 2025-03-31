@@ -314,7 +314,20 @@ export default defineIntegration({
           }
         } as InlineConfig);
       },
-
+      "astro:build:generated"({ logger }) {
+        const locationString = path.join(outDir, "build");
+        if (fs.existsSync(path.join(outDir, "build"))) {
+          logger.info(
+            `Static files already exist in ${locationString} directory - skipping move`
+          );
+          return;
+        }
+        const srcPath = path.join(clientDir, "build");
+        const destPath = path.join(outDir, "build");
+        logger.info(`Copying static files from ${srcPath} to ${destPath}`);
+        copyFolderSync(srcPath, destPath);
+        logger.info(`Static files copied to ${locationString} directory`);
+      },
       "astro:build:done"({ logger }) {
         let errorMessage = "";
         logger.info(
