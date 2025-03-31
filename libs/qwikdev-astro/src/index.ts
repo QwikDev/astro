@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import { join } from "node:path";
-import { object } from "astro:schema";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
   QwikManifest,
