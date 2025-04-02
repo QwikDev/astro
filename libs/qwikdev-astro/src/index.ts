@@ -343,8 +343,7 @@ export default defineIntegration({
         }
         if (!fs.existsSync(path.join(finalDir, "q-manifest.json"))) {
           errorMessage = `Manifest file not found in ${path.join(
-            outDir,
-            "build",
+            finalDir,
             "qwik-manifest.json"
           )}`;
           logger.error(errorMessage);
@@ -356,13 +355,10 @@ export default defineIntegration({
         if (manifestJson) {
           const manifestKeys = Object.keys(manifestJson.bundles);
           if (manifestKeys.length) {
-            logger.info(`Manifest file found in ${path.join(outDir, "build")}`);
+            logger.info(`Manifest file found in ${manifestPath}`);
             for (const key of manifestKeys) {
               if (!fs.existsSync(path.join(outDir, "build", key))) {
-                errorMessage = `Manifest file ${key} not found in ${path.join(
-                  outDir,
-                  "build"
-                )} directory`;
+                errorMessage = `Manifest file ${key} not found in ${manifestPath} directory`;
                 logger.error(errorMessage);
                 throw new Error(errorMessage);
               }
