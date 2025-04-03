@@ -396,6 +396,9 @@ function copyFolderSync(src: string, dest: string) {
       copyFolderSync(srcPath, destPath);
     } else {
       try {
+        if (fs.existsSync(destPath)) {
+          fs.rmSync(destPath);
+        }
         fs.copyFileSync(srcPath, destPath);
       } catch (error) {
         throw new Error(`Failed to copy file from ${srcPath} to ${destPath}: ${error}`);
