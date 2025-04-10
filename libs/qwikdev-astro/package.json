@@ -61,7 +61,8 @@
   "devDependencies": {
     "@builder.io/qwik": "^1.13.0",
     "astro": "5.6.1",
-    "vite": "^6.2.5"
+    "vite": "^6.2.5",
+    "@inox-tools/astro-tests": "^0.5.1"
   },
   "peerDependencies": {
     "@builder.io/qwik": ">=1.9.0"
