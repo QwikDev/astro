@@ -1,7 +1,4 @@
 import fs from "node:fs";
-import { resolve } from "node:path";
-import { pathToFileURL } from "node:url"; // Import pathToFileURL
-
 import { join } from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
