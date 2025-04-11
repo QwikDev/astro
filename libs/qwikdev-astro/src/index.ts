@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import path from "node:path";
 import { join } from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
@@ -10,6 +9,7 @@ import type {
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
+import type { c } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
 import { type PluginOption, build, createFilter } from "vite";
 import type { InlineConfig } from "vite";
 
@@ -63,6 +63,7 @@ export default defineIntegration({
     let serverDir = "";
     let outDir = "";
     let finalDir = "";
+    let staticDir = "";
     let astroVite: InlineConfig;
 
     let resolveEntrypoints: () => void;
@@ -78,8 +79,9 @@ export default defineIntegration({
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
-        const { addRenderer, updateConfig, config } = setupProps;
+        const { addRenderer, updateConfig, config, createCodegenDir } = setupProps;
         astroConfig = config;
+        createCodegenDir();
 
         // integration HMR support
         watchDirectory(setupProps, resolver());
@@ -100,6 +102,10 @@ export default defineIntegration({
         serverDir = getRelativePath(
           astroConfig.root.pathname,
           astroConfig.build.server.pathname
+        );
+        staticDir = getRelativePath(
+          astroConfig.root.pathname,
+          ".astro/integrations/_qwikdev_astro/"
         );
 
         outDir = getRelativePath(astroConfig.root.pathname, astroConfig.outDir.pathname);
@@ -225,6 +231,34 @@ export default defineIntegration({
       "astro:build:setup": async ({ vite }) => {
         astroVite = vite as InlineConfig;
       },
+      "astro:build:done": async ({ dir }) => {
+        console.log("Astro build done dir", dir);
+        const staticFilesLocation = join(finalDir, "build");
+        const staticFiles = staticDir;
+
+        if (!fs.existsSync(staticFiles)) {
+          fs.mkdirSync(staticFiles, { recursive: true });
+        }
+
+        const items = fs.readdirSync(staticFilesLocation);
+
+        for (const item of items) {
+          const sourcePath = join(staticFilesLocation, item);
+          const destinationPath = join(staticFiles, item);
+
+          const stats = fs.statSync(sourcePath);
+          if (stats.isDirectory()) {
+            fs.renameSync(sourcePath, destinationPath);
+          } else {
+            fs.renameSync(sourcePath, destinationPath);
+          }
+        }
+
+        const files = fs.readdirSync(staticFiles);
+        if (files.length) {
+          console.log("Static files copied to:", staticFiles);
+        }
+      },
 
       "astro:build:ssr": async () => {
         await entrypointsReady;
@@ -255,7 +289,6 @@ export default defineIntegration({
 
                 if (serverFile) {
                   const serverPath = join(serverChunksDir, serverFile);
-
                   const content = fs.readFileSync(serverPath, "utf-8");
 
                   // Replace the manifest handling in the bundled code
@@ -313,59 +346,6 @@ export default defineIntegration({
             emptyOutDir: false
           }
         } as InlineConfig);
-      },
-
-      "astro:build:done"({ logger }) {
-        const locationString = fs.existsSync(path.join(outDir, "build"));
-        if (fs.existsSync(path.join(outDir, "build"))) {
-          logger.info(
-            `Static files already exist in ${locationString} directory - skipping move`
-          );
-        }
-        if (!locationString) {
-          const srcPath = path.join(clientDir, "build");
-          const destPath = path.join(outDir, "build");
-          logger.info(`Copying static files from ${srcPath} to ${destPath}`);
-          copyFolderSync(srcPath, destPath);
-          logger.info(`Static files copied to ${locationString} directory`);
-        }
-        let errorMessage = "";
-        logger.info(
-          `Qwik build finished. Check ${path.join(outDir, "build")} for static files`
-        );
-        if (!fs.existsSync(path.join(outDir, "build"))) {
-          errorMessage = `Static files not found in ${path.join(
-            outDir,
-            "build"
-          )} directory`;
-          logger.error(errorMessage);
-          throw new Error(errorMessage);
-        }
-        if (!fs.existsSync(path.join(finalDir, "q-manifest.json"))) {
-          errorMessage = `Manifest file not found in ${path.join(
-            finalDir,
-            "qwik-manifest.json"
-          )}`;
-          logger.error(errorMessage);
-          throw new Error(errorMessage);
-        }
-        const manifestPath = path.join(finalDir, "q-manifest.json");
-        const manifest = fs.readFileSync(manifestPath, "utf-8");
-        const manifestJson = JSON.parse(manifest);
-        if (manifestJson) {
-          const manifestKeys = Object.keys(manifestJson.bundles);
-          if (manifestKeys.length) {
-            logger.info(`Manifest file found in ${manifestPath}`);
-            for (const key of manifestKeys) {
-              if (!fs.existsSync(path.join(outDir, "build", key))) {
-                errorMessage = `Manifest file ${key} not found in ${manifestPath} directory`;
-                logger.error(errorMessage);
-                throw new Error(errorMessage);
-              }
-            }
-          }
-        }
-        logger.info("Build completed successfully");
       }
     };
 
@@ -377,32 +357,4 @@ export default defineIntegration({
 
 function getRelativePath(from: string, to: string) {
   return to.replace(from, "") || ".";
-}
-function copyFolderSync(src: string, dest: string) {
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
-  }
-
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-
-  for (const entry of entries) {
-    if (!entry.name.startsWith("q-")) {
-      continue;
-    }
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-
-    if (entry.isDirectory()) {
-      copyFolderSync(srcPath, destPath);
-    } else {
-      try {
-        if (fs.existsSync(destPath)) {
-          fs.rmSync(destPath);
-        }
-        fs.copyFileSync(srcPath, destPath);
-      } catch (error) {
-        throw new Error(`Failed to copy file from ${srcPath} to ${destPath}: ${error}`);
-      }
-    }
-  }
 }
