@@ -202,9 +202,6 @@ export default defineIntegration({
         };
 
         updateConfig({
-          build: {
-            client: new URL("./", astroConfig.root)
-          },
           vite: {
             build: {
               rollupOptions: {
