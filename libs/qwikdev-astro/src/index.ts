@@ -9,7 +9,6 @@ import type {
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
 import { z } from "astro/zod";
-import type { c } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
 import { type PluginOption, build, createFilter } from "vite";
 import type { InlineConfig } from "vite";
 
@@ -81,8 +80,8 @@ export default defineIntegration({
       "astro:config:setup": async (setupProps) => {
         const { addRenderer, updateConfig, config, createCodegenDir } = setupProps;
         astroConfig = config;
-        createCodegenDir();
-
+        const location = createCodegenDir();
+        console.log("Astro codegen location", location);
         // integration HMR support
         watchDirectory(setupProps, resolver());
 
