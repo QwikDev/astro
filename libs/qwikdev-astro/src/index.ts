@@ -1,4 +1,7 @@
 import fs from "node:fs";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url"; // Import pathToFileURL
+
 import { join } from "node:path";
 import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
 import type {
@@ -62,7 +65,6 @@ export default defineIntegration({
     let serverDir = "";
     let outDir = "";
     let finalDir = "";
-    let staticDir = "";
     let astroVite: InlineConfig;
 
     let resolveEntrypoints: () => void;
@@ -78,13 +80,10 @@ export default defineIntegration({
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
-        const { addRenderer, updateConfig, config, createCodegenDir } = setupProps;
+        const { addRenderer, updateConfig, config } = setupProps;
         astroConfig = config;
-        const location = createCodegenDir();
-        console.log("Astro codegen location", location);
         // integration HMR support
         watchDirectory(setupProps, resolver());
-
         addRenderer({
           name: "@qwikdev/astro",
           serverEntrypoint: resolver("../server.ts")
@@ -101,10 +100,6 @@ export default defineIntegration({
         serverDir = getRelativePath(
           astroConfig.root.pathname,
           astroConfig.build.server.pathname
-        );
-        staticDir = getRelativePath(
-          astroConfig.root.pathname,
-          ".astro/integrations/_qwikdev_astro/"
         );
 
         outDir = getRelativePath(astroConfig.root.pathname, astroConfig.outDir.pathname);
@@ -210,6 +205,9 @@ export default defineIntegration({
         };
 
         updateConfig({
+          build: {
+            client: new URL("./", astroConfig.root)
+          },
           vite: {
             build: {
               rollupOptions: {
@@ -229,34 +227,6 @@ export default defineIntegration({
 
       "astro:build:setup": async ({ vite }) => {
         astroVite = vite as InlineConfig;
-      },
-      "astro:build:done": async ({ dir }) => {
-        console.log("Astro build done dir", dir);
-        const staticFilesLocation = join(finalDir, "build");
-        const staticFiles = staticDir;
-
-        if (!fs.existsSync(staticFiles)) {
-          fs.mkdirSync(staticFiles, { recursive: true });
-        }
-
-        const items = fs.readdirSync(staticFilesLocation);
-
-        for (const item of items) {
-          const sourcePath = join(staticFilesLocation, item);
-          const destinationPath = join(staticFiles, item);
-
-          const stats = fs.statSync(sourcePath);
-          if (stats.isDirectory()) {
-            fs.renameSync(sourcePath, destinationPath);
-          } else {
-            fs.renameSync(sourcePath, destinationPath);
-          }
-        }
-
-        const files = fs.readdirSync(staticFiles);
-        if (files.length) {
-          console.log("Static files copied to:", staticFiles);
-        }
       },
 
       "astro:build:ssr": async () => {
