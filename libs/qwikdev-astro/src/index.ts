@@ -103,14 +103,13 @@ export default defineIntegration({
 
         if (astroConfig.adapter) {
           finalDir = clientDir;
+          if (astroConfig.adapter?.name.includes("vercel")) {
+            const outDirUrl = new URL(astroConfig.outDir.pathname, astroConfig.root);
+            astroConfig.build.client = outDirUrl;
+            finalDir = astroConfig.build.client.pathname;
+          }
         } else {
           finalDir = outDir;
-        }
-
-        if (finalDir !== outDir) {
-          const outDirUrl = new URL(astroConfig.outDir.pathname, astroConfig.root);
-          astroConfig.build.client = outDirUrl;
-          finalDir = astroConfig.build.client.pathname;
         }
 
         /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
@@ -229,7 +228,7 @@ export default defineIntegration({
         astroVite = vite as InlineConfig;
       },
 
-      "astro:build:ssr": async (manifest) => {
+      "astro:build:ssr": async () => {
         await entrypointsReady;
 
         // Astro's SSR build finished -> Now we can handle how Qwik normally builds
