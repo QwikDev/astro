@@ -1,5 +1,18 @@
 # @qwikdev/astro
 
+## 0.7.12
+
+### Patch Changes
+
+- bcf04d0: - Fix Vercel builds failing force create serverchunks directory if needed
+  - Fix Vercel Adapter Client Static Files Handling
+
+## 0.7.11
+
+### Patch Changes
+
+- 0.7.11
+
 ## 0.7.10
 
 ### Patch Changes
