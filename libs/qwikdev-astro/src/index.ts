@@ -243,8 +243,6 @@ export default defineIntegration({
             input: [...qwikEntrypoints, resolver("./root.tsx")],
             outDir: finalDir,
             manifestOutput: (manifest) => {
-              globalThis.qManifest = manifest;
-
               if (astroConfig?.adapter) {
                 const serverChunksDir = join(serverDir, "chunks");
                 if (!fs.existsSync(serverChunksDir)) {
@@ -262,8 +260,8 @@ export default defineIntegration({
                   // Replace the manifest handling in the bundled code
                   const manifestJson = JSON.stringify(manifest);
                   const newContent = content.replace(
-                    "globalThis.qManifest",
-                    `globalThis.qManifest || ${manifestJson}`
+                    "serverData: props,",
+                    `serverData: props, manifest: ${manifestJson},`
                   );
 
                   fs.writeFileSync(serverPath, newContent);

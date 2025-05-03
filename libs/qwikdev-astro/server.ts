@@ -79,14 +79,9 @@ export async function renderToStaticMarkup(
         ...(isDev && { "q-astro-marker": "" })
       },
       containerTagName: "div",
-      ...(isDev
-        ? {
-            manifest: {} as QwikManifest,
-            symbolMapper: globalThis.symbolMapperFn
-          }
-        : {
-            manifest: globalThis.qManifest
-          }),
+      ...(isDev && {
+        symbolMapper: globalThis.symbolMapperFn
+      }),
       serverData: props,
       qwikPrefetchServiceWorker: {
         include: false
