@@ -43,7 +43,7 @@
     "@playwright/test": "^1.49.1",
     "@qwikdev/create-astro": "workspace:*",
     "@types/node": "^22.10.2",
-    "astro": "5.0.3",
+    "astro": "5.7.10",
     "lefthook": "^1.10.1",
     "pkg-pr-new": "^0.0.35",
     "@qwikdev/astro": "0.7.11"
