@@ -188,6 +188,7 @@ export default defineIntegration({
           srcDir,
           ssr: {
             input: resolver("../server.ts")
+            // manifestInput: "qwik replace me!" as unknown as QwikManifest
           },
           client: {
             input: resolver("./root.tsx"),
@@ -243,29 +244,27 @@ export default defineIntegration({
             input: [...qwikEntrypoints, resolver("./root.tsx")],
             outDir: finalDir,
             manifestOutput: (manifest) => {
-              if (astroConfig?.adapter) {
-                const serverChunksDir = join(serverDir, "chunks");
-                if (!fs.existsSync(serverChunksDir)) {
-                  fs.mkdirSync(serverChunksDir, { recursive: true });
-                }
-                const files = fs.readdirSync(serverChunksDir);
-                const serverFile = files.find(
-                  (f) => f.startsWith("server_") && f.endsWith(".mjs")
+              const serverChunksDir = join(serverDir, "chunks");
+              if (!fs.existsSync(serverChunksDir)) {
+                fs.mkdirSync(serverChunksDir, { recursive: true });
+              }
+              const files = fs.readdirSync(serverChunksDir);
+              const serverFile = files.find(
+                (f) => f.startsWith("server_") && f.endsWith(".mjs")
+              );
+
+              if (serverFile) {
+                const serverPath = join(serverChunksDir, serverFile);
+                const content = fs.readFileSync(serverPath, "utf-8");
+
+                // Replace the manifest handling in the bundled code
+                const manifestJson = JSON.stringify(manifest);
+                const newContent = content.replace(
+                  "serverData: props,",
+                  `serverData: props, manifest: ${manifestJson},`
                 );
 
-                if (serverFile) {
-                  const serverPath = join(serverChunksDir, serverFile);
-                  const content = fs.readFileSync(serverPath, "utf-8");
-
-                  // Replace the manifest handling in the bundled code
-                  const manifestJson = JSON.stringify(manifest);
-                  const newContent = content.replace(
-                    "serverData: props,",
-                    `serverData: props, manifest: ${manifestJson},`
-                  );
-
-                  fs.writeFileSync(serverPath, newContent);
-                }
+                fs.writeFileSync(serverPath, newContent);
               }
             }
           },
