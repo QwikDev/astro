@@ -253,6 +253,7 @@ export default defineIntegration({
               }
               const files = fs.readdirSync(serverChunksDir);
 
+              // Astro actions can add more server files
               const serverFiles = files.filter(
                 (f) => f.startsWith("server_") && f.endsWith(".mjs")
               );
