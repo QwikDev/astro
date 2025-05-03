@@ -72,7 +72,6 @@ export async function renderToStaticMarkup(
     }
 
     let html = "";
-    const devUrls = new Set<string>();
 
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: {

@@ -1,7 +1,7 @@
 {
   "name": "@qwikdev/astro",
   "description": "Use Qwik components and Resumability within Astro",
-  "version": "0.7.10",
+  "version": "0.7.12",
   "contributors": [
     {
       "name": "Jack Shelton",
@@ -60,12 +60,9 @@
     "astro-integration-kit": "^0.18.0"
   },
   "devDependencies": {
-    "@qwik.dev/core": "2.0.0-alpha.8",
+    "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@7ab8deb",
     "astro": "^5.1.1",
     "vite": "^5.4.11",
     "ts-morph": "latest"
-  },
-  "peerDependencies": {
-    "@qwik.dev/core": ">=2.0.0-alpha.8"
   }
 }

@@ -79,10 +79,8 @@ export default defineIntegration({
       "astro:config:setup": async (setupProps) => {
         const { addRenderer, updateConfig, config } = setupProps;
         astroConfig = config;
-
         // integration HMR support
         watchDirectory(setupProps, resolver());
-
         addRenderer({
           name: "@qwikdev/astro",
           serverEntrypoint: resolver("../server.ts")
@@ -105,6 +103,11 @@ export default defineIntegration({
 
         if (astroConfig.adapter) {
           finalDir = clientDir;
+          if (astroConfig.adapter?.name.includes("vercel")) {
+            const outDirUrl = new URL(astroConfig.outDir.pathname, astroConfig.root);
+            astroConfig.build.client = outDirUrl;
+            finalDir = astroConfig.build.client.pathname;
+          }
         } else {
           finalDir = outDir;
         }
@@ -244,6 +247,9 @@ export default defineIntegration({
 
               if (astroConfig?.adapter) {
                 const serverChunksDir = join(serverDir, "chunks");
+                if (!fs.existsSync(serverChunksDir)) {
+                  fs.mkdirSync(serverChunksDir, { recursive: true });
+                }
                 const files = fs.readdirSync(serverChunksDir);
                 const serverFile = files.find(
                   (f) => f.startsWith("server_") && f.endsWith(".mjs")

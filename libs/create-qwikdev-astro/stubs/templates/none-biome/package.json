@@ -12,7 +12,7 @@
     "dev": "astro dev",
     "fix": "npm run lint && npm run format",
     "format": "biome format --write .",
-    "lint": "biome check --apply-unsafe .",
+    "lint": "biome check --write --unsafe .",
     "preview": "npm run build && astro preview",
     "prod": "npm run check && astro build",
     "start": "astro dev --open"
