@@ -1,11 +1,11 @@
-import { type JSXNode, jsx } from "@builder.io/qwik";
-import { isDev } from "@builder.io/qwik/build";
-import type { QwikManifest } from "@builder.io/qwik/optimizer";
+import { type JSXNode, type JSXOutput, jsx } from "@qwik.dev/core";
+import { isDev } from "@qwik.dev/core/build";
+import type { QwikManifest } from "@qwik.dev/core/optimizer";
 import {
   type RenderToStreamOptions,
   getQwikLoaderScript,
   renderToStream
-} from "@builder.io/qwik/server";
+} from "@qwik.dev/core/server";
 import type { SSRResult } from "astro";
 
 const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
@@ -92,7 +92,7 @@ export async function renderToStaticMarkup(
         include: false
       },
       stream: {
-        write: (chunk) => {
+        write: (chunk: string) => {
           html += chunk;
         }
       }
@@ -169,7 +169,7 @@ export async function renderToStaticMarkup(
       renderToStreamOpts.containerAttributes!["q-astro-marker"] = "first";
     }
 
-    await renderToStream(qwikComponentJSX, renderToStreamOpts);
+    await renderToStream(qwikComponentJSX as JSXOutput, renderToStreamOpts);
 
     const isClientRouter = Array.from(this.result._metadata.renderedScripts).some(
       (path) => path.includes("ClientRouter.astro")
