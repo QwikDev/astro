@@ -252,12 +252,12 @@ export default defineIntegration({
                 fs.mkdirSync(serverChunksDir, { recursive: true });
               }
               const files = fs.readdirSync(serverChunksDir);
-              console.log("files", files);
-              const serverFile = files.find(
+
+              const serverFiles = files.filter(
                 (f) => f.startsWith("server_") && f.endsWith(".mjs")
               );
 
-              if (serverFile) {
+              for (const serverFile of serverFiles) {
                 const serverPath = join(serverChunksDir, serverFile);
                 const content = fs.readFileSync(serverPath, "utf-8");
 
