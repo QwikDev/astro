@@ -244,11 +244,15 @@ export default defineIntegration({
             input: [...qwikEntrypoints, resolver("./root.tsx")],
             outDir: finalDir,
             manifestOutput: (manifest) => {
-              const serverChunksDir = join(serverDir, "chunks");
+              const serverChunksDir = astroConfig?.adapter
+                ? join(serverDir, "chunks")
+                : join(finalDir, "chunks");
+
               if (!fs.existsSync(serverChunksDir)) {
                 fs.mkdirSync(serverChunksDir, { recursive: true });
               }
               const files = fs.readdirSync(serverChunksDir);
+              console.log("files", files);
               const serverFile = files.find(
                 (f) => f.startsWith("server_") && f.endsWith(".mjs")
               );
