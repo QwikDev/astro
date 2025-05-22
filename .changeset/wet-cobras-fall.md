@@ -3,6 +3,12 @@
 "@qwikdev/astro": minor
 ---
 
-Qwik Astro and the CLI stubs now support the Qwik preloader!
+🚀 Qwik Astro now supports the Qwik preloader! ⚡️
+
+✨ Simplified loader mechanism
+🔄 Improved deployment support
+⚙️ Enhanced Astro actions integration
 
 Read more in the upcoming blog post on the Qwik site.
+
+
