@@ -1,5 +1,11 @@
 # @qwikdev/create-astro
 
+## 0.2.1
+
+### Patch Changes
+
+- 6fe70b5: feat: update stub versions
+
 ## 0.2.0
 
 ### Minor Changes
