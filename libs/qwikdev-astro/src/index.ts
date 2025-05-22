@@ -141,7 +141,7 @@ export default defineIntegration({
               importer?.endsWith(".astro") || importer?.endsWith(".mdx");
             const isFromTrackedFile = potentialEntries.has(importer ?? "");
 
-            if (!isFromAstro && !isFromTrackedFile) {
+            if (!(isFromAstro || isFromTrackedFile)) {
               return null;
             }
 
