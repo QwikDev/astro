@@ -12,8 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@builder.io/qwik": "https://pkg.pr.new/@builder.io/qwik@465483f",
+    "@builder.io/qwik": "^1.14.1",
     "@qwikdev/astro": "workspace:*",
-    "astro": "5.7.10"
+    "astro": "5.8.0"
   }
 }

@@ -56,12 +56,11 @@
   },
   "bugs": "https://github.com/thejackshelton/@qwikdev/astro/issues",
   "dependencies": {
-    "@inox-tools/inline-mod": "^2.0.3",
     "astro-integration-kit": "^0.18.0"
   },
   "devDependencies": {
-    "@builder.io/qwik": "https://pkg.pr.new/@builder.io/qwik@465483f",
-    "astro": "^5.7.10",
+    "@builder.io/qwik": "^1.14.1",
+    "astro": "^5.8.0",
     "vite": "^6.3.4"
   },
   "peerDependencies": {

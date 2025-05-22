@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@builder.io/qwik": "^1.12",
+    "@builder.io/qwik": "^1.14.1",
     "@fontsource-variable/unbounded": "^5.1.1",
     "@iconify-json/lucide": "^1.2.23",
     "@qwikdev/astro": "workspace:*",
