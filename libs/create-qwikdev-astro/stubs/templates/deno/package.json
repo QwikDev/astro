@@ -24,7 +24,7 @@
     "@astrojs/check": "^0.9.4",
     "@astrojs/deno": "^5.0.1",
     "@builder.io/qwik": "^1.14.1",
-    "@qwikdev/astro": "^0.7",
+    "@qwikdev/astro": "^0.8",
     "astro": "^5.8.0"
   },
   "devDependencies": {
