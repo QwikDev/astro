@@ -1,5 +1,17 @@
 # @qwikdev/astro
 
+## 0.8.0
+
+### Minor Changes
+
+- 823ff01: 🚀 Qwik Astro now supports the Qwik preloader! ⚡️
+
+  ✨ Simplified loader mechanism
+  🔄 Improved deployment support
+  ⚙️ Enhanced Astro actions integration
+
+  Read more in the upcoming blog post on the Qwik site.
+
 ## 0.7.12
 
 ### Patch Changes
