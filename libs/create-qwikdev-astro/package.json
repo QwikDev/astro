@@ -9,7 +9,7 @@
     "build": "tsup-node --env.NODE_ENV production",
     "prod": "pnpm check && pnpm build",
     "start": "tsup-node --env.NODE_ENV development --watch",
-    "test": "tsx bin/test.ts"
+    "test": "pnm exec tsx bin/test.ts"
   },
   "contributors": [
     {

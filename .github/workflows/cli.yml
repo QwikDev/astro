@@ -26,6 +26,9 @@ jobs:
       - name: 🔥 Remove lockfile
         run: rm pnpm-lock.yaml
 
+      - name: Install Panam
+        run: npm i -g panam
+
       - name: Setup Test Environment
         uses: siguici/setup-js@v1
         with:
