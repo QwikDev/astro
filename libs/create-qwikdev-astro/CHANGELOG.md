@@ -1,5 +1,23 @@
 # @qwikdev/create-astro
 
+## 0.2.1
+
+### Patch Changes
+
+- 6fe70b5: feat: update stub versions
+
+## 0.2.0
+
+### Minor Changes
+
+- 823ff01: 🚀 Qwik Astro now supports the Qwik preloader! ⚡️
+
+  ✨ Simplified loader mechanism
+  🔄 Improved deployment support
+  ⚙️ Enhanced Astro actions integration
+
+  Read more in the upcoming blog post on the Qwik site.
+
 ## 0.1.6
 
 ### Patch Changes

@@ -13,14 +13,14 @@
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/deno": "^5.0.1",
-    "@astrojs/react": "^4.2.1",
-    "@builder.io/qwik": "^1.12.1",
+    "@astrojs/react": "^4.3.0",
+    "@builder.io/qwik": "^1.14.1",
     "@qwikdev/astro": "workspace:*",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
-    "astro": "^5.4.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "typescript": "^5.8.2"
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "astro": "^5.8.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.7.2"
   }
 }

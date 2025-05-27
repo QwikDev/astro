@@ -141,7 +141,7 @@ export default defineIntegration({
               importer?.endsWith(".astro") || importer?.endsWith(".mdx");
             const isFromTrackedFile = potentialEntries.has(importer ?? "");
 
-            if (!isFromAstro && !isFromTrackedFile) {
+            if (!(isFromAstro || isFromTrackedFile)) {
               return null;
             }
 
@@ -188,6 +188,7 @@ export default defineIntegration({
           srcDir,
           ssr: {
             input: resolver("../server.ts")
+            // manifestInput: "qwik replace me!" as unknown as QwikManifest
           },
           client: {
             input: resolver("./root.tsx"),
@@ -243,31 +244,32 @@ export default defineIntegration({
             input: [...qwikEntrypoints, resolver("./root.tsx")],
             outDir: finalDir,
             manifestOutput: (manifest) => {
-              globalThis.qManifest = manifest;
+              const serverChunksDir = astroConfig?.adapter
+                ? join(serverDir, "chunks")
+                : join(finalDir, "chunks");
 
-              if (astroConfig?.adapter) {
-                const serverChunksDir = join(serverDir, "chunks");
-                if (!fs.existsSync(serverChunksDir)) {
-                  fs.mkdirSync(serverChunksDir, { recursive: true });
-                }
-                const files = fs.readdirSync(serverChunksDir);
-                const serverFile = files.find(
-                  (f) => f.startsWith("server_") && f.endsWith(".mjs")
+              if (!fs.existsSync(serverChunksDir)) {
+                fs.mkdirSync(serverChunksDir, { recursive: true });
+              }
+              const files = fs.readdirSync(serverChunksDir);
+
+              // Astro actions can add more server files
+              const serverFiles = files.filter(
+                (f) => f.startsWith("server_") && f.endsWith(".mjs")
+              );
+
+              for (const serverFile of serverFiles) {
+                const serverPath = join(serverChunksDir, serverFile);
+                const content = fs.readFileSync(serverPath, "utf-8");
+
+                // Replace the manifest handling in the bundled code
+                const manifestJson = JSON.stringify(manifest);
+                const newContent = content.replace(
+                  "serverData: props,",
+                  `serverData: props, manifest: ${manifestJson},`
                 );
 
-                if (serverFile) {
-                  const serverPath = join(serverChunksDir, serverFile);
-                  const content = fs.readFileSync(serverPath, "utf-8");
-
-                  // Replace the manifest handling in the bundled code
-                  const manifestJson = JSON.stringify(manifest);
-                  const newContent = content.replace(
-                    "globalThis.qManifest",
-                    `globalThis.qManifest || ${manifestJson}`
-                  );
-
-                  fs.writeFileSync(serverPath, newContent);
-                }
+                fs.writeFileSync(serverPath, newContent);
               }
             }
           },

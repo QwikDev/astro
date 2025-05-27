@@ -1,15 +1,10 @@
 import { type JSXNode, jsx } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
-import {
-  type RenderToStreamOptions,
-  getQwikLoaderScript,
-  renderToStream
-} from "@builder.io/qwik/server";
+import { type RenderToStreamOptions, renderToStream } from "@builder.io/qwik/server";
 import type { SSRResult } from "astro";
 
-const isQwikLoaderAddedMap = new WeakMap<SSRResult, boolean>();
-const modulePreloadScript = `window.addEventListener("load",()=>{(async()=>{window.requestIdleCallback||(window.requestIdleCallback=(e,t)=>{const n=t||{},o=1,i=n.timeout||o,a=performance.now();return setTimeout(()=>{e({get didTimeout(){return!n.timeout&&performance.now()-a-o>i},timeRemaining:()=>Math.max(0,o+(performance.now()-a))})},o)});const e=async()=>{const e=new Set,t=document.querySelectorAll('script[q\\\\:type="prefetch-bundles"]');t.forEach(t=>{if(!t.textContent)return;const n=t.textContent,o=n.match(/\\["prefetch","[/]build[/]","(.*?)"\\]/);o&&o[1]&&o[1].split('","').forEach(t=>{t.startsWith("q-")&&e.add(t)})}),document.querySelectorAll('script[type="qwik/json"]').forEach(t=>{if(!t.textContent)return;const n=t.textContent.match(/q-[A-Za-z0-9_-]+\\.js/g);n&&n.forEach(t=>e.add(t))}),e.forEach(e=>{const t=document.createElement("link");t.rel="modulepreload",t.href="/build/"+e,t.fetchPriority="low",document.head.appendChild(t)})};await requestIdleCallback(await e)})()});`;
+const containerMap = new WeakMap<SSRResult, boolean>();
 
 type RendererContext = {
   result: SSRResult;
@@ -73,20 +68,20 @@ export async function renderToStaticMarkup(
 
     let html = "";
 
+    // https://qwik.dev/docs/advanced/qwikloader/#qwikloader
+    const isInitialContainer = !containerMap.has(this.result);
+
     const renderToStreamOpts: RenderToStreamOptions = {
       containerAttributes: {
         style: "display: contents",
         ...(isDev && { "q-astro-marker": "" })
       },
+      qwikLoader: isInitialContainer ? { include: "always" } : { include: "never" },
       containerTagName: "div",
-      ...(isDev
-        ? {
-            manifest: {} as QwikManifest,
-            symbolMapper: globalThis.symbolMapperFn
-          }
-        : {
-            manifest: globalThis.qManifest
-          }),
+      ...(isDev && {
+        symbolMapper: globalThis.symbolMapperFn,
+        manifest: {} as QwikManifest
+      }),
       serverData: props,
       qwikPrefetchServiceWorker: {
         include: false
@@ -108,32 +103,6 @@ export async function renderToStaticMarkup(
         html
       };
     }
-
-    // https://qwik.dev/docs/advanced/qwikloader/#qwikloader
-    const isQwikLoaderNeeded = !isQwikLoaderAddedMap.has(this.result);
-    const qwikLoader =
-      isQwikLoaderNeeded &&
-      jsx("script", {
-        "qwik-loader": "",
-        dangerouslySetInnerHTML: getQwikLoaderScript()
-      });
-
-    const modulePreload =
-      isQwikLoaderNeeded &&
-      jsx("script", {
-        "qwik-astro-preloader": "",
-        dangerouslySetInnerHTML: modulePreloadScript
-      });
-
-    /**
-     * service worker script is only added to the page once, and in prod.
-     * https://github.com/QwikDev/qwik/pull/5618
-     */
-    const qwikScripts = jsx("span", {
-      "q:slot": "qwik-scripts",
-      "qwik-scripts": "",
-      children: [qwikLoader, modulePreload]
-    });
 
     const slots: { [key: string]: unknown } = {};
     let defaultSlot: JSXNode<"span"> | undefined = undefined;
@@ -161,11 +130,11 @@ export async function renderToStaticMarkup(
     const slotValues = Object.values(slots);
     const qwikComponentJSX = jsx(component, {
       ...props,
-      children: [qwikScripts, defaultSlot, ...slotValues]
+      children: [defaultSlot, ...slotValues]
     });
 
-    if (isQwikLoaderNeeded) {
-      isQwikLoaderAddedMap.set(this.result, true);
+    if (isInitialContainer) {
+      containerMap.set(this.result, true);
       renderToStreamOpts.containerAttributes!["q-astro-marker"] = "first";
     }
 
@@ -188,7 +157,7 @@ export async function renderToStaticMarkup(
       isClientRouter &&
       htmlWithRerun +
         `
-      ${isQwikLoaderNeeded ? `<script data-qwik-astro-client-router>document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>` : ""}
+      ${isInitialContainer ? `<script data-qwik-astro-client-router>document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>` : ""}
     `;
 
     return {
