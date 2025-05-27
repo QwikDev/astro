@@ -25,6 +25,9 @@ jobs:
         with:
           version: 9
 
+      - name: 📦️ Install Panam
+        run: pnpm i -g panam-cli
+
       # Use the Makefile's install target
       - name: Install Dependencies
         run: make install
