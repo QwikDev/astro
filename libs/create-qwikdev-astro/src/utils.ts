@@ -3,7 +3,7 @@ import os from "node:os";
 import path, { join, resolve, relative, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
-import pm from "panam";
+import pm from "panam/pm";
 
 export const __filename = getModuleFilename();
 export const __dirname = path.dirname(__filename);
