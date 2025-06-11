@@ -1,8 +1,8 @@
 import fs, { cpSync } from "node:fs";
 import path from "node:path";
 import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
+import { $ } from "panam/executor";
 import pm from "panam/pm";
-import { $ } from "panam/process";
 import pkg from "../package.json";
 import { ensureString } from "./console";
 import { type Definition as BaseDefinition, Program } from "./core";

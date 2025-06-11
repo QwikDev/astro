@@ -40,11 +40,11 @@
     "@builder.io/qwik": "^1.14.1",
     "@changesets/cli": "^2.29.4",
     "@inox-tools/astro-tests": "^0.6.1",
-    "@playwright/test": "^1.52.0",
+    "@playwright/test": "^1.53.0",
     "@qwikdev/astro": "workspace:*",
     "@qwikdev/create-astro": "workspace:*",
-    "@types/node": "^22.15.21",
-    "astro": "^5.8.0",
+    "@types/node": "^22.15.31",
+    "astro": "^5.9.2",
     "lefthook": "^1.11.13",
     "pkg-pr-new": "^0.0.35"
   }

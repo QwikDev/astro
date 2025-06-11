@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@builder.io/qwik": "^1.14.1",
-    "astro": "^5.8.0",
+    "astro": "^5.9.2",
     "vite": "^6.3.5"
   },
   "peerDependencies": {
