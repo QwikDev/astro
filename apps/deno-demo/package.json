@@ -12,9 +12,9 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/deno": "^5.0.1",
     "@astrojs/react": "^4.3.0",
     "@builder.io/qwik": "^1.14.1",
+    "@deno/astro-adapter": "^0.3.1",
     "@qwikdev/astro": "workspace:*",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
