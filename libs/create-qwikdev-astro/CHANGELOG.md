@@ -1,5 +1,11 @@
 # @qwikdev/create-astro
 
+## 0.2.2
+
+### Patch Changes
+
+- 98d18e6: `@astrojs/deno` is no longer maintained. Use `@deno/astro-adapter`.
+
 ## 0.2.1
 
 ### Patch Changes
