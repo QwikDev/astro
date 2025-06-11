@@ -36,7 +36,7 @@ const questions = {
   [input.force]: "Would you like to force the copy?",
   [input.copy]: "Copy template files safely (without overwriting existing files)?",
   [input.biome]: "Would you prefer Biome over ESLint/Prettier?",
-  [input.install]: `Would you like to install ${pm.name} dependencies?`,
+  [input.install]: `Would you like to install .* dependencies?`,
   [input.ci]: "Would you like to add CI workflow?",
   [input.git]: "Would you like to initialize Git?",
   [input.package_name]: "What should be the name of this package?"
