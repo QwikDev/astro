@@ -38,14 +38,14 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@builder.io/qwik": "^1.14.1",
-    "@changesets/cli": "^2.27.11",
+    "@changesets/cli": "^2.29.4",
     "@inox-tools/astro-tests": "^0.6.1",
-    "@playwright/test": "^1.49.1",
-    "@qwikdev/create-astro": "workspace:*",
+    "@playwright/test": "^1.53.0",
     "@qwikdev/astro": "workspace:*",
-    "@types/node": "^22.10.2",
-    "astro": "^5.8.0",
-    "lefthook": "^1.10.1",
+    "@qwikdev/create-astro": "workspace:*",
+    "@types/node": "^22.15.31",
+    "astro": "^5.9.2",
+    "lefthook": "^1.11.13",
     "pkg-pr-new": "^0.0.35"
   }
 }

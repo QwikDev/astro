@@ -30,6 +30,9 @@ jobs:
         with:
           version: 9
 
+      - name: 📦️ Install Panam
+        run: pnpm i -g panam-cli
+
       - name: ✅ Install dependencies, check code & run E2E tests
         run: make test
 

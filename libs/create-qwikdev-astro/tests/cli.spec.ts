@@ -1,8 +1,8 @@
 import { test } from "@japa/runner";
 import { TestContext } from "@japa/runner/core";
 import { run } from "@qwikdev/create-astro";
-import { getPackageManager } from "@qwikdev/create-astro/utils";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
+import pm from "panam";
 
 process.env.NODE_ENV = "test";
 process.env.CI = "1";
@@ -10,7 +10,6 @@ process.env.CI = "1";
 const integration = "@qwikdev/astro";
 const root = "labs";
 const project = "test-app";
-const pm = getPackageManager();
 
 delete process.env.npm_config_user_agent;
 
@@ -20,32 +19,15 @@ const setup = () => {
   return () => emptyDirSync(root);
 };
 
-const generatedDirs = [
-  ".vscode",
-  "public",
-  "src",
-  "src/assets",
-  "src/components",
-  "src/layouts",
-  "src/pages",
-  "src/styles"
-];
+const generatedDirs = [".vscode", "public", "src", "src/pages"];
 
 const generatedFiles = [
   ".vscode/extensions.json",
   ".vscode/launch.json",
   "public/favicon.svg",
-  "src/assets/astro.svg",
-  "src/assets/qwik.svg",
-  "src/components/counter.module.css",
-  "src/components/counter.tsx",
-  "src/layouts/Layout.astro",
   "src/pages/index.astro",
-  "src/styles/global.css",
-  "src/env.d.ts",
   ".gitignore",
   "README.md",
-  "astro.config.ts",
   "package.json",
   "tsconfig.json"
 ] as const;
@@ -55,6 +37,7 @@ type GeneratedOptions = Partial<{
   install: boolean;
   ci: boolean;
   git: boolean;
+  template: boolean;
 }>;
 
 const getGeneratedFiles = (options: GeneratedOptions = {}): string[] => {
@@ -83,11 +66,24 @@ const getGeneratedFiles = (options: GeneratedOptions = {}): string[] => {
     files.push(".github/workflows/ci.yml");
   }
 
+  if (!options.template) {
+    files.push(
+      "src/assets/astro.svg",
+      "src/assets/qwik.svg",
+      "src/components/counter.module.css",
+      "src/components/counter.tsx",
+      "src/layouts/Layout.astro",
+      "src/styles/global.css",
+      "src/env.d.ts",
+      "astro.config.ts"
+    );
+  }
+
   return files;
 };
 
 const getGeneratedDirs = (options: GeneratedOptions = {}): string[] => {
-  const dirs = generatedDirs;
+  const dirs = [...generatedDirs];
 
   /*
   if (options.install) {
@@ -101,6 +97,10 @@ const getGeneratedDirs = (options: GeneratedOptions = {}): string[] => {
 
   if (options.git) {
     dirs.push(".git");
+  }
+
+  if (!options.template) {
+    dirs.push("src/assets", "src/components", "src/layouts", "src/styles");
   }
 
   return dirs;
@@ -140,12 +140,15 @@ test.group(`create ${integration} app`, (group) => {
   });
 
   test("with template", async (context) => {
-    return testRun(["--template", "minimal"], context);
+    return testRun(["--template", "minimal"], context, {
+      template: true
+    });
   }).disableTimeout();
 
   test("with template and using Biome", async (context) => {
     return testRun(["--template", "minimal", "--biome"], context, {
-      biome: true
+      biome: true,
+      template: true
     });
   }).disableTimeout();
 });
@@ -175,7 +178,7 @@ async function testRun(
   const { assert } = context;
   const destination = `${root}/${project}`;
 
-  const result = await run([pm, "create", `${destination}`, ...args]);
+  const result = await run([pm.name, "create", `${destination}`, ...args]);
   assert.equal(result, 0);
 
   testProject(destination, context, options);

@@ -374,7 +374,7 @@ export abstract class Program<
 
   getInteraction(message: string): unknown {
     for (const question of this.interactions.keys()) {
-      if (message.includes(question)) {
+      if (message.includes(question) || RegExp(question).test(message)) {
         return this.interactions.get(question);
       }
     }

@@ -1,18 +1,16 @@
 import fs, { cpSync } from "node:fs";
 import path from "node:path";
 import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
+import { $ } from "panam/executor";
+import pm from "panam/pm";
 import pkg from "../package.json";
 import { ensureString } from "./console";
 import { type Definition as BaseDefinition, Program } from "./core";
-import { $, $pmCreate, $pmInstall, $pmX } from "./process";
 import {
   __dirname,
   clearDir,
   getPackageJson,
-  getPackageManager,
-  mergeDotIgnoreFiles,
   notEmptyDir,
-  pmRunCommand,
   replacePackageJsonRunCommand,
   resolveAbsoluteDir,
   resolveRelativeDir,
@@ -66,8 +64,6 @@ export function defineDefinition(definition: UserDefinition): Definition {
 }
 
 export class Application extends Program<Definition, Input> {
-  #packageManger = getPackageManager();
-
   configure(): void {
     this.strict()
       .interactive()
@@ -128,7 +124,7 @@ export class Application extends Program<Definition, Input> {
       .option("git", {
         type: "boolean",
         default: defaultDefinition.git,
-        desc: "Initialize Git repository"
+        desc: "Use Git to save changes"
       })
       .option("ci", {
         type: "boolean",
@@ -195,6 +191,18 @@ export class Application extends Program<Definition, Input> {
     const outDir = resolveAbsoluteDir(destination.trim());
     const exists = notEmptyDir(outDir);
 
+    const template: string =
+      definition.template === undefined &&
+      (await this.scanBoolean(
+        definition,
+        "Would you like to use the default template?",
+        true
+      ))
+        ? await this.scanString("What template would you like to use?", "")
+        : (definition.template ?? "");
+
+    const useTemplate = !!template;
+
     const add = !!(definition.add === undefined && !definition.force
       ? exists &&
         (await this.scanBoolean(
@@ -217,7 +225,7 @@ export class Application extends Program<Definition, Input> {
         : definition.force;
 
     const copy =
-      add || force
+      !useTemplate && (add || force)
         ? definition.copy === undefined
           ? await this.scanBoolean(
               definition,
@@ -227,22 +235,12 @@ export class Application extends Program<Definition, Input> {
           : false
         : !!definition.copy;
 
-    const template: string =
-      definition.template === undefined &&
-      (await this.scanBoolean(
-        definition,
-        "Would you like to use the default template?",
-        true
-      ))
-        ? (definition.template ?? "")
-        : await this.scanString("What template would you like to use?", "");
-
     const ask = !exists || add || force;
 
     let adapter: Adapter;
 
     if (
-      !template &&
+      !useTemplate &&
       ask &&
       (!add || force) &&
       definition.adapter === defaultDefinition.adapter
@@ -293,12 +291,17 @@ export class Application extends Program<Definition, Input> {
     const install = !!(ask && definition.install === undefined
       ? await this.scanBoolean(
           definition,
-          `Would you like to install ${this.#packageManger} dependencies?`
+          `Would you like to install ${pm.name} dependencies?`
         )
       : definition.install);
 
     const git = !!(ask && definition.git === undefined
-      ? await this.scanBoolean(definition, "Would you like to initialize Git?")
+      ? await this.scanBoolean(
+          definition,
+          !exists || force
+            ? "Would you like to initialize Git?"
+            : "Would you like to save the changes with Git?"
+        )
       : definition.git);
 
     const dryRun = !!definition.dryRun;
@@ -335,7 +338,7 @@ export class Application extends Program<Definition, Input> {
       const ranInstall = await this.start(input);
       this.updatePackageJson(input);
       this.runCI(input);
-      await this.runGitInit(input);
+      await this.runGit(input);
       this.end(input, ranInstall);
       return 0;
     } catch (err) {
@@ -348,7 +351,7 @@ export class Application extends Program<Definition, Input> {
     this.info("Adding @QwikDev/astro...");
     try {
       if (!input.dryRun) {
-        await $pmX("astro add @qwikdev/astro", input.outDir);
+        await pm.x("astro add @qwikdev/astro", { cwd: input.outDir });
       }
 
       if (input.copy) {
@@ -407,18 +410,13 @@ export class Application extends Program<Definition, Input> {
     }
 
     await this.prepareDir(input);
-    await $pmCreate(args.join(" "), process.cwd());
 
-    this.copyTemplate(
-      input,
-      path.join(
-        __dirname,
-        "..",
-        "stubs",
-        "templates",
-        `none${input.biome ? "-biome" : ""}`
-      )
-    );
+    const res = await pm.create(args.join(" "));
+    if (!res.status) {
+      this.panic(`Template creation failed: ${res.error}`);
+    }
+
+    this.copyTools(input);
 
     return this.runInstall(input);
   }
@@ -465,9 +463,9 @@ export class Application extends Program<Definition, Input> {
       outString.push(`   cd ${relativeProjectPath}`);
     }
     if (!ranInstall) {
-      outString.push(`   ${getPackageManager()} install`);
+      outString.push(`   ${pm.name} install`);
     }
-    outString.push(`   ${getPackageManager()} start`);
+    outString.push(`   ${pm.name} start`);
 
     this.note(outString.join("\n"), "Ready to start 🚀");
 
@@ -480,8 +478,8 @@ export class Application extends Program<Definition, Input> {
     updatePackageName(packageName as string, outDir);
     this.info(`Updated package name to "${packageName}" 📦️`);
 
-    if (getPackageManager() !== "npm") {
-      this.info(`Replacing 'npm run' by '${pmRunCommand()}' in package.json...`);
+    if (!pm.isNpm()) {
+      this.info(`Replacing 'npm run' by '${pm.runCommand()}' in package.json...`);
       replacePackageJsonRunCommand(outDir);
     }
   }
@@ -496,11 +494,7 @@ export class Application extends Program<Definition, Input> {
           "..",
           "stubs",
           "workflows",
-          `${
-            ["npm", "yarn", "pnpm", "bun"].includes(getPackageManager())
-              ? getPackageManager()
-              : "npm"
-          }-ci.yml`
+          `${pm.in(["npm", "yarn", "pnpm", "bun"]) ? pm.name : "npm"}-ci.yml`
         );
         const projectCIPath = path.join(input.outDir, ".github", "workflows", "ci.yml");
         cpSync(starterCIPath, projectCIPath, { force: true });
@@ -515,7 +509,7 @@ export class Application extends Program<Definition, Input> {
       this.step(`Installing${input.template ? " new " : " "}dependencies...`);
 
       if (!input.dryRun) {
-        await $pmInstall(input.destination);
+        await pm.install({ cwd: input.outDir });
       }
 
       ranInstall = true;
@@ -524,49 +518,52 @@ export class Application extends Program<Definition, Input> {
     return ranInstall;
   }
 
-  async runGitInit(input: Input): Promise<void> {
+  async runGit(input: Input): Promise<void> {
     if (input.git) {
       const s = this.spinner();
 
       const outDir = input.outDir;
       const initialized = fs.existsSync(path.join(outDir, ".git"));
+      const addChanges = initialized || input.add;
       if (initialized) {
         this.info("Git has already been initialized before.");
       }
 
-      s.start(`${initialized ? "Adding New Changes to" : "Initializing"} Git...`);
+      s.start(`${addChanges ? "Adding New Changes to" : "Initializing"} Git...`);
 
       if (!input.dryRun) {
         const res = [];
         try {
           if (!initialized) {
-            res.push(await $("git", ["init"], outDir).process);
+            res.push(await $("git", ["init"], { cwd: outDir }).result);
           }
-          res.push(await $("git", ["add", "-A"], outDir).process);
+          res.push(await $("git", ["add", "-A"], { cwd: outDir }).result);
           res.push(
             await $(
               "git",
               [
                 "commit",
                 "-m",
-                `${initialized ? "➕ Add @qwikdev/astro" : "Initial commit 🎉"}`
+                `${addChanges ? "➕ Add @qwikdev/astro" : "Initial commit 🎉"}`
               ],
-              outDir
-            ).process
+              { cwd: outDir }
+            ).result
           );
 
-          if (res.some((r) => r === false)) {
+          if (res.some((r) => r.status === false)) {
             throw "";
           }
 
-          s.stop(`${initialized ? "Changes added to Git ✨" : "Git initialized 🎲"}`);
+          s.stop(`${addChanges ? "Changes added to Git ✨" : "Git initialized 🎲"}`);
         } catch (e) {
-          s.stop(`Git failed to ${initialized ? "add new changes" : "initialize"}`);
+          s.stop(`Git failed to ${addChanges ? "add new changes" : "initialize"}`);
           if (!initialized) {
             this.error(
-              this.red(
-                "Git failed to initialize. You can do this manually by running: git init"
-              )
+              "Git failed to initialize. You can do this manually by running: git init"
+            );
+          } else {
+            this.error(
+              "Git failed to add new changes. You can do this manually by running: git add -A && git commit"
             );
           }
         }
@@ -574,19 +571,37 @@ export class Application extends Program<Definition, Input> {
     }
   }
 
-  makeGitignore(input: Input) {
-    const dotGitignore = path.join(input.outDir, ".gitignore");
-    const exists = pathExistsSync(dotGitignore);
+  copyTools(input: Input) {
+    for (const filename of [
+      ...(input.biome
+        ? ["biome.json", "tsconfig.biome.json"]
+        : [
+            ".eslintignore",
+            ".eslintrc.cjs",
+            ".prettierignore",
+            "prettier.config.cjs",
+            "tsconfig.json"
+          ]),
+      "gitignore",
+      "README.md"
+    ]) {
+      let outfile = filename;
 
-    this.step(`${exists ? "Merging" : "Copying"} \`.gitignore\` file... 🙈`);
+      if (filename === "gitignore") {
+        outfile = ".gitignore";
+      }
+      if (filename.startsWith("tsconfig.")) {
+        outfile = "tsconfig.json";
+      }
+      const outpath = path.join(input.outDir, outfile);
+      const exists = pathExistsSync(outpath);
+      if (filename.startsWith(".") && filename.endsWith("ignore")) {
+        this.step(`${exists ? "Merging" : "Copying"} \`${outfile}\` file... 🙈`);
+      }
 
-    if (!input.dryRun) {
-      const gitignore = path.join(__dirname, "..", "stubs", "gitignore");
-
-      if (exists) {
-        mergeDotIgnoreFiles(dotGitignore, gitignore, true);
-      } else {
-        cpSync(gitignore, dotGitignore, { force: true });
+      if (!input.dryRun) {
+        const origin = path.join(__dirname, "..", "stubs", "tools", filename);
+        safeCopy(origin, outpath);
       }
     }
   }
@@ -615,7 +630,7 @@ export class Application extends Program<Definition, Input> {
           ? safeCopy(templatePath, outDir)
           : copySync(templatePath, outDir);
 
-        this.makeGitignore(input);
+        this.copyTools(input);
       } catch (error) {
         this.error(this.red(`Template copy failed: ${error}`));
       }

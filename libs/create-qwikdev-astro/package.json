@@ -9,7 +9,8 @@
     "build": "tsup-node --env.NODE_ENV production",
     "prod": "pnpm check && pnpm build",
     "start": "tsup-node --env.NODE_ENV development --watch",
-    "test": "node --loader tsm --enable-source-maps bin/test.ts"
+    "test": "pnm tsx bin/test.ts",
+    "tsx": "tsx"
   },
   "contributors": [
     {
@@ -67,12 +68,6 @@
       "require": "./dist/core.cjs",
       "default": "./dist/core.js"
     },
-    "./process": {
-      "types": "./dist/process.d.ts",
-      "import": "./dist/process.js",
-      "require": "./dist/process.cjs",
-      "default": "./dist/process.js"
-    },
     "./tester": {
       "types": "./dist/tester.d.ts",
       "import": "./dist/tester.js",
@@ -87,10 +82,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist",
-    "stubs"
-  ],
+  "files": ["dist", "stubs"],
   "bin": "./dist/cli.js",
   "keywords": [
     "astro-integration",
@@ -116,26 +108,27 @@
   },
   "bugs": "https://github.com/@QwikDev/astro/issues",
   "dependencies": {
-    "@clack/prompts": "^0.8.2",
+    "@clack/prompts": "^0.11.0",
     "cross-spawn": "^7.0.6",
-    "fs-extra": "^11.2.0",
+    "fs-extra": "^11.3.0",
     "kleur": "^4.1.5",
+    "panam": "^0.3.0",
+    "tsx": "^4.20.1",
     "which": "^5.0.0",
     "which-pm-runs": "^1.1.0",
-    "yargs": "^17.7.2"
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@japa/assert": "^3.0.0",
-    "@japa/runner": "^3.1.4",
+    "@japa/assert": "^4.0.1",
+    "@japa/runner": "^4.2.0",
     "@types/cross-spawn": "^6.0.6",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.10.2",
+    "@types/node": "^24.0.0",
     "@types/which": "^3.0.4",
     "@types/which-pm-runs": "^1.0.2",
     "@types/yargs": "^17.0.33",
-    "tslib": "^2.8.1",
-    "tsm": "^2.3.0",
-    "tsup": "^8.3.5",
-    "typescript": "^5.7.2"
+    "rimraf": "^6.0.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
   }
 }

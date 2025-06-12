@@ -20,14 +20,14 @@
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@builder.io/qwik": "^1.14.1",
-    "@fontsource-variable/unbounded": "^5.1.1",
-    "@iconify-json/lucide": "^1.2.23",
+    "@fontsource-variable/unbounded": "^5.2.6",
+    "@iconify-json/lucide": "^1.2.47",
     "@qwikdev/astro": "workspace:*",
-    "astro": "^5.8.0",
-    "astro-icon": "^1.1.4",
+    "astro": "^5.9.2",
+    "astro-icon": "^1.1.5",
     "sharp": "^0.33.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.7.0"
+    "@biomejs/biome": "^1.9.4"
   }
 }
