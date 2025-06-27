@@ -216,10 +216,6 @@ importers:
         version: 5.8.3
 
   libs/qwikdev-astro:
-    dependencies:
-      astro-integration-kit:
-        specifier: ^0.18.0
-        version: 0.18.0(astro@5.9.2(@types/node@24.0.0)(jiti@2.4.2)(rollup@4.43.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.0))
     devDependencies:
       '@builder.io/qwik':
         specifier: ^1.14.1
@@ -227,6 +223,9 @@ importers:
       astro:
         specifier: ^5.9.2
         version: 5.9.2(@types/node@24.0.0)(jiti@2.4.2)(rollup@4.43.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.0)
+      astro-integration-kit:
+        specifier: ^0.18.0
+        version: 0.18.0(astro@5.9.2(@types/node@24.0.0)(jiti@2.4.2)(rollup@4.43.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.0))
       vite:
         specifier: ^6.3.5
         version: 6.3.5(@types/node@24.0.0)(jiti@2.4.2)(tsx@4.20.1)(yaml@2.8.0)
