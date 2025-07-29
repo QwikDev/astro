@@ -61,6 +61,7 @@ export async function renderToStaticMarkup(
   props: Record<string, unknown>,
   slotted: any
 ) {
+
   try {
     if (!isQwikComponent(component)) {
       return;
@@ -72,6 +73,7 @@ export async function renderToStaticMarkup(
     const isInitialContainer = !containerMap.has(this.result);
 
     const renderToStreamOpts: RenderToStreamOptions = {
+      ...(props.renderOpts ?? {}),
       containerAttributes: {
         style: "display: contents",
         ...(isDev && { "q-astro-marker": "" })
@@ -90,7 +92,7 @@ export async function renderToStaticMarkup(
         write: (chunk) => {
           html += chunk;
         }
-      }
+      },
     };
 
     // https://qwik.dev/docs/components/overview/#inline-components

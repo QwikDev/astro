@@ -4,11 +4,11 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --host 0.0.0.0",
     "dev.debug": "node --inspect ./node_modules/astro/astro.js dev",
     "start": "astro dev --open",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "astro preview --host 0.0.0.0",
     "astro": "astro"
   },
   "dependencies": {
