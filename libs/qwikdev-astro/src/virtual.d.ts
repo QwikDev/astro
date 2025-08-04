@@ -1,4 +1,6 @@
-declare module "inox:inline-mod:mod_0" {
-  export const isNode: boolean;
-  export const qAstroManifestPath: string;
+declare module "virtual:qwikdev-astro" {
+  import type { RenderOptions } from "@builder.io/qwik/server";
+  
+  const renderOpts: RenderOptions;
+  export { renderOpts };
 }

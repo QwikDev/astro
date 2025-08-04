@@ -6,11 +6,29 @@ import type {
   QwikVitePluginOptions,
   SymbolMapperFn
 } from "@builder.io/qwik/optimizer";
+import type { RenderOptions } from "@builder.io/qwik/server";
 import type { AstroConfig, AstroIntegration } from "astro";
-import { createResolver, defineIntegration, watchDirectory } from "astro-integration-kit";
+import { createResolver, defineIntegration, watchDirectory, withPlugins } from "astro-integration-kit";
 import { z } from "astro/zod";
 import { type PluginOption, build, createFilter } from "vite";
 import type { InlineConfig } from "vite";
+import aikMod from '@inox-tools/aik-mod';
+
+// TODO: contributing this back to aik-mod where we export the type
+type DefineModuleOptions = {
+  constExports?: Record<string, unknown>;
+  defaultExport?: unknown;
+};
+
+type SetupPropsWithAikMod = 
+  Parameters<
+    NonNullable<AstroIntegration["hooks"]["astro:config:setup"]>
+  >[0] & {
+    defineModule: (
+      name: string,
+      options: DefineModuleOptions
+    ) => string;
+  };
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
@@ -26,12 +44,14 @@ const FilterPatternSchema = z.union([
   z.null()
 ]);
 
+const name = "@qwikdev/astro";
+
 /**
  * This project uses Astro Integration Kit.
  * @see https://astro-integration-kit.netlify.app/
  */
 export default defineIntegration({
-  name: "@qwikdev/astro",
+  name,
   optionsSchema: z
     .object({
       /**
@@ -48,11 +68,12 @@ export default defineIntegration({
        * Enable debug mode with the qwikVite plugin.
        */
       debug: z.boolean().optional(),
-
       /**
-       * Use node's readFileSync to read the manifest. Common for deployment providers that don't support dynamic json imports. When false, please ensure your deployment provider supports dynamic json imports, through environment variables or other means.
+       * Options passed into each Qwik component's `renderToStream` call. 
        */
-      isNode: z.boolean().optional().default(true)
+      renderOpts: z.custom<RenderOptions>((data) => {
+        return typeof data === "object" && data !== null;
+      }).optional()
     })
     .optional(),
 
@@ -77,13 +98,19 @@ export default defineIntegration({
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
-        const { addRenderer, updateConfig, config } = setupProps;
+        const { addRenderer, updateConfig, config, defineModule } = setupProps as SetupPropsWithAikMod;
         astroConfig = config;
         // integration HMR support
         watchDirectory(setupProps, resolver());
         addRenderer({
           name: "@qwikdev/astro",
           serverEntrypoint: resolver("../server.ts")
+        });
+
+        defineModule('virtual:qwikdev-astro', {
+          constExports: {
+            renderOpts: options?.renderOpts ?? {}
+          }
         });
 
         /** Relative paths, as the Qwik optimizer handles normalization */
@@ -319,9 +346,11 @@ export default defineIntegration({
       }
     };
 
-    return {
-      hooks: lifecycleHooks
-    };
+    return withPlugins({
+      name,
+      hooks: lifecycleHooks,
+      plugins: [aikMod]
+    });
   }
 });
 

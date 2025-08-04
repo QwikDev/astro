@@ -61,6 +61,7 @@
   },
   "bugs": "https://github.com/thejackshelton/@qwikdev/astro/issues",
   "dependencies": {
+    "@inox-tools/aik-mod": "^0.11.0",
     "astro-integration-kit": "^0.18.0"
   },
   "devDependencies": {
