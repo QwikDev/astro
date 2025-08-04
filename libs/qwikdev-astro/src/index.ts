@@ -107,11 +107,9 @@ export default defineIntegration({
           serverEntrypoint: resolver("../server.ts")
         });
 
-        if (options?.renderOpts) {
-          defineModule('virtual:qwikdev-astro', {
-            defaultExport: options.renderOpts,
-          });
-        }
+        defineModule('virtual:qwikdev-astro', {
+          defaultExport: options?.renderOpts,
+        });
 
         /** Relative paths, as the Qwik optimizer handles normalization */
         srcDir = getRelativePath(astroConfig.root.pathname, astroConfig.srcDir.pathname);
