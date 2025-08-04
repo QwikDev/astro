@@ -3,7 +3,7 @@ import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
 import { type RenderToStreamOptions, renderToStream } from "@builder.io/qwik/server";
 import type { SSRResult } from "astro";
-import globalRenderOpts from "virtual:qwikdev-astro";
+import { renderOpts as globalRenderOpts } from "virtual:qwikdev-astro";
 
 const containerMap = new WeakMap<SSRResult, boolean>();
 

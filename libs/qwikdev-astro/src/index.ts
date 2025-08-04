@@ -108,7 +108,9 @@ export default defineIntegration({
         });
 
         defineModule('virtual:qwikdev-astro', {
-          defaultExport: options?.renderOpts,
+          constExports: {
+            renderOpts: options?.renderOpts ?? {}
+          }
         });
 
         /** Relative paths, as the Qwik optimizer handles normalization */
