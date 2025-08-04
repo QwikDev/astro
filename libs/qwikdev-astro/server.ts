@@ -3,6 +3,7 @@ import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
 import { type RenderToStreamOptions, renderToStream } from "@builder.io/qwik/server";
 import type { SSRResult } from "astro";
+import globalRenderOpts from "virtual:qwikdev-astro";
 
 const containerMap = new WeakMap<SSRResult, boolean>();
 
@@ -73,7 +74,7 @@ export async function renderToStaticMarkup(
     const isInitialContainer = !containerMap.has(this.result);
 
     const renderToStreamOpts: RenderToStreamOptions = {
-      ...(props.renderOpts ?? {}),
+      ...(props.renderOpts ?? globalRenderOpts ?? {}),
       containerAttributes: {
         style: "display: contents",
         ...(isDev && { "q-astro-marker": "" })

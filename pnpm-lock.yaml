@@ -217,6 +217,9 @@ importers:
 
   libs/qwikdev-astro:
     dependencies:
+      '@inox-tools/aik-mod':
+        specifier: ^0.11.0
+        version: 0.11.0(astro-integration-kit@0.18.0(astro@5.9.2(@types/node@24.0.0)(jiti@2.4.2)(rollup@4.43.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.0)))(astro@5.9.2(@types/node@24.0.0)(jiti@2.4.2)(rollup@4.43.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.0))(vite@6.3.5(@types/node@24.0.0)(jiti@2.4.2)(tsx@4.20.1)(yaml@2.8.0))
       astro-integration-kit:
         specifier: ^0.18.0
         version: 0.18.0(astro@5.9.2(@types/node@24.0.0)(jiti@2.4.2)(rollup@4.43.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.0))
@@ -824,13 +827,30 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@inox-tools/aik-mod@0.11.0':
+    resolution: {integrity: sha512-0mFOrKPa2jz23g4caa7+MsxitiKMgyzn/4e+mLdpEzlWnB0HZP50AeL2rX6CioKw+Pi2zgo96mYDc1skh0/Otg==}
+    peerDependencies:
+      astro: ^5
+      astro-integration-kit: ~0.17 || ~0.18
+
   '@inox-tools/astro-tests@0.6.1':
     resolution: {integrity: sha512-j0yq/9AWawSoKSpon5xsGGRrEu0NoEE+6lubbJbP7cjCISVGBIp82aCmGBt+SxoM1A38+QfC/TcLpArKohdLNw==}
     peerDependencies:
       astro: ^5.7.12
 
+  '@inox-tools/inline-mod@2.2.0':
+    resolution: {integrity: sha512-d2hA6Ggy1fjVZEgO/an6DtYB9mkF9aWApJoeGBaARrjouJ6Tkle3F1+ULc1pq+94xc3gXav7Wa8zu5FJXSLPMA==}
+    peerDependencies:
+      vite: ^4 || ^5 || ^6
+    peerDependenciesMeta:
+      vite:
+        optional: true
+
   '@inox-tools/utils@0.4.0':
     resolution: {integrity: sha512-9F46GQ3UUNHyb/Qjkra/7sMjNybf+6BanYIE1sBYOwEB+yDqjZKsv0VbZhvoA1QpANzUGEBlbhjD6N/PATBdsQ==}
+
+  '@inox-tools/utils@0.6.0':
+    resolution: {integrity: sha512-R8sYd4G+SA7Jy1YLmIZkKnE9UKx+0lzmn3uEfOXvzNWXjJAKTad1/9G1p19KY/AhkwfcATupyiKayueH6mlnfA==}
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -3122,6 +3142,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   space-separated-tokens@2.0.2:
     resolution: {integrity: sha512-PEGlAwrG8yXGXRjW32fGbg66JAlOAwbObuqVoJpv/mRgoWDQfgH1wDPvtzWyUSNAXBGSk8h755YDbbcEy3SH2Q==}
@@ -4471,6 +4492,16 @@ snapshots:
   '@img/sharp-win32-x64@0.33.5':
     optional: true
 
+  '@inox-tools/aik-mod@0.11.0(astro-integration-kit@0.18.0(astro@5.9.2(@types/node@24.0.0)(jiti@2.4.2)(rollup@4.43.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.0)))(astro@5.9.2(@types/node@24.0.0)(jiti@2.4.2)(rollup@4.43.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.0))(vite@6.3.5(@types/node@24.0.0)(jiti@2.4.2)(tsx@4.20.1)(yaml@2.8.0))':
+    dependencies:
+      '@inox-tools/inline-mod': 2.2.0(vite@6.3.5(@types/node@24.0.0)(jiti@2.4.2)(tsx@4.20.1)(yaml@2.8.0))
+      astro: 5.9.2(@types/node@24.0.0)(jiti@2.4.2)(rollup@4.43.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.0)
+      astro-integration-kit: 0.18.0(astro@5.9.2(@types/node@24.0.0)(jiti@2.4.2)(rollup@4.43.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.0))
+      debug: 4.4.1
+    transitivePeerDependencies:
+      - supports-color
+      - vite
+
   '@inox-tools/astro-tests@0.6.1(astro@5.9.2(@types/node@22.15.31)(jiti@2.4.2)(rollup@4.43.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.0))':
     dependencies:
       '@astrojs/internal-helpers': 0.6.1
@@ -4486,7 +4517,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@inox-tools/inline-mod@2.2.0(vite@6.3.5(@types/node@24.0.0)(jiti@2.4.2)(tsx@4.20.1)(yaml@2.8.0))':
+    dependencies:
+      '@inox-tools/utils': 0.6.0
+      debug: 4.4.1
+      typescript: 5.8.3
+    optionalDependencies:
+      vite: 6.3.5(@types/node@24.0.0)(jiti@2.4.2)(tsx@4.20.1)(yaml@2.8.0)
+    transitivePeerDependencies:
+      - supports-color
+
   '@inox-tools/utils@0.4.0': {}
+
+  '@inox-tools/utils@0.6.0': {}
 
   '@isaacs/cliui@8.0.2':
     dependencies:
