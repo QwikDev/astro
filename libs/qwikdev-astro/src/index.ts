@@ -1,12 +1,12 @@
 import fs from "node:fs";
 import { join } from "node:path";
-import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
+import { qwikVite } from "@qwik.dev/core/optimizer";
 import type {
   QwikManifest,
   QwikVitePluginOptions,
   SymbolMapperFn
-} from "@builder.io/qwik/optimizer";
-import type { RenderOptions } from "@builder.io/qwik/server";
+} from "@qwik.dev/core/optimizer";
+import type { RenderOptions } from "@qwik.dev/core/server";
 import type { AstroConfig, AstroIntegration } from "astro";
 import { createResolver, defineIntegration, watchDirectory, withPlugins } from "astro-integration-kit";
 import { z } from "astro/zod";
@@ -157,9 +157,9 @@ export default defineIntegration({
         const astroQwikPlugin: PluginOption = {
           name: "astro-qwik-parser",
           enforce: "pre",
-          configResolved() {
-            globalThis.symbolMapperFn = symbolMapper;
-          },
+          // configResolved() {
+          //   globalThis.symbolMapperFn = symbolMapper;
+          // },
           buildEnd() {
             resolveEntrypoints();
           },
@@ -253,7 +253,7 @@ export default defineIntegration({
       },
 
       "astro:build:setup": async ({ vite }) => {
-        astroVite = vite as InlineConfig;
+        astroVite = vite;
       },
 
       "astro:build:ssr": async () => {
@@ -342,7 +342,7 @@ export default defineIntegration({
             outDir: finalDir,
             emptyOutDir: false
           }
-        } as InlineConfig);
+        });
       }
     };
 

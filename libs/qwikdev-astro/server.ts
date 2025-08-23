@@ -1,7 +1,7 @@
-import { type JSXNode, jsx } from "@builder.io/qwik";
-import { isDev } from "@builder.io/qwik/build";
-import type { QwikManifest } from "@builder.io/qwik/optimizer";
-import { type RenderToStreamOptions, renderToStream } from "@builder.io/qwik/server";
+import { type JSXNode, type JSXOutput, jsx } from "@qwik.dev/core";
+import { isDev } from "@qwik.dev/core/build";
+import type { QwikManifest } from "@qwik.dev/core/optimizer";
+import { type RenderToStreamOptions, renderToStream } from "@qwik.dev/core/server";
 import type { SSRResult } from "astro";
 import { renderOpts as globalRenderOpts } from "virtual:qwikdev-astro";
 
@@ -81,16 +81,9 @@ export async function renderToStaticMarkup(
       },
       qwikLoader: isInitialContainer ? { include: "always" } : { include: "never" },
       containerTagName: "div",
-      ...(isDev && {
-        symbolMapper: globalThis.symbolMapperFn,
-        manifest: {} as QwikManifest
-      }),
       serverData: props,
-      qwikPrefetchServiceWorker: {
-        include: false
-      },
       stream: {
-        write: (chunk) => {
+        write: (chunk: string) => {
           html += chunk;
         }
       },
@@ -134,7 +127,7 @@ export async function renderToStaticMarkup(
     const qwikComponentJSX = jsx(component, {
       ...props,
       children: [defaultSlot, ...slotValues]
-    });
+    }) as JSXOutput;
 
     if (isInitialContainer) {
       containerMap.set(this.result, true);
