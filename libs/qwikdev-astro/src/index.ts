@@ -253,11 +253,9 @@ export default defineIntegration({
       },
 
       "astro:build:setup": async ({ vite }) => {
-        astroVite = vite;
-      },
-
-      "astro:build:ssr": async () => {
         await entrypointsReady;
+        astroVite = vite;
+
 
         // Astro's SSR build finished -> Now we can handle how Qwik normally builds
         const qwikClientConfig: QwikVitePluginOptions = {
@@ -343,7 +341,7 @@ export default defineIntegration({
             emptyOutDir: false
           }
         });
-      }
+      },
     };
 
     return withPlugins({
