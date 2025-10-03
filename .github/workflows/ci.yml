@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: 🚚 Get latest code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🐳 Setup Node
         uses: actions/setup-node@v5
