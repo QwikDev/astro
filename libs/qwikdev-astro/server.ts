@@ -1,9 +1,9 @@
+import { renderOpts as globalRenderOpts } from "virtual:qwikdev-astro";
 import { type JSXNode, jsx } from "@builder.io/qwik";
 import { isDev } from "@builder.io/qwik/build";
 import type { QwikManifest } from "@builder.io/qwik/optimizer";
 import { type RenderToStreamOptions, renderToStream } from "@builder.io/qwik/server";
 import type { SSRResult } from "astro";
-import { renderOpts as globalRenderOpts } from "virtual:qwikdev-astro";
 
 const containerMap = new WeakMap<SSRResult, boolean>();
 
@@ -62,7 +62,6 @@ export async function renderToStaticMarkup(
   props: Record<string, unknown>,
   slotted: any
 ) {
-
   try {
     if (!isQwikComponent(component)) {
       return;
@@ -93,7 +92,7 @@ export async function renderToStaticMarkup(
         write: (chunk) => {
           html += chunk;
         }
-      },
+      }
     };
 
     // https://qwik.dev/docs/components/overview/#inline-components

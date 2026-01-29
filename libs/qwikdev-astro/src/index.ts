@@ -7,12 +7,17 @@ import type {
   SymbolMapperFn
 } from "@builder.io/qwik/optimizer";
 import type { RenderOptions } from "@builder.io/qwik/server";
+import aikMod from "@inox-tools/aik-mod";
 import type { AstroConfig, AstroIntegration } from "astro";
-import { createResolver, defineIntegration, watchDirectory, withPlugins } from "astro-integration-kit";
+import {
+  createResolver,
+  defineIntegration,
+  watchDirectory,
+  withPlugins
+} from "astro-integration-kit";
 import { z } from "astro/zod";
 import { type PluginOption, build, createFilter } from "vite";
 import type { InlineConfig } from "vite";
-import aikMod from '@inox-tools/aik-mod';
 
 // TODO: contributing this back to aik-mod where we export the type
 type DefineModuleOptions = {
@@ -20,15 +25,11 @@ type DefineModuleOptions = {
   defaultExport?: unknown;
 };
 
-type SetupPropsWithAikMod = 
-  Parameters<
-    NonNullable<AstroIntegration["hooks"]["astro:config:setup"]>
-  >[0] & {
-    defineModule: (
-      name: string,
-      options: DefineModuleOptions
-    ) => string;
-  };
+type SetupPropsWithAikMod = Parameters<
+  NonNullable<AstroIntegration["hooks"]["astro:config:setup"]>
+>[0] & {
+  defineModule: (name: string, options: DefineModuleOptions) => string;
+};
 
 declare global {
   var symbolMapperFn: SymbolMapperFn;
@@ -69,11 +70,13 @@ export default defineIntegration({
        */
       debug: z.boolean().optional(),
       /**
-       * Options passed into each Qwik component's `renderToStream` call. 
+       * Options passed into each Qwik component's `renderToStream` call.
        */
-      renderOpts: z.custom<RenderOptions>((data) => {
-        return typeof data === "object" && data !== null;
-      }).optional()
+      renderOpts: z
+        .custom<RenderOptions>((data) => {
+          return typeof data === "object" && data !== null;
+        })
+        .optional()
     })
     .optional(),
 
@@ -98,7 +101,8 @@ export default defineIntegration({
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
-        const { addRenderer, updateConfig, config, defineModule } = setupProps as SetupPropsWithAikMod;
+        const { addRenderer, updateConfig, config, defineModule } =
+          setupProps as SetupPropsWithAikMod;
         astroConfig = config;
         // integration HMR support
         watchDirectory(setupProps, resolver());
@@ -107,7 +111,7 @@ export default defineIntegration({
           serverEntrypoint: resolver("../server.ts")
         });
 
-        defineModule('virtual:qwikdev-astro', {
+        defineModule("virtual:qwikdev-astro", {
           constExports: {
             renderOpts: options?.renderOpts ?? {}
           }
@@ -174,7 +178,7 @@ export default defineIntegration({
 
             const resolved = await this.resolve(id, importer);
             if (!resolved) {
-              throw new Error(`Could not resolve ${id} from ${importer}`);
+              return null;
             }
 
             if (resolved.id.includes(".qwik.")) {
