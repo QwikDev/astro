@@ -178,6 +178,9 @@ export default defineIntegration({
 
             const resolved = await this.resolve(id, importer);
             if (!resolved) {
+              if (options?.debug) {
+                console.debug(`Could not resolve ${id} from ${importer}`);
+              }
               return null;
             }
 
