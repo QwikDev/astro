@@ -1,5 +1,11 @@
 # @qwikdev/astro
 
+## 1.0.0
+
+### Major Changes
+
+- fd9074f: fix: return null instead of throwing on unresolved modules in resolveId
+
 ## 0.8.2
 
 ### Patch Changes

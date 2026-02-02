@@ -1,7 +1,7 @@
 {
   "name": "@qwikdev/astro",
   "description": "Use Qwik components and Resumability within Astro",
-  "version": "0.8.2",
+  "version": "1.0.0",
   "contributors": [
     {
       "name": "Jack Shelton",
@@ -40,7 +40,12 @@
     "./utils": "./src/utils.ts",
     "./q-astro-manifest.json": "./q-astro-manifest.json"
   },
-  "files": ["src", "src/index.ts", "server.ts", "env.d.ts"],
+  "files": [
+    "src",
+    "src/index.ts",
+    "server.ts",
+    "env.d.ts"
+  ],
   "keywords": [
     "astro-integration",
     "astro-component",
