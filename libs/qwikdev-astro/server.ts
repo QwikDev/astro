@@ -40,9 +40,9 @@ function isQwikComponent(component: unknown) {
   if (isInlineComponent(component)) {
     return true;
   }
-  if (component.name !== "QwikComponent") {
-    return false;
-  }
+  // if (component.name !== "QwikComponent") {
+  //   return false;
+  // }
 
   return true;
 }
@@ -80,9 +80,7 @@ export async function renderToStaticMarkup(
       },
       qwikLoader: isInitialContainer ? { include: "always" } : { include: "never" },
       containerTagName: "div",
-      ...(isDev && {
-        manifest: {} as QwikManifest
-      }),
+      manifest: (props.manifest ?? {}) as QwikManifest,
       serverData: props,
       stream: {
         write: (chunk: string) => {

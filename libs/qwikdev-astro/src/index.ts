@@ -16,7 +16,6 @@ import {
 } from "astro-integration-kit";
 import { z } from "astro/zod";
 import { type PluginOption, build, createFilter } from "vite";
-import type { InlineConfig } from "vite";
 
 // TODO: contributing this back to aik-mod where we export the type
 type DefineModuleOptions = {
@@ -84,24 +83,20 @@ export default defineIntegration({
     let serverDir = "";
     let outDir = "";
     let finalDir = "";
-    let astroVite: InlineConfig;
 
-    let resolveEntrypoints: () => void;
-    const entrypointsReady = new Promise<void>((resolve) => {
-      resolveEntrypoints = resolve;
-    });
+    let qwikManifest: QwikManifest | null = null;
 
-    const qwikEntrypoints = new Set<string>();
-    const potentialEntries = new Set<string>();
     let astroConfig: AstroConfig | null = null;
     const { resolve: resolver } = createResolver(import.meta.url);
     const filter = createFilter(options?.include, options?.exclude);
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
-        const { addRenderer, updateConfig, config, defineModule } =
+        const { addRenderer, updateConfig, config, command, defineModule } =
           setupProps as SetupPropsWithAikMod;
         astroConfig = config;
+        const isDev = command === "dev";
+
         // integration HMR support
         watchDirectory(setupProps, resolver());
         addRenderer({
@@ -156,86 +151,6 @@ export default defineIntegration({
           return true;
         };
 
-        const astroQwikPlugin: PluginOption = {
-          name: "astro-qwik-parser",
-          enforce: "pre",
-          buildEnd() {
-            resolveEntrypoints();
-          },
-          async resolveId(id, importer) {
-            const isFromAstro =
-              importer?.endsWith(".astro") || importer?.endsWith(".mdx");
-            const isFromTrackedFile = potentialEntries.has(importer ?? "");
-
-            if (!(isFromAstro || isFromTrackedFile)) {
-              return null;
-            }
-
-            const resolved = await this.resolve(id, importer);
-            if (!resolved) {
-              if (options?.debug) {
-                console.debug(`Could not resolve ${id} from ${importer}`);
-              }
-              return null;
-            }
-
-            if (resolved.id.includes(".qwik.")) {
-              qwikEntrypoints.add(resolved.id);
-              return null;
-            }
-
-            potentialEntries.add(resolved.id);
-            return null;
-          },
-          async transform(code, id) {
-            if (!potentialEntries.has(id)) {
-              return null;
-            }
-
-            /**
-             *  Qwik Entrypoints
-             *  ---
-             *  @qwik.dev/core
-             *  @qwik.dev/react
-             *  @qwik.dev/core
-             *  @qwik.dev/react
-             */
-            const qwikImportsRegex =
-              /@builder\.io\/qwik(-react)?|qwik\.dev\/(core|react)/;
-
-            if (qwikImportsRegex.test(code)) {
-              qwikEntrypoints.add(id);
-            }
-
-            return null;
-          }
-        };
-
-        const qwikSetupConfig: QwikVitePluginOptions = {
-          fileFilter,
-          devSsrServer: false,
-          srcDir,
-          ssr: {
-            input: resolver("../server.ts")
-            // manifestInput: "qwik replace me!" as unknown as QwikManifest
-          },
-          client: {
-            input: resolver("./root.tsx"),
-            outDir: finalDir
-          },
-          debug: options?.debug ?? false
-        };
-
-        const overrideEsbuildPlugin: PluginOption = {
-          // override qwikVite's attempt to set `esbuild` to false during dev
-          name: "overrideEsbuild",
-          enforce: "post",
-          config(config) {
-            config.esbuild = {};
-            return config;
-          }
-        };
-
         /**
          * Vite 7 removed `options.ssr` from plugin hooks, replacing it with
          * `this.environment`. The qwikVite plugin still relies on `options.ssr`
@@ -247,12 +162,16 @@ export default defineIntegration({
          * values based on the Vite environment.
          */
         const QWIK_BUILD_ID = "\0@qwik.dev/core/build";
+        const QWIK_MANIFEST_ID = "\0@qwik-client-manifest";
         const qwikBuildFixPlugin: PluginOption = {
           name: "astro-qwik-build-fix",
           enforce: "pre",
           resolveId(id) {
             if (id === "@qwik.dev/core/build" || id.endsWith("@qwik.dev/core/build")) {
               return QWIK_BUILD_ID;
+            }
+            if (id === "@qwik-client-manifest") {
+              return QWIK_MANIFEST_ID;
             }
           },
           load(id) {
@@ -269,6 +188,80 @@ export const isDev = ${isDev};`,
                 moduleSideEffects: false
               };
             }
+            if (id === QWIK_MANIFEST_ID) {
+              // Provide the Qwik manifest from the client build (run before prerender).
+              // Falls back to undefined if no client build has run yet.
+              const manifestJson = qwikManifest
+                ? JSON.stringify(qwikManifest)
+                : "undefined";
+              return {
+                code: `export const manifest = ${manifestJson};`,
+                moduleSideEffects: false
+              };
+            }
+          }
+        };
+
+        const qwikSetupConfig: QwikVitePluginOptions = {
+          fileFilter,
+          devSsrServer: false,
+          srcDir,
+          ssr: {
+            input: resolver("../server.ts")
+          },
+          client: {
+            input: resolver("./root.tsx"),
+            outDir: finalDir
+          },
+          debug: options?.debug ?? false
+        };
+
+        const qwikPlugins = qwikVite(qwikSetupConfig);
+
+        // In build mode, wrap qwikVite's outputOptions hook to preserve
+        // Astro 6's per-environment output directories.
+        if (!isDev) {
+          for (const plugin of qwikPlugins) {
+            if (!plugin || typeof plugin !== "object") continue;
+            const orig = (plugin as any).outputOptions;
+            if (typeof orig === "function") {
+              (plugin as any).outputOptions = function (this: any, opts: any) {
+                const originalDir = opts?.dir;
+                const result = orig.call(this, opts);
+                if (this.environment?.name !== "client" && originalDir) {
+                  if (Array.isArray(result)) {
+                    for (const o of result) if (o) o.dir = originalDir;
+                  } else if (result && typeof result === "object") {
+                    result.dir = originalDir;
+                  }
+                }
+                return result;
+              };
+            }
+          }
+        }
+
+        const astroQwikPostPlugin: PluginOption = {
+          name: "astro-qwik-post",
+          enforce: "post" as const,
+          config(config) {
+            // Restore esbuild (qwikVite disables it in dev)
+            config.esbuild = {};
+
+            if (!isDev) {
+              // Remove qwikVite's output dir overrides so Astro controls per-environment dirs
+              delete config.build?.outDir;
+              if (config.build?.rollupOptions?.output) {
+                const output = config.build.rollupOptions.output;
+                if (Array.isArray(output)) {
+                  for (const o of output) if (o && typeof o === "object") delete o.dir;
+                } else if (typeof output === "object") {
+                  delete output.dir;
+                }
+              }
+            }
+
+            return config;
           }
         };
 
@@ -281,11 +274,13 @@ export const isDev = ${isDev};`,
                 }
               }
             },
+            resolve: {
+              noExternal: ["@qwik.dev/core", "@qwik-client-manifest"]
+            },
             plugins: [
               qwikBuildFixPlugin,
-              astroQwikPlugin,
-              qwikVite(qwikSetupConfig),
-              overrideEsbuildPlugin
+              ...qwikPlugins,
+              astroQwikPostPlugin
             ]
           }
         });
@@ -295,97 +290,65 @@ export const isDev = ${isDev};`,
         astroConfig = config;
       },
 
+      /**
+       * Use astro:build:setup to run the Qwik client build BEFORE Astro's
+       * prerender step. Astro 6 uses Vite's Environment API with buildApp()
+       * controlling build order. We override buildApp to:
+       *   1. Run standalone Qwik client build (generates manifest + chunks)
+       *   2. Then run Astro's normal build (prerender has manifest available)
+       */
       "astro:build:setup": async ({ vite }) => {
-        astroVite = vite as InlineConfig;
-      },
+        const originalBuildApp = (vite as any).builder?.buildApp;
+        if (!originalBuildApp) return;
 
-      "astro:build:ssr": async () => {
-        await entrypointsReady;
+        (vite as any).builder.buildApp = async (builder: any) => {
+          // Scan source files for Qwik entrypoints before building
+          const entrypoints = await scanQwikEntrypoints(
+            astroConfig!,
+            filter,
+            options?.debug
+          );
 
-        // Astro's SSR build finished -> Now we can handle how Qwik normally builds
-        const qwikClientConfig: QwikVitePluginOptions = {
-          devSsrServer: false,
-          srcDir,
-          ssr: {
-            input: "@qwikdev/astro/server",
-            outDir: serverDir
-          },
-          client: {
-            input: [...qwikEntrypoints, resolver("./root.tsx")],
-            outDir: finalDir,
-            manifestOutput: (manifest) => {
-              const serverChunksDir = astroConfig?.adapter
-                ? join(serverDir, "chunks")
-                : join(finalDir, "chunks");
+          if (entrypoints.size > 0) {
+            // Run standalone Qwik client build first to generate manifest
+            const qwikClientConfig: QwikVitePluginOptions = {
+              devSsrServer: false,
+              srcDir,
+              ssr: {
+                input: "@qwikdev/astro/server",
+                outDir: serverDir
+              },
+              client: {
+                input: [...entrypoints, resolver("./root.tsx")],
+                outDir: finalDir,
+                manifestOutput: (manifest) => {
+                  qwikManifest = manifest;
+                }
+              },
+              debug: options?.debug ?? false
+            };
 
-              if (!fs.existsSync(serverChunksDir)) {
-                fs.mkdirSync(serverChunksDir, { recursive: true });
+            await build({
+              plugins: [qwikVite(qwikClientConfig)],
+              build: {
+                ssr: false,
+                outDir: finalDir,
+                emptyOutDir: false
               }
-              const files = fs.readdirSync(serverChunksDir);
-
-              // Astro actions can add more server files
-              const serverFiles = files.filter(
-                (f) => f.startsWith("server_") && f.endsWith(".mjs")
-              );
-
-              for (const serverFile of serverFiles) {
-                const serverPath = join(serverChunksDir, serverFile);
-                const content = fs.readFileSync(serverPath, "utf-8");
-
-                // Replace the manifest handling in the bundled code
-                const manifestJson = JSON.stringify(manifest);
-                const newContent = content.replace(
-                  "serverData: props,",
-                  `serverData: props, manifest: ${manifestJson},`
-                );
-
-                fs.writeFileSync(serverPath, newContent);
-              }
-            }
-          },
-          debug: options?.debug ?? false
-        };
-
-        // determine which plugins from core to keep
-        const astroPlugins = (
-          astroVite.plugins?.flatMap((p) => (Array.isArray(p) ? p : [p])) ?? []
-        )
-          .filter((plugin): plugin is { name: string } & NonNullable<PluginOption> => {
-            return plugin != null && typeof plugin === "object" && "name" in plugin;
-          })
-          .filter((plugin) => {
-            const isCoreBuildPlugin = plugin.name === "astro:build";
-            const isAstroInternalPlugin = plugin.name.includes("@astro");
-            const isAllowedPlugin =
-              plugin.name === "astro:transitions" || plugin.name.includes("virtual");
-            const isAstroBuildPlugin = plugin.name.startsWith("astro:build");
-            const isQwikPlugin =
-              plugin.name === "vite-plugin-qwik" ||
-              plugin.name === "vite-plugin-qwik-post" ||
-              plugin.name === "overrideEsbuild";
-
-            if (isAllowedPlugin) {
-              return true;
-            }
-
-            return !(
-              isCoreBuildPlugin ||
-              isAstroInternalPlugin ||
-              isAstroBuildPlugin ||
-              isQwikPlugin
-            );
-          });
-
-        await build({
-          ...astroConfig?.vite,
-          plugins: [...astroPlugins, qwikVite(qwikClientConfig)],
-          build: {
-            ...astroConfig?.vite?.build,
-            ssr: false,
-            outDir: finalDir,
-            emptyOutDir: false
+            });
           }
-        } as InlineConfig);
+
+          // Now run Astro's normal build (prerender will have the manifest)
+          await originalBuildApp(builder);
+
+          // After build, inject manifest into server chunks (for SSR adapters)
+          if (qwikManifest && astroConfig?.adapter) {
+            injectManifestIntoServerChunks(
+              qwikManifest,
+              astroConfig.adapter ? join(serverDir, "chunks") : join(finalDir, "chunks")
+            );
+          }
+        };
       }
     };
 
@@ -399,4 +362,67 @@ export const isDev = ${isDev};`,
 
 function getRelativePath(from: string, to: string) {
   return to.replace(from, "") || ".";
+}
+
+/**
+ * Scan the Astro source directory for files that import Qwik packages.
+ * This replaces the runtime entrypoint tracking with a pre-build scan.
+ */
+async function scanQwikEntrypoints(
+  config: AstroConfig,
+  filter: (id: string) => boolean,
+  debug?: boolean
+): Promise<Set<string>> {
+  const { resolve } = await import("node:path");
+  const srcDir = config.srcDir.pathname;
+
+  // Find all potential component files using Node 22+ fs.globSync
+  const { globSync } = fs;
+  const files = globSync("**/*.{tsx,jsx,ts,js}", {
+    cwd: srcDir,
+    exclude: (name: string) => name === "node_modules"
+  }).map((f: string) => resolve(srcDir, f));
+
+  const qwikImportsRegex = /@builder\.io\/qwik(-react)?|qwik\.dev\/(core|react)/;
+  const entrypoints = new Set<string>();
+
+  for (const file of files) {
+    if (!filter(file)) continue;
+    try {
+      const content = fs.readFileSync(file, "utf-8");
+      if (qwikImportsRegex.test(content)) {
+        entrypoints.add(file);
+        if (debug) {
+          console.debug(`[qwikdev/astro] Found Qwik entrypoint: ${file}`);
+        }
+      }
+    } catch {
+      // Skip unreadable files
+    }
+  }
+
+  return entrypoints;
+}
+
+function injectManifestIntoServerChunks(
+  manifest: QwikManifest,
+  serverChunksDir: string
+) {
+  if (!fs.existsSync(serverChunksDir)) return;
+
+  const files = fs.readdirSync(serverChunksDir);
+  const serverFiles = files.filter(
+    (f) => f.startsWith("server_") && f.endsWith(".mjs")
+  );
+
+  const manifestJson = JSON.stringify(manifest);
+  for (const serverFile of serverFiles) {
+    const serverPath = join(serverChunksDir, serverFile);
+    const content = fs.readFileSync(serverPath, "utf-8");
+    const newContent = content.replace(
+      "serverData: props,",
+      `serverData: props, manifest: ${manifestJson},`
+    );
+    fs.writeFileSync(serverPath, newContent);
+  }
 }
