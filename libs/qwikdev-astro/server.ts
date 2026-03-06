@@ -127,7 +127,7 @@ export async function renderToStaticMarkup(
     const qwikComponentJSX = jsx(component, {
       ...props,
       children: [defaultSlot, ...slotValues]
-    });
+    }) as Parameters<typeof renderToStream>[0];
 
     if (isInitialContainer) {
       containerMap.set(this.result, true);

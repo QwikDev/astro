@@ -184,6 +184,7 @@ export default defineIntegration({
             if (id === "@qwik-client-manifest") {
               return QWIK_MANIFEST_ID;
             }
+            return undefined;
           },
           load(id) {
             if (id === QWIK_BUILD_ID) {
@@ -210,6 +211,7 @@ export const isDev = ${isDev};`,
                 moduleSideEffects: false
               };
             }
+            return undefined;
           }
         };
 
