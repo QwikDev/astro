@@ -17,7 +17,7 @@ import {
   withPlugins
 } from "astro-integration-kit";
 import { z } from "astro/zod";
-import { type PluginOption, build, createFilter } from "vite";
+import { type PluginOption, type ViteBuilder, build, createFilter } from "vite";
 
 // TODO: contributing this back to aik-mod where we export the type
 type DefineModuleOptions = {
@@ -237,7 +237,7 @@ export const isDev = ${isDev};`,
         if (!isDev) {
           for (const plugin of qwikPlugins) {
             if (!plugin || typeof plugin !== "object") continue;
-            delete (plugin as any).outputOptions;
+            delete plugin.outputOptions;
           }
         }
 
@@ -295,10 +295,10 @@ export const isDev = ${isDev};`,
        *   2. Then run Astro's normal build (prerender has manifest available)
        */
       "astro:build:setup": async ({ vite }) => {
-        const originalBuildApp = (vite as any).builder?.buildApp;
+        const originalBuildApp = vite.builder?.buildApp;
         if (!originalBuildApp) return;
 
-        (vite as any).builder.buildApp = async (builder: any) => {
+        vite.builder!.buildApp = async (builder: ViteBuilder) => {
           // Scan source files for Qwik entrypoints before building
           const entrypoints = await scanQwikEntrypoints(
             astroConfig!,
