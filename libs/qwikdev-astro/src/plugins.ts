@@ -62,7 +62,6 @@ export async function runQwikClientBuild(opts: {
   onManifest: (manifest: QwikManifest) => void;
 }) {
   const config: QwikVitePluginOptions = {
-    devSsrServer: false,
     srcDir: opts.srcDir,
     ssr: {
       input: SERVER_ENTRYPOINT,

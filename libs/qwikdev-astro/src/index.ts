@@ -63,7 +63,6 @@ export default defineIntegration({
 
         const qwikSetupConfig: QwikVitePluginOptions = {
           fileFilter,
-          devSsrServer: false,
           srcDir,
           ssr: {
             input: SERVER_ENTRYPOINT
