@@ -38,15 +38,15 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@changesets/cli": "^2.29.4",
-    "@inox-tools/astro-tests": "^0.6.1",
-    "@playwright/test": "^1.53.0",
+    "@inox-tools/astro-tests": "^0.9.1",
+    "@playwright/test": "^1.58.2",
+    "@qwik.dev/core": "2.0.0-beta.27",
     "@qwikdev/astro": "workspace:*",
     "@qwikdev/create-astro": "workspace:*",
     "@types/node": "^22.15.31",
-    "astro": "^5.9.2",
+    "astro": "6.0.0-beta.19",
     "lefthook": "^1.11.13",
     "pkg-pr-new": "^0.0.35",
-    "@qwik.dev/core": "2.0.0-beta.27",
-    "ts-morph": "latest"
+    "vitest": "^4.0.18"
   }
 }
