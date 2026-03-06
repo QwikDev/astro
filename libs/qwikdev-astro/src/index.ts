@@ -1,8 +1,5 @@
 import { qwikVite } from "@qwik.dev/core/optimizer";
-import type {
-  QwikManifest,
-  QwikVitePluginOptions,
-} from "@qwik.dev/core/optimizer";
+import type { QwikManifest, QwikVitePluginOptions } from "@qwik.dev/core/optimizer";
 import aikMod from "@inox-tools/aik-mod";
 import type { AstroConfig, AstroIntegration } from "astro";
 import {
@@ -11,10 +8,10 @@ import {
   watchDirectory,
   withPlugins
 } from "astro-integration-kit";
-import { type ViteBuilder, build, createFilter } from "vite";
-import { INTEGRATION_NAME, QWIK_MODULES, VIRTUAL_MODULE_NAME, optionsSchema } from "./constants";
-import { createAstroQwikPostPlugin, createQwikBuildFixPlugin } from "./plugins";
-import { getRelativePath, scanQwikEntrypoints } from "./scan";
+import { type ViteBuilder, createFilter } from "vite";
+import { INTEGRATION_NAME, VIRTUAL_MODULE_NAME, optionsSchema } from "./constants";
+import { createAstroQwikPostPlugin, createQwikBuildFixPlugin, runQwikClientBuild, stripOutputOptions } from "./plugins";
+import { createQwikFileFilter, resolveQwikPaths, scanQwikEntrypoints } from "./scan";
 import type { SetupPropsWithAikMod } from "./types";
 
 /**
@@ -27,9 +24,7 @@ export default defineIntegration({
 
   setup({ options }) {
     let srcDir = "";
-    let clientDir = "";
     let serverDir = "";
-    let outDir = "";
     let finalDir = "";
 
     let qwikManifest: QwikManifest | null = null;
@@ -59,47 +54,9 @@ export default defineIntegration({
           }
         });
 
-        /** Relative paths, as the Qwik optimizer handles normalization */
-        srcDir = getRelativePath(astroConfig.root.pathname, astroConfig.srcDir.pathname);
+        ({ srcDir, serverDir, finalDir } = resolveQwikPaths(astroConfig));
 
-        clientDir = getRelativePath(
-          astroConfig.root.pathname,
-          astroConfig.build.client.pathname
-        );
-
-        serverDir = getRelativePath(
-          astroConfig.root.pathname,
-          astroConfig.build.server.pathname
-        );
-
-        outDir = getRelativePath(astroConfig.root.pathname, astroConfig.outDir.pathname);
-
-        if (astroConfig.adapter) {
-          finalDir = clientDir;
-          if (astroConfig.adapter?.name.includes("vercel")) {
-            const outDirUrl = new URL(astroConfig.outDir.pathname, astroConfig.root);
-            astroConfig.build.client = outDirUrl;
-            finalDir = astroConfig.build.client.pathname;
-          }
-        } else {
-          finalDir = outDir;
-        }
-
-        /** check if the file should be processed based on the 'transform' hook and user-defined filters (include & exclude) */
-        const fileFilter = (id: string, hook: string) => {
-          if (hook === "transform") {
-            if (id.includes(".qwik.")) {
-              return true;
-            }
-
-            if (!filter(id)) {
-              return false;
-            }
-          }
-
-          return true;
-        };
-
+        const fileFilter = createQwikFileFilter(filter);
         const qwikBuildFixPlugin = createQwikBuildFixPlugin(() => qwikManifest);
         const astroQwikPostPlugin = createAstroQwikPostPlugin(isDev);
 
@@ -119,14 +76,8 @@ export default defineIntegration({
 
         const qwikPlugins = qwikVite(qwikSetupConfig);
 
-        // In build mode, strip qwikVite's outputOptions hook — the standalone
-        // Qwik client build handles client output. Keep config hook (configResolved
-        // depends on state it sets) but undo its output dir changes via post plugin.
         if (!isDev) {
-          for (const plugin of qwikPlugins) {
-            if (!plugin || typeof plugin !== "object") continue;
-            delete plugin.outputOptions;
-          }
+          stripOutputOptions(qwikPlugins);
         }
 
         updateConfig({
@@ -139,7 +90,7 @@ export default defineIntegration({
               }
             },
             resolve: {
-              noExternal: [...QWIK_MODULES]
+              noExternal: ["@qwik.dev/core", "@qwik-client-manifest"]
             },
             plugins: [
               qwikBuildFixPlugin,
@@ -150,61 +101,32 @@ export default defineIntegration({
         });
       },
 
-      "astro:config:done": async ({ config }) => {
-        astroConfig = config;
-      },
-
-      /**
-       * Use astro:build:setup to run the Qwik client build BEFORE Astro's
-       * prerender step. Astro 6 uses Vite's Environment API with buildApp()
-       * controlling build order. We override buildApp to:
-       *   1. Run standalone Qwik client build (generates manifest + chunks)
-       *   2. Then run Astro's normal build (prerender has manifest available)
-       */
+      // Override buildApp to run Qwik client build before Astro's prerender.
       "astro:build:setup": async ({ vite }) => {
-        const originalBuildApp = vite.builder?.buildApp;
-        if (!originalBuildApp) return;
+        const config = astroConfig;
+        if (!config) throw new Error("[qwikdev/astro] astroConfig not set — astro:config:setup must run first");
 
-        vite.builder!.buildApp = async (builder: ViteBuilder) => {
-          // Scan source files for Qwik entrypoints before building
-          const entrypoints = await scanQwikEntrypoints(
-            astroConfig!,
-            filter,
-            options?.debug
-          );
+        const { builder } = vite;
+        
+        if (!builder?.buildApp) return;
+
+        const originalBuildApp = builder.buildApp;
+        builder.buildApp = async (b: ViteBuilder) => {
+          const entrypoints = await scanQwikEntrypoints(config, filter, options?.debug);
 
           if (entrypoints.size > 0) {
-            // Run standalone Qwik client build first to generate manifest
-            const qwikClientConfig: QwikVitePluginOptions = {
-              devSsrServer: false,
+            await runQwikClientBuild({
+              entrypoints,
+              rootEntry: resolver("./root.tsx"),
               srcDir,
-              ssr: {
-                input: "@qwikdev/astro/server",
-                outDir: serverDir
-              },
-              client: {
-                input: [...entrypoints, resolver("./root.tsx")],
-                outDir: finalDir,
-                manifestOutput: (manifest) => {
-                  qwikManifest = manifest;
-                }
-              },
-              debug: options?.debug ?? false
-            };
-
-            await build({
-              plugins: [qwikVite(qwikClientConfig)],
-              build: {
-                ssr: false,
-                outDir: finalDir,
-                emptyOutDir: false
-              }
+              serverDir,
+              finalDir,
+              debug: options?.debug ?? false,
+              onManifest: (manifest) => { qwikManifest = manifest; }
             });
           }
 
-          // Now run Astro's normal build (prerender will have the manifest
-          // available via the @qwik-client-manifest virtual module)
-          await originalBuildApp(builder);
+          await originalBuildApp(b);
         };
       }
     };

@@ -1,5 +1,6 @@
-import type { QwikManifest } from "@qwik.dev/core/optimizer";
-import type { PluginOption } from "vite";
+import { qwikVite } from "@qwik.dev/core/optimizer";
+import type { QwikManifest, QwikVitePluginOptions } from "@qwik.dev/core/optimizer";
+import { build, type PluginOption } from "vite";
 import { VIRTUAL_MODULES } from "./constants";
 
 type VirtualId = (typeof VIRTUAL_MODULES)[keyof typeof VIRTUAL_MODULES];
@@ -39,6 +40,50 @@ export function createQwikBuildFixPlugin(
       return loaders[id as VirtualId]?.(this);
     }
   };
+}
+
+/** Strips qwikVite's outputOptions hook so the standalone Qwik client build handles client output instead. */
+export function stripOutputOptions(plugins: PluginOption[]) {
+  for (const plugin of plugins) {
+    if (plugin && typeof plugin === "object" && "outputOptions" in plugin) {
+      delete plugin.outputOptions;
+    }
+  }
+}
+
+/** Runs a standalone Qwik client build to generate the manifest before Astro's prerender. */
+export async function runQwikClientBuild(opts: {
+  entrypoints: Set<string>;
+  rootEntry: string;
+  srcDir: string;
+  serverDir: string;
+  finalDir: string;
+  debug: boolean;
+  onManifest: (manifest: QwikManifest) => void;
+}) {
+  const config: QwikVitePluginOptions = {
+    devSsrServer: false,
+    srcDir: opts.srcDir,
+    ssr: {
+      input: "@qwikdev/astro/server",
+      outDir: opts.serverDir
+    },
+    client: {
+      input: [...opts.entrypoints, opts.rootEntry],
+      outDir: opts.finalDir,
+      manifestOutput: opts.onManifest
+    },
+    debug: opts.debug
+  };
+
+  await build({
+    plugins: [qwikVite(config)],
+    build: {
+      ssr: false,
+      outDir: opts.finalDir,
+      emptyOutDir: false
+    }
+  });
 }
 
 /** Undoes qwikVite's output dir overrides so Astro controls per-environment output directories. */
