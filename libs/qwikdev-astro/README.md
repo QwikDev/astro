@@ -268,7 +268,7 @@ If you're using React, use the [Qwik-React integration](https://qwik.dev/docs/in
 import { defineConfig } from "astro/config";
 
 import qwikdev from "@qwikdev/astro";
-import { qwikReact } from "@builder.io/qwik-react/vite";
+import { qwikReact } from "@qwik.dev/react/vite";
 
 // https://astro.build/config
 export default defineConfig({
@@ -287,7 +287,7 @@ The Qwik-React integration allows you to use React components directly in Qwik.
 
 ```tsx
 /** @jsxImportSource react */
-import { qwikify$ } from "@builder.io/qwik-react";
+import { qwikify$ } from "@qwik.dev/react";
 import { useState } from "react";
 
 const ReactCounter = () => {
