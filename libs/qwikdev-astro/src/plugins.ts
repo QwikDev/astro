@@ -54,6 +54,7 @@ export function stripOutputOptions(plugins: PluginOption[]) {
 /** Runs a standalone Qwik client build to generate the manifest before Astro's prerender. */
 export async function runQwikClientBuild(opts: {
   entrypoints: Set<string>;
+  rootEntry: string;
   srcDir: string;
   serverDir: string;
   finalDir: string;
@@ -68,7 +69,7 @@ export async function runQwikClientBuild(opts: {
       outDir: opts.serverDir
     },
     client: {
-      input: [...opts.entrypoints],
+      input: [...opts.entrypoints, opts.rootEntry],
       outDir: opts.finalDir,
       manifestOutput: opts.onManifest
     },

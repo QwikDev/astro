@@ -117,6 +117,7 @@ export default defineIntegration({
           if (entrypoints.size > 0) {
             await runQwikClientBuild({
               entrypoints,
+              rootEntry: resolver("./root.tsx"),
               srcDir,
               serverDir,
               finalDir,
