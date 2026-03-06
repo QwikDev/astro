@@ -1,5 +1,6 @@
-import { execSync } from "node:child_process";
+import { execFile } from "node:child_process";
 import { resolve } from "node:path";
+import { promisify } from "node:util";
 import { qwikVite } from "@qwik.dev/core/optimizer";
 import { anyOf, createRegExp, exactly } from "magic-regexp";
 import type {
@@ -45,11 +46,12 @@ const FilterPatternSchema = z.union([
 
 const name = "@qwikdev/astro";
 
-const qwikImportPattern = createRegExp(
+const qwikEntrypointPattern = createRegExp(
   anyOf(
     exactly("@builder.io/qwik"),
     exactly("qwik.dev/core"),
-    exactly("qwik.dev/react")
+    exactly("qwik.dev/react"),
+    exactly(".qwik.")
   )
 );
 
@@ -296,7 +298,7 @@ export const isDev = ${isDev};`,
 
         (vite as any).builder.buildApp = async (builder: any) => {
           // Scan source files for Qwik entrypoints before building
-          const entrypoints = scanQwikEntrypoints(
+          const entrypoints = await scanQwikEntrypoints(
             astroConfig!,
             filter,
             options?.debug
@@ -350,29 +352,35 @@ function getRelativePath(from: string, to: string) {
   return to.replace(from, "") || ".";
 }
 
-function scanQwikEntrypoints(
+const execFileAsync = promisify(execFile);
+
+async function scanQwikEntrypoints(
   config: AstroConfig,
   filter: (id: string) => boolean,
   debug?: boolean
-): Set<string> {
-  const srcDir = config.srcDir.pathname;
+): Promise<Set<string>> {
+  const rootDir = config.root.pathname;
 
-  let matches: string;
+  let stdout: string;
   try {
-    matches = execSync(
-      `grep -rl --include='*.tsx' --include='*.jsx' --include='*.ts' --include='*.js' -E '${qwikImportPattern.source}' .`,
-      { cwd: srcDir, encoding: "utf-8", stdio: ["pipe", "pipe", "ignore"] }
-    ).trim();
+    // Single grep: find files with qwik imports OR .qwik. in their path
+    const result = await execFileAsync(
+      "grep",
+      ["-rl", "--include=*.tsx", "--include=*.jsx", "--include=*.ts", "--include=*.js",
+       "-E", qwikEntrypointPattern.source, "."],
+      { cwd: rootDir, encoding: "utf-8" }
+    );
+    stdout = result.stdout.trim();
   } catch {
     return new Set();
   }
 
-  if (!matches) return new Set();
+  if (!stdout) return new Set();
 
   const entrypoints = new Set<string>();
-  for (const rel of matches.split("\n")) {
-    const abs = resolve(srcDir, rel);
-    if (!filter(abs)) continue;
+  for (const rel of stdout.split("\n")) {
+    const abs = resolve(rootDir, rel);
+    if (!rel.includes("node_modules") && !filter(abs)) continue;
     entrypoints.add(abs);
     if (debug) console.debug(`[qwikdev/astro] Found Qwik entrypoint: ${abs}`);
   }
