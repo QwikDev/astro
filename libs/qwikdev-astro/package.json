@@ -65,8 +65,8 @@
     "astro-integration-kit": "^0.18.0"
   },
   "devDependencies": {
-    "astro": "^5.9.2",
-    "vite": "^6.3.5",
+    "astro": "6.0.0-beta.19",
+    "vite": "^7.3",
     "@qwik.dev/core": "2.0.0-beta.27"
   },
   "peerDependencies": {

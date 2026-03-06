@@ -236,6 +236,42 @@ export default defineIntegration({
           }
         };
 
+        /**
+         * Vite 7 removed `options.ssr` from plugin hooks, replacing it with
+         * `this.environment`. The qwikVite plugin still relies on `options.ssr`
+         * to determine server vs client when resolving `@qwik.dev/core/build`,
+         * so it always returns `isBrowser: true` in Vite 7, which causes
+         * `document is not defined` errors when preloader.mjs runs on the server.
+         *
+         * This plugin intercepts `@qwik.dev/core/build` and provides the correct
+         * values based on the Vite environment.
+         */
+        const QWIK_BUILD_ID = "\0@qwik.dev/core/build";
+        const qwikBuildFixPlugin: PluginOption = {
+          name: "astro-qwik-build-fix",
+          enforce: "pre",
+          resolveId(id) {
+            if (id === "@qwik.dev/core/build" || id.endsWith("@qwik.dev/core/build")) {
+              return QWIK_BUILD_ID;
+            }
+          },
+          load(id) {
+            if (id === QWIK_BUILD_ID) {
+              const isServer =
+                this.environment?.name !== "client";
+              const isDev =
+                this.environment?.mode === "dev" ||
+                this.environment?.config?.mode === "development";
+              return {
+                code: `export const isServer = ${isServer};
+export const isBrowser = ${!isServer};
+export const isDev = ${isDev};`,
+                moduleSideEffects: false
+              };
+            }
+          }
+        };
+
         updateConfig({
           vite: {
             build: {
@@ -245,7 +281,12 @@ export default defineIntegration({
                 }
               }
             },
-            plugins: [astroQwikPlugin, qwikVite(qwikSetupConfig), overrideEsbuildPlugin]
+            plugins: [
+              qwikBuildFixPlugin,
+              astroQwikPlugin,
+              qwikVite(qwikSetupConfig),
+              overrideEsbuildPlugin
+            ]
           }
         });
       },
