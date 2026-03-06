@@ -1,5 +1,3 @@
-import fs from "node:fs";
-import { join } from "node:path";
 import { qwikVite } from "@qwik.dev/core/optimizer";
 import type {
   QwikManifest,
@@ -218,26 +216,13 @@ export const isDev = ${isDev};`,
 
         const qwikPlugins = qwikVite(qwikSetupConfig);
 
-        // In build mode, wrap qwikVite's outputOptions hook to preserve
-        // Astro 6's per-environment output directories.
+        // In build mode, strip qwikVite's outputOptions hook — the standalone
+        // Qwik client build handles client output. Keep config hook (configResolved
+        // depends on state it sets) but undo its output dir changes via post plugin.
         if (!isDev) {
           for (const plugin of qwikPlugins) {
             if (!plugin || typeof plugin !== "object") continue;
-            const orig = (plugin as any).outputOptions;
-            if (typeof orig === "function") {
-              (plugin as any).outputOptions = function (this: any, opts: any) {
-                const originalDir = opts?.dir;
-                const result = orig.call(this, opts);
-                if (this.environment?.name !== "client" && originalDir) {
-                  if (Array.isArray(result)) {
-                    for (const o of result) if (o) o.dir = originalDir;
-                  } else if (result && typeof result === "object") {
-                    result.dir = originalDir;
-                  }
-                }
-                return result;
-              };
-            }
+            delete (plugin as any).outputOptions;
           }
         }
 
@@ -245,11 +230,9 @@ export const isDev = ${isDev};`,
           name: "astro-qwik-post",
           enforce: "post" as const,
           config(config) {
-            // Restore esbuild (qwikVite disables it in dev)
             config.esbuild = {};
-
             if (!isDev) {
-              // Remove qwikVite's output dir overrides so Astro controls per-environment dirs
+              // Undo qwikVite's output dir overrides so Astro controls per-environment dirs
               delete config.build?.outDir;
               if (config.build?.rollupOptions?.output) {
                 const output = config.build.rollupOptions.output;
@@ -260,7 +243,6 @@ export const isDev = ${isDev};`,
                 }
               }
             }
-
             return config;
           }
         };
@@ -338,16 +320,9 @@ export const isDev = ${isDev};`,
             });
           }
 
-          // Now run Astro's normal build (prerender will have the manifest)
+          // Now run Astro's normal build (prerender will have the manifest
+          // available via the @qwik-client-manifest virtual module)
           await originalBuildApp(builder);
-
-          // After build, inject manifest into server chunks (for SSR adapters)
-          if (qwikManifest && astroConfig?.adapter) {
-            injectManifestIntoServerChunks(
-              qwikManifest,
-              astroConfig.adapter ? join(serverDir, "chunks") : join(finalDir, "chunks")
-            );
-          }
         };
       }
     };
@@ -364,65 +339,30 @@ function getRelativePath(from: string, to: string) {
   return to.replace(from, "") || ".";
 }
 
-/**
- * Scan the Astro source directory for files that import Qwik packages.
- * This replaces the runtime entrypoint tracking with a pre-build scan.
- */
 async function scanQwikEntrypoints(
   config: AstroConfig,
   filter: (id: string) => boolean,
   debug?: boolean
 ): Promise<Set<string>> {
+  const { execSync } = await import("node:child_process");
   const { resolve } = await import("node:path");
   const srcDir = config.srcDir.pathname;
 
-  // Find all potential component files using Node 22+ fs.globSync
-  const { globSync } = fs;
-  const files = globSync("**/*.{tsx,jsx,ts,js}", {
-    cwd: srcDir,
-    exclude: (name: string) => name === "node_modules"
-  }).map((f: string) => resolve(srcDir, f));
+  const matches = execSync(
+    `grep -rl --include='*.tsx' --include='*.jsx' --include='*.ts' --include='*.js' -E '@builder\\.io/qwik|qwik\\.dev/(core|react)' .`,
+    { cwd: srcDir, encoding: "utf-8", stdio: ["pipe", "pipe", "ignore"] }
+  ).trim();
 
-  const qwikImportsRegex = /@builder\.io\/qwik(-react)?|qwik\.dev\/(core|react)/;
+  if (!matches) return new Set();
+
   const entrypoints = new Set<string>();
-
-  for (const file of files) {
-    if (!filter(file)) continue;
-    try {
-      const content = fs.readFileSync(file, "utf-8");
-      if (qwikImportsRegex.test(content)) {
-        entrypoints.add(file);
-        if (debug) {
-          console.debug(`[qwikdev/astro] Found Qwik entrypoint: ${file}`);
-        }
-      }
-    } catch {
-      // Skip unreadable files
-    }
+  for (const rel of matches.split("\n")) {
+    const abs = resolve(srcDir, rel);
+    if (!filter(abs)) continue;
+    entrypoints.add(abs);
+    if (debug) console.debug(`[qwikdev/astro] Found Qwik entrypoint: ${abs}`);
   }
 
   return entrypoints;
 }
 
-function injectManifestIntoServerChunks(
-  manifest: QwikManifest,
-  serverChunksDir: string
-) {
-  if (!fs.existsSync(serverChunksDir)) return;
-
-  const files = fs.readdirSync(serverChunksDir);
-  const serverFiles = files.filter(
-    (f) => f.startsWith("server_") && f.endsWith(".mjs")
-  );
-
-  const manifestJson = JSON.stringify(manifest);
-  for (const serverFile of serverFiles) {
-    const serverPath = join(serverChunksDir, serverFile);
-    const content = fs.readFileSync(serverPath, "utf-8");
-    const newContent = content.replace(
-      "serverData: props,",
-      `serverData: props, manifest: ${manifestJson},`
-    );
-    fs.writeFileSync(serverPath, newContent);
-  }
-}
