@@ -1,10 +1,9 @@
 import fs from "node:fs";
 import { join } from "node:path";
-import { qwikVite, symbolMapper } from "@qwik.dev/core/optimizer";
+import { qwikVite } from "@qwik.dev/core/optimizer";
 import type {
   QwikManifest,
   QwikVitePluginOptions,
-  SymbolMapperFn
 } from "@qwik.dev/core/optimizer";
 import type { RenderOptions } from "@qwik.dev/core/server";
 import aikMod from "@inox-tools/aik-mod";
@@ -32,7 +31,6 @@ type SetupPropsWithAikMod = Parameters<
 };
 
 declare global {
-  var symbolMapperFn: SymbolMapperFn;
   var relativeClientPath: string;
   var qManifest: QwikManifest;
 }
@@ -161,9 +159,6 @@ export default defineIntegration({
         const astroQwikPlugin: PluginOption = {
           name: "astro-qwik-parser",
           enforce: "pre",
-          configResolved() {
-            globalThis.symbolMapperFn = symbolMapper;
-          },
           buildEnd() {
             resolveEntrypoints();
           },

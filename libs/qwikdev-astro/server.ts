@@ -81,15 +81,11 @@ export async function renderToStaticMarkup(
       qwikLoader: isInitialContainer ? { include: "always" } : { include: "never" },
       containerTagName: "div",
       ...(isDev && {
-        symbolMapper: globalThis.symbolMapperFn,
         manifest: {} as QwikManifest
       }),
       serverData: props,
-      qwikPrefetchServiceWorker: {
-        include: false
-      },
       stream: {
-        write: (chunk) => {
+        write: (chunk: string) => {
           html += chunk;
         }
       }
