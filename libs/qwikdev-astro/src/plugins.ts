@@ -1,7 +1,7 @@
 import { qwikVite } from "@qwik.dev/core/optimizer";
 import type { QwikManifest, QwikVitePluginOptions } from "@qwik.dev/core/optimizer";
 import { build, type PluginOption } from "vite";
-import { VIRTUAL_MODULES } from "./constants";
+import { SERVER_ENTRYPOINT, VIRTUAL_MODULES } from "./constants";
 
 type VirtualId = (typeof VIRTUAL_MODULES)[keyof typeof VIRTUAL_MODULES];
 
@@ -65,7 +65,7 @@ export async function runQwikClientBuild(opts: {
     devSsrServer: false,
     srcDir: opts.srcDir,
     ssr: {
-      input: "@qwikdev/astro/server",
+      input: SERVER_ENTRYPOINT,
       outDir: opts.serverDir
     },
     client: {

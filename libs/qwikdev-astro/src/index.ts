@@ -3,13 +3,14 @@ import type { QwikManifest, QwikVitePluginOptions } from "@qwik.dev/core/optimiz
 import aikMod from "@inox-tools/aik-mod";
 import type { AstroConfig, AstroIntegration } from "astro";
 import {
-  createResolver,
   defineIntegration,
   watchDirectory,
   withPlugins
 } from "astro-integration-kit";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { type ViteBuilder, createFilter } from "vite";
-import { INTEGRATION_NAME, VIRTUAL_MODULE_NAME, optionsSchema } from "./constants";
+import { INTEGRATION_NAME, ROOT_ENTRYPOINT, SERVER_ENTRYPOINT, VIRTUAL_MODULE_NAME, optionsSchema } from "./constants";
 import { createAstroQwikPostPlugin, createQwikBuildFixPlugin, runQwikClientBuild, stripOutputOptions } from "./plugins";
 import { createQwikFileFilter, resolveQwikPaths, scanQwikEntrypoints } from "./scan";
 import type { SetupPropsWithAikMod } from "./types";
@@ -30,7 +31,7 @@ export default defineIntegration({
     let qwikManifest: QwikManifest | null = null;
 
     let astroConfig: AstroConfig | null = null;
-    const { resolve: resolver } = createResolver(import.meta.url);
+    const packageDir = dirname(fileURLToPath(import.meta.url));
     const filter = createFilter(options?.include, options?.exclude);
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
@@ -41,11 +42,11 @@ export default defineIntegration({
         const isDev = command === "dev";
 
         // integration HMR support
-        watchDirectory(setupProps, resolver());
-        
+        watchDirectory(setupProps, packageDir);
+
         addRenderer({
-          name: "@qwikdev/astro",
-          serverEntrypoint: resolver("../server.ts")
+          name: INTEGRATION_NAME,
+          serverEntrypoint: SERVER_ENTRYPOINT
         });
 
         defineModule(VIRTUAL_MODULE_NAME, {
@@ -65,10 +66,10 @@ export default defineIntegration({
           devSsrServer: false,
           srcDir,
           ssr: {
-            input: resolver("../server.ts")
+            input: SERVER_ENTRYPOINT
           },
           client: {
-            input: resolver("./root.tsx"),
+            input: ROOT_ENTRYPOINT,
             outDir: finalDir
           },
           debug: options?.debug ?? false
@@ -117,7 +118,7 @@ export default defineIntegration({
           if (entrypoints.size > 0) {
             await runQwikClientBuild({
               entrypoints,
-              rootEntry: resolver("./root.tsx"),
+              rootEntry: ROOT_ENTRYPOINT,
               srcDir,
               serverDir,
               finalDir,

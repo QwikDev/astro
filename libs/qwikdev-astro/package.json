@@ -37,6 +37,7 @@
     ".": "./src/index.ts",
     "./package.json": "./package.json",
     "./server": "./server.ts",
+    "./root": "./src/root.tsx",
     "./utils": "./src/utils.ts",
     "./q-astro-manifest.json": "./q-astro-manifest.json"
   },

@@ -4,6 +4,9 @@ import { z } from "astro/zod";
 
 export const INTEGRATION_NAME = "@qwikdev/astro";
 
+export const SERVER_ENTRYPOINT = "@qwikdev/astro/server";
+export const ROOT_ENTRYPOINT = "@qwikdev/astro/root";
+
 export const VIRTUAL_MODULE_NAME = "virtual:qwikdev-astro";
 
 export const VIRTUAL_MODULES = {
