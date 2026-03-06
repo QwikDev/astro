@@ -1,0 +1,67 @@
+import type { QwikManifest } from "@qwik.dev/core/optimizer";
+import type { PluginOption } from "vite";
+import { VIRTUAL_MODULES } from "./constants";
+
+type VirtualId = (typeof VIRTUAL_MODULES)[keyof typeof VIRTUAL_MODULES];
+
+/** Intercepts `@qwik.dev/core/build` and `@qwik-client-manifest` to provide correct isServer/isBrowser/isDev values using Vite 7's `this.environment` (replaces the removed `options.ssr`). TODO: remove this once Qwik supports Environment API */
+export function createQwikBuildFixPlugin(
+  getManifest: () => QwikManifest | null
+): PluginOption {
+  const loaders: Record<VirtualId, (ctx: { environment?: any }) => { code: string; moduleSideEffects: boolean }> = {
+    [VIRTUAL_MODULES["@qwik.dev/core/build"]](ctx) {
+      const isServer = ctx.environment?.name !== "client";
+      const isDev = ctx.environment?.mode === "dev" ||
+        ctx.environment?.config?.mode === "development";
+      return {
+        code: `export const isServer = ${isServer};\nexport const isBrowser = ${!isServer};\nexport const isDev = ${isDev};`,
+        moduleSideEffects: false
+      };
+    },
+    [VIRTUAL_MODULES["@qwik-client-manifest"]]() {
+      const manifest = getManifest();
+      return {
+        code: `export const manifest = ${manifest ? JSON.stringify(manifest) : "undefined"};`,
+        moduleSideEffects: false
+      };
+    }
+  };
+
+  return {
+    name: "astro-qwik-build-fix",
+    enforce: "pre",
+    resolveId(id) {
+      if (id in VIRTUAL_MODULES) return VIRTUAL_MODULES[id as keyof typeof VIRTUAL_MODULES];
+      if (id.endsWith("@qwik.dev/core/build")) return VIRTUAL_MODULES["@qwik.dev/core/build"];
+      return undefined;
+    },
+    load(id) {
+      return loaders[id as VirtualId]?.(this);
+    }
+  };
+}
+
+/** Undoes qwikVite's output dir overrides so Astro controls per-environment output directories. */
+export function createAstroQwikPostPlugin(isDev: boolean): PluginOption {
+  return {
+    name: "astro-qwik-post",
+    enforce: "post" as const,
+    config(config) {
+      config.esbuild = {};
+      if (isDev) return config;
+
+      delete config.build?.outDir;
+
+      const output = config.build?.rollupOptions?.output;
+      if (!output) return config;
+
+      if (Array.isArray(output)) {
+        for (const o of output) if (o && typeof o === "object") delete o.dir;
+      } else if (typeof output === "object") {
+        delete output.dir;
+      }
+
+      return config;
+    }
+  };
+}

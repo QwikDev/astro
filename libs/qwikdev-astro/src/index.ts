@@ -1,13 +1,8 @@
-import { execFile } from "node:child_process";
-import { resolve } from "node:path";
-import { promisify } from "node:util";
 import { qwikVite } from "@qwik.dev/core/optimizer";
-import { anyOf, createRegExp, exactly } from "magic-regexp";
 import type {
   QwikManifest,
   QwikVitePluginOptions,
 } from "@qwik.dev/core/optimizer";
-import type { RenderOptions } from "@qwik.dev/core/server";
 import aikMod from "@inox-tools/aik-mod";
 import type { AstroConfig, AstroIntegration } from "astro";
 import {
@@ -16,77 +11,19 @@ import {
   watchDirectory,
   withPlugins
 } from "astro-integration-kit";
-import { z } from "astro/zod";
-import { type PluginOption, type ViteBuilder, build, createFilter } from "vite";
-
-// TODO: contributing this back to aik-mod where we export the type
-type DefineModuleOptions = {
-  constExports?: Record<string, unknown>;
-  defaultExport?: unknown;
-};
-
-type SetupPropsWithAikMod = Parameters<
-  NonNullable<AstroIntegration["hooks"]["astro:config:setup"]>
->[0] & {
-  defineModule: (name: string, options: DefineModuleOptions) => string;
-};
-
-declare global {
-  var relativeClientPath: string;
-  var qManifest: QwikManifest;
-}
-
-/* Similar to vite's FilterPattern */
-const FilterPatternSchema = z.union([
-  z.string(),
-  z.instanceof(RegExp),
-  z.array(z.union([z.string(), z.instanceof(RegExp)])).readonly(),
-  z.null()
-]);
-
-const name = "@qwikdev/astro";
-
-const qwikEntrypointPattern = createRegExp(
-  anyOf(
-    exactly("@builder.io/qwik"),
-    exactly("qwik.dev/core"),
-    exactly("qwik.dev/react"),
-    exactly(".qwik.")
-  )
-);
+import { type ViteBuilder, build, createFilter } from "vite";
+import { INTEGRATION_NAME, QWIK_MODULES, VIRTUAL_MODULE_NAME, optionsSchema } from "./constants";
+import { createAstroQwikPostPlugin, createQwikBuildFixPlugin } from "./plugins";
+import { getRelativePath, scanQwikEntrypoints } from "./scan";
+import type { SetupPropsWithAikMod } from "./types";
 
 /**
  * This project uses Astro Integration Kit.
  * @see https://astro-integration-kit.netlify.app/
  */
 export default defineIntegration({
-  name,
-  optionsSchema: z
-    .object({
-      /**
-       * Tell Qwik which files to process.
-       */
-      include: FilterPatternSchema.optional(),
-
-      /**
-       * Tell Qwik which files to ignore.
-       */
-      exclude: FilterPatternSchema.optional(),
-
-      /**
-       * Enable debug mode with the qwikVite plugin.
-       */
-      debug: z.boolean().optional(),
-      /**
-       * Options passed into each Qwik component's `renderToStream` call.
-       */
-      renderOpts: z
-        .custom<RenderOptions>((data) => {
-          return typeof data === "object" && data !== null;
-        })
-        .optional()
-    })
-    .optional(),
+  name: INTEGRATION_NAME,
+  optionsSchema,
 
   setup({ options }) {
     let srcDir = "";
@@ -104,18 +41,19 @@ export default defineIntegration({
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
         const { addRenderer, updateConfig, config, command, defineModule } =
-          setupProps as SetupPropsWithAikMod;
+        setupProps as SetupPropsWithAikMod;
         astroConfig = config;
         const isDev = command === "dev";
 
         // integration HMR support
         watchDirectory(setupProps, resolver());
+        
         addRenderer({
           name: "@qwikdev/astro",
           serverEntrypoint: resolver("../server.ts")
         });
 
-        defineModule("virtual:qwikdev-astro", {
+        defineModule(VIRTUAL_MODULE_NAME, {
           constExports: {
             renderOpts: options?.renderOpts ?? {}
           }
@@ -162,58 +100,8 @@ export default defineIntegration({
           return true;
         };
 
-        /**
-         * Vite 7 removed `options.ssr` from plugin hooks, replacing it with
-         * `this.environment`. The qwikVite plugin still relies on `options.ssr`
-         * to determine server vs client when resolving `@qwik.dev/core/build`,
-         * so it always returns `isBrowser: true` in Vite 7, which causes
-         * `document is not defined` errors when preloader.mjs runs on the server.
-         *
-         * This plugin intercepts `@qwik.dev/core/build` and provides the correct
-         * values based on the Vite environment.
-         */
-        const QWIK_BUILD_ID = "\0@qwik.dev/core/build";
-        const QWIK_MANIFEST_ID = "\0@qwik-client-manifest";
-        const qwikBuildFixPlugin: PluginOption = {
-          name: "astro-qwik-build-fix",
-          enforce: "pre",
-          resolveId(id) {
-            if (id === "@qwik.dev/core/build" || id.endsWith("@qwik.dev/core/build")) {
-              return QWIK_BUILD_ID;
-            }
-            if (id === "@qwik-client-manifest") {
-              return QWIK_MANIFEST_ID;
-            }
-            return undefined;
-          },
-          load(id) {
-            if (id === QWIK_BUILD_ID) {
-              const isServer =
-                this.environment?.name !== "client";
-              const isDev =
-                this.environment?.mode === "dev" ||
-                this.environment?.config?.mode === "development";
-              return {
-                code: `export const isServer = ${isServer};
-export const isBrowser = ${!isServer};
-export const isDev = ${isDev};`,
-                moduleSideEffects: false
-              };
-            }
-            if (id === QWIK_MANIFEST_ID) {
-              // Provide the Qwik manifest from the client build (run before prerender).
-              // Falls back to undefined if no client build has run yet.
-              const manifestJson = qwikManifest
-                ? JSON.stringify(qwikManifest)
-                : "undefined";
-              return {
-                code: `export const manifest = ${manifestJson};`,
-                moduleSideEffects: false
-              };
-            }
-            return undefined;
-          }
-        };
+        const qwikBuildFixPlugin = createQwikBuildFixPlugin(() => qwikManifest);
+        const astroQwikPostPlugin = createAstroQwikPostPlugin(isDev);
 
         const qwikSetupConfig: QwikVitePluginOptions = {
           fileFilter,
@@ -241,27 +129,6 @@ export const isDev = ${isDev};`,
           }
         }
 
-        const astroQwikPostPlugin: PluginOption = {
-          name: "astro-qwik-post",
-          enforce: "post" as const,
-          config(config) {
-            config.esbuild = {};
-            if (!isDev) {
-              // Undo qwikVite's output dir overrides so Astro controls per-environment dirs
-              delete config.build?.outDir;
-              if (config.build?.rollupOptions?.output) {
-                const output = config.build.rollupOptions.output;
-                if (Array.isArray(output)) {
-                  for (const o of output) if (o && typeof o === "object") delete o.dir;
-                } else if (typeof output === "object") {
-                  delete output.dir;
-                }
-              }
-            }
-            return config;
-          }
-        };
-
         updateConfig({
           vite: {
             build: {
@@ -272,7 +139,7 @@ export const isDev = ${isDev};`,
               }
             },
             resolve: {
-              noExternal: ["@qwik.dev/core", "@qwik-client-manifest"]
+              noExternal: [...QWIK_MODULES]
             },
             plugins: [
               qwikBuildFixPlugin,
@@ -343,50 +210,9 @@ export const isDev = ${isDev};`,
     };
 
     return withPlugins({
-      name,
+      name: INTEGRATION_NAME,
       hooks: lifecycleHooks,
       plugins: [aikMod]
     });
   }
 });
-
-function getRelativePath(from: string, to: string) {
-  return to.replace(from, "") || ".";
-}
-
-const execFileAsync = promisify(execFile);
-
-async function scanQwikEntrypoints(
-  config: AstroConfig,
-  filter: (id: string) => boolean,
-  debug?: boolean
-): Promise<Set<string>> {
-  const rootDir = config.root.pathname;
-
-  let stdout: string;
-  try {
-    // Single grep: find files with qwik imports OR .qwik. in their path
-    const result = await execFileAsync(
-      "grep",
-      ["-rl", "--include=*.tsx", "--include=*.jsx", "--include=*.ts", "--include=*.js",
-       "-E", qwikEntrypointPattern.source, "."],
-      { cwd: rootDir, encoding: "utf-8" }
-    );
-    stdout = result.stdout.trim();
-  } catch {
-    return new Set();
-  }
-
-  if (!stdout) return new Set();
-
-  const entrypoints = new Set<string>();
-  for (const rel of stdout.split("\n")) {
-    const abs = resolve(rootDir, rel);
-    if (!rel.includes("node_modules") && !filter(abs)) continue;
-    entrypoints.add(abs);
-    if (debug) console.debug(`[qwikdev/astro] Found Qwik entrypoint: ${abs}`);
-  }
-
-  return entrypoints;
-}
-
