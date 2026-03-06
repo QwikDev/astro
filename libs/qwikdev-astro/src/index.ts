@@ -1,12 +1,12 @@
 import fs from "node:fs";
 import { join } from "node:path";
-import { qwikVite, symbolMapper } from "@builder.io/qwik/optimizer";
+import { qwikVite, symbolMapper } from "@qwik.dev/core/optimizer";
 import type {
   QwikManifest,
   QwikVitePluginOptions,
   SymbolMapperFn
-} from "@builder.io/qwik/optimizer";
-import type { RenderOptions } from "@builder.io/qwik/server";
+} from "@qwik.dev/core/optimizer";
+import type { RenderOptions } from "@qwik.dev/core/server";
 import aikMod from "@inox-tools/aik-mod";
 import type { AstroConfig, AstroIntegration } from "astro";
 import {
@@ -200,8 +200,8 @@ export default defineIntegration({
             /**
              *  Qwik Entrypoints
              *  ---
-             *  @builder.io/qwik
-             *  @builder.io/qwik-react
+             *  @qwik.dev/core
+             *  @qwik.dev/react
              *  @qwik.dev/core
              *  @qwik.dev/react
              */

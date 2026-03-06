@@ -5,7 +5,7 @@ import {
   useSignal,
   useStyles$,
   useTask$
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 import styles from "./cli-copy.css?inline";
 
 export const CLICopy = component$((props: PropsOf<"button">) => {

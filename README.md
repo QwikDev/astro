@@ -60,7 +60,7 @@ The integration needs the following in `tsconfig.json` for typescript to recogni
 ```ts
 "compilerOptions": {
   "jsx": "react-jsx",
-  "jsxImportSource": "@builder.io/qwik"
+  "jsxImportSource": "@qwik.dev/core"
 }
 ```
 
@@ -69,7 +69,7 @@ The integration needs the following in `tsconfig.json` for typescript to recogni
 If you don't intend to use Qwik as your primary `jsxImportSource`, add:
 
 ```
-/** @jsxImportSource @builder.io/qwik */
+/** @jsxImportSource @qwik.dev/core */
 ```
 
 at the top of each Qwik component file.
@@ -86,10 +86,10 @@ First, install the `@qwikdev/astro` integration like so:
 npm install @qwikdev/astro
 ```
 
-Typically, package managers install peer dependencies. However, if you get a `Cannot find package '@builder.io/qwik'` warning when starting Astro, install Qwik.
+Typically, package managers install peer dependencies. However, if you get a `Cannot find package '@qwik.dev/core'` warning when starting Astro, install Qwik.
 
 ```sh
-npm install @builder.io/qwik
+npm install @qwik.dev/core
 ```
 
 Now, add the integration to your `astro.config.*` file using the `integrations` property:
@@ -123,7 +123,7 @@ When using Qwik inside a meta framework like Astro or Qwik City, components are 
 For example here's how to create a counter component in Qwik (e.g. at `src/components/counter.tsx`).
 
 ```tsx
-import { component$, useSignal } from "@builder.io/qwik";
+import { component$, useSignal } from "@qwik.dev/core";
 
 export const Counter = component$(() => {
   const counter = useSignal(0);
@@ -347,7 +347,7 @@ For named slots within Astro, instead of adding `q:slot` on the markup, add `slo
 **my-slot-comp.tsx**
 
 ```tsx
-import { Slot, component$, useSignal } from "@builder.io/qwik";
+import { Slot, component$, useSignal } from "@qwik.dev/core";
 
 export const MySlotComp = component$<{ initial: number }>((props) => {
   return (

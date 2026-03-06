@@ -120,7 +120,7 @@ Unlike other integrations, Qwik needs to pass the client build into the server b
 
 ### How do we get the Qwik Entrypoints?
 
-We currently get them using an [Abstract Syntax Tree](https://levelup.gitconnected.com/understanding-abstract-syntax-trees-ast-in-software-development-e8c2b1957f0a). Then, we traverse the tree and check if the node is an import declaration, string literal, and contains "@builder.io/qwik".
+We currently get them using an [Abstract Syntax Tree](https://levelup.gitconnected.com/understanding-abstract-syntax-trees-ast-in-software-development-e8c2b1957f0a). Then, we traverse the tree and check if the node is an import declaration, string literal, and contains "@qwik.dev/core".
 
 ## server.ts
 
@@ -212,4 +212,4 @@ That's about it! Some exciting features we would like to add to Qwik + Astro are
 
 - Full view transitions support
 - Moving [Qwik Image optimizations](<https://github.com/BuilderIO/qwik/blob/85552d7f381e43e46fb1db79717c0a1e5b44b868/starters/apps/qwikcity-test/src/routes/(common)/index.tsx#L4>) (?jsx) off the Qwik City Vite plugin to Qwik core.
-- Moving [@builder.io/qwik/testing](https://github.com/BuilderIO/qwik/blob/85552d7f381e43e46fb1db79717c0a1e5b44b868/packages/qwik/src/testing/README.md#L1) off the Qwik City Vite plugin.
+- Moving [@qwik.dev/core/testing](https://github.com/BuilderIO/qwik/blob/85552d7f381e43e46fb1db79717c0a1e5b44b868/packages/qwik/src/testing/README.md#L1) off the Qwik City Vite plugin.

@@ -37,7 +37,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@builder.io/qwik": "^1.14.1",
     "@changesets/cli": "^2.29.4",
     "@inox-tools/astro-tests": "^0.6.1",
     "@playwright/test": "^1.53.0",
@@ -46,6 +45,8 @@
     "@types/node": "^22.15.31",
     "astro": "^5.9.2",
     "lefthook": "^1.11.13",
-    "pkg-pr-new": "^0.0.35"
+    "pkg-pr-new": "^0.0.35",
+    "@qwik.dev/core": "2.0.0-beta.27",
+    "ts-morph": "latest"
   }
 }

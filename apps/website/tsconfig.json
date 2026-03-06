@@ -10,6 +10,6 @@
     },
 
     "jsx": "react-jsx",
-    "jsxImportSource": "@builder.io/qwik"
+    "jsxImportSource": "@qwik.dev/core"
   }
 }

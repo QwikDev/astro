@@ -1,8 +1,8 @@
 import { renderOpts as globalRenderOpts } from "virtual:qwikdev-astro";
-import { type JSXNode, jsx } from "@builder.io/qwik";
-import { isDev } from "@builder.io/qwik/build";
-import type { QwikManifest } from "@builder.io/qwik/optimizer";
-import { type RenderToStreamOptions, renderToStream } from "@builder.io/qwik/server";
+import { type JSXNode, jsx } from "@qwik.dev/core";
+import { isDev } from "@qwik.dev/core/build";
+import type { QwikManifest } from "@qwik.dev/core/optimizer";
+import { type RenderToStreamOptions, renderToStream } from "@qwik.dev/core/server";
 import type { SSRResult } from "astro";
 
 const containerMap = new WeakMap<SSRResult, boolean>();

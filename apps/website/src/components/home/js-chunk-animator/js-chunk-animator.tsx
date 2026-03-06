@@ -4,7 +4,7 @@ import {
   useOnDocument,
   useSignal,
   useStylesScoped$
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 import { JSChunk } from "../js-chunk/js-chunk";
 
 export const JSChunkAnimator = component$(() => {

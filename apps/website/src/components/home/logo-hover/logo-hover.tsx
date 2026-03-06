@@ -5,7 +5,7 @@ import {
   useSignal,
   useStyles$,
   useVisibleTask$
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 import { AstroIcon } from "@icons/astro";
 import { QwikIcon } from "@icons/qwik";
 import styles from "./logo-hover.css?inline";
