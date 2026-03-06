@@ -1,4 +1,7 @@
+import { execSync } from "node:child_process";
+import { resolve } from "node:path";
 import { qwikVite } from "@qwik.dev/core/optimizer";
+import { anyOf, createRegExp, exactly } from "magic-regexp";
 import type {
   QwikManifest,
   QwikVitePluginOptions,
@@ -41,6 +44,14 @@ const FilterPatternSchema = z.union([
 ]);
 
 const name = "@qwikdev/astro";
+
+const qwikImportPattern = createRegExp(
+  anyOf(
+    exactly("@builder.io/qwik"),
+    exactly("qwik.dev/core"),
+    exactly("qwik.dev/react")
+  )
+);
 
 /**
  * This project uses Astro Integration Kit.
@@ -285,7 +296,7 @@ export const isDev = ${isDev};`,
 
         (vite as any).builder.buildApp = async (builder: any) => {
           // Scan source files for Qwik entrypoints before building
-          const entrypoints = await scanQwikEntrypoints(
+          const entrypoints = scanQwikEntrypoints(
             astroConfig!,
             filter,
             options?.debug
@@ -339,19 +350,22 @@ function getRelativePath(from: string, to: string) {
   return to.replace(from, "") || ".";
 }
 
-async function scanQwikEntrypoints(
+function scanQwikEntrypoints(
   config: AstroConfig,
   filter: (id: string) => boolean,
   debug?: boolean
-): Promise<Set<string>> {
-  const { execSync } = await import("node:child_process");
-  const { resolve } = await import("node:path");
+): Set<string> {
   const srcDir = config.srcDir.pathname;
 
-  const matches = execSync(
-    `grep -rl --include='*.tsx' --include='*.jsx' --include='*.ts' --include='*.js' -E '@builder\\.io/qwik|qwik\\.dev/(core|react)' .`,
-    { cwd: srcDir, encoding: "utf-8", stdio: ["pipe", "pipe", "ignore"] }
-  ).trim();
+  let matches: string;
+  try {
+    matches = execSync(
+      `grep -rl --include='*.tsx' --include='*.jsx' --include='*.ts' --include='*.js' -E '${qwikImportPattern.source}' .`,
+      { cwd: srcDir, encoding: "utf-8", stdio: ["pipe", "pipe", "ignore"] }
+    ).trim();
+  } catch {
+    return new Set();
+  }
 
   if (!matches) return new Set();
 

@@ -233,6 +233,9 @@ importers:
       astro:
         specifier: 6.0.0-beta.19
         version: 6.0.0-beta.19(@types/node@24.0.0)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.0)
+      magic-regexp:
+        specifier: ^0.11.0
+        version: 0.11.0
       vite:
         specifier: ^7.3
         version: 7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.0)
@@ -1239,6 +1242,9 @@ packages:
   '@jridgewell/gen-mapping@0.3.8':
     resolution: {integrity: sha512-imAbBGkb+ebQyxKgzv5Hu2nmROxoDOXHh80evxdoXNOrvAnVx7zimzc1Oo5h9RlfV4vPXaE2iM5pOFbvOCClWA==}
     engines: {node: '>=6.0.0'}
+
+  '@jridgewell/remapping@2.3.5':
+    resolution: {integrity: sha512-LI9u/+laYG4Ds1TDKSJW2YPrIlcVYOwi2fUC6xB43lueCjgxV4lffOCZCtYFiH6TNOX+tQKXx97T4IKHbhyHEQ==}
 
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
@@ -3088,6 +3094,9 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
+  magic-regexp@0.11.0:
+    resolution: {integrity: sha512-LG77Z/gVnwz7oaDpD4heX6ryl+lcr4l1B2gnP4MMvt2pGhGC1Dfj7dl1pXpP4ih+VQFLuAadeKVa+lARAzfW+Q==}
+
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
 
@@ -3684,6 +3693,10 @@ packages:
   regex@6.0.1:
     resolution: {integrity: sha512-uorlqlzAKjKQZ5P+kTJr3eeJGSVroLKoHmquUj4zHWuR+hEyNqlXsSKlYYF5F4NI6nl7tWCs0apKJ0lmfsXAPA==}
 
+  regexp-tree@0.1.27:
+    resolution: {integrity: sha512-iETxpjK6YoRWJG5o6hXLwvjYAoW+FEZn9os0PD/b6AP6xQwsa/Y7lCVgIixBbUPMfhu+i2LtdeAqVTgGlQarfA==}
+    hasBin: true
+
   rehype-parse@9.0.1:
     resolution: {integrity: sha512-ksCzCD0Fgfh7trPDxr2rSylbwq9iYDkSn8TCDmEJ49ljEUBxDVCzCHv7QNzZOfODanX4+bWQ4WZqLCRWYLfhag==}
 
@@ -4104,6 +4117,9 @@ packages:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
 
+  type-level-regexp@0.1.17:
+    resolution: {integrity: sha512-wTk4DH3cxwk196uGLK/E9pE45aLfeKJacKmcEgEOA/q5dnPGNxXt0cfYdFxb57L+sEpf1oJH4Dnx/pnRcku9jg==}
+
   typesafe-path@0.2.2:
     resolution: {integrity: sha512-OJabfkAg1WLZSqJAJ0Z6Sdt3utnbzr/jh+NAHoyWHJe8CMSy79Gm085094M9nvTPy22KzTVn5Zq5mbapCI/hPA==}
 
@@ -4198,6 +4214,10 @@ packages:
   universalify@2.0.1:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
+
+  unplugin@3.0.0:
+    resolution: {integrity: sha512-0Mqk3AT2TZCXWKdcoaufeXNukv2mTrEZExeXlHIOZXdqYoHHr4n51pymnwV8x2BOVxwXbK2HLlI7usrqMpycdg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
 
   unrun@0.2.26:
     resolution: {integrity: sha512-A3DQLBcDyTui4Hlaoojkldg+8x+CIR+tcSHY0wzW+CgB4X/DNyH58jJpXp1B/EkE+yG6tU8iH1mWsLtwFU3IQg==}
@@ -4560,6 +4580,9 @@ packages:
 
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
+
+  webpack-virtual-modules@0.6.2:
+    resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
 
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
@@ -5756,6 +5779,11 @@ snapshots:
       '@jridgewell/set-array': 1.2.1
       '@jridgewell/sourcemap-codec': 1.5.0
       '@jridgewell/trace-mapping': 0.3.25
+
+  '@jridgewell/remapping@2.3.5':
+    dependencies:
+      '@jridgewell/gen-mapping': 0.3.13
+      '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/resolve-uri@3.1.2': {}
 
@@ -7973,6 +8001,13 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
+  magic-regexp@0.11.0:
+    dependencies:
+      magic-string: 0.30.21
+      regexp-tree: 0.1.27
+      type-level-regexp: 0.1.17
+      unplugin: 3.0.0
+
   magic-string@0.30.17:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
@@ -8732,6 +8767,8 @@ snapshots:
     dependencies:
       regex-utilities: 2.3.0
 
+  regexp-tree@0.1.27: {}
+
   rehype-parse@9.0.1:
     dependencies:
       '@types/hast': 3.0.4
@@ -9294,6 +9331,8 @@ snapshots:
 
   type-fest@4.41.0: {}
 
+  type-level-regexp@0.1.17: {}
+
   typesafe-path@0.2.2: {}
 
   typescript-auto-import-cache@0.3.6:
@@ -9410,6 +9449,12 @@ snapshots:
   universalify@0.1.2: {}
 
   universalify@2.0.1: {}
+
+  unplugin@3.0.0:
+    dependencies:
+      '@jridgewell/remapping': 2.3.5
+      picomatch: 4.0.3
+      webpack-virtual-modules: 0.6.2
 
   unrun@0.2.26:
     dependencies:
@@ -9646,6 +9691,8 @@ snapshots:
   web-namespaces@2.0.1: {}
 
   webidl-conversions@3.0.1: {}
+
+  webpack-virtual-modules@0.6.2: {}
 
   whatwg-encoding@3.1.1:
     dependencies:
