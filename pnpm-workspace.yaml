@@ -3,3 +3,8 @@ packages:
   - libs/*/tests/fixtures/*
   - apps/*
   - '!**/labs/**'
+allowBuilds:
+  '@biomejs/biome': true
+  esbuild: true
+  lefthook: true
+  sharp: true

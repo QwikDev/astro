@@ -1,5 +1,5 @@
 {
-  "name": "@qwikdev/astro",
+  "name": "@qwik.dev/astro",
   "description": "Use Qwik components and Resumability within Astro",
   "version": "0.8.3",
   "contributors": [

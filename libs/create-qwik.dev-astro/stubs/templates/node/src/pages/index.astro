@@ -1,0 +1,65 @@
+---
+import astroLogo from "../assets/astro.svg?url";
+import qwikLogo from "../assets/qwik.svg?url";
+import { Counter } from "../components/counter.tsx";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Qwik + Astro">
+	<main id="app">
+    <div class="brand">
+      <a href="https://qwik.dev" target="_blank" rel="noreferrer">
+        <img src={qwikLogo} class="logo qwik" alt="Qwik logo" />
+      </a>
+      <a href="https://github.com/QwikDev/astro" target="_blank" rel="noreferrer">
+        <span class="love">💜</span>
+      </a>
+      <a href="https://astro.build" target="_blank" rel="noreferrer">
+        <img src={astroLogo} class="logo" alt="Astro logo" />
+      </a>
+    </div>
+    <h1>Qwik + Astro</h1>
+		<p class="motivation">
+      Thanks to <a href="https://github.com/QwikDev/astro" title="@QwikDev/astro integration">@QwikDev/astro</a>, seamlessly integrate your Qwik components into your Astro project, as shown with the counter below.
+    </p>
+    <Counter />
+    <p class="read-the-docs">
+      Click on the Qwik and Astro logos to learn more
+    </p>
+	</main>
+</Layout>
+
+<style is:global>
+#app {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+  }
+  .brand {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .love {
+    display: inline-block;
+    font-size: 1.5em;
+  }
+  .logo {
+    height: 6em;
+    padding: 1.5em;
+  }
+  .logo:hover {
+    filter: drop-shadow(0 0 2em #646cffaa);
+  }
+  .logo.qwik:hover {
+    filter: drop-shadow(0 0 2em #673ab8aa);
+  }
+  .motivation {
+    font-size: 1.25em;
+    font-weight: 300;
+  }
+  .read-the-docs {
+    color: #888;
+  }
+</style>
