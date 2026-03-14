@@ -12,14 +12,14 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
 
       - name: 📦️ Install Panam
         run: pnpm i -g panam-cli
 
       - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24
           cache: "pnpm"
 
       - run: make pr-release
