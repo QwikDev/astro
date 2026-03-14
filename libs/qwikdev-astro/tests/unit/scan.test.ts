@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveQwikPaths, createQwikFileFilter } from "../../src/scan";
+import { createQwikFileFilter, resolveQwikPaths } from "../../src/scan";
 
 describe("resolveQwikPaths", () => {
   function makeConfig(overrides: { adapter?: { name: string } } = {}) {
@@ -9,9 +9,9 @@ describe("resolveQwikPaths", () => {
       outDir: new URL("file:///project/dist/"),
       build: {
         client: new URL("file:///project/dist/client/"),
-        server: new URL("file:///project/dist/server/"),
+        server: new URL("file:///project/dist/server/")
       },
-      adapter: overrides.adapter ?? null,
+      adapter: overrides.adapter ?? null
     } as any;
   }
 

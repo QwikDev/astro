@@ -67,7 +67,13 @@ async function grepQwikFiles(cwd: string): Promise<string> {
   try {
     const result = await execFileAsync(
       "grep",
-      ["-rl", ...SCAN_EXTENSIONS.map((ext) => `--include=${ext}`), "-E", QWIK_ENTRYPOINT_PATTERN.source, "."],
+      [
+        "-rl",
+        ...SCAN_EXTENSIONS.map((ext) => `--include=${ext}`),
+        "-E",
+        QWIK_ENTRYPOINT_PATTERN.source,
+        "."
+      ],
       { cwd, encoding: "utf-8" }
     );
     return result.stdout.trim();

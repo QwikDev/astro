@@ -1,6 +1,6 @@
 import { qwikVite } from "@qwik.dev/core/optimizer";
 import type { QwikManifest, QwikVitePluginOptions } from "@qwik.dev/core/optimizer";
-import { build, type PluginOption } from "vite";
+import { type PluginOption, build } from "vite";
 import { SERVER_ENTRYPOINT, VIRTUAL_MODULES } from "./constants";
 
 type VirtualId = (typeof VIRTUAL_MODULES)[keyof typeof VIRTUAL_MODULES];
@@ -9,10 +9,14 @@ type VirtualId = (typeof VIRTUAL_MODULES)[keyof typeof VIRTUAL_MODULES];
 export function createQwikBuildFixPlugin(
   getManifest: () => QwikManifest | null
 ): PluginOption {
-  const loaders: Record<VirtualId, (ctx: { environment?: any }) => { code: string; moduleSideEffects: boolean }> = {
+  const loaders: Record<
+    VirtualId,
+    (ctx: { environment?: any }) => { code: string; moduleSideEffects: boolean }
+  > = {
     [VIRTUAL_MODULES["@qwik.dev/core/build"]](ctx) {
       const isServer = ctx.environment?.name !== "client";
-      const isDev = ctx.environment?.mode === "dev" ||
+      const isDev =
+        ctx.environment?.mode === "dev" ||
         ctx.environment?.config?.mode === "development";
       return {
         code: `export const isServer = ${isServer};\nexport const isBrowser = ${!isServer};\nexport const isDev = ${isDev};`,
@@ -32,8 +36,10 @@ export function createQwikBuildFixPlugin(
     name: "astro-qwik-build-fix",
     enforce: "pre",
     resolveId(id) {
-      if (id in VIRTUAL_MODULES) return VIRTUAL_MODULES[id as keyof typeof VIRTUAL_MODULES];
-      if (id.endsWith("@qwik.dev/core/build")) return VIRTUAL_MODULES["@qwik.dev/core/build"];
+      if (id in VIRTUAL_MODULES)
+        return VIRTUAL_MODULES[id as keyof typeof VIRTUAL_MODULES];
+      if (id.endsWith("@qwik.dev/core/build"))
+        return VIRTUAL_MODULES["@qwik.dev/core/build"];
       return undefined;
     },
     load(id) {

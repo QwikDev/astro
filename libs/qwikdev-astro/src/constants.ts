@@ -1,6 +1,6 @@
 import type { RenderOptions } from "@qwik.dev/core/server";
-import { anyOf, createRegExp, exactly } from "magic-regexp";
 import { z } from "astro/zod";
+import { anyOf, createRegExp, exactly } from "magic-regexp";
 
 export const INTEGRATION_NAME = "@qwikdev/astro";
 

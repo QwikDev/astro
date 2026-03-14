@@ -1,17 +1,24 @@
-import { qwikVite } from "@qwik.dev/core/optimizer";
-import type { QwikManifest, QwikVitePluginOptions } from "@qwik.dev/core/optimizer";
-import aikMod from "@inox-tools/aik-mod";
-import type { AstroConfig, AstroIntegration } from "astro";
-import {
-  defineIntegration,
-  watchDirectory,
-  withPlugins
-} from "astro-integration-kit";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import aikMod from "@inox-tools/aik-mod";
+import { qwikVite } from "@qwik.dev/core/optimizer";
+import type { QwikManifest, QwikVitePluginOptions } from "@qwik.dev/core/optimizer";
+import type { AstroConfig, AstroIntegration } from "astro";
+import { defineIntegration, watchDirectory, withPlugins } from "astro-integration-kit";
 import { type ViteBuilder, createFilter } from "vite";
-import { INTEGRATION_NAME, ROOT_ENTRYPOINT, SERVER_ENTRYPOINT, VIRTUAL_MODULE_NAME, optionsSchema } from "./constants";
-import { createAstroQwikPostPlugin, createQwikBuildFixPlugin, runQwikClientBuild, stripOutputOptions } from "./plugins";
+import {
+  INTEGRATION_NAME,
+  ROOT_ENTRYPOINT,
+  SERVER_ENTRYPOINT,
+  VIRTUAL_MODULE_NAME,
+  optionsSchema
+} from "./constants";
+import {
+  createAstroQwikPostPlugin,
+  createQwikBuildFixPlugin,
+  runQwikClientBuild,
+  stripOutputOptions
+} from "./plugins";
 import { createQwikFileFilter, resolveQwikPaths, scanQwikEntrypoints } from "./scan";
 import type { SetupPropsWithAikMod } from "./types";
 
@@ -37,7 +44,7 @@ export default defineIntegration({
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
         const { addRenderer, updateConfig, config, command, defineModule } =
-        setupProps as SetupPropsWithAikMod;
+          setupProps as SetupPropsWithAikMod;
         astroConfig = config;
         const isDev = command === "dev";
 
@@ -92,11 +99,7 @@ export default defineIntegration({
             resolve: {
               noExternal: ["@qwik.dev/core", "@qwik-client-manifest"]
             },
-            plugins: [
-              qwikBuildFixPlugin,
-              ...qwikPlugins,
-              astroQwikPostPlugin
-            ]
+            plugins: [qwikBuildFixPlugin, ...qwikPlugins, astroQwikPostPlugin]
           }
         });
       },
@@ -104,10 +107,13 @@ export default defineIntegration({
       // Override buildApp to run Qwik client build before Astro's prerender.
       "astro:build:setup": async ({ vite }) => {
         const config = astroConfig;
-        if (!config) throw new Error("[qwikdev/astro] astroConfig not set — astro:config:setup must run first");
+        if (!config)
+          throw new Error(
+            "[qwikdev/astro] astroConfig not set — astro:config:setup must run first"
+          );
 
         const { builder } = vite;
-        
+
         if (!builder?.buildApp) return;
 
         const originalBuildApp = builder.buildApp;
@@ -122,7 +128,9 @@ export default defineIntegration({
               serverDir,
               finalDir,
               debug: options?.debug ?? false,
-              onManifest: (manifest) => { qwikManifest = manifest; }
+              onManifest: (manifest) => {
+                qwikManifest = manifest;
+              }
             });
           }
 

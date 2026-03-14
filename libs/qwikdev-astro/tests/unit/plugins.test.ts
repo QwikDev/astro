@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createQwikBuildFixPlugin } from "../../src/plugins";
 import { VIRTUAL_MODULES } from "../../src/constants";
+import { createQwikBuildFixPlugin } from "../../src/plugins";
 
 describe("createQwikBuildFixPlugin load", () => {
   function getPlugin(manifest: any = null) {

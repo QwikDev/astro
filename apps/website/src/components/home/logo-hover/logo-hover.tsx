@@ -1,3 +1,5 @@
+import { AstroIcon } from "@icons/astro";
+import { QwikIcon } from "@icons/qwik";
 import {
   $,
   type Signal,
@@ -6,8 +8,6 @@ import {
   useStyles$,
   useVisibleTask$
 } from "@qwik.dev/core";
-import { AstroIcon } from "@icons/astro";
-import { QwikIcon } from "@icons/qwik";
 import styles from "./logo-hover.css?inline";
 
 export const LogoHover = component$(() => {
