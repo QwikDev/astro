@@ -18,14 +18,14 @@
     "start": "astro dev --open"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
+    "@astrojs/check": "^0.9.8",
     "@fontsource-variable/unbounded": "^5.2.6",
     "@iconify-json/lucide": "^1.2.47",
+    "@qwik.dev/core": "2.0.0-beta.29",
     "@qwikdev/astro": "workspace:*",
-    "astro": "6.0.0-beta.19",
+    "astro": "6.0.6",
     "astro-icon": "^1.1.5",
-    "sharp": "^0.33.5",
-    "@qwik.dev/core": "2.0.0-beta.27"
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4"

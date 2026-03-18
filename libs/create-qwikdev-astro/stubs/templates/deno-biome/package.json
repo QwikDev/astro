@@ -20,12 +20,12 @@
     "start": "astro dev --open"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
+    "@astrojs/check": "^0.9.8",
     "@deno/astro-adapter": "^0.3.1",
+    "@qwik.dev/core": "2.0.0-beta.29",
     "@qwikdev/astro": "^0.8",
-    "astro": "^6.0.0-beta.19",
-    "typescript": "^5.4.3",
-    "@qwik.dev/core": "2.0.0-beta.27"
+    "astro": "^6.0.6",
+    "typescript": "^5.4.3"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.6.3"

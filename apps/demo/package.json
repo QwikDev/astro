@@ -12,8 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@qwik.dev/core": "2.0.0-beta.27",
+    "@qwik.dev/core": "2.0.0-beta.29",
     "@qwikdev/astro": "workspace:*",
-    "astro": "6.0.0-beta.19"
+    "astro": "6.0.6"
   }
 }

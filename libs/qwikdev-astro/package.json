@@ -61,12 +61,12 @@
     "astro-integration-kit": "^0.18.0"
   },
   "devDependencies": {
-    "@qwik.dev/core": "2.0.0-beta.27",
-    "astro": "6.0.0-beta.19",
+    "@qwik.dev/core": "2.0.0-beta.29",
+    "astro": "6.0.6",
     "magic-regexp": "^0.11.0",
     "vite": "^7.3"
   },
   "peerDependencies": {
-    "@qwik.dev/core": ">=2.0.0-beta.27"
+    "@qwik.dev/core": ">=2.0.0-beta.29"
   }
 }
