@@ -3,47 +3,26 @@ import type { QwikManifest, QwikVitePluginOptions } from "@qwik.dev/core/optimiz
 import { type PluginOption, build } from "vite";
 import { SERVER_ENTRYPOINT, VIRTUAL_MODULES } from "./constants";
 
-type VirtualId = (typeof VIRTUAL_MODULES)[keyof typeof VIRTUAL_MODULES];
-
-/** Intercepts `@qwik.dev/core/build` and `@qwik-client-manifest` to provide correct isServer/isBrowser/isDev values using Vite 7's `this.environment` (replaces the removed `options.ssr`). TODO: remove this once Qwik supports Environment API */
-export function createQwikBuildFixPlugin(
+/** Intercepts `@qwik-client-manifest` to provide the manifest from our standalone Qwik client build. */
+export function createQwikManifestPlugin(
   getManifest: () => QwikManifest | null
 ): PluginOption {
-  const loaders: Record<
-    VirtualId,
-    (ctx: { environment?: any }) => { code: string; moduleSideEffects: boolean }
-  > = {
-    [VIRTUAL_MODULES["@qwik.dev/core/build"]](ctx) {
-      const isServer = ctx.environment?.name !== "client";
-      const isDev =
-        ctx.environment?.mode === "dev" ||
-        ctx.environment?.config?.mode === "development";
-      return {
-        code: `export const isServer = ${isServer};\nexport const isBrowser = ${!isServer};\nexport const isDev = ${isDev};`,
-        moduleSideEffects: false
-      };
+  const VIRTUAL_ID = VIRTUAL_MODULES["@qwik-client-manifest"];
+
+  return {
+    name: "astro-qwik-manifest",
+    enforce: "pre",
+    resolveId(id) {
+      if (id === "@qwik-client-manifest") return VIRTUAL_ID;
+      return undefined;
     },
-    [VIRTUAL_MODULES["@qwik-client-manifest"]]() {
+    load(id) {
+      if (id !== VIRTUAL_ID) return undefined;
       const manifest = getManifest();
       return {
         code: `export const manifest = ${manifest ? JSON.stringify(manifest) : "undefined"};`,
         moduleSideEffects: false
       };
-    }
-  };
-
-  return {
-    name: "astro-qwik-build-fix",
-    enforce: "pre",
-    resolveId(id) {
-      if (id in VIRTUAL_MODULES)
-        return VIRTUAL_MODULES[id as keyof typeof VIRTUAL_MODULES];
-      if (id.endsWith("@qwik.dev/core/build"))
-        return VIRTUAL_MODULES["@qwik.dev/core/build"];
-      return undefined;
-    },
-    load(id) {
-      return loaders[id as VirtualId]?.(this);
     }
   };
 }

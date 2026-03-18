@@ -10,7 +10,6 @@ export const ROOT_ENTRYPOINT = "@qwikdev/astro/root";
 export const VIRTUAL_MODULE_NAME = "virtual:qwikdev-astro";
 
 export const VIRTUAL_MODULES = {
-  "@qwik.dev/core/build": "\0@qwik.dev/core/build",
   "@qwik-client-manifest": "\0@qwik-client-manifest"
 } as const;
 

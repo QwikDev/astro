@@ -1,56 +1,39 @@
 import { describe, expect, it } from "vitest";
 import { VIRTUAL_MODULES } from "../../src/constants";
-import { createQwikBuildFixPlugin } from "../../src/plugins";
+import { createQwikManifestPlugin } from "../../src/plugins";
 
-describe("createQwikBuildFixPlugin load", () => {
+describe("createQwikManifestPlugin", () => {
   function getPlugin(manifest: any = null) {
-    return createQwikBuildFixPlugin(() => manifest) as any;
+    return createQwikManifestPlugin(() => manifest) as any;
   }
 
-  it("returns isServer=true, isBrowser=false for server environment", () => {
+  it("resolves @qwik-client-manifest to virtual id", () => {
     const plugin = getPlugin();
-    const result = plugin.load.call(
-      { environment: { name: "server" } },
-      VIRTUAL_MODULES["@qwik.dev/core/build"]
-    );
-    expect(result.code).toContain("export const isServer = true");
-    expect(result.code).toContain("export const isBrowser = false");
+    const resolved = plugin.resolveId("@qwik-client-manifest");
+    expect(resolved).toBe(VIRTUAL_MODULES["@qwik-client-manifest"]);
   });
 
-  it("returns isServer=false, isBrowser=true for client environment", () => {
+  it("returns undefined for unrelated ids", () => {
     const plugin = getPlugin();
-    const result = plugin.load.call(
-      { environment: { name: "client" } },
-      VIRTUAL_MODULES["@qwik.dev/core/build"]
-    );
-    expect(result.code).toContain("export const isServer = false");
-    expect(result.code).toContain("export const isBrowser = true");
+    expect(plugin.resolveId("some-other-module")).toBeUndefined();
   });
 
-  it("detects dev mode from environment.mode", () => {
-    const plugin = getPlugin();
-    const result = plugin.load.call(
-      { environment: { name: "server", mode: "dev" } },
-      VIRTUAL_MODULES["@qwik.dev/core/build"]
-    );
-    expect(result.code).toContain("export const isDev = true");
+  it("loads manifest as undefined when no manifest available", () => {
+    const plugin = getPlugin(null);
+    const result = plugin.load(VIRTUAL_MODULES["@qwik-client-manifest"]);
+    expect(result.code).toContain("export const manifest = undefined");
   });
 
-  it("detects dev mode from environment.config.mode", () => {
-    const plugin = getPlugin();
-    const result = plugin.load.call(
-      { environment: { name: "server", config: { mode: "development" } } },
-      VIRTUAL_MODULES["@qwik.dev/core/build"]
-    );
-    expect(result.code).toContain("export const isDev = true");
+  it("loads manifest as JSON when manifest is available", () => {
+    const manifest = { symbols: {}, mapping: {} };
+    const plugin = getPlugin(manifest);
+    const result = plugin.load(VIRTUAL_MODULES["@qwik-client-manifest"]);
+    expect(result.code).toContain("export const manifest = ");
+    expect(result.code).not.toContain("undefined");
   });
 
-  it("returns isDev=false in production", () => {
+  it("returns undefined for unrelated load ids", () => {
     const plugin = getPlugin();
-    const result = plugin.load.call(
-      { environment: { name: "server", mode: "production" } },
-      VIRTUAL_MODULES["@qwik.dev/core/build"]
-    );
-    expect(result.code).toContain("export const isDev = false");
+    expect(plugin.load("some-other-id")).toBeUndefined();
   });
 });

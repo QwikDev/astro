@@ -15,7 +15,7 @@ import {
 } from "./constants";
 import {
   createAstroQwikPostPlugin,
-  createQwikBuildFixPlugin,
+  createQwikManifestPlugin,
   runQwikClientBuild,
   stripOutputOptions
 } from "./plugins";
@@ -65,7 +65,7 @@ export default defineIntegration({
         ({ srcDir, serverDir, finalDir } = resolveQwikPaths(astroConfig));
 
         const fileFilter = createQwikFileFilter(filter);
-        const qwikBuildFixPlugin = createQwikBuildFixPlugin(() => qwikManifest);
+        const qwikManifestPlugin = createQwikManifestPlugin(() => qwikManifest);
         const astroQwikPostPlugin = createAstroQwikPostPlugin(isDev);
 
         const qwikSetupConfig: QwikVitePluginOptions = {
@@ -99,7 +99,7 @@ export default defineIntegration({
             resolve: {
               noExternal: ["@qwik.dev/core", "@qwik-client-manifest"]
             },
-            plugins: [qwikBuildFixPlugin, ...qwikPlugins, astroQwikPostPlugin]
+            plugins: [qwikManifestPlugin, ...qwikPlugins, astroQwikPostPlugin]
           }
         });
       },
