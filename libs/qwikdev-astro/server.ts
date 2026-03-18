@@ -1,11 +1,8 @@
 import { renderOpts as globalRenderOpts } from "virtual:qwikdev-astro";
 import { type JSXNode, jsx } from "@qwik.dev/core";
-import { isDev } from "@qwik.dev/core/build";
 import type { QwikManifest } from "@qwik.dev/core/optimizer";
 import { type RenderToStreamOptions, renderToStream } from "@qwik.dev/core/server";
 import type { SSRResult } from "astro";
-
-const containerMap = new WeakMap<SSRResult, boolean>();
 
 type RendererContext = {
   result: SSRResult;
@@ -69,16 +66,11 @@ export async function renderToStaticMarkup(
 
     let html = "";
 
-    // https://qwik.dev/docs/advanced/qwikloader/#qwikloader
-    const isInitialContainer = !containerMap.has(this.result);
-
     const renderToStreamOpts: RenderToStreamOptions = {
       ...(props.renderOpts ?? globalRenderOpts ?? {}),
       containerAttributes: {
-        style: "display: contents",
-        ...(isDev && { "q-astro-marker": "" })
+        style: "display: contents"
       },
-      qwikLoader: isInitialContainer ? { include: "always" } : { include: "never" },
       containerTagName: "div",
       manifest: (props.manifest ?? {}) as QwikManifest,
       serverData: props,
@@ -129,11 +121,6 @@ export async function renderToStaticMarkup(
       children: [defaultSlot, ...slotValues]
     }) as Parameters<typeof renderToStream>[0];
 
-    if (isInitialContainer) {
-      containerMap.set(this.result, true);
-      renderToStreamOpts.containerAttributes!["q-astro-marker"] = "first";
-    }
-
     await renderToStream(qwikComponentJSX, renderToStreamOpts);
 
     const isClientRouter = Array.from(this.result._metadata.renderedScripts).some(
@@ -153,7 +140,7 @@ export async function renderToStaticMarkup(
       isClientRouter &&
       htmlWithRerun +
         `
-      ${isInitialContainer ? `<script data-qwik-astro-client-router>document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>` : ""}
+      <script data-qwik-astro-client-router>document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>
     `;
 
     return {
