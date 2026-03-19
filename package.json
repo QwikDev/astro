@@ -29,16 +29,15 @@
     "postinstall": "lefthook install && playwright install --with-deps",
     "changeset": "changeset",
     "release": "pnpm build.create-qwikdev-astro && changeset publish",
-    "test": "pnpm test:cli && pnpm test:e2e",
-    "test:cli": "pnpm -C ./libs/create-qwikdev-astro test",
-    "test:e2e": "playwright test --pass-with-no-tests",
-    "test:e2e.ui": "playwright test --ui",
-    "test:e2e.report": "playwright show-report"
+    "test": "pnpm test.cli && pnpm test.platform",
+    "test.cli": "pnpm -C ./libs/create-qwikdev-astro test",
+    "test.platform": "playwright test --pass-with-no-tests",
+    "test.platform.ui": "playwright test --ui",
+    "test.platform.report": "playwright show-report"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@changesets/cli": "^2.29.4",
-    "@inox-tools/astro-tests": "^0.9.1",
     "@playwright/test": "^1.58.2",
     "@qwik.dev/core": "2.0.0-beta.29",
     "@qwikdev/astro": "workspace:*",

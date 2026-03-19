@@ -1,0 +1,11 @@
+{
+  "name": "netlify-fixture",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "dependencies": {
+    "@astrojs/netlify": "7.0.3",
+    "@qwikdev/astro": "workspace:*",
+    "astro": "6.0.6"
+  }
+}
