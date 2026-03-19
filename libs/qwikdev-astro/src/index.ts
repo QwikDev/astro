@@ -78,6 +78,9 @@ export default defineIntegration({
             input: ROOT_ENTRYPOINT,
             outDir: finalDir
           },
+          devTools: {
+            hmr: false
+          },
           debug: options?.debug ?? false
         };
 
