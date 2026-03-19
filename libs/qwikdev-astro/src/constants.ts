@@ -1,6 +1,6 @@
 import type { RenderOptions } from "@qwik.dev/core/server";
 import { z } from "astro/zod";
-import { anyOf, createRegExp, exactly } from "magic-regexp";
+
 
 export const INTEGRATION_NAME = "@qwikdev/astro";
 
@@ -17,14 +17,8 @@ export const QWIK_MODULES = ["@qwik.dev/core", "@qwik-client-manifest"] as const
 
 export const SCAN_EXTENSIONS = ["*.tsx", "*.jsx", "*.ts", "*.js"] as const;
 
-export const QWIK_ENTRYPOINT_PATTERN = createRegExp(
-  anyOf(
-    exactly("@builder.io/qwik"),
-    exactly("qwik.dev/core"),
-    exactly("qwik.dev/react"),
-    exactly(".qwik.")
-  )
-);
+export const QWIK_ENTRYPOINT_PATTERN =
+  /@builder\.io\/qwik|qwik\.dev\/core|qwik\.dev\/react|\.qwik\./;
 
 export const FilterPatternSchema = z.union([
   z.string(),
