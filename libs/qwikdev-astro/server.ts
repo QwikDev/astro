@@ -17,7 +17,7 @@ type RendererContext = {
  *
  * In Qwik v1, the identifiers are _jsxQ - _jsxC - _jsxS
  *
- * In Qwik v2, it is jsxsplit and I believe jsxSorted
+ * In Qwik v2, the identifiers are _jsxSorted and _jsxSplit
  *
  */
 function isInlineComponent(component: unknown): boolean {
@@ -25,7 +25,13 @@ function isInlineComponent(component: unknown): boolean {
     return false;
   }
   const codeStr = component?.toString().toLowerCase();
-  const qwikJsxIdentifiers = ["_jsxq", "_jsxc", "_jsxs", "jsxsplit"];
+  const qwikJsxIdentifiers = [
+    "_jsxsorted",
+    "_jsxsplit",
+    "_jsxq",
+    "_jsxc",
+    "_jsxs",
+  ];
   return (
     qwikJsxIdentifiers.some((id) => codeStr.includes(id)) &&
     component.name !== "QwikComponent"
