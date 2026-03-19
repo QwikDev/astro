@@ -5,26 +5,31 @@ import { type RenderToStreamOptions, renderToStream } from "@qwik.dev/core/serve
 import type { SSRResult } from "astro";
 
 const containerMap = new WeakMap<SSRResult, boolean>();
-
 type RendererContext = {
   result: SSRResult;
 };
 
+/** Detects component$() components via the SERIALIZABLE_STATE symbol that survives minification. */
+function hasSerializableState(component: Function): boolean {
+  const symbols = Object.getOwnPropertySymbols(component);
+  return symbols.some((s) => {
+    const val = (component as any)[s];
+    return Array.isArray(val);
+  });
+}
+
 /**
- *  Because inline components are very much like normal functions, it's hard to distinguish them from normal functions.
- *
- * We currently identify them through the jsx transform function call.
+ * Inline components are plain functions that use Qwik JSX transforms.
+ * We identify them through the jsx transform function call in their source.
  *
  * In Qwik v1, the identifiers are _jsxQ - _jsxC - _jsxS
- *
  * In Qwik v2, the identifiers are _jsxSorted and _jsxSplit
- *
  */
 function isInlineComponent(component: unknown): boolean {
   if (typeof component !== "function") {
     return false;
   }
-  const codeStr = component?.toString().toLowerCase();
+  const codeStr = component.toString().toLowerCase();
   const qwikJsxIdentifiers = [
     "_jsxsorted",
     "_jsxsplit",
@@ -34,7 +39,7 @@ function isInlineComponent(component: unknown): boolean {
   ];
   return (
     qwikJsxIdentifiers.some((id) => codeStr.includes(id)) &&
-    component.name !== "QwikComponent"
+    !hasSerializableState(component)
   );
 }
 
@@ -42,15 +47,11 @@ function isQwikComponent(component: unknown) {
   if (typeof component !== "function") {
     return false;
   }
-  if (isInlineComponent(component)) {
-    return true;
-  }
-
-  if (component.name !== "QwikComponent") {
-    return false;
-  }
-
-  return true;
+  return (
+    hasSerializableState(component) ||
+    component.name === "QwikComponent" ||
+    isInlineComponent(component)
+  );
 }
 
 async function check(this: RendererContext, component: unknown) {

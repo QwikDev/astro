@@ -6,30 +6,27 @@ import { expect, test } from "@playwright/test";
 import { build, preview } from "astro";
 import type { PreviewServer } from "astro";
 
-const fixtureRoot = new URL("../fixtures/minimal/", import.meta.url);
-const fixtureDir = fileURLToPath(fixtureRoot);
+const fixtureDir = fileURLToPath(
+  new URL("../fixtures/minimal/", import.meta.url)
+);
 const distDir = join(fixtureDir, "dist");
 
-const originalCwd = process.cwd();
-
-function enterFixture() {
+async function buildFixture() {
+  const prevCwd = process.cwd();
   process.chdir(fixtureDir);
-}
-
-function restoreCwd() {
-  process.chdir(originalCwd);
+  try {
+    await build({});
+  } finally {
+    process.chdir(prevCwd);
+  }
 }
 
 test.describe("Build Output", () => {
   test.beforeAll(async () => {
-    enterFixture();
-
-    // clean previous build
     if (existsSync(distDir)) {
       await rm(distDir, { recursive: true });
     }
-
-    await build({});
+    await buildFixture();
   });
 
   test("dist directory is created", () => {
@@ -41,7 +38,6 @@ test.describe("Build Output", () => {
     const qwikChunks = files.filter(
       (f) => f.endsWith(".js") && f.includes("q-")
     );
-
     expect(qwikChunks.length).toBeGreaterThan(0);
   });
 
@@ -52,7 +48,6 @@ test.describe("Build Output", () => {
   test("build output contains rendered HTML with q:container", async () => {
     const files = await collectFiles(distDir);
     const indexHtml = files.find((f) => f.endsWith("index.html"));
-
     expect(indexHtml).toBeDefined();
 
     const content = await readFile(indexHtml!, "utf-8");
@@ -62,7 +57,6 @@ test.describe("Build Output", () => {
   test("rendered HTML contains the counter component markup", async () => {
     const files = await collectFiles(distDir);
     const indexHtml = files.find((f) => f.endsWith("index.html"))!;
-
     const content = await readFile(indexHtml, "utf-8");
     expect(content).toContain('data-testid="counter"');
   });
@@ -72,19 +66,18 @@ test.describe("Production Preview", () => {
   let previewServer: PreviewServer;
 
   test.beforeAll(async () => {
-    enterFixture();
-
-    // build if not already built
-    if (!existsSync(distDir)) {
-      await build({});
+    if (!existsSync(join(distDir, "index.html"))) {
+      await buildFixture();
     }
 
+    const prevCwd = process.cwd();
+    process.chdir(fixtureDir);
     previewServer = await preview({});
+    process.chdir(prevCwd);
   });
 
   test.afterAll(async () => {
     await previewServer?.stop();
-    restoreCwd();
   });
 
   test("Qwik container is SSR rendered in production", async ({ page }) => {
