@@ -17,12 +17,12 @@ importers:
       '@playwright/test':
         specifier: ^1.58.2
         version: 1.58.2
+      '@qwik.dev/astro':
+        specifier: workspace:*
+        version: link:libs/qwikdev-astro
       '@qwik.dev/core':
         specifier: 2.0.0-beta.29
         version: 2.0.0-beta.29(vite@7.3.1(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
-      '@qwikdev/astro':
-        specifier: workspace:*
-        version: link:libs/qwikdev-astro
       '@qwikdev/create-astro':
         specifier: workspace:*
         version: link:libs/create-qwikdev-astro
@@ -44,12 +44,12 @@ importers:
 
   apps/demo:
     dependencies:
+      '@qwik.dev/astro':
+        specifier: workspace:*
+        version: link:../../libs/qwikdev-astro
       '@qwik.dev/core':
         specifier: 2.0.0-beta.29
         version: 2.0.0-beta.29(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
-      '@qwikdev/astro':
-        specifier: workspace:*
-        version: link:../../libs/qwikdev-astro
       astro:
         specifier: 6.0.6
         version: 6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2)
@@ -62,12 +62,12 @@ importers:
       '@deno/astro-adapter':
         specifier: ^0.3.2
         version: 0.3.2(@opentelemetry/api@1.9.0)(astro@6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.2))
+      '@qwik.dev/astro':
+        specifier: workspace:*
+        version: link:../../libs/qwikdev-astro
       '@qwik.dev/core':
         specifier: 2.0.0-beta.29
         version: 2.0.0-beta.29(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
-      '@qwikdev/astro':
-        specifier: workspace:*
-        version: link:../../libs/qwikdev-astro
       astro:
         specifier: 6.0.6
         version: 6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.2)
@@ -80,12 +80,12 @@ importers:
       '@astrojs/node':
         specifier: 10.0.2
         version: 10.0.2(astro@6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2))
+      '@qwik.dev/astro':
+        specifier: workspace:*
+        version: link:../../libs/qwikdev-astro
       '@qwik.dev/core':
         specifier: 2.0.0-beta.29
         version: 2.0.0-beta.29(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
-      '@qwikdev/astro':
-        specifier: workspace:*
-        version: link:../../libs/qwikdev-astro
       astro:
         specifier: 6.0.6
         version: 6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2)
@@ -101,12 +101,12 @@ importers:
       '@iconify-json/lucide':
         specifier: ^1.2.47
         version: 1.2.47
+      '@qwik.dev/astro':
+        specifier: workspace:*
+        version: link:../../libs/qwikdev-astro
       '@qwik.dev/core':
         specifier: 2.0.0-beta.29
         version: 2.0.0-beta.29(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
-      '@qwikdev/astro':
-        specifier: workspace:*
-        version: link:../../libs/qwikdev-astro
       astro:
         specifier: 6.0.6
         version: 6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2)
@@ -206,7 +206,7 @@ importers:
 
   libs/qwikdev-astro/tests/fixtures/minimal:
     dependencies:
-      '@qwikdev/astro':
+      '@qwik.dev/astro':
         specifier: workspace:*
         version: link:../../..
       astro:
@@ -218,7 +218,7 @@ importers:
       '@astrojs/netlify':
         specifier: 7.0.3
         version: 7.0.3(@types/node@24.0.0)(@vercel/functions@3.4.3)(astro@6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2))(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(yaml@2.8.2)
-      '@qwikdev/astro':
+      '@qwik.dev/astro':
         specifier: workspace:*
         version: link:../../..
       astro:
@@ -230,7 +230,7 @@ importers:
       '@astrojs/node':
         specifier: 10.0.2
         version: 10.0.2(astro@6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2))
-      '@qwikdev/astro':
+      '@qwik.dev/astro':
         specifier: workspace:*
         version: link:../../..
       astro:
@@ -242,7 +242,7 @@ importers:
       '@astrojs/vercel':
         specifier: 10.0.1
         version: 10.0.1(astro@6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2))(rollup@4.59.0)
-      '@qwikdev/astro':
+      '@qwik.dev/astro':
         specifier: workspace:*
         version: link:../../..
       astro:

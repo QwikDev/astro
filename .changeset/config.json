@@ -8,7 +8,7 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "@qwikdev/astro-website",
+    "@qwik.dev/astro-website",
     "astro-deno-demo",
     "astro-node-demo",
     "astro-demo",

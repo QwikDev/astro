@@ -5,7 +5,7 @@
   "version": "0.0.1",
   "dependencies": {
     "@astrojs/netlify": "7.0.3",
-    "@qwikdev/astro": "workspace:*",
+    "@qwik.dev/astro": "workspace:*",
     "astro": "6.0.6"
   }
 }

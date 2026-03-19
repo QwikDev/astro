@@ -1,4 +1,4 @@
-# Create [@qwikdev/astro](https://github.com/QwikDev/astro) 🦾
+# Create [@qwik.dev/astro](https://github.com/QwikDev/astro) 🦾
 
 ## **The Ultimate Starter for QwikDev/Astro Projects**
 
@@ -14,7 +14,7 @@ If you already have an existing Astro project and want to add the integration,
 you can do so with the following command:
 
   ```bash
-  npm create @qwikdev/astro@latest --add
+  npm create @qwik.dev/astro@latest --add
   ```
 
 ### Create a new project
@@ -23,7 +23,7 @@ To create a brand new project,
 you can use the following command:
 
   ```bash
-  npm create @qwikdev/astro@latest
+  npm create @qwik.dev/astro@latest
   ```
 
 ---
@@ -37,25 +37,25 @@ Run the following command using your preferred package manager:
 - **With `NPM`**:
 
   ```bash
-  npm create @qwikdev/astro@latest [destination] [adapter] [...options]
+  npm create @qwik.dev/astro@latest [destination] [adapter] [...options]
   ```
 
 - **With `Yarn`**:
 
   ```bash
-  yarn create @qwikdev/astro [destination] [adapter] [...options]
+  yarn create @qwik.dev/astro [destination] [adapter] [...options]
   ```
 
 - **With `PNPM`**:
 
   ```bash
-  pnpm create @qwikdev/astro [destination] [adapter] [...options]
+  pnpm create @qwik.dev/astro [destination] [adapter] [...options]
   ```
 
 - **With `Bun`**:
 
   ```bash
-  bun create @qwikdev/astro [destination] [adapter] [...options]
+  bun create @qwik.dev/astro [destination] [adapter] [...options]
   ```
 
 ### 🛠️ Flags
@@ -94,7 +94,7 @@ The easiest way to explore [QwikDev/Astro](https://github.com/QwikDev/astro)
 on your machine is by running the following command:
 
 ```bash
-npm create @qwikdev/astro@latest
+npm create @qwik.dev/astro@latest
 ```
 
 1. Start Without Any Template
@@ -104,13 +104,13 @@ npm create @qwikdev/astro@latest
     This approach uses only the default starter kit provided by the integration:
 
     ```bash
-    npm create @qwikdev/astro@latest my-project
+    npm create @qwik.dev/astro@latest my-project
     ```
 
    To skip all prompts and initialize without a template automatically:
 
    ```bash
-   npm create @qwikdev/astro@latest my-project --yes
+   npm create @qwik.dev/astro@latest my-project --yes
    ```
 
 2. Add **Qwik/Astro** to an Existing Project**
@@ -120,7 +120,7 @@ npm create @qwikdev/astro@latest
     you can use the `--add` option:
 
     ```bash
-    npm create @qwikdev/astro@latest my-existing-project --add
+    npm create @qwik.dev/astro@latest my-existing-project --add
     ```
 
 3. Use an Official Template
@@ -129,7 +129,7 @@ npm create @qwikdev/astro@latest
    (e.g., minimal, portfolio, starlight, blog, etc.):
 
    ```bash
-   npm create @qwikdev/astro@latest --template <name>
+   npm create @qwik.dev/astro@latest --template <name>
    ```
 
    [The full list of templates is quite long](https://github.com/withastro/astro/tree/main/examples),
@@ -140,7 +140,7 @@ npm create @qwikdev/astro@latest
     You can use any GitHub repository as a template:
 
     ```bash
-    npm create @qwikdev/astro@latest --template <user>/<repo>
+    npm create @qwik.dev/astro@latest --template <user>/<repo>
     ```
 
     For a broader range of community-provided templates,
@@ -151,7 +151,7 @@ npm create @qwikdev/astro@latest
     Paths to examples nested inside a GitHub repository are also supported:
 
     ```bash
-    npm create @qwikdev/astro@latest --template <user>/<repo>/path/to/example
+    npm create @qwik.dev/astro@latest --template <user>/<repo>/path/to/example
     ```
 
 6. Advanced Use Cases
@@ -159,7 +159,7 @@ npm create @qwikdev/astro@latest
     You can combine multiple flags to set up your project exactly as needed:
 
     ```bash
-    npm create @qwikdev/astro my-existing-project --add --copy --template portfolio --yes --no-git --no-ci
+    npm create @qwik.dev/astro my-existing-project --add --copy --template portfolio --yes --no-git --no-ci
     ```
 
 ### 📦 API

@@ -58,7 +58,7 @@ async function check(this: RendererContext, component: unknown) {
   try {
     return isQwikComponent(component);
   } catch (error) {
-    console.error("Error in check function of @qwikdev/astro: ", error);
+    console.error("Error in check function of @qwik.dev/astro: ", error);
     return false;
   }
 }
@@ -158,7 +158,7 @@ export async function renderToStaticMarkup(
 
     return { html };
   } catch (error) {
-    console.error("Error in renderToStaticMarkup function of @qwikdev/astro: ", error);
+    console.error("Error in renderToStaticMarkup function of @qwik.dev/astro: ", error);
     throw error;
   }
 }

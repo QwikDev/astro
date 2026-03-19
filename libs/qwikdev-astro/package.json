@@ -1,5 +1,5 @@
 {
-  "name": "@qwikdev/astro",
+  "name": "@qwik.dev/astro",
   "description": "Use Qwik components and Resumability within Astro",
   "version": "0.8.3",
   "contributors": [
@@ -55,7 +55,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "bugs": "https://github.com/thejackshelton/@qwikdev/astro/issues",
+  "bugs": "https://github.com/QwikDev/astro/issues",
   "dependencies": {
     "@inox-tools/aik-mod": "^0.13.0",
     "astro-integration-kit": "^0.20.0"

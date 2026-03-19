@@ -7,7 +7,7 @@ import pm from "panam";
 process.env.NODE_ENV = "test";
 process.env.CI = "1";
 
-const integration = "@qwikdev/astro";
+const integration = "@qwik.dev/astro";
 const root = "labs";
 const project = "test-app";
 

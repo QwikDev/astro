@@ -1,4 +1,4 @@
-# @qwikdev/astro
+# @qwik.dev/astro
 
 ## 0.8.3
 
@@ -26,7 +26,7 @@
 
   ```ts
   import { defineConfig } from "astro/config";
-  import qwik from "@qwikdev/astro";
+  import qwik from "@qwik.dev/astro";
 
   export default defineConfig({
     integrations: [

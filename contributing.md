@@ -1,6 +1,6 @@
 # Contributing
 
-Hey, Welcome to the contributing guide for `@qwikdev/astro`! We really appreciate your help.
+Hey, Welcome to the contributing guide for `@qwik.dev/astro`! We really appreciate your help.
 
 ## Qwik Start
 
@@ -39,7 +39,7 @@ pnpm preview
 This project is a pnpm workspace monorepo. It contains:
 
 - An Astro Demo app playground
-- The `@qwikdev/astro` library.
+- The `@qwik.dev/astro` library.
 
 Below is an outline of the file structure.
 
