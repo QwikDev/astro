@@ -143,10 +143,16 @@ export async function renderToStaticMarkup(
     );
 
     if (isClientRouter && isInitialContainer) {
-      /** ClientRouter support: reset Qwik's global state before swap
-       * so the qwikloader re-initializes on the new page.
-       * Re-observe visible tasks after navigation. */
-      const clientRouterScript = `<script q-astro-client-router data-astro-rerun>document.addEventListener('astro:before-swap',()=>{delete window._qwikEv;delete document.qVNodeData;});document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>`;
+      /**
+       * ClientRouter support: after Astro swaps the page, the qwikloader's
+       * initialization has already fired and won't re-run for new elements.
+       *
+       * This script mirrors the qwikloader's processReadyStateChange():
+       * 1. before-swap: reset Qwik's global state so it re-initializes
+       * 2. after-swap: dispatch qinit (document-ready), qidle (document-idle),
+       *    and re-observe qvisible (intersection-observer) for new elements
+       */
+      const clientRouterScript = `<script q-astro-client-router data-astro-rerun>!function(){var d=document;d.addEventListener('astro:before-swap',function(){delete window._qwikEv;delete d.qVNodeData});d.addEventListener('astro:after-swap',function(){d.querySelectorAll('[q-d\\\\:qinit]').forEach(function(e){e.dispatchEvent(new CustomEvent('qinit'));e.removeAttribute('q-d:qinit')});(window.requestIdleCallback||setTimeout)(function(){d.querySelectorAll('[q-d\\\\:qidle]').forEach(function(e){e.dispatchEvent(new CustomEvent('qidle'));e.removeAttribute('q-d:qidle')})});var o=new IntersectionObserver(function(t){t.forEach(function(e){e.isIntersecting&&(o.unobserve(e.target),e.target.dispatchEvent(new CustomEvent('qvisible',{detail:e})))})});d.querySelectorAll('[q-e\\\\:qvisible]:not([q\\\\:observed])').forEach(function(e){o.observe(e);e.setAttribute('q:observed','true')})})}();</script>`;
       return { html: html + clientRouterScript };
     }
 
