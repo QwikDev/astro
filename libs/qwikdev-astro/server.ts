@@ -39,9 +39,10 @@ function isQwikComponent(component: unknown) {
   if (isInlineComponent(component)) {
     return true;
   }
-  // if (component.name !== "QwikComponent") {
-  //   return false;
-  // }
+
+  if (component.name !== "QwikComponent") {
+    return false;
+  }
 
   return true;
 }
