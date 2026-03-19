@@ -4,6 +4,8 @@ import type { QwikManifest } from "@qwik.dev/core/optimizer";
 import { type RenderToStreamOptions, renderToStream } from "@qwik.dev/core/server";
 import type { SSRResult } from "astro";
 
+const containerMap = new WeakMap<SSRResult, boolean>();
+
 type RendererContext = {
   result: SSRResult;
 };
@@ -121,31 +123,26 @@ export async function renderToStaticMarkup(
       children: [defaultSlot, ...slotValues]
     }) as Parameters<typeof renderToStream>[0];
 
+    const isInitialContainer = !containerMap.has(this.result);
+    if (isInitialContainer) {
+      containerMap.set(this.result, true);
+    }
+
     await renderToStream(qwikComponentJSX, renderToStreamOpts);
 
-    const isClientRouter = Array.from(this.result._metadata.renderedScripts).some(
-      (path) => path.includes("ClientRouter.astro")
+    const isClientRouter = Array.from(this.result.componentMetadata.keys()).some(
+      (key) => key.includes("ClientRouter.astro")
     );
 
-    /** With View Transitions, rerun so that signals work
-     * https://docs.astro.build/en/guides/view-transitions/#data-astro-rerun
-     */
-    const htmlWithRerun = html.replace(
-      '<script q:func="qwik/json">',
-      '<script q:func="qwik/json" data-astro-rerun>'
-    );
+    if (isClientRouter && isInitialContainer) {
+      /** ClientRouter support: reset Qwik's global state before swap
+       * so the qwikloader re-initializes on the new page.
+       * Re-observe visible tasks after navigation. */
+      const clientRouterScript = `<script q-astro-client-router data-astro-rerun>document.addEventListener('astro:before-swap',()=>{delete window._qwikEv;delete document.qVNodeData;});document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>`;
+      return { html: html + clientRouterScript };
+    }
 
-    /** Adds support for visible tasks with Astro's client router */
-    const htmlWithObservers =
-      isClientRouter &&
-      htmlWithRerun +
-        `
-      <script data-qwik-astro-client-router>document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>
-    `;
-
-    return {
-      html: isClientRouter ? htmlWithObservers : html
-    };
+    return { html };
   } catch (error) {
     console.error("Error in renderToStaticMarkup function of @qwikdev/astro: ", error);
     throw error;
