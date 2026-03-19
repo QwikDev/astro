@@ -366,6 +366,44 @@ export const MySlotComp = component$<{ initial: number }>((props) => {
   </MySlotComp>
 ```
 
+## Configuration
+
+The integration accepts the following options:
+
+```ts
+import { defineConfig } from "astro/config";
+import qwikdev from "@qwikdev/astro";
+
+export default defineConfig({
+  integrations: [
+    qwikdev({
+      include: "**/qwik/*",
+      exclude: "**/legacy/*",
+      debug: true,
+      renderOpts: {
+        base: "/build/",
+      },
+    }),
+  ],
+});
+```
+
+### renderOpts
+
+Options passed to Qwik's `renderToStream` for every component. This is useful for configuring the `base` path when serving Qwik assets from a CDN or custom location:
+
+```ts
+qwikdev({
+  renderOpts: {
+    base: "https://cdn.example.com/myapp/build/",
+  },
+})
+```
+
+## Caching the build directory
+
+Qwik outputs content-hashed client-side chunks to `/build/q-[hash].js`. Deployment platforms like Vercel, Netlify, and Cloudflare handle caching automatically. If you are self-hosting, make sure your server sets appropriate cache headers for the `/build/` directory.
+
 ## Community Guides
 
 - [Embed Stackblitz in a performant way](https://thenewstack.io/how-to-build-embed-components-with-astro-qwik-and-stackblitz/)

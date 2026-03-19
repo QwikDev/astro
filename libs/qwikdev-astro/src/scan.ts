@@ -51,7 +51,7 @@ export async function scanQwikEntrypoints(
   const stdout = await grepQwikFiles(rootDir);
   if (!stdout) return new Set();
 
-  const files = stdout.split("\n");
+  const files = stdout.split("\n").sort();
   const entrypoints = new Set<string>();
   for (const relativePath of files) {
     const absolutePath = resolve(rootDir, relativePath);
