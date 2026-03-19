@@ -1,101 +1,122 @@
-// import { loadFixture } from "@inox-tools/astro-tests/astroFixture";
-// import { expect, test } from "@playwright/test";
+import { existsSync } from "node:fs";
+import { readdir, readFile, rm } from "node:fs/promises";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { expect, test } from "@playwright/test";
+import { build, preview } from "astro";
+import type { PreviewServer } from "astro";
 
-// function clearGlobalState() {
-//     (globalThis as any).qManifest = undefined;
-//     (globalThis as any).symbolMapperFn = undefined;
-// }
+const fixtureRoot = new URL("../fixtures/minimal/", import.meta.url);
+const fixtureDir = fileURLToPath(fixtureRoot);
+const distDir = join(fixtureDir, "dist");
 
-// test.describe("Dev Mode", () => {
-//   let devServer: any;
-//   let fixture: any;
+const originalCwd = process.cwd();
 
-//   test.beforeAll(async () => {
-//     console.log("BEFORE ALL!!!")
+function enterFixture() {
+  process.chdir(fixtureDir);
+}
 
-//     clearGlobalState();
+function restoreCwd() {
+  process.chdir(originalCwd);
+}
 
-//     fixture = await loadFixture({
-//       root: "../fixtures/minimal",
-//       devToolbar: {
-//         enabled: false
-//       }
-//     });
-//     devServer = await fixture.startDevServer({});
-//   });
+test.describe("Build Output", () => {
+  test.beforeAll(async () => {
+    enterFixture();
 
-//   test.afterAll(async () => {
-//     await devServer?.stop();
-//   });
+    // clean previous build
+    if (existsSync(distDir)) {
+      await rm(distDir, { recursive: true });
+    }
 
-//   // Remove individual server setup/teardown from tests
-//   test("Qwik container is SSR rendered in dev mode", async ({ page }) => {
-//     const pageUrl = fixture.resolveUrl("/");
-//     const response = await page.goto(pageUrl);
+    await build({});
+  });
 
-//     if (!response?.ok()) {
-//       throw new Error(
-//         `Failed to load page: ${response?.status()} ${response?.statusText()}`
-//       );
-//     }
+  test("dist directory is created", () => {
+    expect(existsSync(distDir)).toBe(true);
+  });
 
-//     await expect(page.locator("[q\\:container]").first()).toBeVisible();
-//   });
+  test("build output contains Qwik JS chunks", async () => {
+    const files = await collectFiles(distDir);
+    const qwikChunks = files.filter(
+      (f) => f.endsWith(".js") && f.includes("q-")
+    );
 
-//   test("Counter increments on click", async ({ page }) => {
-//     const pageUrl = fixture.resolveUrl("/");
-//     await page.goto(pageUrl);
+    expect(qwikChunks.length).toBeGreaterThan(0);
+  });
 
-//     const counter = page.getByTestId("counter");
-//     await expect(counter).toBeVisible();
-//     await expect(counter).toHaveText("0");
-//     await counter.click();
-//     await expect(counter).toHaveText("1");
-//   });
-// });
+  test("build output contains q-manifest.json", () => {
+    expect(existsSync(join(distDir, "q-manifest.json"))).toBe(true);
+  });
 
-// test.describe("Production Mode", () => {
-//   let preview: any;
-//   let fixture: any;
+  test("build output contains rendered HTML with q:container", async () => {
+    const files = await collectFiles(distDir);
+    const indexHtml = files.find((f) => f.endsWith("index.html"));
 
-//   test.beforeAll(async () => {
-//     fixture = await loadFixture({
-//       root: "../fixtures/minimal",
-//     });
+    expect(indexHtml).toBeDefined();
 
-//     clearGlobalState();
+    const content = await readFile(indexHtml!, "utf-8");
+    expect(content).toContain("q:container");
+  });
 
-//     // Build with explicit configuration
-//     await fixture.build();
+  test("rendered HTML contains the counter component markup", async () => {
+    const files = await collectFiles(distDir);
+    const indexHtml = files.find((f) => f.endsWith("index.html"))!;
 
-//     preview = await fixture.preview({});
-//   });
+    const content = await readFile(indexHtml, "utf-8");
+    expect(content).toContain('data-testid="counter"');
+  });
+});
 
-//   test.afterAll(async () => {
-//     await preview?.stop();
-//   });
+test.describe("Production Preview", () => {
+  let previewServer: PreviewServer;
 
-//   test("Qwik container is SSR rendered in production", async ({ page }) => {
-//     const pageUrl = fixture.resolveUrl("/");
-//     const response = await page.goto(pageUrl);
+  test.beforeAll(async () => {
+    enterFixture();
 
-//     if (!response?.ok()) {
-//       throw new Error(
-//         `Failed to load page: ${response?.status()} ${response?.statusText()}`
-//       );
-//     }
+    // build if not already built
+    if (!existsSync(distDir)) {
+      await build({});
+    }
 
-//     await expect(page.locator("[q\\:container]").first()).toBeVisible();
-//   });
+    previewServer = await preview({});
+  });
 
-//   test("Counter increments on click", async ({ page }) => {
-//     const pageUrl = fixture.resolveUrl("/");
-//     await page.goto(pageUrl);
+  test.afterAll(async () => {
+    await previewServer?.stop();
+    restoreCwd();
+  });
 
-//     const counter = page.getByTestId("counter");
-//     await expect(counter).toBeVisible();
-//     await expect(counter).toHaveText("0");
-//     await counter.click();
-//     await expect(counter).toHaveText("1");
-//   });
-// });
+  test("Qwik container is SSR rendered in production", async ({ page }) => {
+    const url = `http://localhost:${previewServer.port}/`;
+    const response = await page.goto(url);
+
+    expect(response?.ok()).toBe(true);
+    await expect(page.locator("[q\\:container]").first()).toBeVisible();
+  });
+
+  test("Counter increments on click", async ({ page }) => {
+    const url = `http://localhost:${previewServer.port}/`;
+    await page.goto(url);
+
+    const counter = page.getByTestId("counter");
+    await expect(counter).toBeVisible();
+    await expect(counter).toHaveText("0");
+    await counter.click();
+    await expect(counter).toHaveText("1");
+  });
+});
+
+async function collectFiles(dir: string): Promise<string[]> {
+  const results: string[] = [];
+  const entries = await readdir(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...(await collectFiles(fullPath)));
+    } else {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
