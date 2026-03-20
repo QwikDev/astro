@@ -5,10 +5,10 @@ import {
   type Signal,
   component$,
   useSignal,
-  useStyles$,
-  useVisibleTask$
+  useStyles$
 } from "@qwik.dev/core";
 import styles from "./logo-hover.css?inline";
+import qwikAstroLogo from "@assets/qwik-v2-logo.svg?raw";
 
 export const LogoHover = component$(() => {
   useStyles$(styles);
@@ -65,6 +65,7 @@ export const LogoHover = component$(() => {
             </span>
           ))}
         </span>
+        <span class="letter plus" style="animation-delay: 0.6s;">+</span>
         <span
           onMouseEnter$={() => handleMouseEnter(astroLogoRef, astroRect)}
           onMouseMove$={({ clientX, clientY }) =>
@@ -76,12 +77,14 @@ export const LogoHover = component$(() => {
             <span
               class="letter"
               key={letter}
-              style={`animation-delay: ${(i + 5) * 0.15}s;`}
+              style={`animation-delay: ${(i + 6) * 0.15}s;`}
             >
               {letter}
             </span>
           ))}
         </span>
+        <span class="letter equals" style="animation-delay: 1.65s;">=</span>
+        <span class="letter logo-reveal" style="animation-delay: 1.8s;" dangerouslySetInnerHTML={qwikAstroLogo} />
       </h1>
       <QwikIcon ref={qwikLogoRef} class="qwik-logo tooltip" />
       <AstroIcon ref={astroLogoRef} class="astro-logo tooltip" />

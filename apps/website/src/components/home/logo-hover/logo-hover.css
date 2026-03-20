@@ -2,6 +2,7 @@
   margin-block: var(--space-m);
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-xs);
   line-height: 1;
 }
@@ -58,6 +59,15 @@
   border-radius: 9999999px;
   box-shadow: var(--shadow-elevation-high);
   z-index: 1000;
+}
+
+.logo-reveal {
+  align-items: center;
+}
+
+.logo-reveal svg {
+  height: 1.2em;
+  width: auto;
 }
 
 .qwik-logo,
