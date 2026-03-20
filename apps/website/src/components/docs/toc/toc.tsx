@@ -1,10 +1,4 @@
-import {
-  $,
-  component$,
-  useOnDocument,
-  useSignal,
-  useStyles$,
-} from "@qwik.dev/core";
+import { component$, useStyles$ } from "@qwik.dev/core";
 import styles from "./toc.css?inline";
 
 type TocItem = {
@@ -15,24 +9,6 @@ type TocItem = {
 
 export const Toc = component$<{ items: TocItem[] }>(({ items }) => {
   useStyles$(styles);
-  const activeId = useSignal("");
-
-  useOnDocument(
-    "scroll",
-    $(() => {
-      const headings = items
-        .map((item) => document.getElementById(item.id))
-        .filter(Boolean) as HTMLElement[];
-
-      let current = "";
-      for (const heading of headings) {
-        if (heading.getBoundingClientRect().top <= 100) {
-          current = heading.id;
-        }
-      }
-      activeId.value = current;
-    }),
-  );
 
   return (
     <aside class="toc">
@@ -42,7 +18,7 @@ export const Toc = component$<{ items: TocItem[] }>(({ items }) => {
           <a
             key={item.id}
             href={`#${item.id}`}
-            class={`toc-link${item.level > 2 ? " toc-link-nested" : ""}${activeId.value === item.id ? " active" : ""}`}
+            class={`toc-link${item.level > 2 ? " toc-link-nested" : ""}`}
           >
             {item.label}
           </a>

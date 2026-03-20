@@ -36,10 +36,6 @@
   color: var(--purple-50);
 }
 
-.toc-link.active {
-  color: var(--purple-50);
-}
-
 .toc-link-nested {
   padding-left: var(--space-m);
 }

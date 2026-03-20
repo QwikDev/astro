@@ -7,7 +7,9 @@
   gap: var(--space-3xs);
   transition: background-color 0.35s;
   transition-timing-function: var(--qa-hover);
-  min-width: 221.65px;
+  width: fit-content;
+  padding-inline: var(--space-s);
+  min-width: 14em;
   box-shadow: var(--shadow-elevation-medium);
 }
 
