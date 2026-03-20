@@ -1,0 +1,69 @@
+---
+title: Installation
+label: "@qwik.dev/astro"
+description: Get started with the Qwik Astro integration.
+order: 1
+---
+
+## The CLI
+
+To start a new Qwik Astro project, run the command in your preferred package manager.
+
+```bash
+npm create @qwik.dev/astro@latest
+
+# or with pnpm
+pnpm create @qwik.dev/astro@latest
+
+# or with bun
+bun create @qwik.dev/astro@latest
+```
+
+## Existing projects
+
+To install `@qwik.dev/astro` in an existing project, run the following from your project directory and follow the prompts.
+
+```bash
+npx astro add @qwik.dev/astro
+
+# or with pnpm
+pnpm astro add @qwik.dev/astro
+```
+
+## TypeScript config
+
+The integration needs the following in `tsconfig.json` for TypeScript to recognize Qwik's JSX types.
+
+```json
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "@qwik.dev/core"
+  }
+}
+```
+
+If you don't intend to use Qwik as your primary `jsxImportSource`, add the following at the top of each Qwik component file:
+
+```tsx
+/** @jsxImportSource @qwik.dev/core */
+```
+
+## Manual installation
+
+Install the integration and Qwik core:
+
+```bash
+npm install @qwik.dev/astro @qwik.dev/core
+```
+
+Then add the integration to your `astro.config.mjs`:
+
+```js
+import { defineConfig } from 'astro/config';
+import qwik from '@qwik.dev/astro';
+
+export default defineConfig({
+  integrations: [qwik()],
+});
+```

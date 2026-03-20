@@ -1,0 +1,98 @@
+---
+title: Using multiple JSX frameworks
+label: Multi-framework
+description: Use Qwik alongside React, Preact, or Solid in Astro.
+order: 4
+---
+
+## Framework include paths
+
+To use multiple JSX frameworks like Qwik, React, Preact, or Solid in Astro, you need to set up rules for which files each framework should handle.
+
+Place all Qwik components in a folder named `qwik`, then configure Astro to process files within that folder.
+
+```ts
+import { defineConfig } from "astro/config";
+import qwik from "@qwik.dev/astro";
+import react from "@astrojs/react";
+
+export default defineConfig({
+  integrations: [
+    qwik({ include: "**/qwik/*" }),
+    react({ include: "**/react/*" }),
+    solid({ include: "**/solid/*" }),
+  ],
+});
+```
+
+For simplicity, consider grouping common framework components in the same folder (like `/components/react/` and `/components/qwik/`). However, this is optional.
+
+## Qwik React
+
+If you're using React, use the [Qwik-React integration](https://qwik.dev/docs/integrations/react/). It's a drop-in replacement for `@astrojs/react`, and allows a seamless transition to Qwik.
+
+```ts
+import { defineConfig } from "astro/config";
+import qwik from "@qwik.dev/astro";
+import { qwikReact } from "@qwik.dev/react/vite";
+
+export default defineConfig({
+  integrations: [qwik()],
+  vite: {
+    plugins: [qwikReact()],
+  },
+});
+```
+
+A React component with the qwik-react integration:
+
+```tsx
+/** @jsxImportSource react */
+import { qwikify$ } from "@qwik.dev/react";
+import { useState } from "react";
+
+const ReactCounter = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      React {count}
+    </button>
+  );
+};
+
+// "Qwikified" React component
+export const QReactCounter = qwikify$(ReactCounter);
+```
+
+Then consume it in an Astro file:
+
+```astro
+<QReactCounter qwik:visible />
+```
+
+Notice the `qwik:` hydration directive prefix — this prevents a conflict with Astro's built-in hydration directives. You can also use the `client:*` prefix, but only in tsx files.
+
+> Qwik React components still have hydration. It is recommended to use Qwik-React as a migration strategy to resumable components.
+
+## jsxImportSource
+
+TypeScript can only have one `jsxImportSource` default. If you're using React, Solid, or Preact alongside Qwik, override each component's import source.
+
+```tsx
+/** @jsxImportSource react */
+import { useState } from "react";
+
+export const ReactCounter = () => {
+  const [count, setCount] = useState(0);
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      {count}
+    </button>
+  );
+};
+```
+
+For Solid JS: `/** @jsxImportSource solid-js */`
+
+For Preact: `/** @jsxImportSource preact */`
