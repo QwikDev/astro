@@ -40,6 +40,12 @@
   animation-timing-function: var(--qa-fade);
 }
 
+.word {
+  opacity: 0;
+  animation: fade-in 0.5s forwards;
+  animation-timing-function: var(--qa-fade);
+}
+
 .tooltip {
   position: absolute;
   padding-block: var(--space-3xs);
@@ -63,11 +69,28 @@
 
 .logo-reveal {
   align-items: center;
+  opacity: 0;
+  scale: 0;
+  animation: logo-pop 0.6s forwards;
+  animation-timing-function: var(--overshoot-easing-function);
 }
 
 .logo-reveal svg {
   height: 1.2em;
   width: auto;
+}
+
+@keyframes logo-pop {
+  from {
+    opacity: 0;
+    scale: 0;
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+    filter: blur(0);
+  }
 }
 
 .qwik-logo,
