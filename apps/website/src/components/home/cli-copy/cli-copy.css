@@ -14,7 +14,7 @@
 }
 
 .cli-copy:hover {
-  background-color: var(--neutral-950);
+  background-color: var(--bg-hover);
 }
 
 .cli-copy[data-click-success="true"] [data-copy-icon] {

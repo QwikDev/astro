@@ -105,6 +105,18 @@
   --breakpoint-sm: 640px;
   --breakpoint-xl: 1240px;
 
+  /* Semantic tokens (dark default) */
+  --bg: var(--off-black);
+  --bg-surface: #1a1a1a;
+  --bg-code: #151515;
+  --bg-code-header: #2a2a2a;
+  --bg-hover: var(--neutral-950);
+  --text: var(--purple-50);
+  --text-muted: var(--neutral-400);
+  --text-hover: var(--purple-50);
+  --border: var(--neutral-950);
+  --border-interactive: var(--neutral-800);
+
   /* Shadows */
   --shadow-color: 0deg 0% 0%;
   --shadow-elevation-low:
@@ -150,7 +162,7 @@ body,
 p,
 button,
 a {
-  color: var(--purple-50);
+  color: var(--text);
 }
 
 button {
@@ -162,7 +174,7 @@ body {
   line-height: 1.5;
   /* 4. Improve text rendering */
   -webkit-font-smoothing: antialiased;
-  background-color: var(--off-black);
+  background-color: var(--bg);
   font-family: "Yusei Magic", sans-serif;
 }
 /* 5. Improve media defaults */
@@ -204,6 +216,59 @@ h6 {
   text-wrap: balance;
 }
 
+pre > code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+.light pre > code span {
+  color: var(--shiki-light) !important;
+  background-color: var(--shiki-light-bg) !important;
+}
+
+.light .card-topo {
+  background-image: url("/topo-pattern-light.svg") !important;
+}
+
 @view-transition {
   navigation: auto;
+}
+
+.light {
+  --bg: #f9f9f9;
+  --bg-surface: #ffffff;
+  --bg-code: #fdf7ff;
+  --bg-code-header: #ede9fe;
+  --bg-hover: #f0f0f0;
+  --text: var(--purple-950);
+  --text-muted: #938e9d;
+  --text-hover: var(--purple-950);
+  --border: #e5e5e5;
+  --border-interactive: #d1d1d1;
+  --shadow-color: 0deg 0% 63%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body,
+  .section,
+  .footer,
+  .sidebar,
+  .docs-main,
+  .header,
+  .intro,
+  .grid-line,
+  .scroll-fog,
+  a,
+  button,
+  p,
+  span,
+  h1, h2, h3, h4, h5, h6,
+  pre,
+  code,
+  nav,
+  aside,
+  footer,
+  article {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
 }

@@ -6,6 +6,15 @@ import { defineConfig } from "astro/config";
 // https://astro.build/config
 export default defineConfig({
   integrations: [qwik(), icon(), mdx()],
+  markdown: {
+    shikiConfig: {
+      themes: {
+        light: "github-light",
+        dark: "github-dark",
+      },
+      defaultColor: false,
+    },
+  },
   image: {
     domains: [
       "img.youtube.com",

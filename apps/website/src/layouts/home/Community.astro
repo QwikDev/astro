@@ -7,80 +7,178 @@ import matthewAvatar from "@assets/avatars/matthew.png";
 import nateAvatar from "@assets/avatars/nate.png";
 
 const team = {
-  jack: { name: "Jack Shelton", login: "thejackshelton", bio: "Sharing the joy of fast and beautiful web experiences.", role: "Integration architecture", avatar: "/avatars/jack.png" },
-  sigui: { name: "SIGUI Kessé Emmanuel", login: "siguici", bio: "Code wizard by day, open-source ninja by night.", role: "CLI & tooling", avatar: "/avatars/sigui.png" },
-  matthew: { name: "Matthew Phillips", login: "matthewp", role: "Astro Core", avatar: "/avatars/matthew.png" },
-  nate: { name: "Nate Moore", login: "natemoo-re", role: "Astro Core", avatar: "/avatars/nate.png" },
+  jack: {
+    name: "Jack Shelton",
+    login: "thejackshelton",
+    bio: "Sharing the joy of fast and beautiful web experiences.",
+    role: "Integration architecture",
+    avatar: "/avatars/jack.png",
+  },
+  sigui: {
+    name: "SIGUI Kessé Emmanuel",
+    login: "siguici",
+    bio: "Code wizard by day, open-source ninja by night.",
+    role: "CLI & tooling",
+    avatar: "/avatars/sigui.png",
+  },
+  matthew: {
+    name: "Matthew Phillips",
+    login: "matthewp",
+    role: "Astro Core",
+    avatar: "/avatars/matthew.png",
+  },
+  nate: {
+    name: "Nate Moore",
+    login: "natemoo-re",
+    role: "Astro Core",
+    avatar: "/avatars/nate.png",
+  },
 };
 
 const videos = [
-  { id: "OSIjoqVK51o", title: "DevWorld 2024", desc: "A match made in performance heaven", thumb: `https://img.youtube.com/vi/OSIjoqVK51o/mqdefault.jpg` },
-  { id: "W-j2HH1GdjU", title: "Learn with Jason", desc: "Building with the Qwik Astro integration", thumb: `https://img.youtube.com/vi/W-j2HH1GdjU/mqdefault.jpg` },
-  { id: "LIKxkSzHqeo", title: "Announcement", desc: "Steve's original Qwik Astro reveal", thumb: `https://img.youtube.com/vi/LIKxkSzHqeo/mqdefault.jpg` },
-  { id: "wKvkYUNBa5k", title: "Awesome's deep dive", desc: "How Astro just got even faster", thumb: `https://img.youtube.com/vi/wKvkYUNBa5k/mqdefault.jpg` },
-  { id: "OgRfNfCMvvQ", title: "Lazy Loading talk", desc: "A New Era of Effective Lazy Loading", thumb: `https://img.youtube.com/vi/OgRfNfCMvvQ/mqdefault.jpg` },
+  {
+    id: "OSIjoqVK51o",
+    title: "DevWorld 2024",
+    desc: "A match made in performance heaven",
+    thumb: `https://img.youtube.com/vi/OSIjoqVK51o/mqdefault.jpg`,
+  },
+  {
+    id: "W-j2HH1GdjU",
+    title: "Learn with Jason",
+    desc: "Building with the Qwik Astro integration",
+    thumb: `https://img.youtube.com/vi/W-j2HH1GdjU/mqdefault.jpg`,
+  },
+  {
+    id: "LIKxkSzHqeo",
+    title: "Announcement",
+    desc: "Steve's original Qwik Astro reveal",
+    thumb: `https://img.youtube.com/vi/LIKxkSzHqeo/mqdefault.jpg`,
+  },
+  {
+    id: "wKvkYUNBa5k",
+    title: "Awesome's deep dive",
+    desc: "How Astro just got even faster",
+    thumb: `https://img.youtube.com/vi/wKvkYUNBa5k/mqdefault.jpg`,
+  },
+  {
+    id: "OgRfNfCMvvQ",
+    title: "Lazy Loading talk",
+    desc: "A New Era of Effective Lazy Loading",
+    thumb: `https://img.youtube.com/vi/OgRfNfCMvvQ/mqdefault.jpg`,
+  },
 ];
 
 const guides = [
-  { title: "Embed Stackblitz performantly", href: "https://thenewstack.io/how-to-build-embed-components-with-astro-qwik-and-stackblitz/" },
-  { title: "Site Search with Fuse.js", href: "https://thenewstack.io/how-to-build-site-search-with-astro-qwik-and-fuse-js/" },
-  { title: "Qwik as a React alternative in Astro", href: "https://thenewstack.io/take-a-qwik-break-from-react-with-astro/" },
-  { title: "Qwik beats React and Vanilla JS", href: "https://thenewstack.io/how-quiks-astro-integration-beats-both-react-and-vanilla-js/" },
-  { title: "Deploy with Vercel SSR Adapter", href: "https://dev.to/reeshee/qwik-look-at-resumability-with-astro-on-vercel-44fj" },
-  { title: "Netlify's Guide to Qwik Astro", href: "https://developers.netlify.com/guides/adding-resumability-to-astro-with-qwik/" },
-  { title: "Initial @qwik.dev/astro alpha post", href: "https://www.builder.io/blog/astro-qwik" },
+  {
+    title: "Embed Stackblitz performantly",
+    href: "https://thenewstack.io/how-to-build-embed-components-with-astro-qwik-and-stackblitz/",
+  },
+  {
+    title: "Site Search with Fuse.js",
+    href: "https://thenewstack.io/how-to-build-site-search-with-astro-qwik-and-fuse-js/",
+  },
+  {
+    title: "Qwik as a React alternative in Astro",
+    href: "https://thenewstack.io/take-a-qwik-break-from-react-with-astro/",
+  },
+  {
+    title: "Qwik beats React and Vanilla JS",
+    href: "https://thenewstack.io/how-quiks-astro-integration-beats-both-react-and-vanilla-js/",
+  },
+  {
+    title: "Deploy with Vercel SSR Adapter",
+    href: "https://dev.to/reeshee/qwik-look-at-resumability-with-astro-on-vercel-44fj",
+  },
+  {
+    title: "Netlify's Guide to Qwik Astro",
+    href: "https://developers.netlify.com/guides/adding-resumability-to-astro-with-qwik/",
+  },
+  {
+    title: "Initial @qwik.dev/astro alpha post",
+    href: "https://www.builder.io/blog/astro-qwik",
+  },
 ];
 ---
-
 
 <div class="section stagger-1">
   <h2>Community</h2>
 
   <div class="subsection">
-    <h3><Icon name="lucide:play-circle" class="section-icon" /> Talks & Videos</h3>
+    <h3>
+      <Icon name="lucide:play-circle" class="section-icon" /> Talks & Videos
+    </h3>
     <div class="videos">
-        {videos.map(v => (
-          <a href={`https://www.youtube.com/watch?v=${v.id}`} target="_blank" rel="noopener">
-            <div class="card-topo" aria-hidden="true"></div>
+      {
+        videos.map((v) => (
+          <a
+            href={`https://www.youtube.com/watch?v=${v.id}`}
+            target="_blank"
+            rel="noopener"
+          >
+            <div class="card-topo" aria-hidden="true" />
             <Image src={v.thumb} alt={v.title} width={320} height={180} />
             <div class="video-text">
               <span class="video-title">{v.title}</span>
               <span class="video-desc">{v.desc}</span>
             </div>
           </a>
-        ))}
+        ))
+      }
     </div>
   </div>
 
   <div class="subsection">
     <h3><Icon name="lucide:book-open" class="section-icon" /> Guides</h3>
     <div class="guide-list">
-      {guides.map(g => (
-        <a href={g.href} target="_blank" rel="noopener" class="guide-link">
-          <Icon name="lucide:arrow-up-right" class="guide-arrow" />
-          {g.title}
-        </a>
-      ))}
+      {
+        guides.map((g) => (
+          <a href={g.href} target="_blank" rel="noopener" class="guide-link">
+            <Icon name="lucide:arrow-up-right" class="guide-arrow" />
+            {g.title}
+          </a>
+        ))
+      }
     </div>
   </div>
-
 </div>
 
 <div class="grid-line" aria-hidden="true"></div>
 <div class="section stagger-2">
   <h2>Maintainers</h2>
   <div class="team-grid team-grid-2">
-    <a href={`https://github.com/${team.jack.login}`} target="_blank" rel="noopener" class="team-card">
+    <a
+      href={`https://github.com/${team.jack.login}`}
+      target="_blank"
+      rel="noopener"
+      class="team-card"
+    >
       <div class="card-topo" aria-hidden="true"></div>
-      <Image src={jackAvatar} alt={team.jack.name} width={72} height={72} class="team-avatar" />
+      <Image
+        src={jackAvatar}
+        alt={team.jack.name}
+        width={72}
+        height={72}
+        class="team-avatar"
+      />
       <span class="team-name">{team.jack.name}</span>
       <span class="team-role">{team.jack.role}</span>
       <span class="team-bio">{team.jack.bio}</span>
       <span class="team-github">@{team.jack.login}</span>
     </a>
-    <a href={`https://github.com/${team.sigui.login}`} target="_blank" rel="noopener" class="team-card">
+    <a
+      href={`https://github.com/${team.sigui.login}`}
+      target="_blank"
+      rel="noopener"
+      class="team-card"
+    >
       <div class="card-topo" aria-hidden="true"></div>
-      <Image src={siguiAvatar} alt={team.sigui.name} width={72} height={72} class="team-avatar" />
+      <Image
+        src={siguiAvatar}
+        alt={team.sigui.name}
+        width={72}
+        height={72}
+        class="team-avatar"
+      />
       <span class="team-name">{team.sigui.name}</span>
       <span class="team-role">{team.sigui.role}</span>
       <span class="team-bio">{team.sigui.bio}</span>
@@ -92,18 +190,42 @@ const guides = [
 <div class="grid-line" aria-hidden="true"></div>
 <div class="section stagger-3">
   <h2>Special Thanks</h2>
-  <p class="thanks-text">This integration would not be possible without the Astro core team.</p>
+  <p class="thanks-text">
+    This integration would not be possible without the Astro core team.
+  </p>
   <div class="team-grid team-grid-2">
-    <a href={`https://github.com/${team.matthew.login}`} target="_blank" rel="noopener" class="team-card">
+    <a
+      href={`https://github.com/${team.matthew.login}`}
+      target="_blank"
+      rel="noopener"
+      class="team-card"
+    >
       <div class="card-topo" aria-hidden="true"></div>
-      <Image src={matthewAvatar} alt={team.matthew.name} width={72} height={72} class="team-avatar" />
+      <Image
+        src={matthewAvatar}
+        alt={team.matthew.name}
+        width={72}
+        height={72}
+        class="team-avatar"
+      />
       <span class="team-name">{team.matthew.name}</span>
       <span class="team-role">{team.matthew.role}</span>
       <span class="team-github">@{team.matthew.login}</span>
     </a>
-    <a href={`https://github.com/${team.nate.login}`} target="_blank" rel="noopener" class="team-card">
+    <a
+      href={`https://github.com/${team.nate.login}`}
+      target="_blank"
+      rel="noopener"
+      class="team-card"
+    >
       <div class="card-topo" aria-hidden="true"></div>
-      <Image src={nateAvatar} alt={team.nate.name} width={72} height={72} class="team-avatar" />
+      <Image
+        src={nateAvatar}
+        alt={team.nate.name}
+        width={72}
+        height={72}
+        class="team-avatar"
+      />
       <span class="team-name">{team.nate.name}</span>
       <span class="team-role">{team.nate.role}</span>
       <span class="team-github">@{team.nate.login}</span>
@@ -118,23 +240,33 @@ const guides = [
       <Icon name="lucide:github" class="footer-icon" />
       <span>GitHub</span>
     </a>
-    <a href="https://discord.com/channels/842438759945601056/1150941080355881080" target="_blank" rel="noopener">
+    <a
+      href="https://discord.com/channels/842438759945601056/1150941080355881080"
+      target="_blank"
+      rel="noopener"
+    >
       <Icon name="lucide:message-circle" class="footer-icon" />
       <span>Discord</span>
     </a>
-    <a href="https://github.com/QwikDev/astro/blob/main/contributing.md" target="_blank" rel="noopener">
+    <a
+      href="https://github.com/QwikDev/astro/blob/main/contributing.md"
+      target="_blank"
+      rel="noopener"
+    >
       <Icon name="lucide:heart" class="footer-icon" />
       <span>Contributing</span>
     </a>
   </div>
-  <span class="footer-copy">&copy; {new Date().getFullYear()} Qwik Team. Built with Qwik + Astro.</span>
+  <span class="footer-copy"
+    >&copy; {new Date().getFullYear()} Qwik Team. Built with Qwik + Astro.</span
+  >
 </footer>
 
 <style>
   .grid-line {
     width: 100%;
     height: 1px;
-    background-color: var(--neutral-950);
+    background-color: var(--border);
   }
 
   .community-wrap {
@@ -144,7 +276,7 @@ const guides = [
   .section {
     margin: 0 auto;
     max-width: var(--breakpoint-xl);
-    border-inline: 1px solid var(--neutral-950);
+    border-inline: 1px solid var(--border);
     padding: var(--space-m);
     padding-block: var(--space-l);
   }
@@ -189,7 +321,6 @@ const guides = [
     .videos {
       grid-template-columns: repeat(2, 1fr);
     }
-
   }
 
   @media (max-width: 390px) {
@@ -202,11 +333,11 @@ const guides = [
     text-decoration: none;
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--neutral-950);
+    border: 1px solid var(--border);
     overflow: hidden;
     transition: border-color 0.35s;
     transition-timing-function: var(--qa-hover);
-    background-color: var(--off-black);
+    background-color: var(--bg);
     position: relative;
   }
 
@@ -240,7 +371,7 @@ const guides = [
 
   .video-desc {
     font-size: var(--step--2);
-    color: var(--neutral-400);
+    color: var(--text-muted);
     line-height: 1.4;
   }
 
@@ -262,7 +393,7 @@ const guides = [
   }
 
   .guide-link:hover {
-    color: var(--purple-50);
+    color: var(--text-hover);
   }
 
   .guide-arrow {
@@ -271,10 +402,9 @@ const guides = [
     flex-shrink: 0;
   }
 
-
   .thanks-text {
     font-size: var(--step-0);
-    color: var(--neutral-400);
+    color: var(--text-muted);
     line-height: 1.7;
     margin-bottom: var(--space-m);
   }
@@ -316,7 +446,7 @@ const guides = [
     gap: var(--space-3xs);
     text-decoration: none;
     padding: var(--space-m);
-    border: 1px solid var(--neutral-950);
+    border: 1px solid var(--border);
     position: relative;
     overflow: hidden;
     transition: border-color 0.35s;
@@ -327,7 +457,6 @@ const guides = [
     border-color: var(--rose-500);
   }
 
-
   .card-topo {
     position: absolute;
     inset: 0;
@@ -335,6 +464,11 @@ const guides = [
     background-size: 400px 400px;
     opacity: 0.5;
     pointer-events: none;
+  }
+
+  :global(.light) .card-topo {
+    background-image: url("/topo-pattern-light.svg");
+    opacity: 1;
   }
 
   .team-avatar {
@@ -358,19 +492,19 @@ const guides = [
 
   .team-bio {
     font-size: var(--step--2);
-    color: var(--neutral-400);
+    color: var(--text-muted);
     line-height: 1.4;
   }
 
   .team-github {
     font-size: var(--step--2);
-    color: var(--neutral-400);
+    color: var(--text-muted);
   }
 
   .footer {
     margin: 0 auto;
     max-width: var(--breakpoint-xl);
-    border-inline: 1px solid var(--neutral-950);
+    border-inline: 1px solid var(--border);
     padding: var(--space-m);
     padding-top: var(--space-l);
     padding-bottom: var(--space-2xl);
@@ -391,12 +525,12 @@ const guides = [
     gap: var(--space-3xs);
     text-decoration: none;
     font-size: var(--step--1);
-    color: var(--neutral-400);
+    color: var(--text-muted);
     transition: color 0.2s;
   }
 
   .footer-links a:hover {
-    color: var(--purple-50);
+    color: var(--text-hover);
   }
 
   .footer-icon {
@@ -406,7 +540,7 @@ const guides = [
 
   .footer-copy {
     font-size: var(--step--2);
-    color: var(--neutral-400);
+    color: var(--text-muted);
   }
 
   .section,
@@ -416,10 +550,18 @@ const guides = [
     animation-timing-function: var(--qa-fade);
   }
 
-  .stagger-1 { animation-delay: 3.4s; }
-  .stagger-2 { animation-delay: 3.7s; }
-  .stagger-3 { animation-delay: 4s; }
-  .footer { animation-delay: 4.3s; }
+  .stagger-1 {
+    animation-delay: 3.4s;
+  }
+  .stagger-2 {
+    animation-delay: 3.7s;
+  }
+  .stagger-3 {
+    animation-delay: 4s;
+  }
+  .footer {
+    animation-delay: 4.3s;
+  }
 
   @keyframes community-fade-in {
     from {

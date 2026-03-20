@@ -1,0 +1,99 @@
+.theme-toggle {
+  --icon-fill: var(--text);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+.theme-toggle > svg {
+  inline-size: 80%;
+  block-size: 100%;
+  stroke-linecap: round;
+}
+
+.sun-and-moon {
+  --ease-elastic-3: cubic-bezier(0.5, 1.25, 0.75, 1.25);
+  --ease-elastic-4: cubic-bezier(0.5, 1.5, 0.75, 1.25);
+  --ease-out-5: cubic-bezier(0, 0, 0, 1);
+  --ease-3: cubic-bezier(0.25, 0, 0.3, 1);
+}
+
+.sun-and-moon > :is(.moon, .sun, .sun-beams) {
+  transform-origin: center center;
+}
+
+.sun-and-moon > :is(.moon, .sun) {
+  fill: var(--icon-fill);
+}
+
+.sun-and-moon > .sun-beams {
+  stroke: var(--icon-fill);
+  stroke-width: 2px;
+}
+
+html[class~="dark"] .sun-and-moon > .sun {
+  transform: scale(1.75);
+}
+
+html[class~="dark"] .sun-and-moon > .sun-beams {
+  opacity: 0;
+}
+
+html[class~="dark"] .sun-and-moon > .moon > circle {
+  transform: translateX(-7px);
+}
+
+@supports (cx: 1) {
+  html[class~="dark"] .sun-and-moon > .moon > circle {
+    transform: translateX(0);
+    cx: 17;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sun-and-moon > .sun {
+    transition: transform 0.5s var(--ease-elastic-3);
+  }
+
+  .sun-and-moon > .sun-beams {
+    transition:
+      transform 0.5s var(--ease-elastic-4),
+      opacity 0.5s var(--ease-3);
+  }
+
+  .sun-and-moon .moon > circle {
+    transition: transform 0.25s var(--ease-out-5);
+  }
+
+  @supports (cx: 1) {
+    .sun-and-moon .moon > circle {
+      transition: cx 0.25s var(--ease-out-5);
+    }
+  }
+}
+
+html[class~="dark"] .sun-and-moon > .sun {
+  transform: scale(1.75);
+  transition-timing-function: var(--ease-3);
+  transition-duration: 0.25s;
+}
+
+html[class~="dark"] .sun-and-moon > .sun-beams {
+  transform: rotateZ(-25deg);
+  transition-duration: 0.15s;
+}
+
+html[class~="dark"] .sun-and-moon > .moon > circle {
+  transition-delay: 0.25s;
+  transition-duration: 0.5s;
+}

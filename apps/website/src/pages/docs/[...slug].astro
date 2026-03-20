@@ -43,7 +43,7 @@ const toc = headings
 <style>
   .docs-hero {
     padding-bottom: var(--space-xl);
-    border-bottom: 1px solid var(--neutral-950);
+    border-bottom: 1px solid var(--border);
     margin-bottom: var(--space-xl);
   }
 
@@ -63,7 +63,7 @@ const toc = headings
 
   .docs-intro {
     font-size: var(--step-1);
-    color: var(--neutral-400);
+    color: var(--text-muted);
     max-width: 48ch;
     line-height: 1.7;
   }
@@ -73,7 +73,7 @@ const toc = headings
     margin-top: var(--space-xl);
     margin-bottom: var(--space-m);
     padding-top: var(--space-xl);
-    border-top: 1px solid var(--neutral-950);
+    border-top: 1px solid var(--border);
   }
 
   .docs-prose :global(h2:first-child) {
@@ -90,7 +90,7 @@ const toc = headings
 
   .docs-prose :global(p) {
     font-size: var(--step-0);
-    color: var(--neutral-400);
+    color: var(--text-muted);
     line-height: 1.7;
     margin-bottom: var(--space-m);
     max-width: 60ch;
@@ -108,14 +108,14 @@ const toc = headings
   }
 
   .docs-prose :global(strong) {
-    color: var(--purple-50);
+    color: var(--text);
   }
 
   .docs-prose :global(blockquote) {
     border-left: var(--space-4xs) dotted var(--rose-500);
     padding-left: var(--space-m);
     margin-bottom: var(--space-m);
-    color: var(--neutral-400);
+    color: var(--text-muted);
     font-size: var(--step-0);
     line-height: 1.7;
     font-style: italic;
@@ -136,7 +136,7 @@ const toc = headings
 
   .docs-prose :global(li) {
     font-size: var(--step-0);
-    color: var(--neutral-400);
+    color: var(--text-muted);
     padding-left: var(--space-m);
     position: relative;
   }
@@ -152,8 +152,8 @@ const toc = headings
   }
 
   .docs-prose :global(pre) {
-    background-color: #151515 !important;
-    border: 1px solid var(--neutral-950);
+    background-color: var(--bg-code) !important;
+    border: 1px solid var(--border);
     padding: var(--space-m);
     margin-bottom: var(--space-m);
     overflow-x: auto;

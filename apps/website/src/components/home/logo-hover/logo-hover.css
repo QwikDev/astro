@@ -60,7 +60,7 @@
   transition: scale 500ms var(--overshoot-easing-function), opacity 200ms
     var(--overshoot-easing-function);
   pointer-events: none;
-  background: var(--off-black);
+  background: var(--bg);
   border: 1px solid white;
   border-radius: 9999999px;
   box-shadow: var(--shadow-elevation-high);

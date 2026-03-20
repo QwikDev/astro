@@ -1,4 +1,5 @@
 import { component$, useStyles$ } from "@qwik.dev/core";
+import { ThemeToggle } from "../../../components/theme/theme-toggle";
 import styles from "./toc.css?inline";
 
 type TocItem = {
@@ -12,6 +13,7 @@ export const Toc = component$<{ items: TocItem[] }>(({ items }) => {
 
   return (
     <aside class="toc">
+      <ThemeToggle />
       <span class="toc-title">On this page</span>
       <nav class="toc-nav">
         {items.map((item) => (

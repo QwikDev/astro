@@ -24,7 +24,7 @@
 
 .toc-link {
   font-size: var(--step--1);
-  color: var(--neutral-400);
+  color: var(--text-muted);
   text-decoration: none;
   padding: var(--space-3xs) 0;
   border-bottom: 1px solid transparent;
@@ -33,7 +33,7 @@
 }
 
 .toc-link:hover {
-  color: var(--purple-50);
+  color: var(--text-hover);
 }
 
 .toc-link-nested {
@@ -57,7 +57,7 @@
 }
 
 .toc-external:hover {
-  color: var(--purple-50);
+  color: var(--text-hover);
 }
 
 @media (max-width: 1200px) {

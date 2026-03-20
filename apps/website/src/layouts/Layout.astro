@@ -23,6 +23,16 @@ import "@fontsource/yusei-magic";
 		<title>{title}</title>
 	</head>
 	<body>
+		<script is:inline>
+			function setDarkMode(document) {
+				let theme = localStorage.getItem("darkMode") || "dark";
+				document.documentElement.className = theme;
+			}
+			setDarkMode(document);
+			document.addEventListener("astro:before-swap", (ev) => {
+				setDarkMode(ev.newDocument);
+			});
+		</script>
 		<slot />
 		<JSChunkAnimator />
 	</body>

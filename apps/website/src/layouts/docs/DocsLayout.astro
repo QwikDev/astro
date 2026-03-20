@@ -33,6 +33,16 @@ const { title, currentPath, toc = [] } = Astro.props;
     <title>{title} — Qwik + Astro</title>
   </head>
   <body>
+    <script is:inline>
+      function setDarkMode(document) {
+        let theme = localStorage.getItem("darkMode") || "dark";
+        document.documentElement.className = theme;
+      }
+      setDarkMode(document);
+      document.addEventListener("astro:before-swap", (ev) => {
+        setDarkMode(ev.newDocument);
+      });
+    </script>
     <Sidebar currentPath={currentPath} version={pkg.version} />
 
     <header class="header">
@@ -53,7 +63,7 @@ const { title, currentPath, toc = [] } = Astro.props;
 
 <style>
   .header {
-    border-bottom: 1px solid var(--neutral-950);
+    border-bottom: 1px solid var(--border);
     margin-left: 320px;
     overflow: hidden;
     position: relative;
@@ -88,7 +98,7 @@ const { title, currentPath, toc = [] } = Astro.props;
     left: 0;
     right: 0;
     height: 20vh;
-    background: linear-gradient(to top, var(--off-black), transparent);
+    background: linear-gradient(to top, var(--bg), transparent);
     pointer-events: none;
     z-index: 10;
   }
