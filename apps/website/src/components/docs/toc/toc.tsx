@@ -54,7 +54,7 @@ export const Toc = component$<{ items: TocItem[] }>(({ items }) => {
         <a
           href="https://github.com/QwikDev/astro/issues"
           target="_blank"
-          rel="noopener"
+          rel="noreferrer noopener"
           class="toc-external"
         >
           <svg
@@ -77,7 +77,7 @@ export const Toc = component$<{ items: TocItem[] }>(({ items }) => {
         <a
           href="https://discord.com/channels/842438759945601056/1150941080355881080"
           target="_blank"
-          rel="noopener"
+          rel="noreferrer noopener"
           class="toc-external"
         >
           <svg
@@ -98,7 +98,7 @@ export const Toc = component$<{ items: TocItem[] }>(({ items }) => {
         <a
           href="https://github.com/QwikDev/astro"
           target="_blank"
-          rel="noopener"
+          rel="noreferrer noopener"
           class="toc-external"
         >
           <svg

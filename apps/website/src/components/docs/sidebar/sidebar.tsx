@@ -1,6 +1,5 @@
 import { component$, useStyles$ } from "@qwik.dev/core";
 import styles from "./sidebar.css?inline";
-import qwikAstroLogo from "@assets/qwik-v2-logo.svg?raw";
 
 type NavItem = {
   label: string;
@@ -42,16 +41,19 @@ export const Sidebar = component$<{ currentPath: string }>(
 
     return (
       <aside class="sidebar">
-        <div class="sidebar-header">
-          <span
+        <a href="/" class="sidebar-header">
+          <img
+            src="/qwik-v2-logo.svg"
+            alt="Qwik Astro"
+            width="36"
+            height="41"
             class="sidebar-logo"
-            dangerouslySetInnerHTML={qwikAstroLogo}
           />
           <div class="sidebar-header-text">
             <span class="sidebar-title">Documentation</span>
             <span class="sidebar-version">v2</span>
           </div>
-        </div>
+        </a>
 
         <nav class="sidebar-nav">
           {navItems.map((item) => (
@@ -81,7 +83,7 @@ export const Sidebar = component$<{ currentPath: string }>(
           <a
             href="https://github.com/QwikDev/astro"
             target="_blank"
-            rel="noopener"
+            rel="noreferrer noopener"
             class="sidebar-external"
           >
             <svg
@@ -103,7 +105,7 @@ export const Sidebar = component$<{ currentPath: string }>(
           <a
             href="https://discord.com/channels/842438759945601056/1150941080355881080"
             target="_blank"
-            rel="noopener"
+            rel="noreferrer noopener"
             class="sidebar-external"
           >
             <svg

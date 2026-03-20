@@ -8,6 +8,12 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "correctness": {
+        "noUnknownProperty": "off"
+      },
       "style": {
         "useBlockStatements": "off",
         "useShorthandArrayType": "error",
