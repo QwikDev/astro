@@ -9,4 +9,18 @@ import Community from "@layouts/home/Community.astro";
     <Hero />
     <Community />
   </main>
+  <div class="scroll-fog" aria-hidden="true"></div>
 </Layout>
+
+<style>
+  .scroll-fog {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20vh;
+    background: linear-gradient(to top, var(--off-black), transparent);
+    pointer-events: none;
+    z-index: 10;
+  }
+</style>

@@ -66,12 +66,12 @@ export const LogoHover = component$(() => {
         >
           QWIK
         </span>
-        <span class="word" style="animation-delay: 0.7s;">
+        <span class="word" style="animation-delay: 0.4s;">
           +
         </span>
         <span
           class="word"
-          style="animation-delay: 1.4s;"
+          style="animation-delay: 0.8s;"
           onMouseEnter$={() => handleMouseEnter(astroLogoRef, astroRect)}
           onMouseMove$={({ clientX, clientY }) =>
             handleMouseMove(astroLogoRef, astroRect, clientX, clientY)
@@ -80,12 +80,12 @@ export const LogoHover = component$(() => {
         >
           ASTRO
         </span>
-        <span class="word" style="animation-delay: 2.1s;">
+        <span class="word" style="animation-delay: 1.2s;">
           =
         </span>
         <span
           class="logo-reveal"
-          style="animation-delay: 3.2s;"
+          style="animation-delay: 2.2s;"
           dangerouslySetInnerHTML={qwikAstroLogo}
         />
       </h1>

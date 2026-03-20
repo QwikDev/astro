@@ -47,6 +47,7 @@ const { title, currentPath, toc = [] } = Astro.props;
         {toc.length > 0 && <Toc items={toc} />}
       </div>
     </main>
+    <div class="scroll-fog" aria-hidden="true"></div>
   </body>
 </html>
 
@@ -79,6 +80,17 @@ const { title, currentPath, toc = [] } = Astro.props;
   .docs-article {
     flex: 1;
     min-width: 0;
+  }
+
+  .scroll-fog {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20vh;
+    background: linear-gradient(to top, var(--off-black), transparent);
+    pointer-events: none;
+    z-index: 10;
   }
 
   @media (max-width: 768px) {

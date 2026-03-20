@@ -1,28 +1,17 @@
 ---
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
+import jackAvatar from "@assets/avatars/jack.png";
+import siguiAvatar from "@assets/avatars/sigui.png";
+import matthewAvatar from "@assets/avatars/matthew.png";
+import nateAvatar from "@assets/avatars/nate.png";
 
-const fetchUser = async (username: string) => {
-  try {
-    const res = await fetch(`https://api.github.com/users/${username}`);
-    if (!res.ok) throw new Error(`${res.status}`);
-    return await res.json();
-  } catch {
-    return {
-      login: username,
-      name: null,
-      bio: null,
-      avatar_url: `https://github.com/${username}.png`,
-    };
-  }
+const team = {
+  jack: { name: "Jack Shelton", login: "thejackshelton", bio: "Sharing the joy of fast and beautiful web experiences.", role: "Integration architecture", avatar: "/avatars/jack.png" },
+  sigui: { name: "SIGUI Kessé Emmanuel", login: "siguici", bio: "Code wizard by day, open-source ninja by night.", role: "CLI & tooling", avatar: "/avatars/sigui.png" },
+  matthew: { name: "Matthew Phillips", login: "matthewp", role: "Astro Core", avatar: "/avatars/matthew.png" },
+  nate: { name: "Nate Moore", login: "natemoo-re", role: "Astro Core", avatar: "/avatars/nate.png" },
 };
-
-const [jack, sigui, matthew, nate] = await Promise.all([
-  fetchUser("thejackshelton"),
-  fetchUser("siguici"),
-  fetchUser("matthewp"),
-  fetchUser("natemoo-re"),
-]);
 
 const videos = [
   { id: "OSIjoqVK51o", title: "DevWorld 2024", desc: "A match made in performance heaven", thumb: `https://img.youtube.com/vi/OSIjoqVK51o/mqdefault.jpg` },
@@ -43,8 +32,8 @@ const guides = [
 ];
 ---
 
-<div class="grid-line" aria-hidden="true"></div>
-<div class="section">
+
+<div class="section stagger-1">
   <h2>Community</h2>
 
   <div class="subsection">
@@ -78,46 +67,46 @@ const guides = [
 </div>
 
 <div class="grid-line" aria-hidden="true"></div>
-<div class="section">
+<div class="section stagger-2">
   <h2>Maintainers</h2>
   <div class="team-grid team-grid-2">
-    <a href={`https://github.com/${jack.login}`} target="_blank" rel="noopener" class="team-card">
+    <a href={`https://github.com/${team.jack.login}`} target="_blank" rel="noopener" class="team-card">
       <div class="card-topo" aria-hidden="true"></div>
-      <Image src={jack.avatar_url} alt={jack.name || jack.login || "Jack Shelton"} width={72} height={72} class="team-avatar" />
-      <span class="team-name">{jack.name || jack.login}</span>
-      <span class="team-role">Integration architecture</span>
-      {jack.bio && <span class="team-bio">{jack.bio}</span>}
-      <span class="team-github">@{jack.login}</span>
+      <Image src={jackAvatar} alt={team.jack.name} width={72} height={72} class="team-avatar" />
+      <span class="team-name">{team.jack.name}</span>
+      <span class="team-role">{team.jack.role}</span>
+      <span class="team-bio">{team.jack.bio}</span>
+      <span class="team-github">@{team.jack.login}</span>
     </a>
-    <a href={`https://github.com/${sigui.login}`} target="_blank" rel="noopener" class="team-card">
+    <a href={`https://github.com/${team.sigui.login}`} target="_blank" rel="noopener" class="team-card">
       <div class="card-topo" aria-hidden="true"></div>
-      <Image src={sigui.avatar_url} alt={sigui.name || sigui.login || "Sigui Kessé Emmanuel"} width={72} height={72} class="team-avatar" />
-      <span class="team-name">{sigui.name || sigui.login}</span>
-      <span class="team-role">CLI & tooling</span>
-      {sigui.bio && <span class="team-bio">{sigui.bio}</span>}
-      <span class="team-github">@{sigui.login}</span>
+      <Image src={siguiAvatar} alt={team.sigui.name} width={72} height={72} class="team-avatar" />
+      <span class="team-name">{team.sigui.name}</span>
+      <span class="team-role">{team.sigui.role}</span>
+      <span class="team-bio">{team.sigui.bio}</span>
+      <span class="team-github">@{team.sigui.login}</span>
     </a>
   </div>
 </div>
 
 <div class="grid-line" aria-hidden="true"></div>
-<div class="section">
+<div class="section stagger-3">
   <h2>Special Thanks</h2>
   <p class="thanks-text">This integration would not be possible without the Astro core team.</p>
   <div class="team-grid team-grid-2">
-    <a href={`https://github.com/${matthew.login}`} target="_blank" rel="noopener" class="team-card">
+    <a href={`https://github.com/${team.matthew.login}`} target="_blank" rel="noopener" class="team-card">
       <div class="card-topo" aria-hidden="true"></div>
-      <Image src={matthew.avatar_url} alt={matthew.name || matthew.login || "Matthew Phillips"} width={72} height={72} class="team-avatar" />
-      <span class="team-name">{matthew.name || matthew.login}</span>
-      <span class="team-role">Astro Core</span>
-      <span class="team-github">@{matthew.login}</span>
+      <Image src={matthewAvatar} alt={team.matthew.name} width={72} height={72} class="team-avatar" />
+      <span class="team-name">{team.matthew.name}</span>
+      <span class="team-role">{team.matthew.role}</span>
+      <span class="team-github">@{team.matthew.login}</span>
     </a>
-    <a href={`https://github.com/${nate.login}`} target="_blank" rel="noopener" class="team-card">
+    <a href={`https://github.com/${team.nate.login}`} target="_blank" rel="noopener" class="team-card">
       <div class="card-topo" aria-hidden="true"></div>
-      <Image src={nate.avatar_url} alt={nate.name || nate.login || "Nate Moore"} width={72} height={72} class="team-avatar" />
-      <span class="team-name">{nate.name || nate.login}</span>
-      <span class="team-role">Astro Core</span>
-      <span class="team-github">@{nate.login}</span>
+      <Image src={nateAvatar} alt={team.nate.name} width={72} height={72} class="team-avatar" />
+      <span class="team-name">{team.nate.name}</span>
+      <span class="team-role">{team.nate.role}</span>
+      <span class="team-github">@{team.nate.login}</span>
     </a>
   </div>
 </div>
@@ -383,7 +372,8 @@ const guides = [
     max-width: var(--breakpoint-xl);
     border-inline: 1px solid var(--neutral-950);
     padding: var(--space-m);
-    padding-block: var(--space-l);
+    padding-top: var(--space-l);
+    padding-bottom: var(--space-2xl);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -417,5 +407,30 @@ const guides = [
   .footer-copy {
     font-size: var(--step--2);
     color: var(--neutral-400);
+  }
+
+  .section,
+  .footer {
+    opacity: 0;
+    animation: community-fade-in 0.5s forwards;
+    animation-timing-function: var(--qa-fade);
+  }
+
+  .stagger-1 { animation-delay: 3.4s; }
+  .stagger-2 { animation-delay: 3.7s; }
+  .stagger-3 { animation-delay: 4s; }
+  .footer { animation-delay: 4.3s; }
+
+  @keyframes community-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(var(--space-xs));
+      filter: blur(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
   }
 </style>
