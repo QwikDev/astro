@@ -1,0 +1,153 @@
+---
+import { Sidebar } from "@components/docs/sidebar/sidebar";
+import { Toc } from "@components/docs/toc/toc";
+import "@fontsource-variable/unbounded";
+import "@fontsource/yusei-magic";
+import "../../styles/global.css";
+import qwikAstroLogo from "@assets/qwik-v2-logo.svg?raw";
+
+type TocItem = {
+  label: string;
+  id: string;
+  level: number;
+};
+
+interface Props {
+  title: string;
+  currentPath: string;
+  toc?: TocItem[];
+}
+
+const { title, currentPath, toc = [] } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Qwik + Astro documentation" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} — Qwik + Astro</title>
+  </head>
+  <body>
+    <Sidebar currentPath={currentPath} />
+
+    <header class="header">
+      <div class="header-inner">
+        <a href="/" class="header-home">
+          <span class="header-logo" set:html={qwikAstroLogo} />
+          <span>Qwik Astro</span>
+        </a>
+        <nav class="header-nav">
+          <a href="/docs" class="header-link active">Docs</a>
+          <a href="https://github.com/QwikDev/astro" target="_blank" rel="noopener" class="header-link">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="docs-main">
+      <div class="docs-content">
+        <article class="docs-article">
+          <slot />
+        </article>
+        {toc.length > 0 && <Toc items={toc} />}
+      </div>
+    </main>
+  </body>
+</html>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--neutral-950);
+    background-color: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(16px);
+    margin-left: 272px;
+  }
+
+  .header-inner {
+    max-width: var(--breakpoint-xl);
+    margin: 0 auto;
+    padding: var(--space-3xs) var(--space-m);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-home {
+    font-family: "Unbounded Variable", sans-serif;
+    font-size: var(--step--1);
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .header-logo :global(svg) {
+    width: 28px;
+    height: auto;
+  }
+
+  .header-nav {
+    display: flex;
+    gap: var(--space-m);
+    align-items: center;
+  }
+
+  .header-link {
+    font-family: "Unbounded Variable", sans-serif;
+    font-size: var(--step--2);
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--neutral-400);
+    transition: color 0.2s;
+  }
+
+  .header-link:hover {
+    color: var(--purple-50);
+  }
+
+  .header-link.active {
+    color: var(--rose-500);
+    border-bottom: 2px solid var(--rose-500);
+    padding-bottom: 2px;
+  }
+
+  .docs-main {
+    margin-left: 272px;
+    padding: var(--space-xl) var(--space-m);
+  }
+
+  .docs-content {
+    max-width: var(--breakpoint-xl);
+    margin: 0 auto;
+    display: flex;
+    gap: var(--space-xl);
+  }
+
+  .docs-article {
+    flex: 1;
+    min-width: 0;
+  }
+
+  @media (max-width: 768px) {
+    .header {
+      margin-left: 0;
+    }
+
+    .docs-main {
+      margin-left: 0;
+    }
+  }
+</style>

@@ -163,7 +163,7 @@ body {
   /* 4. Improve text rendering */
   -webkit-font-smoothing: antialiased;
   background-color: var(--off-black);
-  font-family: "Unbounded Variable", sans-serif;
+  font-family: "Yusei Magic", sans-serif;
 }
 /* 5. Improve media defaults */
 img,
@@ -202,4 +202,8 @@ h4,
 h5,
 h6 {
   text-wrap: balance;
+}
+
+@view-transition {
+  navigation: auto;
 }

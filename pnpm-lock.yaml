@@ -98,6 +98,9 @@ importers:
       '@fontsource-variable/unbounded':
         specifier: ^5.2.6
         version: 5.2.6
+      '@fontsource/yusei-magic':
+        specifier: ^5.2.8
+        version: 5.2.8
       '@iconify-json/lucide':
         specifier: ^1.2.47
         version: 1.2.47
@@ -863,6 +866,9 @@ packages:
 
   '@fontsource-variable/unbounded@5.2.6':
     resolution: {integrity: sha512-5bf5OYhhA6F7lHaY+Snd4d1UqjFYr5001OoOYqsPr/PF5GZ3T2eSyKu5cAoJ1IBFF3uSRUur8zrlk9y1PSDVaw==}
+
+  '@fontsource/yusei-magic@5.2.8':
+    resolution: {integrity: sha512-+QarJLmvO/jKFIbkZF0Kkppwo0rMu0vDT7GMps7wBIubUat1uesyjGc7VJKaoEct9Uv9XS2UBQQZboTJ73evYw==}
 
   '@humanwhocodes/momoa@2.0.4':
     resolution: {integrity: sha512-RE815I4arJFtt+FVeU1Tgp9/Xvecacji8w/V6XtXsWWH/wz/eNkNbhb+ny/+PlVZjV0rxQpRSQKNKE3lcktHEA==}
@@ -6529,6 +6535,8 @@ snapshots:
   '@fastify/busboy@3.2.0': {}
 
   '@fontsource-variable/unbounded@5.2.6': {}
+
+  '@fontsource/yusei-magic@5.2.8': {}
 
   '@humanwhocodes/momoa@2.0.4': {}
 
