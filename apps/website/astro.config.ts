@@ -6,4 +6,10 @@ import { defineConfig } from "astro/config";
 // https://astro.build/config
 export default defineConfig({
   integrations: [qwik(), icon(), mdx()],
+  image: {
+    domains: [
+      "img.youtube.com",
+      "avatars.githubusercontent.com",
+    ],
+  },
 });

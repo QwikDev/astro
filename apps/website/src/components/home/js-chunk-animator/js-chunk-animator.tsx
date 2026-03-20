@@ -23,7 +23,7 @@ export const JSChunkAnimator = component$(() => {
 
   useStylesScoped$(`
     .chunk-container {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
       width: 100%;
@@ -33,7 +33,7 @@ export const JSChunkAnimator = component$(() => {
     }
 
     .animated-chunk {
-      position: fixed;
+      position: absolute;
       animation: 
         fadeIn 0.2s linear forwards,
         popUpJS 0.3s cubic-bezier(0.2, 0.8, 0.3, 1) forwards,
@@ -77,8 +77,8 @@ export const JSChunkAnimator = component$(() => {
 
         hasInteracted.value = true;
         const rect = jsElement.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const topY = rect.top - 30;
+        const centerX = rect.left + rect.width / 2 + window.scrollX;
+        const topY = rect.top - 30 + window.scrollY;
 
         // Find landing targets
         const targets = document.querySelectorAll(

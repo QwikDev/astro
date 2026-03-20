@@ -5,6 +5,7 @@ import { Background } from "@components/home/background/background";
 import "@fontsource-variable/unbounded";
 import "@fontsource/yusei-magic";
 import "../../styles/global.css";
+import pkg from "@qwik.dev/astro/package.json";
 
 type TocItem = {
   label: string;
@@ -32,7 +33,7 @@ const { title, currentPath, toc = [] } = Astro.props;
     <title>{title} — Qwik + Astro</title>
   </head>
   <body>
-    <Sidebar currentPath={currentPath} />
+    <Sidebar currentPath={currentPath} version={pkg.version} />
 
     <header class="header">
       <Background />

@@ -26,6 +26,7 @@
   opacity: 0.8;
 }
 
+
 .sidebar-logo {
   width: 36px;
   height: auto;
@@ -34,8 +35,7 @@
 
 .sidebar-header-text {
   display: flex;
-  align-items: baseline;
-  gap: var(--space-3xs);
+  flex-direction: column;
 }
 
 .sidebar-title {
