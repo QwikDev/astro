@@ -1,3 +1,9 @@
+@property --scrollbar-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 :root {
   /* colors */
   --off-black: #0a0a0a;
@@ -173,10 +179,11 @@ button {
 }
 
 html {
-  scrollbar-gutter: stable;
+  container-type: inline-size;
 }
 
 body {
+  --scrollbar-width: calc(100vw - 100cqw);
   /* 3. Add accessible line-height */
   line-height: 1.5;
   /* 4. Improve text rendering */

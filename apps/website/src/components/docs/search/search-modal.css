@@ -62,6 +62,12 @@
     overlay 0.2s cubic-bezier(0.16, 1, 0.3, 1) allow-discrete;
 }
 
+.light .search-dialog {
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
 .search-dialog::backdrop {
   background: rgba(10, 10, 10, 0.9);
   backdrop-filter: blur(12px);
@@ -90,6 +96,12 @@
   .search-dialog[open]::backdrop {
     opacity: 0;
   }
+}
+
+.light .search-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .search-dialog-inner {
