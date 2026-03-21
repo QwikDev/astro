@@ -16,9 +16,6 @@ export default defineConfig({
     },
   },
   image: {
-    domains: [
-      "img.youtube.com",
-      "avatars.githubusercontent.com",
-    ],
+    domains: ["img.youtube.com", "avatars.githubusercontent.com"],
   },
 });

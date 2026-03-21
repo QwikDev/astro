@@ -232,7 +232,7 @@ h6 {
 
 pre > code span {
   color: var(--shiki-dark) !important;
-  background-color: var(--shiki-dark-bg) !important;
+  background-color: transparent !important;
 }
 
 .light pre > code span {
@@ -254,10 +254,6 @@ pre > code span {
   background-size: 400px 400px !important;
 }
 
-@view-transition {
-  navigation: auto;
-}
-
 .light {
   --bg: #f9f9f9;
   --bg-surface: #ffffff;
@@ -274,4 +270,3 @@ pre > code span {
   --topo-opacity: 0.4;
   --shadow-color: 0deg 0% 63%;
 }
-

@@ -99,9 +99,6 @@ export default defineIntegration({
                 }
               }
             },
-            resolve: {
-              noExternal: ["@qwik.dev/core", "@qwik-client-manifest"]
-            },
             plugins: [qwikManifestPlugin, ...qwikPlugins, astroQwikPostPlugin]
           }
         });

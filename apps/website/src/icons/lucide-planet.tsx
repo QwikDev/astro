@@ -1,4 +1,6 @@
-export const LucidePlanet = () => {
+import { component$ } from "@qwik.dev/core";
+
+export const LucidePlanet = component$(() => {
   return (
     <span>
       <svg
@@ -19,4 +21,4 @@ export const LucidePlanet = () => {
       </svg>
     </span>
   );
-};
+});

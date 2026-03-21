@@ -26,6 +26,12 @@
     }
   },
 
+  "css": {
+    "parser": {
+      "cssModules": true
+    }
+  },
+
   "json": {
     "formatter": {
       "enabled": true

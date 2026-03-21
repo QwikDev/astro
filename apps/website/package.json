@@ -5,7 +5,7 @@
   "scripts": {
     "astro": "astro",
     "sync": "astro sync",
-    "build": "pnpm fix && astro build",
+    "build": "pnpm fix && astro build && pagefind --site dist",
     "check": "biome ci . && astro check",
     "check.format": "biome format .",
     "check.lint": "biome check .",
@@ -25,9 +25,10 @@
     "@iconify-json/lucide": "^1.2.47",
     "@qds.dev/ui": "^0.14.3",
     "@qwik.dev/astro": "workspace:*",
-    "@qwik.dev/core": "2.0.0-beta.29",
+    "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c",
     "astro": "6.0.6",
     "astro-icon": "^1.1.5",
+    "pagefind": "^1.4.0",
     "sharp": "^0.33.5"
   },
   "devDependencies": {

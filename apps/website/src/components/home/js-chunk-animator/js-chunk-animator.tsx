@@ -81,22 +81,19 @@ export const JSChunkAnimator = component$(() => {
         const topY = rect.top - 30 + window.scrollY;
 
         // Find landing targets
-        const targets = document.querySelectorAll(
-          ".cli-copy, .navigation a",
-        );
+        const targets = document.querySelectorAll(".cli-copy, .navigation a");
         const targetRects = Array.from(targets).map((el) =>
           el.getBoundingClientRect(),
         );
 
         const newChunks = Array.from({ length: 3 }, (_, i) => {
           const targetRect =
-            targetRects[i < 2 ? i : Math.floor(Math.random() * targetRects.length)];
+            targetRects[
+              i < 2 ? i : Math.floor(Math.random() * targetRects.length)
+            ];
           const jitter = (Math.random() - 0.5) * (targetRect?.width ?? 60);
           const landX = targetRect
-            ? targetRect.left +
-              targetRect.width / 2 +
-              jitter -
-              centerX
+            ? targetRect.left + targetRect.width / 2 + jitter - centerX
             : (Math.random() - 0.5) * 400;
           const height = -140 - Math.random() * 80;
           return {

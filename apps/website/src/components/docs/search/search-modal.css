@@ -63,9 +63,8 @@
 }
 
 .light .search-dialog {
-  box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px
+    rgba(0, 0, 0, 0.05);
 }
 
 .search-dialog::backdrop {
@@ -73,18 +72,16 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   opacity: 0;
-  transition:
-    opacity 0.1s cubic-bezier(0.32, 0, 0.67, 0),
-    display 0.1s cubic-bezier(0.32, 0, 0.67, 0) allow-discrete,
-    overlay 0.1s cubic-bezier(0.32, 0, 0.67, 0) allow-discrete;
+  transition: opacity 0.1s cubic-bezier(0.32, 0, 0.67, 0), display 0.1s
+    cubic-bezier(0.32, 0, 0.67, 0) allow-discrete, overlay 0.1s
+    cubic-bezier(0.32, 0, 0.67, 0) allow-discrete;
 }
 
 .search-dialog[open]::backdrop {
   opacity: 1;
-  transition:
-    opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-    display 0.2s cubic-bezier(0.16, 1, 0.3, 1) allow-discrete,
-    overlay 0.2s cubic-bezier(0.16, 1, 0.3, 1) allow-discrete;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), display 0.2s
+    cubic-bezier(0.16, 1, 0.3, 1) allow-discrete, overlay 0.2s
+    cubic-bezier(0.16, 1, 0.3, 1) allow-discrete;
 }
 
 /* entry state */
@@ -235,9 +232,17 @@
 .search-result-desc {
   font-size: var(--step--2);
   color: var(--text-muted);
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.search-result-desc mark {
+  background: rgba(116, 97, 200, 0.25);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
 }
 
 .search-result-chevron {

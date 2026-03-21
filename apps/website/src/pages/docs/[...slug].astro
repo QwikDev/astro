@@ -96,10 +96,15 @@ const toc = headings
     max-width: 60ch;
   }
 
-  .docs-prose :global(p code) {
-    color: var(--green-400);
+  .docs-prose :global(p code),
+  .docs-prose :global(li code) {
     font-family: monospace;
-    font-size: 0.9em;
+    font-size: 0.85em;
+    color: var(--purple-400);
+    background: var(--bg-code);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    border: 1px solid var(--border);
   }
 
   .docs-prose :global(a) {

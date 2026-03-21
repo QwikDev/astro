@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from "astro:transitions";
 import { Sidebar } from "@components/docs/sidebar/sidebar";
 import { Toc } from "@components/docs/toc/toc";
 import { Background } from "@components/home/background/background";
@@ -31,6 +32,7 @@ const { title, currentPath, toc = [] } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title} — Qwik + Astro</title>
+    <ClientRouter />
   </head>
   <body>
     <script is:inline>
@@ -51,13 +53,67 @@ const { title, currentPath, toc = [] } = Astro.props;
 
     <main class="docs-main">
       <div class="docs-content">
-        <article class="docs-article">
+        <article class="docs-article" data-pagefind-body>
           <slot />
         </article>
         {toc.length > 0 && <Toc items={toc} />}
       </div>
     </main>
     <div class="scroll-fog" aria-hidden="true"></div>
+
+    <script is:inline data-astro-rerun>
+      (function() {
+        var input = document.querySelector("[data-search-input]");
+        var resultsList = document.querySelector("[data-search-results]");
+        var countEl = document.querySelector("[data-search-count]");
+
+        if (!input || !resultsList || !countEl) return;
+
+        var pagefind;
+        var debounceTimer;
+        var defaultHTML = resultsList.innerHTML;
+        var defaultCount = countEl.textContent;
+
+        input.addEventListener("input", function() {
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(async function() {
+            var q = input.value.trim();
+            if (!q) {
+              resultsList.innerHTML = defaultHTML;
+              countEl.textContent = defaultCount;
+              return;
+            }
+
+            if (!pagefind) {
+              pagefind = await import("/pagefind/pagefind.js");
+            }
+
+            var search = await pagefind.search(q);
+            var loaded = await Promise.all(
+              search.results.slice(0, 20).map(function(r) { return r.data(); }),
+            );
+
+            resultsList.innerHTML = loaded.length > 0
+              ? loaded.map(function(r) { return '<a href="' + r.url + '" class="search-result">'
+                  + '<div class="search-result-icon">'
+                  + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                  + '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>'
+                  + '<path d="M14 2v4a2 2 0 0 0 2 2h4"/>'
+                  + '</svg></div>'
+                  + '<div class="search-result-text">'
+                  + '<div class="search-result-title">' + (r.meta && r.meta.title ? r.meta.title : r.url) + '</div>'
+                  + '<p class="search-result-desc">' + r.excerpt + '</p>'
+                  + '</div>'
+                  + '<svg class="search-result-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+                  + '<path d="m9 18 6-6-6-6"/>'
+                  + '</svg></a>'; }).join("")
+              : '<div class="search-no-results">No results found for "' + q + '"</div>';
+
+            countEl.textContent = loaded.length + " result" + (loaded.length !== 1 ? "s" : "") + " found";
+          }, 150);
+        });
+      })();
+    </script>
   </body>
 </html>
 

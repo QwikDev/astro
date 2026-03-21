@@ -37,7 +37,7 @@
   },
   "pnpm": {
     "overrides": {
-      "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@8462"
+      "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c"
     }
   },
   "devDependencies": {

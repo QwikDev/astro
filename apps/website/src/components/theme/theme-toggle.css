@@ -14,7 +14,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-
 .theme-toggle > svg {
   inline-size: 80%;
   block-size: 100%;
@@ -66,9 +65,7 @@ html[class~="dark"] .sun-and-moon > .moon > circle {
   }
 
   .sun-and-moon > .sun-beams {
-    transition:
-      transform 0.5s var(--ease-elastic-4),
-      opacity 0.5s var(--ease-3);
+    transition: transform 0.5s var(--ease-elastic-4), opacity 0.5s var(--ease-3);
   }
 
   .sun-and-moon .moon > circle {

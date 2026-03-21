@@ -3,7 +3,6 @@ import {
   $,
   component$,
   sync$,
-  useComputed$,
   useOnDocument,
   useSignal,
   useStyles$,
@@ -14,20 +13,8 @@ import styles from "./search-modal.css?inline";
 export const SearchModal = component$(() => {
   useStyles$(styles);
 
-  const query = useSignal("");
-  const inputRef = useSignal<HTMLInputElement>();
   const activeIndex = useSignal(-1);
   const listRef = useSignal<HTMLDivElement>();
-
-  const filteredItems = useComputed$(() => {
-    const q = query.value.toLowerCase().trim();
-    if (!q) return navItems;
-    return navItems.filter(
-      (item) =>
-        item.label.toLowerCase().includes(q) ||
-        item.description.toLowerCase().includes(q),
-    );
-  });
 
   useOnDocument(
     "keydown",
@@ -50,7 +37,9 @@ export const SearchModal = component$(() => {
   });
 
   const handleKeyDown$ = $((e: KeyboardEvent) => {
-    const count = filteredItems.value.length;
+    const links =
+      listRef.value?.querySelectorAll<HTMLAnchorElement>(".search-result");
+    const count = links?.length ?? 0;
     if (!count) return;
 
     if (e.key === "ArrowDown") {
@@ -58,14 +47,16 @@ export const SearchModal = component$(() => {
     } else if (e.key === "ArrowUp") {
       activeIndex.value = (activeIndex.value - 1 + count) % count;
     } else if (e.key === "Enter" && activeIndex.value >= 0) {
-      const links = listRef.value?.querySelectorAll<HTMLAnchorElement>(".search-result");
       links?.[activeIndex.value]?.click();
       return;
     } else {
       return;
     }
 
-    const links = listRef.value?.querySelectorAll<HTMLAnchorElement>(".search-result");
+    if (links) {
+      for (const link of links) link.classList.remove("search-result-active");
+    }
+    links?.[activeIndex.value]?.classList.add("search-result-active");
     links?.[activeIndex.value]?.scrollIntoView({ block: "nearest" });
   });
 
@@ -76,9 +67,7 @@ export const SearchModal = component$(() => {
         <kbd>&#8984;K</kbd>
       </modal.trigger>
 
-      <modal.content
-        class="search-dialog"
-      >
+      <modal.content class="search-dialog">
         <div class="search-dialog-inner">
           <modal.title class="search-header">
             <svg
@@ -97,43 +86,25 @@ export const SearchModal = component$(() => {
               <path d="m21 21-4.3-4.3" />
             </svg>
             <input
-              ref={inputRef}
               type="text"
               class="search-input"
+              data-search-input
               placeholder="Search documentation..."
-              bind:value={query}
-              onInput$={() => { activeIndex.value = -1; }}
               onKeyDown$={[preventArrowScroll$, handleKeyDown$]}
+              onInput$={() => {
+                activeIndex.value = -1;
+              }}
             />
             <modal.close class="search-esc">ESC</modal.close>
           </modal.title>
 
           <div class="search-results">
             <div class="search-results-label">Results</div>
-            <div ref={listRef} class="search-results-list">
-              {filteredItems.value.length > 0 ? (
-                filteredItems.value.map((item, i) => (
-                  <a key={item.href} href={item.href} class={`search-result ${i === activeIndex.value ? "search-result-active" : ""}`}>
-                    <div class="search-result-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                        dangerouslySetInnerHTML={item.icon}
-                      />
-                    </div>
-                    <div class="search-result-text">
-                      <div class="search-result-title">{item.label}</div>
-                      <p class="search-result-desc">{item.description}</p>
-                    </div>
+            <div ref={listRef} class="search-results-list" data-search-results>
+              {navItems.map((item) => (
+                <a key={item.href} href={item.href} class="search-result">
+                  <div class="search-result-icon">
                     <svg
-                      class="search-result-chevron"
                       width="16"
                       height="16"
                       viewBox="0 0 24 24"
@@ -143,23 +114,35 @@ export const SearchModal = component$(() => {
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       aria-hidden="true"
-                    >
-                      <path d="m9 18 6-6-6-6" />
-                    </svg>
-                  </a>
-                ))
-              ) : (
-                <div class="search-no-results">
-                  No results found for "{query.value}"
-                </div>
-              )}
+                      dangerouslySetInnerHTML={item.icon}
+                    />
+                  </div>
+                  <div class="search-result-text">
+                    <div class="search-result-title">{item.label}</div>
+                    <p class="search-result-desc">{item.description}</p>
+                  </div>
+                  <svg
+                    class="search-result-chevron"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </a>
+              ))}
             </div>
           </div>
 
           <div class="search-footer">
-            <div class="search-footer-count">
-              {filteredItems.value.length} result
-              {filteredItems.value.length !== 1 ? "s" : ""} found
+            <div class="search-footer-count" data-search-count>
+              {navItems.length} results found
             </div>
           </div>
         </div>
