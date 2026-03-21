@@ -51,7 +51,7 @@
   align-items: center;
   gap: var(--space-2xs);
   font-size: var(--step--2);
-  color: var(--purple-300);
+  color: var(--link);
   text-decoration: none;
   transition: color 0.2s;
 }
