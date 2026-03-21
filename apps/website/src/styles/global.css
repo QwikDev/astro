@@ -172,6 +172,10 @@ button {
   cursor: pointer;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   /* 3. Add accessible line-height */
   line-height: 1.5;

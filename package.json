@@ -35,6 +35,11 @@
     "test.platform.ui": "playwright test --ui",
     "test.platform.report": "playwright show-report"
   },
+  "pnpm": {
+    "overrides": {
+      "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@8462"
+    }
+  },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@changesets/cli": "^2.29.4",
