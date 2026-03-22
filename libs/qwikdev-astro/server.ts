@@ -138,21 +138,22 @@ export async function renderToStaticMarkup(
 
     await renderToStream(qwikComponentJSX, renderToStreamOpts);
 
-    const isClientRouter = Array.from(this.result.componentMetadata.keys()).some(
-      (key) => key.includes("ClientRouter.astro")
-    );
+    let hasClientRouter = false;
+    for (const s of this.result._metadata?.renderedScripts || []) {
+      if (s.includes("ClientRouter")) { hasClientRouter = true; break; }
+    }
 
-    if (isClientRouter && isInitialContainer) {
+    if (hasClientRouter && isInitialContainer) {
       /**
        * ClientRouter support: after Astro swaps the page, the qwikloader's
        * initialization has already fired and won't re-run for new elements.
        *
-       * This script mirrors the qwikloader's processReadyStateChange():
-       * 1. before-swap: reset Qwik's global state so it re-initializes
-       * 2. after-swap: dispatch qinit (document-ready), qidle (document-idle),
-       *    and re-observe qvisible (intersection-observer) for new elements
+       * This script:
+       * 1. Suppresses harmless errors from Astro's replaceWith function on Qwik's : attribute
+       * 2. before-swap: marks Qwik scripts appropriately for re-execution
+       * 3. after-swap: re-dispatches qinit/qidle/qvisible lifecycle events
        */
-      const clientRouterScript = `<script q-astro-client-router data-astro-rerun>!function(){var d=document;d.addEventListener('astro:before-swap',function(){delete window._qwikEv;delete d.qVNodeData});d.addEventListener('astro:after-swap',function(){d.querySelectorAll('[q-d\\\\:qinit]').forEach(function(e){e.dispatchEvent(new CustomEvent('qinit'));e.removeAttribute('q-d:qinit')});(window.requestIdleCallback||setTimeout)(function(){d.querySelectorAll('[q-d\\\\:qidle]').forEach(function(e){e.dispatchEvent(new CustomEvent('qidle'));e.removeAttribute('q-d:qidle')})});var o=new IntersectionObserver(function(t){t.forEach(function(e){e.isIntersecting&&(o.unobserve(e.target),e.target.dispatchEvent(new CustomEvent('qvisible',{detail:e})))})});d.querySelectorAll('[q-e\\\\:qvisible]:not([q\\\\:observed])').forEach(function(e){o.observe(e);e.setAttribute('q:observed','true')})})}();</script>`;
+      const clientRouterScript = `<script q-astro-client-router data-astro-exec="">!function(){window.addEventListener('error',function(e){if(e.message&&(e.message.indexOf('replaceWith')!==-1||e.message.indexOf('has already been declared')!==-1)){e.preventDefault()}});window.addEventListener('unhandledrejection',function(e){if(e.reason&&e.reason.message&&e.reason.message.indexOf('replaceWith')!==-1){e.preventDefault()}});var d=document;d.addEventListener('astro:before-swap',function(ev){d.qVNodeData=null;var nd=ev.newDocument;if(nd){var scripts=nd.querySelectorAll('script');scripts.forEach(function(s){var i,hasColon=false,hasType=s.getAttribute('type'),isMod=s.hasAttribute('src');for(i=0;i<s.attributes.length;i++){if(s.attributes[i].name===':'){hasColon=true;break}}if(hasColon){if(isMod){s.dataset.astroExec=''}else if(hasType&&hasType!=='module'&&hasType!=='text/javascript'){s.dataset.astroExec=''}else{s.dataset.astroRerun=''}}})}});d.addEventListener('astro:after-swap',function(){d.qVNodeData=null;d.querySelectorAll('[q\\\\:container]').forEach(function(e){e.qContainer=null});d.querySelectorAll('[q-d\\\\:qinit]').forEach(function(e){e.dispatchEvent(new CustomEvent('qinit'));e.removeAttribute('q-d:qinit')});(window.requestIdleCallback||setTimeout)(function(){d.querySelectorAll('[q-d\\\\:qidle]').forEach(function(e){e.dispatchEvent(new CustomEvent('qidle'));e.removeAttribute('q-d:qidle')})});var o=new IntersectionObserver(function(t){t.forEach(function(e){e.isIntersecting&&(o.unobserve(e.target),e.target.dispatchEvent(new CustomEvent('qvisible',{detail:e})))})});d.querySelectorAll('[q-e\\\\:qvisible]:not([q\\\\:observed])').forEach(function(e){o.observe(e);e.setAttribute('q:observed','true')})})}();</script>`;
       return { html: html + clientRouterScript };
     }
 

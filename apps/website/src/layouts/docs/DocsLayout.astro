@@ -61,15 +61,18 @@ const { title, currentPath, toc = [] } = Astro.props;
     </main>
     <div class="scroll-fog" aria-hidden="true"></div>
 
-    <script is:inline data-astro-rerun>
-      (function() {
+    <script is:inline>
+      if (!window._pagefindInit) {
+        window._pagefindInit = true;
+        var pagefind;
+
+        document.addEventListener("astro:page-load", function() {
         var input = document.querySelector("[data-search-input]");
         var resultsList = document.querySelector("[data-search-results]");
         var countEl = document.querySelector("[data-search-count]");
 
         if (!input || !resultsList || !countEl) return;
 
-        var pagefind;
         var debounceTimer;
         var defaultHTML = resultsList.innerHTML;
         var defaultCount = countEl.textContent;
@@ -112,7 +115,8 @@ const { title, currentPath, toc = [] } = Astro.props;
             countEl.textContent = loaded.length + " result" + (loaded.length !== 1 ? "s" : "") + " found";
           }, 150);
         });
-      })();
+        });
+      }
     </script>
   </body>
 </html>

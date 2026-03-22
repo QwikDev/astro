@@ -6,6 +6,7 @@ import {
   useOnDocument,
   useSignal,
   useStyles$,
+  useVisibleTask$,
 } from "@qwik.dev/core";
 import { navItems } from "../nav-items";
 import styles from "./search-modal.css?inline";
@@ -58,6 +59,10 @@ export const SearchModal = component$(() => {
     }
     links?.[activeIndex.value]?.classList.add("search-result-active");
     links?.[activeIndex.value]?.scrollIntoView({ block: "nearest" });
+  });
+
+  useVisibleTask$(() => {
+    console.log("HEY");
   });
 
   return (
