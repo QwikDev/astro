@@ -19,17 +19,16 @@ window.addEventListener("unhandledrejection", function (e) {
   }
 });
 
-document.addEventListener("astro:after-preparation", function () {
+document.addEventListener("astro:before-swap", function () {
   document.querySelectorAll("[q\\:container]").forEach(function (e) {
     if (e.qDestroy) {
       e.qDestroy();
     }
   });
+  document.qVNodeData = undefined;
 });
 
 document.addEventListener("astro:after-swap", function () {
-  // Clear so new containers call processVNodeData
-  document.qVNodeData = undefined;
   var o = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
