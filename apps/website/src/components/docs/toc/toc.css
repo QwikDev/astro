@@ -6,7 +6,6 @@
   gap: var(--space-l);
   width: 220px;
   flex-shrink: 0;
-  margin-right: calc(var(--noscroll-target-scrollbar-width, 0px) * -1);
 }
 
 .toc-title {

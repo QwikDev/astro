@@ -146,6 +146,11 @@
     33.1px 53.1px 70.4px -2.5px hsl(var(--shadow-color) / 0.34);
 }
 
+:focus-visible:not(input):not(textarea):not(select) {
+  outline: 9px double black;
+  box-shadow: 0 0 0 6px white;
+}
+
 *,
 *::before,
 *::after {
@@ -177,7 +182,7 @@ button {
   cursor: pointer;
 }
 
-html {
+html:not(:has(dialog:modal)) {
   container-type: inline-size;
 }
 

@@ -61,10 +61,6 @@ export const SearchModal = component$(() => {
     links?.[activeIndex.value]?.scrollIntoView({ block: "nearest" });
   });
 
-  useVisibleTask$(() => {
-    console.log("HEY");
-  });
-
   return (
     <modal.root>
       <modal.trigger class="search-trigger" data-search-trigger>

@@ -55,6 +55,8 @@
 .search-dialog[open] {
   opacity: 1;
   transform: translateY(0) scale(1);
+  position: relative;
+  left: calc(var(--noscroll-target-scrollbar-width, 0px) * -1);
   transition:
     opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
@@ -63,8 +65,7 @@
 }
 
 .light .search-dialog {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px
-    rgba(0, 0, 0, 0.05);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
 }
 
 .search-dialog::backdrop {
@@ -72,16 +73,12 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   opacity: 0;
-  transition: opacity 0.1s cubic-bezier(0.32, 0, 0.67, 0), display 0.1s
-    cubic-bezier(0.32, 0, 0.67, 0) allow-discrete, overlay 0.1s
-    cubic-bezier(0.32, 0, 0.67, 0) allow-discrete;
+  transition: opacity 0.1s cubic-bezier(0.32, 0, 0.67, 0), display 0.1s cubic-bezier(0.32, 0, 0.67, 0) allow-discrete, overlay 0.1s cubic-bezier(0.32, 0, 0.67, 0) allow-discrete;
 }
 
 .search-dialog[open]::backdrop {
   opacity: 1;
-  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), display 0.2s
-    cubic-bezier(0.16, 1, 0.3, 1) allow-discrete, overlay 0.2s
-    cubic-bezier(0.16, 1, 0.3, 1) allow-discrete;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), display 0.2s cubic-bezier(0.16, 1, 0.3, 1) allow-discrete, overlay 0.2s cubic-bezier(0.16, 1, 0.3, 1) allow-discrete;
 }
 
 /* entry state */
@@ -90,6 +87,7 @@
     opacity: 0;
     transform: translateY(-12px) scale(0.98);
   }
+
   .search-dialog[open]::backdrop {
     opacity: 0;
   }
