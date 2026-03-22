@@ -50,9 +50,7 @@
   position: absolute;
   padding-block: var(--space-3xs);
   padding-inline: var(--space-2xs);
-  background: hsl(var(--dark));
-  border: 2px dotted hsl(var(--primary));
-  color: hsl(var(--light));
+  color: var(--text);
   opacity: 0;
   scale: 0;
   left: 50%;
@@ -61,7 +59,7 @@
     var(--overshoot-easing-function);
   pointer-events: none;
   background: var(--bg);
-  border: 1px solid white;
+  border: 1px solid var(--text);
   border-radius: 9999999px;
   box-shadow: var(--shadow-elevation-high);
   z-index: 1000;
