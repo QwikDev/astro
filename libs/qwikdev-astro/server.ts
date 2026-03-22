@@ -1,5 +1,6 @@
 import { renderOpts as globalRenderOpts } from "virtual:qwikdev-astro";
 import { type JSXNode, jsx } from "@qwik.dev/core";
+import { SSRComment } from "@qwik.dev/core/internal";
 import type { QwikManifest } from "@qwik.dev/core/optimizer";
 import { type RenderToStreamOptions, renderToStream } from "@qwik.dev/core/server";
 import type { SSRResult } from "astro";
@@ -104,17 +105,22 @@ export async function renderToStaticMarkup(
     }
 
     const slots: { [key: string]: unknown } = {};
-    let defaultSlot: JSXNode<"span"> | undefined = undefined;
+    let defaultSlot: JSXNode | undefined = undefined;
+    const slotMarkers = new Map<string, string>();
 
     /** slot handling
      *  https://qwik.dev/docs/components/slots/#slots
      *  https://docs.astro.build/en/basics/astro-components/#slots
+     *
+     *  SSRComment placeholder during SSR, replaced with actual
+     *  slot content after render.
      */
     for (const [key, value] of Object.entries(slotted)) {
+      const markerId = `astro-slot:${key}`;
+      slotMarkers.set(`<!--${markerId}-->`, String(value));
       const namedSlot = key !== "default" && { "q:slot": key };
-      const jsxElement = jsx("span", {
-        dangerouslySetInnerHTML: String(value),
-        style: "display: contents",
+      const jsxElement = jsx(SSRComment as any, {
+        data: markerId,
         ...namedSlot,
         "q:key": Math.random().toString(26).split(".").pop()
       });
@@ -138,6 +144,10 @@ export async function renderToStaticMarkup(
     }
 
     await renderToStream(qwikComponentJSX, renderToStreamOpts);
+
+    for (const [marker, content] of slotMarkers) {
+      html = html.replace(marker, content);
+    }
 
     if (isInitialContainer) {
       let hasClientRouter = false;
