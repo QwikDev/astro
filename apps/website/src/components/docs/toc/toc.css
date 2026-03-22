@@ -61,7 +61,7 @@
   color: var(--text-hover);
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1350px) {
   .toc {
     display: none;
   }

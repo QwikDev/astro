@@ -61,6 +61,12 @@ const toc = headings
     margin-bottom: var(--space-m);
   }
 
+  @media (max-width: 640px) {
+    h1 {
+      font-size: var(--step-3);
+    }
+  }
+
   .docs-intro {
     font-size: var(--step-1);
     color: var(--text-muted);
@@ -100,7 +106,7 @@ const toc = headings
   .docs-prose :global(li code) {
     font-family: monospace;
     font-size: 0.85em;
-    color: var(--purple-400);
+    color: var(--purple-700);
     background: var(--bg-code);
     padding: 0.15em 0.4em;
     border-radius: 4px;

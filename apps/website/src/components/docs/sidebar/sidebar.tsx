@@ -1,16 +1,14 @@
-import { component$, useStyles$ } from "@qwik.dev/core";
+import { component$, useSignal, useStyles$ } from "@qwik.dev/core";
 import { navItems } from "../nav-items";
 import { SearchModal } from "../search/search-modal";
 import styles from "./sidebar.css?inline";
 
-export const Sidebar = component$<{
+const SidebarContent = component$<{
   currentPath: string;
   version: string;
 }>(({ currentPath, version }) => {
-  useStyles$(styles);
-
   return (
-    <aside class="sidebar">
+    <>
       <a href="/" class="sidebar-header">
         <img
           src="/qwik-v2-logo.svg"
@@ -96,6 +94,84 @@ export const Sidebar = component$<{
           <span>Discord</span>
         </a>
       </div>
-    </aside>
+    </>
+  );
+});
+
+export const Sidebar = component$<{
+  currentPath: string;
+  version: string;
+}>(({ currentPath, version }) => {
+  useStyles$(styles);
+  const mobileOpen = useSignal(false);
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside class="sidebar">
+        <SidebarContent currentPath={currentPath} version={version} />
+      </aside>
+
+      {/* Mobile trigger */}
+      <button
+        class="sidebar-mobile-trigger"
+        onClick$={() => {
+          mobileOpen.value = true;
+        }}
+        aria-label="Open navigation"
+        type="button"
+        aria-hidden={mobileOpen.value ? "true" : "false"}
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="15" y2="12" />
+          <line x1="3" y1="18" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      {/* Mobile sheet */}
+      <div
+        class={`sidebar-sheet-backdrop${mobileOpen.value ? " open" : ""}`}
+        onClick$={() => {
+          mobileOpen.value = false;
+        }}
+      />
+      <aside class={`sidebar-sheet${mobileOpen.value ? " open" : ""}`}>
+        <button
+          class="sidebar-sheet-close"
+          onClick$={() => {
+            mobileOpen.value = false;
+          }}
+          aria-label="Close navigation"
+          type="button"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <SidebarContent currentPath={currentPath} version={version} />
+      </aside>
+    </>
   );
 });

@@ -108,8 +108,116 @@
   color: var(--text-hover);
 }
 
-@media (max-width: 768px) {
+/* Mobile trigger — sticks to left edge */
+.sidebar-mobile-trigger {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 12px;
+  z-index: 70;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, border-color 0.2s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-mobile-trigger:hover {
+  color: var(--text-hover);
+  border-color: var(--text-muted);
+}
+
+/* Sheet backdrop */
+.sidebar-sheet-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 80;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-sheet-backdrop.open {
+  opacity: 1;
+}
+
+/* Slide-in sheet */
+.sidebar-sheet {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 320px;
+  max-width: 85vw;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--bg);
+  border-right: 1px solid var(--border);
+  flex-direction: column;
+  gap: var(--space-3xs);
+  padding: var(--space-m);
+  padding-top: calc(var(--space-m) + 48px);
+  z-index: 90;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+}
+
+.sidebar-sheet.open {
+  transform: translateX(0);
+}
+
+/* Close button inside sheet */
+.sidebar-sheet-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.sidebar-sheet-close:hover {
+  color: var(--text-hover);
+  border-color: var(--text-muted);
+}
+
+@media (max-width: 1024px) {
   .sidebar {
     display: none;
+  }
+
+  .sidebar-mobile-trigger {
+    display: flex;
+  }
+
+  .sidebar-sheet-backdrop {
+    display: block;
+    pointer-events: none;
+  }
+
+  .sidebar-sheet-backdrop.open {
+    pointer-events: auto;
+  }
+
+  .sidebar-sheet {
+    display: flex;
   }
 }

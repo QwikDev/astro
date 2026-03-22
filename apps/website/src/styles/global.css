@@ -95,18 +95,16 @@
 
   /* Animations */
   --qa-fade: cubic-bezier(0.8, -0.4, 0.5, 1);
-  --qa-hover: linear(
-    0,
-    0.417 25.5%,
-    0.867 49.4%,
-    1 57.7%,
-    0.925 65.1%,
-    0.908 68.6%,
-    0.902 72.2%,
-    0.916 78.2%,
-    0.988 92.1%,
-    1
-  );
+  --qa-hover: linear(0,
+      0.417 25.5%,
+      0.867 49.4%,
+      1 57.7%,
+      0.925 65.1%,
+      0.908 68.6%,
+      0.902 72.2%,
+      0.916 78.2%,
+      0.988 92.1%,
+      1);
 
   --breakpoint-sm: 640px;
   --breakpoint-xl: 1240px;
@@ -153,6 +151,7 @@
 *::after {
   box-sizing: border-box;
 }
+
 /* 2. Remove default margin */
 * {
   margin: 0;
@@ -191,6 +190,7 @@ body {
   background-color: var(--bg);
   font-family: "Yusei Magic", sans-serif;
 }
+
 /* 5. Improve media defaults */
 img,
 picture,
@@ -200,6 +200,7 @@ svg {
   display: block;
   max-width: 100%;
 }
+
 /* 6. Inherit fonts for form controls */
 input,
 button,
@@ -207,6 +208,7 @@ textarea,
 select {
   font: inherit;
 }
+
 /* 7. Avoid text overflows */
 p,
 h1,
@@ -217,10 +219,12 @@ h5,
 h6 {
   overflow-wrap: break-word;
 }
+
 /* 8. Improve line wrapping */
 p {
   text-wrap: pretty;
 }
+
 h1,
 h2,
 h3,
@@ -230,21 +234,26 @@ h6 {
   text-wrap: balance;
 }
 
-pre > code span {
+h1 {
+  line-height: 1.1;
+}
+
+pre>code span {
   color: var(--shiki-dark) !important;
   background-color: transparent !important;
 }
 
-.light pre > code span {
+.light pre>code span {
   color: var(--shiki-light) !important;
   background-color: transparent !important;
 }
 
 .light pre {
   background-color: var(--bg-code) !important;
+  border: 1px solid var(--border);
 }
 
-.light .background-wrapper > div {
+.light .background-wrapper>div {
   background: url("/topo-pattern-light.svg") repeat !important;
   background-size: 600px 600px !important;
 }
@@ -268,5 +277,5 @@ pre > code span {
   --link: var(--purple-700);
   --topo-url: url("/topo-pattern-light.svg");
   --topo-opacity: 0.4;
-  --shadow-color: 0deg 0% 63%;
+  --shadow-color: 0deg 0% 24%;
 }

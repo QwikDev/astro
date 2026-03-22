@@ -163,13 +163,14 @@ const { title, currentPath, toc = [] } = Astro.props;
     z-index: 10;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     .header {
       margin-left: 0;
     }
 
     .docs-main {
       margin-left: 0;
+      padding-top: calc(var(--space-xl) + 48px);
     }
   }
 </style>
