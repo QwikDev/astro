@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@qwik.dev/core': https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c
+  '@qwik.dev/core': link:../qwik/packages/qwik
 
 importers:
 
@@ -24,8 +24,8 @@ importers:
         specifier: workspace:*
         version: link:libs/qwikdev-astro
       '@qwik.dev/core':
-        specifier: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c
-        version: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c(vite@7.3.1(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
+        specifier: link:../qwik/packages/qwik
+        version: link:../qwik/packages/qwik
       '@qwikdev/create-astro':
         specifier: workspace:*
         version: link:libs/create-qwikdev-astro
@@ -51,8 +51,8 @@ importers:
         specifier: workspace:*
         version: link:../../libs/qwikdev-astro
       '@qwik.dev/core':
-        specifier: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c
-        version: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
+        specifier: link:../../../qwik/packages/qwik
+        version: link:../../../qwik/packages/qwik
       astro:
         specifier: 6.0.6
         version: 6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2)
@@ -61,7 +61,7 @@ importers:
     dependencies:
       '@astrojs/check':
         specifier: ^0.9.8
-        version: 0.9.8(prettier-plugin-astro@0.13.0)(typescript@5.8.3)
+        version: 0.9.8(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.8.3)
       '@deno/astro-adapter':
         specifier: ^0.3.2
         version: 0.3.2(@opentelemetry/api@1.9.0)(astro@6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.2))
@@ -69,8 +69,8 @@ importers:
         specifier: workspace:*
         version: link:../../libs/qwikdev-astro
       '@qwik.dev/core':
-        specifier: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c
-        version: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
+        specifier: link:../../../qwik/packages/qwik
+        version: link:../../../qwik/packages/qwik
       astro:
         specifier: 6.0.6
         version: 6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.8.2)
@@ -87,8 +87,8 @@ importers:
         specifier: workspace:*
         version: link:../../libs/qwikdev-astro
       '@qwik.dev/core':
-        specifier: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c
-        version: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
+        specifier: link:../../../qwik/packages/qwik
+        version: link:../../../qwik/packages/qwik
       astro:
         specifier: 6.0.6
         version: 6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2)
@@ -97,7 +97,7 @@ importers:
     dependencies:
       '@astrojs/check':
         specifier: ^0.9.8
-        version: 0.9.8(prettier-plugin-astro@0.13.0)(typescript@5.9.3)
+        version: 0.9.8(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.9.3)
       '@astrojs/mdx':
         specifier: ^5.0.2
         version: 5.0.2(astro@6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2))
@@ -112,13 +112,13 @@ importers:
         version: 1.2.47
       '@qds.dev/ui':
         specifier: ^0.14.3
-        version: 0.14.3(@qwik.dev/core@https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)))
+        version: 0.14.3(@qwik.dev/core@qwik+packages+qwik)
       '@qwik.dev/astro':
         specifier: workspace:*
         version: link:../../libs/qwikdev-astro
       '@qwik.dev/core':
-        specifier: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c
-        version: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
+        specifier: link:../../../qwik/packages/qwik
+        version: link:../../../qwik/packages/qwik
       astro:
         specifier: 6.0.6
         version: 6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2)
@@ -206,8 +206,8 @@ importers:
         specifier: ^0.13.0
         version: 0.13.0(astro-integration-kit@0.20.0(astro@6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2)))(astro@6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2))(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
       '@qwik.dev/core':
-        specifier: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c
-        version: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
+        specifier: link:../../../qwik/packages/qwik
+        version: link:../../../qwik/packages/qwik
       astro-integration-kit:
         specifier: ^0.20.0
         version: 0.20.0(astro@6.0.6(@netlify/blobs@10.7.3)(@types/node@24.0.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.59.0)(tsx@4.20.1)(typescript@5.9.3)(yaml@2.8.2))
@@ -1660,27 +1660,11 @@ packages:
 
   '@qds.dev/ui@0.14.3':
     resolution: {integrity: sha512-xSnWgHqXbbp4WEda8rjw/YFDKQi9UhZP1ZIYUVI7z4+IzJ51H558xDV04qpKZWAHdO0XD68KVFLW12rAcS73EQ==}
-    version: 0.14.3
     peerDependencies:
       '@qwik.dev/core': '>=2.0.0-beta.27'
 
   '@quansync/fs@1.0.0':
     resolution: {integrity: sha512-4TJ3DFtlf1L5LDMaM6CanJ/0lckGNtJcMjQ1NAV6zDmA0tEHKZtxNKin8EgPaVX1YzljbxckyT2tJrpQKAtngQ==}
-
-  '@qwik.dev/core@https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c':
-    resolution: {tarball: https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c}
-    version: 2.0.0-beta.29
-    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-    hasBin: true
-    peerDependencies:
-      prettier: 3.6.2
-      vite: '>=6 <9'
-      vitest: '>=2 <4'
-    peerDependenciesMeta:
-      prettier:
-        optional: true
-      vitest:
-        optional: true
 
   '@rolldown/binding-android-arm64@1.0.0-rc.1':
     resolution: {integrity: sha512-He6ZoCfv5D7dlRbrhNBkuMVIHd0GDnjJwbICE1OWpG7G3S2gmJ+eXkcNLJjzjNDpeI2aRy56ou39AJM9AD8YFA==}
@@ -2775,9 +2759,6 @@ packages:
   csso@5.0.5:
     resolution: {integrity: sha512-0LrrStPOdJj+SPCCrGhzryycLjwcgUSHBtxNA8aIDxf0GLsRh1cKYhB00Gd1lDOS4yGH69+SNn13+TWbVHETFQ==}
     engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0, npm: '>=7.0.0'}
-
-  csstype@3.2.3:
-    resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
 
   data-uri-to-buffer@4.0.1:
     resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
@@ -3923,9 +3904,6 @@ packages:
     resolution: {integrity: sha512-bPcgpIXbHnVGfI/omZIlgucDqlf4LrsunwoKue5JdZeGybt8L6KyJz2Zu19ffuZwIwLj2NAI2ZyaqNT6/cetcg==}
     engines: {node: '>=8'}
     hasBin: true
-
-  launch-editor@2.13.1:
-    resolution: {integrity: sha512-lPSddlAAluRKJ7/cjRFoXUFzaX7q/YKI7yPHuEvSJVqoXvFnJov1/Ud87Aa4zULIbA9Nja4mSPK8l0z/7eV2wA==}
 
   lazystream@1.0.1:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
@@ -5119,10 +5097,6 @@ packages:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
 
-  shell-quote@1.8.3:
-    resolution: {integrity: sha512-ObmnIF4hXNg1BqhnHmgbDETF8dLPCggZWBjkQfhZpbszZnYur5DUljTcCHii5LC3J5E0yeO/1LIMyH+UvHQgyw==}
-    engines: {node: '>= 0.4'}
-
   shiki@4.0.1:
     resolution: {integrity: sha512-EkAEhDTN5WhpoQFXFw79OHIrSAfHhlImeCdSyg4u4XvrpxKEmdo/9x/HWSowujAnUrFsGOwWiE58a6GVentMnQ==}
     engines: {node: '>=20'}
@@ -6077,9 +6051,9 @@ snapshots:
 
   '@antfu/utils@8.1.1': {}
 
-  '@astrojs/check@0.9.8(prettier-plugin-astro@0.13.0)(typescript@5.8.3)':
+  '@astrojs/check@0.9.8(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.8.3)':
     dependencies:
-      '@astrojs/language-server': 2.16.6(prettier-plugin-astro@0.13.0)(typescript@5.8.3)
+      '@astrojs/language-server': 2.16.6(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.8.3)
       chokidar: 4.0.3
       kleur: 4.1.5
       typescript: 5.8.3
@@ -6088,9 +6062,9 @@ snapshots:
       - prettier
       - prettier-plugin-astro
 
-  '@astrojs/check@0.9.8(prettier-plugin-astro@0.13.0)(typescript@5.9.3)':
+  '@astrojs/check@0.9.8(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.9.3)':
     dependencies:
-      '@astrojs/language-server': 2.16.6(prettier-plugin-astro@0.13.0)(typescript@5.9.3)
+      '@astrojs/language-server': 2.16.6(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.9.3)
       chokidar: 4.0.3
       kleur: 4.1.5
       typescript: 5.9.3
@@ -6110,7 +6084,7 @@ snapshots:
     dependencies:
       picomatch: 4.0.3
 
-  '@astrojs/language-server@2.16.6(prettier-plugin-astro@0.13.0)(typescript@5.8.3)':
+  '@astrojs/language-server@2.16.6(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.8.3)':
     dependencies:
       '@astrojs/compiler': 2.13.1
       '@astrojs/yaml2ts': 0.2.3
@@ -6124,18 +6098,19 @@ snapshots:
       volar-service-css: 0.0.70(@volar/language-service@2.4.28)
       volar-service-emmet: 0.0.70(@volar/language-service@2.4.28)
       volar-service-html: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-prettier: 0.0.70(@volar/language-service@2.4.28)
+      volar-service-prettier: 0.0.70(@volar/language-service@2.4.28)(prettier@3.8.1)
       volar-service-typescript: 0.0.70(@volar/language-service@2.4.28)
       volar-service-typescript-twoslash-queries: 0.0.70(@volar/language-service@2.4.28)
       volar-service-yaml: 0.0.70(@volar/language-service@2.4.28)
       vscode-html-languageservice: 5.6.2
       vscode-uri: 3.1.0
     optionalDependencies:
+      prettier: 3.8.1
       prettier-plugin-astro: 0.13.0
     transitivePeerDependencies:
       - typescript
 
-  '@astrojs/language-server@2.16.6(prettier-plugin-astro@0.13.0)(typescript@5.9.3)':
+  '@astrojs/language-server@2.16.6(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.9.3)':
     dependencies:
       '@astrojs/compiler': 2.13.1
       '@astrojs/yaml2ts': 0.2.3
@@ -6149,13 +6124,14 @@ snapshots:
       volar-service-css: 0.0.70(@volar/language-service@2.4.28)
       volar-service-emmet: 0.0.70(@volar/language-service@2.4.28)
       volar-service-html: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-prettier: 0.0.70(@volar/language-service@2.4.28)
+      volar-service-prettier: 0.0.70(@volar/language-service@2.4.28)(prettier@3.8.1)
       volar-service-typescript: 0.0.70(@volar/language-service@2.4.28)
       volar-service-typescript-twoslash-queries: 0.0.70(@volar/language-service@2.4.28)
       volar-service-yaml: 0.0.70(@volar/language-service@2.4.28)
       vscode-html-languageservice: 5.6.2
       vscode-uri: 3.1.0
     optionalDependencies:
+      prettier: 3.8.1
       prettier-plugin-astro: 0.13.0
     transitivePeerDependencies:
       - typescript
@@ -7793,33 +7769,15 @@ snapshots:
       slugify: 1.6.6
       truncatise: 0.0.8
 
-  '@qds.dev/ui@0.14.3(@qwik.dev/core@https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)))':
+  '@qds.dev/ui@0.14.3(@qwik.dev/core@qwik+packages+qwik)':
     dependencies:
       '@oddbird/css-anchor-positioning': 0.6.1
-      '@qwik.dev/core': https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
+      '@qwik.dev/core': link:../qwik/packages/qwik
       temporal-polyfill: 0.3.2
 
   '@quansync/fs@1.0.0':
     dependencies:
       quansync: 1.0.0
-
-  '@qwik.dev/core@https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c(vite@7.3.1(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))':
-    dependencies:
-      csstype: 3.2.3
-      launch-editor: 2.13.1
-      rollup: 4.59.0
-      vite: 7.3.1(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)
-    optionalDependencies:
-      vitest: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)
-
-  '@qwik.dev/core@https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))':
-    dependencies:
-      csstype: 3.2.3
-      launch-editor: 2.13.1
-      rollup: 4.59.0
-      vite: 7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)
-    optionalDependencies:
-      vitest: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)
 
   '@rolldown/binding-android-arm64@1.0.0-rc.1':
     optional: true
@@ -8654,7 +8612,7 @@ snapshots:
       unstorage: 1.17.4(@netlify/blobs@10.7.3)(@vercel/functions@3.4.3)
       vfile: 6.0.3
       vite: 7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)
-      vitefu: 1.1.2(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
+      vitefu: 1.1.2(vite@7.3.1(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
       xxhash-wasm: 1.1.0
       yargs-parser: 22.0.0
       zod: 4.3.6
@@ -8748,7 +8706,7 @@ snapshots:
       unstorage: 1.17.4(@netlify/blobs@10.7.3)(@vercel/functions@3.4.3)
       vfile: 6.0.3
       vite: 7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)
-      vitefu: 1.1.2(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
+      vitefu: 1.1.2(vite@7.3.1(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
       xxhash-wasm: 1.1.0
       yargs-parser: 22.0.0
       zod: 4.3.6
@@ -9162,8 +9120,6 @@ snapshots:
   csso@5.0.5:
     dependencies:
       css-tree: 2.2.1
-
-  csstype@3.2.3: {}
 
   data-uri-to-buffer@4.0.1: {}
 
@@ -10481,11 +10437,6 @@ snapshots:
       commander: 10.0.1
       dotenv: 16.6.1
       winston: 3.19.0
-
-  launch-editor@2.13.1:
-    dependencies:
-      picocolors: 1.1.1
-      shell-quote: 1.8.3
 
   lazystream@1.0.1:
     dependencies:
@@ -12108,8 +12059,6 @@ snapshots:
 
   shebang-regex@3.0.0: {}
 
-  shell-quote@1.8.3: {}
-
   shiki@4.0.1:
     dependencies:
       '@shikijs/core': 4.0.1
@@ -12745,10 +12694,6 @@ snapshots:
     optionalDependencies:
       vite: 7.3.1(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)
 
-  vitefu@1.1.2(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)):
-    optionalDependencies:
-      vite: 7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)
-
   vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2):
     dependencies:
       '@vitest/expect': 4.0.18
@@ -12812,11 +12757,12 @@ snapshots:
     optionalDependencies:
       '@volar/language-service': 2.4.28
 
-  volar-service-prettier@0.0.70(@volar/language-service@2.4.28):
+  volar-service-prettier@0.0.70(@volar/language-service@2.4.28)(prettier@3.8.1):
     dependencies:
       vscode-uri: 3.1.0
     optionalDependencies:
       '@volar/language-service': 2.4.28
+      prettier: 3.8.1
 
   volar-service-typescript-twoslash-queries@0.0.70(@volar/language-service@2.4.28):
     dependencies:

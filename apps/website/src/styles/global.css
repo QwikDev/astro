@@ -275,7 +275,7 @@ pre>code span {
   --bg-code-header: #ede9fe;
   --bg-hover: #f0f0f0;
   --text: var(--purple-950);
-  --text-muted: #938e9d;
+  --text-muted: var(--neutral-600);
   --text-hover: var(--purple-950);
   --border: #e5e5e5;
   --border-interactive: #d1d1d1;

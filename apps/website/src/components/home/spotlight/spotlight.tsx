@@ -29,7 +29,6 @@ export const Spotlight = component$(() => {
   });
 
   const onPointerLeave$ = $(() => {
-    console.log("leave");
     if (!overlayRef.value) return;
 
     overlayRef.value.classList.add("leaving");
