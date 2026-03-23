@@ -107,6 +107,9 @@ export default defineIntegration({
 
         updateConfig({
           vite: {
+            ssr: {
+              noExternal: ["@qwik.dev/core", "@qwik.dev/core/optimizer"]
+            },
             build: {
               rollupOptions: {
                 output: {
