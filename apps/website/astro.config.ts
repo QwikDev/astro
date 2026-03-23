@@ -5,7 +5,7 @@ import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [qwik({ clientRouter: true }), icon(), mdx()],
+  integrations: [qwik(), icon(), mdx()],
   markdown: {
     shikiConfig: {
       themes: {

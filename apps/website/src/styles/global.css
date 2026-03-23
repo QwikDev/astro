@@ -4,6 +4,10 @@
   initial-value: 0px;
 }
 
+@view-transition {
+  navigation: auto;
+}
+
 :root {
   /* colors */
   --off-black: #0a0a0a;
