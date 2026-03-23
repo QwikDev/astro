@@ -95,16 +95,18 @@
 
   /* Animations */
   --qa-fade: cubic-bezier(0.8, -0.4, 0.5, 1);
-  --qa-hover: linear(0,
-      0.417 25.5%,
-      0.867 49.4%,
-      1 57.7%,
-      0.925 65.1%,
-      0.908 68.6%,
-      0.902 72.2%,
-      0.916 78.2%,
-      0.988 92.1%,
-      1);
+  --qa-hover: linear(
+    0,
+    0.417 25.5%,
+    0.867 49.4%,
+    1 57.7%,
+    0.925 65.1%,
+    0.908 68.6%,
+    0.902 72.2%,
+    0.916 78.2%,
+    0.988 92.1%,
+    1
+  );
 
   --breakpoint-sm: 640px;
   --breakpoint-xl: 1240px;
@@ -243,12 +245,12 @@ h1 {
   line-height: 1.1;
 }
 
-pre>code span {
+pre > code span {
   color: var(--shiki-dark) !important;
   background-color: transparent !important;
 }
 
-.light pre>code span {
+.light pre > code span {
   color: var(--shiki-light) !important;
   background-color: transparent !important;
 }
@@ -258,7 +260,7 @@ pre>code span {
   border: 1px solid var(--border);
 }
 
-.light .background-wrapper>div {
+.light .background-wrapper > div {
   background: url("/topo-pattern-light.svg") repeat !important;
   background-size: 600px 600px !important;
 }
