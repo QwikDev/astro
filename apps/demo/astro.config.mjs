@@ -4,5 +4,5 @@ import qwik from "@qwik.dev/astro";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [qwik({ include: "**/qwik/*" })]
+  integrations: [qwik({ include: "**/qwik/*", clientRouter: true })]
 });

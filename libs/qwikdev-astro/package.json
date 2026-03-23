@@ -39,7 +39,12 @@
     "./server": "./server.ts",
     "./root": "./src/root.tsx"
   },
-  "files": ["src", "src/index.ts", "server.ts", "env.d.ts"],
+  "files": [
+    "src",
+    "src/index.ts",
+    "server.ts",
+    "env.d.ts"
+  ],
   "keywords": [
     "astro-integration",
     "astro-component",
@@ -55,7 +60,6 @@
   },
   "bugs": "https://github.com/QwikDev/astro/issues",
   "dependencies": {
-    "@inox-tools/aik-mod": "^0.13.0",
     "astro-integration-kit": "^0.20.0"
   },
   "devDependencies": {

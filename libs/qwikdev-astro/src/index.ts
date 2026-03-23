@@ -1,10 +1,10 @@
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import aikMod from "@inox-tools/aik-mod";
 import { qwikVite } from "@qwik.dev/core/optimizer";
 import type { QwikManifest, QwikVitePluginOptions } from "@qwik.dev/core/optimizer";
 import type { AstroConfig, AstroIntegration } from "astro";
-import { defineIntegration, watchDirectory, withPlugins } from "astro-integration-kit";
+import { defineIntegration, watchDirectory } from "astro-integration-kit";
+import type { Plugin } from "vite";
 import { type ViteBuilder, createFilter } from "vite";
 import {
   INTEGRATION_NAME,
@@ -20,7 +20,25 @@ import {
   stripOutputOptions
 } from "./plugins";
 import { createQwikFileFilter, resolveQwikPaths, scanQwikEntrypoints } from "./scan";
-import type { SetupPropsWithAikMod } from "./types";
+
+const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_MODULE_NAME}`;
+
+function createVirtualModulePlugin(renderOpts: unknown, clientRouter: boolean): Plugin {
+  return {
+    name: "qwik-astro:virtual",
+    resolveId(id) {
+      if (id === VIRTUAL_MODULE_NAME) return RESOLVED_VIRTUAL_ID;
+      return undefined;
+    },
+    load(id) {
+      if (id === RESOLVED_VIRTUAL_ID) {
+        return `export const renderOpts = ${JSON.stringify(renderOpts)};
+export const clientRouter = ${JSON.stringify(clientRouter)};`;
+      }
+      return undefined;
+    }
+  };
+}
 
 /**
  * This project uses Astro Integration Kit.
@@ -43,8 +61,7 @@ export default defineIntegration({
 
     const lifecycleHooks: AstroIntegration["hooks"] = {
       "astro:config:setup": async (setupProps) => {
-        const { addRenderer, updateConfig, config, command, defineModule } =
-          setupProps as SetupPropsWithAikMod;
+        const { addRenderer, updateConfig, config, command } = setupProps;
         astroConfig = config;
         const isDev = command === "dev";
 
@@ -56,18 +73,15 @@ export default defineIntegration({
           serverEntrypoint: SERVER_ENTRYPOINT
         });
 
-        defineModule(VIRTUAL_MODULE_NAME, {
-          constExports: {
-            renderOpts: options?.renderOpts ?? {},
-            clientRouter: options?.clientRouter ?? false
-          }
-        });
-
         ({ srcDir, serverDir, finalDir } = resolveQwikPaths(astroConfig));
 
         const fileFilter = createQwikFileFilter(filter);
         const qwikManifestPlugin = createQwikManifestPlugin(() => qwikManifest);
         const astroQwikPostPlugin = createAstroQwikPostPlugin(isDev);
+        const virtualModulePlugin = createVirtualModulePlugin(
+          options?.renderOpts ?? {},
+          options?.clientRouter ?? false
+        );
 
         const qwikSetupConfig: QwikVitePluginOptions = {
           fileFilter,
@@ -100,7 +114,12 @@ export default defineIntegration({
                 }
               }
             },
-            plugins: [qwikManifestPlugin, ...qwikPlugins, astroQwikPostPlugin]
+            plugins: [
+              virtualModulePlugin,
+              qwikManifestPlugin,
+              ...qwikPlugins,
+              astroQwikPostPlugin
+            ]
           }
         });
       },
@@ -140,10 +159,9 @@ export default defineIntegration({
       }
     };
 
-    return withPlugins({
+    return {
       name: INTEGRATION_NAME,
-      hooks: lifecycleHooks,
-      plugins: [aikMod]
-    });
+      hooks: lifecycleHooks
+    };
   }
 });
