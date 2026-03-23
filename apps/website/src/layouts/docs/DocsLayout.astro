@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from "astro:transitions";
 import { Sidebar } from "@components/docs/sidebar/sidebar";
 import { Toc } from "@components/docs/toc/toc";
 import { Background } from "@components/home/background/background";
@@ -31,6 +32,7 @@ const { title, currentPath, toc = [] } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title} — Qwik + Astro</title>
+    <ClientRouter />
   </head>
   <body>
     <script is:inline>

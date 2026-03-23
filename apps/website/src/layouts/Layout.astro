@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from "astro:transitions";
 import { JSChunkAnimator } from "@components/home/js-chunk-animator/js-chunk-animator";
 import "../styles/global.css";
 
@@ -21,6 +22,7 @@ import "@fontsource/yusei-magic";
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<ClientRouter />
 	</head>
 	<body>
 		<script is:inline>
