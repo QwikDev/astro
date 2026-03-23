@@ -7,7 +7,7 @@ export const INTEGRATION_NAME = "@qwik.dev/astro";
 export const SERVER_ENTRYPOINT = "@qwik.dev/astro/server";
 export const ROOT_ENTRYPOINT = "@qwik.dev/astro/root";
 
-export const VIRTUAL_MODULE_NAME = "virtual:qwikdev-astro";
+export const VIRTUAL_MODULE_NAME = "virtual:qwik-astro";
 
 export const VIRTUAL_MODULES = {
   "@qwik-client-manifest": "\0@qwik-client-manifest"
@@ -43,6 +43,9 @@ export const optionsSchema = z
       .custom<RenderOptions>((data) => {
         return typeof data === "object" && data !== null;
       })
-      .optional()
+      .optional(),
+
+    /** Enable SPA-style navigation support with Astro's ClientRouter. */
+    clientRouter: z.boolean().optional()
   })
   .optional();

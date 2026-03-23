@@ -19,6 +19,7 @@ export default defineConfig({
       include: "**/qwik/*",
       exclude: "**/legacy/*",
       debug: true,
+      clientRouter: true,
       renderOpts: {
         base: "/build/",
       },
@@ -26,6 +27,16 @@ export default defineConfig({
   ],
 });
 ```
+
+## clientRouter
+
+Enable this option when using Astro's `<ClientRouter />` component for SPA-style page transitions. It manages Qwik container cleanup as Astro navigations happen: destroying old containers, clearing vnode data, and re-initializing event observers on the new page.
+
+```ts
+qwik({ clientRouter: true })
+```
+
+> Astro does not expose a server-side API for integrations to detect `<ClientRouter />` usage, so this option is required when using client-side navigation for the time being.
 
 ## renderOpts
 

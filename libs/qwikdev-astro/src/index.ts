@@ -58,7 +58,8 @@ export default defineIntegration({
 
         defineModule(VIRTUAL_MODULE_NAME, {
           constExports: {
-            renderOpts: options?.renderOpts ?? {}
+            renderOpts: options?.renderOpts ?? {},
+            clientRouter: options?.clientRouter ?? false
           }
         });
 

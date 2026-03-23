@@ -1,10 +1,11 @@
-import { renderOpts as globalRenderOpts } from "virtual:qwikdev-astro";
+import { renderOpts as globalRenderOpts, clientRouter } from "virtual:qwik-astro";
 import { type JSXNode, jsx } from "@qwik.dev/core";
 import { SSRComment } from "@qwik.dev/core/internal";
 import type { QwikManifest } from "@qwik.dev/core/optimizer";
 import { type RenderToStreamOptions, renderToStream } from "@qwik.dev/core/server";
 import type { SSRResult } from "astro";
-import clientRouterScript from "./src/client-router.js?raw";
+
+const CLIENT_ROUTER_SCRIPT = `(function(){window.addEventListener("error",e=>{e.message&&(e.message.includes("replaceWith")||e.message.includes("has already been declared"))&&e.preventDefault()}),window.addEventListener("unhandledrejection",e=>{e.reason?.message?.includes("replaceWith")&&e.preventDefault()}),document.addEventListener("astro:before-swap",()=>{document.querySelectorAll("[q\\\\:container]").forEach(e=>{e.qDestroy&&e.qDestroy()}),document.qVNodeData=void 0}),document.addEventListener("astro:after-swap",()=>{window._qwikEv?.push&&window._qwikEv.push("e:qvisible"),document.dispatchEvent(new Event("readystatechange"))})})();`;
 
 const containerMap = new WeakMap<SSRResult, boolean>();
 type RendererContext = {
@@ -149,8 +150,8 @@ export async function renderToStaticMarkup(
       html = html.replace(marker, content);
     }
 
-    if (isInitialContainer) {
-      html += `<script q-astro-client-router data-astro-exec="">${clientRouterScript}</script>`;
+    if (clientRouter && isInitialContainer) {
+      html += `<script qwik-astro-client-router data-astro-exec="">${CLIENT_ROUTER_SCRIPT}</script>`;
     }
 
     return { html };

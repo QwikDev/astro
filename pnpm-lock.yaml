@@ -8706,7 +8706,7 @@ snapshots:
       unstorage: 1.17.4(@netlify/blobs@10.7.3)(@vercel/functions@3.4.3)
       vfile: 6.0.3
       vite: 7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)
-      vitefu: 1.1.2(vite@7.3.1(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
+      vitefu: 1.1.2(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2))
       xxhash-wasm: 1.1.0
       yargs-parser: 22.0.0
       zod: 4.3.6
@@ -12693,6 +12693,10 @@ snapshots:
   vitefu@1.1.2(vite@7.3.1(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)):
     optionalDependencies:
       vite: 7.3.1(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)
+
+  vitefu@1.1.2(vite@7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)):
+    optionalDependencies:
+      vite: 7.3.1(@types/node@24.0.0)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2)
 
   vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@22.15.31)(jiti@2.6.1)(tsx@4.20.1)(yaml@2.8.2):
     dependencies:
