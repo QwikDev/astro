@@ -52,7 +52,7 @@
     "@changesets/cli": "^2.29.4",
     "@playwright/test": "^1.58.2",
     "@qwik.dev/astro": "workspace:*",
-    "@qwik.dev/core": "2.0.0-beta.29",
+    "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@324116a",
     "@qwikdev/create-astro": "workspace:*",
     "@types/node": "^22.15.31",
     "astro": "6.0.6",
