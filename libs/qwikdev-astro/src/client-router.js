@@ -29,17 +29,10 @@ document.addEventListener("astro:before-swap", function () {
 });
 
 document.addEventListener("astro:after-swap", function () {
-  var o = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        o.unobserve(entry.target);
-        entry.target.dispatchEvent(new CustomEvent("qvisible", { detail: entry }));
-      }
-    });
-  });
-
-  document.querySelectorAll("[q-e\\:qvisible]:not([q\\:observed])").forEach(function (e) {
-    o.observe(e);
-    e.setAttribute("q:observed", "true");
-  });
+  // Re-trigger qwikloader's processReadyStateChange to observe new qvisible
+  // elements using its native IntersectionObserver after page swap.
+  if (window._qwikEv && window._qwikEv.push) {
+    window._qwikEv.push("e:qvisible");
+  }
+  document.dispatchEvent(new Event("readystatechange"));
 });

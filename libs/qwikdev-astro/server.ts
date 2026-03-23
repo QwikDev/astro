@@ -150,14 +150,7 @@ export async function renderToStaticMarkup(
     }
 
     if (isInitialContainer) {
-      let hasClientRouter = false;
-      for (const s of this.result._metadata?.renderedScripts || []) {
-        if (s.includes("ClientRouter")) { hasClientRouter = true; break; }
-      }
-
-      if (hasClientRouter) {
-        html += `<script q-astro-client-router data-astro-exec="">${clientRouterScript}</script>`;
-      }
+      html += `<script q-astro-client-router data-astro-exec="">${clientRouterScript}</script>`;
     }
 
     return { html };
