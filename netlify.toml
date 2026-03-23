@@ -1,0 +1,8 @@
+[build]
+  command = "pnpm run docs.build"
+  publish = "apps/website/dist"
+  ignore = "git diff --quiet $CACHED_COMMIT HEAD -- apps/website/ libs/qwikdev-astro/"
+
+[build.environment]
+  LEFTHOOK = "0"
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
