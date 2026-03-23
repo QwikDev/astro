@@ -36,9 +36,6 @@
     "test.platform.report": "playwright show-report"
   },
   "pnpm": {
-    "overrides": {
-      "@qwik.dev/core": "link:../qwik/packages/qwik"
-    },
     "ignoredBuiltDependencies": [
       "@biomejs/biome",
       "@parcel/watcher",
