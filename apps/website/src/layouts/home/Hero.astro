@@ -19,7 +19,7 @@ import { Icon } from "astro-icon/components";
   </div>
   
 <Spotlight>
- <Image loading="eager" class="hero-image" src={heroImage} alt="Qwik + Astro" />
+ <Image loading="eager" fetchpriority="high" class="hero-image" src={heroImage} alt="Qwik + Astro" widths={[500, 800, 1200]} sizes="(max-width: 640px) 100vw, (max-width: 1240px) 80vw, 1200px" />
 </Spotlight>
 
 <LogoHover />
@@ -127,12 +127,10 @@ import { Icon } from "astro-icon/components";
       from {
         opacity: 0;
         transform: translateY(var(--space-xs));
-        filter: blur(8px);
       }
       to {
         opacity: 1;
         transform: translateY(0);
-        filter: blur(0);
       }
     }
 </style>
