@@ -5,8 +5,7 @@
 <h1 align="center">Qwik + Astro</h1>
 
 <p align="center">
-  Render <a href="https://qwik.dev/">Qwik</a> components in <a href="https://astro.build/">Astro</a>.
-  <br />Zero hydration. Instant interactivity. HTML until users care.
+  Render <a href="https://qwik.dev/">Qwik</a> components in <a href="https://astro.build/">Astro</a>. Zero hydration. Instant interactivity. HTML until users care.
 </p>
 
 <p align="center">
