@@ -28,6 +28,10 @@ npx astro add @qwik.dev/astro
 
 For full installation instructions, guides, and API reference, visit **[qwik.dev/astro](https://qwik.dev/astro)**.
 
+## Upgrading from v1
+
+This is the v2 branch (`build/v2`), which supports **Qwik v2** and **Astro 6+** under the new `@qwik.dev/astro` package name. If you need Astro <5 or Qwik v1, use the [`@qwikdev/astro`](https://www.npmjs.com/package/@qwikdev/astro) package (without the dot).
+
 ## Contributing
 
 See our [Contributing Guide](https://qwik.dev/astro/contributing) to get started.
