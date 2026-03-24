@@ -5,14 +5,14 @@
 <h1 align="center">Qwik + Astro</h1>
 
 <p align="center">
-  Render <a href="https://qwik.dev/">Qwik</a> components in <a href="https://astro.build/">Astro</a>. Zero hydration. Instant interactivity. HTML until users care.
+  Render <a href="https://qwik.dev/">Qwik</a> components in <a href="https://astro.build/">Astro</a>.
+  <br />
+  Zero hydration. Instant interactivity. HTML until users care.
 </p>
 
 <p align="center">
   <a href="https://qwik.dev/astro">Documentation</a> · <a href="https://github.com/QwikDev/astro/issues">Report an Issue</a> · <a href="https://discord.com/channels/842438759945601056/1150941080355881080">Discord</a>
 </p>
-
----
 
 ## Quick Start
 
