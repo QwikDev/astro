@@ -2,15 +2,15 @@
   <img src="apps/website/public/qwik-v2-logo.svg" width="120" alt="Qwik logo" />
 </p>
 
-<h1 align="center">@qwik.dev/astro</h1>
+<h1 align="center">Qwik + Astro</h1>
 
 <p align="center">
-  Primitives for the <a href="https://qwik.dev/">Qwik</a> framework integration in <a href="https://astro.build/">Astro</a>.
-  <br />Zero hydration. Instant interactivity. JavaScript streaming.
+  Render <a href="https://qwik.dev/">Qwik</a> components in <a href="https://astro.build/">Astro</a>.
+  <br />Zero hydration. Instant interactivity. HTML until users care.
 </p>
 
 <p align="center">
-  <a href="https://qwik.dev/astro"><strong>Documentation</strong></a> · <a href="https://github.com/QwikDev/astro/issues">Report an Issue</a> · <a href="https://discord.com/channels/842438759945601056/1150941080355881080">Discord</a>
+  <a href="https://qwik.dev/astro">Documentation</a> · <a href="https://github.com/QwikDev/astro/issues">Report an Issue</a> · <a href="https://discord.com/channels/842438759945601056/1150941080355881080">Discord</a>
 </p>
 
 ---
@@ -31,11 +31,11 @@ For full installation instructions, guides, and API reference, visit **[qwik.dev
 
 ## Contributing
 
-See our [Contributing Guide](https://github.com/QwikDev/astro/blob/main/contributing.md) to get started.
+See our [Contributing Guide](https://qwik.dev/astro/contributing) to get started.
 
 ## Help
 
-Reach out in the [Qwik Discord](https://discord.gg/p7E6mgXGgF) — there's a dedicated [#qwik-astro](https://discord.com/channels/842438759945601056/1150941080355881080) channel. You can also [open an issue](https://github.com/QwikDev/astro/issues).
+Reach out in the [Qwik Discord](https://discord.gg/p7E6mgXGgF), there's a dedicated [#qwik-astro](https://discord.com/channels/842438759945601056/1150941080355881080) channel. You can also [open an issue](https://github.com/QwikDev/astro/issues).
 
 ## Maintainers
 
