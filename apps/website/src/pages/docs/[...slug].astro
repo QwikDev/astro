@@ -24,11 +24,7 @@ const toc = headings
   }));
 ---
 
-<DocsLayout
-  title={entry.data.title}
-  currentPath={currentPath}
-  toc={toc}
->
+<DocsLayout title={entry.data.title} currentPath={currentPath} toc={toc}>
   <section class="docs-hero">
     <span class="docs-label">{entry.data.label}</span>
     <h1>{entry.data.title}</h1>
@@ -106,11 +102,18 @@ const toc = headings
   .docs-prose :global(li code) {
     font-family: monospace;
     font-size: 0.85em;
-    color: var(--purple-700);
+    color: var(--rose-300);
     background: var(--bg-code);
     padding: 0.15em 0.4em;
     border-radius: 4px;
     border: 1px solid var(--border);
+  }
+
+  :global(.light) .docs-prose :global(p code),
+  :global(.light) .docs-prose :global(li code) {
+    background: var(--rose-50);
+    border-color: var(--rose-200);
+    color: var(--rose-700);
   }
 
   .docs-prose :global(a) {
@@ -145,6 +148,19 @@ const toc = headings
     gap: var(--space-3xs);
   }
 
+  .docs-prose {
+    counter-reset: docs-ol;
+  }
+
+  .docs-prose :global(ol) {
+    list-style: none;
+    padding: 0;
+    margin-bottom: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-l);
+  }
+
   .docs-prose :global(li) {
     font-size: var(--step-0);
     color: var(--text-muted);
@@ -152,7 +168,7 @@ const toc = headings
     position: relative;
   }
 
-  .docs-prose :global(li::before) {
+  .docs-prose :global(ul > li::before) {
     content: "";
     position: absolute;
     left: 0;
@@ -160,6 +176,20 @@ const toc = headings
     width: 6px;
     height: 6px;
     background-color: var(--rose-500);
+  }
+
+  .docs-prose :global(ol > li) {
+    counter-increment: docs-ol;
+  }
+
+  .docs-prose :global(ol > li::before) {
+    content: counter(docs-ol) ".";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: 600;
+    color: var(--rose-500);
+    font-size: var(--step-0);
   }
 
   .docs-prose :global(pre) {

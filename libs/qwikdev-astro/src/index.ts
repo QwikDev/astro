@@ -23,6 +23,46 @@ import { createQwikFileFilter, resolveQwikPaths, scanQwikEntrypoints } from "./s
 
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_MODULE_NAME}`;
 
+const QWIK_NOEXTERNAL = ["@qwik.dev/core", "@qwik.dev/core/optimizer"];
+
+/**
+ * Ensures Qwik packages are in `resolve.noExternal` at the per-environment level.
+ *
+ * Qwik core's `qwikVite` plugin has a `configEnvironment` hook that does this,
+ * but it only targets `name === 'ssr'`. Astro 6 creates additional server environments
+ * (e.g. "prerender") that also need noExternal. Vite 7 sets `consumer: "server"` for
+ * any non-client environment, but qwik checks `name` not `consumer` because `consumer`
+ * isn't set yet when `configEnvironment` runs.
+ *
+ * Upstream fix: qwik-evolution #318 (remove need for noExternal entirely).
+ * Interim core fix: qwikVite's configEnvironment should check all server environments,
+ * not just `name === 'ssr'`.
+ *
+ * @see https://github.com/QwikDev/qwik-evolution/discussions/318
+ * @see https://github.com/QwikDev/qwik/blob/main/packages/qwik/src/optimizer/src/plugins/vite.ts#L374
+ */
+function createQwikNoExternalPlugin(): Plugin {
+  return {
+    name: "qwik-astro:noexternal",
+    enforce: "pre",
+    configEnvironment(_name, options) {
+      const existing = options.resolve?.noExternal;
+      if (existing === true) return;
+
+      let current: (string | RegExp)[];
+      if (Array.isArray(existing)) current = existing;
+      else if (existing) current = [existing];
+      else current = [];
+
+      return {
+        resolve: {
+          noExternal: [...current, ...QWIK_NOEXTERNAL]
+        }
+      };
+    }
+  };
+}
+
 function createVirtualModulePlugin(renderOpts: unknown, clientRouter: boolean): Plugin {
   return {
     name: "qwik-astro:virtual",
@@ -76,6 +116,7 @@ export default defineIntegration({
         ({ srcDir, serverDir, finalDir } = resolveQwikPaths(astroConfig));
 
         const fileFilter = createQwikFileFilter(filter);
+        const qwikNoExternalPlugin = createQwikNoExternalPlugin();
         const qwikManifestPlugin = createQwikManifestPlugin(() => qwikManifest);
         const astroQwikPostPlugin = createAstroQwikPostPlugin(isDev);
         const virtualModulePlugin = createVirtualModulePlugin(
@@ -118,6 +159,7 @@ export default defineIntegration({
               }
             },
             plugins: [
+              qwikNoExternalPlugin,
               virtualModulePlugin,
               qwikManifestPlugin,
               ...qwikPlugins,

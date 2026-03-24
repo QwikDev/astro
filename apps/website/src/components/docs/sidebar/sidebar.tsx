@@ -1,4 +1,5 @@
-import { component$, useSignal, useStyles$ } from "@qwik.dev/core";
+import { component$, useStyles$ } from "@qwik.dev/core";
+import { modal } from "@qds.dev/ui";
 import { navItems } from "../nav-items";
 import { SearchModal } from "../search/search-modal";
 import styles from "./sidebar.css?inline";
@@ -103,7 +104,6 @@ export const Sidebar = component$<{
   version: string;
 }>(({ currentPath, version }) => {
   useStyles$(styles);
-  const mobileOpen = useSignal(false);
 
   return (
     <>
@@ -112,52 +112,12 @@ export const Sidebar = component$<{
         <SidebarContent currentPath={currentPath} version={version} />
       </aside>
 
-      {/* Mobile trigger */}
-      <button
-        class="sidebar-mobile-trigger"
-        onClick$={() => {
-          mobileOpen.value = true;
-        }}
-        aria-label="Open navigation"
-        type="button"
-        aria-hidden={mobileOpen.value ? "true" : "false"}
-      >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="12" x2="15" y2="12" />
-          <line x1="3" y1="18" x2="18" y2="18" />
-        </svg>
-      </button>
-
-      {/* Mobile sheet */}
-      <div
-        class={`sidebar-sheet-backdrop${mobileOpen.value ? " open" : ""}`}
-        onClick$={() => {
-          mobileOpen.value = false;
-        }}
-      />
-      <aside class={`sidebar-sheet${mobileOpen.value ? " open" : ""}`}>
-        <button
-          class="sidebar-sheet-close"
-          onClick$={() => {
-            mobileOpen.value = false;
-          }}
-          aria-label="Close navigation"
-          type="button"
-        >
+      {/* Mobile sidebar using QDS modal */}
+      <modal.root>
+        <modal.trigger class="sidebar-mobile-trigger" aria-label="Open navigation">
           <svg
-            width="18"
-            height="18"
+            width="20"
+            height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -166,12 +126,33 @@ export const Sidebar = component$<{
             stroke-linejoin="round"
             aria-hidden="true"
           >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="15" y2="12" />
+            <line x1="3" y1="18" x2="18" y2="18" />
           </svg>
-        </button>
-        <SidebarContent currentPath={currentPath} version={version} />
-      </aside>
+        </modal.trigger>
+
+        <modal.content class="sidebar-sheet">
+          <modal.title class="sr-only">Navigation</modal.title>
+          <modal.close class="sidebar-sheet-close" aria-label="Close navigation">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </modal.close>
+          <SidebarContent currentPath={currentPath} version={version} />
+        </modal.content>
+      </modal.root>
     </>
   );
 });

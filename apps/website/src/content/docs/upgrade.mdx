@@ -1,0 +1,1240 @@
+---
+title: Upgrade Guide
+label: "Releases"
+description: Migration guide for every version of the Qwik Astro integration.
+order: 1.5
+---
+
+A complete migration guide covering every release of `@qwikdev/astro`. Each section explains what changed, what to do, and any breaking changes to watch for.
+
+
+## Upcoming 1.0 Release
+
+The next big release brings **Qwik v2** and **Astro 6+** support. This is the largest upgrade in the project's history.
+
+
+### Breaking changes
+
+- **Package name changed** from `@qwikdev/astro` to `@qwik.dev/astro`
+- **Qwik v2 required** — Qwik v1 is no longer supported
+- **Astro 6+ required** — earlier Astro versions are no longer supported
+- **`@qwik.dev/core` replaces `@builder.io/qwik`** as the core package
+- **Deprecated symbol mapper removed** — the integration no longer ships its own symbol mapper
+- **Extra qwik loader handling removed** — the integration relies on Qwik's built-in loader
+
+
+### Migration steps
+
+1. Update your packages:
+
+```bash
+# Remove old packages
+npm uninstall @qwikdev/astro @builder.io/qwik
+
+# Install new packages
+npm install @qwik.dev/astro @qwik.dev/core
+```
+
+2. Update your `astro.config.mjs` import:
+
+```diff
+- import qwik from '@qwikdev/astro';
++ import qwik from '@qwik.dev/astro';
+```
+
+3. Update `tsconfig.json`:
+
+```diff
+{
+  "compilerOptions": {
+-   "jsxImportSource": "@builder.io/qwik"
++   "jsxImportSource": "@qwik.dev/core"
+  }
+}
+```
+
+4. Update all Qwik imports in your components:
+
+```diff
+- import { component$, useSignal } from '@builder.io/qwik';
++ import { component$, useSignal } from '@qwik.dev/core';
+```
+
+5. If you use per-file JSX pragma, update those too:
+
+```diff
+- /** @jsxImportSource @builder.io/qwik */
++ /** @jsxImportSource @qwik.dev/core */
+```
+
+
+### New features
+
+- **Client router** — enable SPA-style navigation support with Astro's `ClientRouter`:
+
+```js
+// astro.config.mjs
+import qwik from '@qwik.dev/astro';
+
+export default defineConfig({
+  integrations: [
+    qwik({ clientRouter: true }),
+  ],
+});
+```
+
+- **Visible task** — now uses native Qwik visible task, matching Qwik Router behavior
+- **Slots use comments** — slot markers switched from DOM nodes to comments for cleaner output
+
+
+## 0.8.3
+
+- **Migrated to tsdown** — internal build tooling switched from tsup to tsdown
+- **`resolveId` fix** — returns `null` instead of throwing on unresolved modules, fixing compatibility issues with other Vite plugins
+
+```bash
+npm install @qwikdev/astro@0.8.3
+```
+
+## 0.8.2
+
+- **Global render options** — configure render options globally through the integration config, applying to all Qwik components at once
+- **Build fix** — resolved a build regression introduced alongside render options
+
+```js
+// astro.config.mjs
+import qwik from '@qwikdev/astro';
+
+export default defineConfig({
+  integrations: [
+    qwik({
+      renderOpts: {
+        containerTagName: 'div',
+      },
+    }),
+  ],
+});
+```
+
+```bash
+npm install @qwikdev/astro@0.8.2
+```
+
+## 0.8.1
+
+- **Per-component render options** — pass `renderOpts` as a prop on any Qwik component to override the global defaults for that component
+- **Deno adapter updated** — replaced deprecated `@astrojs/deno` with `@deno/astro-adapter`
+- **CLI improvements** — uses `panam` for package manager subprocess management, fixes for template file paths and interaction interception
+
+```astro
+---
+import { Counter } from '../components/counter';
+---
+
+<Counter renderOpts={{ containerTagName: 'section' }} />
+```
+
+```bash
+npm install @qwikdev/astro@0.8.1
+```
+
+## 0.8.0
+
+- **Preloader update** — improved module preloading behavior for better performance
+
+```bash
+npm install @qwikdev/astro@0.8.0
+```
+
+## 0.7.12
+
+- **Vercel adapter fix** — resolved compatibility issues with Vercel deployments
+
+```bash
+npm install @qwikdev/astro@0.7.12
+```
+
+## 0.7.11
+
+- **Dev preloader removed** — removed the dev-mode preloader added in 0.7.10, settling on Qwik's built-in approach
+- **CLI fix** — `biome apply --unsafe` deprecation error fixed in templates
+
+```bash
+npm install @qwikdev/astro@0.7.11
+```
+
+## 0.7.10
+
+- **Dev preloader added** — added module preloading in dev mode with support for multiple pages and first-container detection
+
+```bash
+npm install @qwikdev/astro@0.7.10
+```
+
+## 0.7.9
+
+- **Inline component fix** — inline components with props now transform correctly; fixed conditional string append vs HTML return behavior
+
+```bash
+npm install @qwikdev/astro@0.7.9
+```
+
+## 0.7.8
+
+- **Barrel file support** — barrel files (re-export files) are now handled correctly by the entry point scanner
+
+```bash
+npm install @qwikdev/astro@0.7.8
+```
+
+## 0.7.7
+
+- **Updated server bundle** — refreshed the server bundle for improved compatibility
+- **CLI API update** — renamed `--safe` option to `--copy`, improved template selection, dry-run fixes, and better messaging
+
+```bash
+npm install @qwikdev/astro@0.7.7
+```
+
+## 0.7.6
+
+- **Reduced bloat** — slimmed down the package by using inline modules and reducing unnecessary exports
+- **Manifest path handling** — improved manifest path resolution
+
+```bash
+npm install @qwikdev/astro@0.7.6
+```
+
+## 0.7.5
+
+- **Virtual imports fixed** — resolved issues with Astro virtual imports; no longer passes the Qwik plugin twice
+- **Simpler build** — simplified the build pipeline
+- **CLI improvements** — Astro template support, `.gitignore` merging, Deno `npm:` specifier support, and better default options
+
+```bash
+npm install @qwikdev/astro@0.7.5
+```
+
+## 0.7.4
+
+- **Client router support** — added initial support for Astro's `ClientRouter` (view transitions). Qwik components now properly re-observe `qvisible` after page swaps.
+
+```bash
+npm install @qwikdev/astro@0.7.4
+```
+
+## 0.7.3
+
+- **Node error handling** — provides a clearer error message when running in unsupported Node.js environments
+
+```bash
+npm install @qwikdev/astro@0.7.3
+```
+
+## 0.7.2
+
+- **`.gitignore` fix** — fixed `.gitignore` files not being included when publishing to npm
+- **CLI updates** — updated dependencies, improved template base file testing
+
+```bash
+npm install @qwikdev/astro@0.7.2
+```
+
+## 0.7.1
+
+- **CLI dependency upgrade** — updated CLI dependencies to latest versions
+
+```bash
+npm install @qwikdev/astro@0.7.1
+```
+
+## 0.7.0
+
+Major release upgrading to **Astro 5** with significant internal rewrites.
+
+
+### Breaking changes
+
+- **Astro 5 required** — Astro 4.x is no longer supported
+- **Node.js reliance removed** — the integration is now environment-agnostic (works with Deno, Bun, etc.)
+- **Speculative module fetching removed** — replaced by Qwik's built-in preloader
+- **Service worker prefetch removed** — no longer ships SW-based prefetching
+
+
+### What changed
+
+- **Environment-agnostic build** — no more Node.js-specific imports, works in any runtime
+- **Manifest handling rewrite** — uses `globalThis` for manifest passing instead of file system
+- **renderToStream** — switched to `renderToStream` for server rendering
+- **Debug mode** — added `debug` option for troubleshooting the qwikVite plugin:
+
+```js
+qwik({ debug: true })
+```
+
+- **Include/exclude made optional** — entry point filtering options are no longer required
+- **Library support** — added support for libraries in filter mode with recursive scanning
+- **MDX file support** — MDX files now included in entry point scanning
+- **CLI overhaul** — complete rewrite of `@qwikdev/create-astro` with programmatic interaction execution, `node-pty` support, template system, `--add` flag for existing projects, and comprehensive test suite
+
+
+### Migration steps
+
+1. Upgrade Astro to v5:
+
+```bash
+npx @astrojs/upgrade
+```
+
+2. Update the integration:
+
+```bash
+npm install @qwikdev/astro@0.7.0
+```
+
+3. If you were using the `prefetch` or service worker features, remove any related configuration — preloading is now handled automatically by Qwik's built-in preloader.
+
+## 0.6.3
+
+- **Inline component support** — Qwik components can now be defined inline (not just in separate files)
+- **CLI updates** — default demo app and starter kit templates added, adapter made optional
+
+```bash
+npm install @qwikdev/astro@0.6.3
+```
+
+## 0.6.2
+
+- **Dependency updates** — updated to latest Qwik and Astro dependencies
+
+```bash
+npm install @qwikdev/astro@0.6.2
+```
+
+## 0.6.1
+
+- **Version alignment** — aligned internal version references
+
+```bash
+npm install @qwikdev/astro@0.6.1
+```
+
+## 0.6.0
+
+Introduced the **`@qwikdev/create-astro` CLI** and major performance improvements.
+
+
+### What changed
+
+- **New CLI** — `npm create @qwikdev/astro` scaffolds new projects with template selection, adapter choice, and linter/formatter setup
+- **Symbol mapper from core** — switched to using Qwik's built-in symbol mapper (upgrading to Qwik 1.7) for major performance improvements
+- **Deno adapter template** — the CLI includes a Deno adapter template
+
+
+### Migration steps
+
+No breaking changes. Update your package:
+
+```bash
+npm install @qwikdev/astro@0.6.0
+```
+
+To use the new CLI for future projects:
+
+```bash
+npm create @qwikdev/astro
+```
+
+## 0.5.16
+
+- **CLI fixes** — downgraded Qwik to fix CLI compatibility, updated docs
+
+```bash
+npm install @qwikdev/astro@0.5.16
+```
+
+## 0.5.15
+
+- **`@qwikdev/create-astro` introduced** — new project scaffolding CLI with Deno adapter template, linter/formatter selection (Biome or ESLint/Prettier), interactive and non-interactive modes
+- **Monorepo scripts** — added monorepo-wide scripts for Node and Deno demos
+
+```bash
+npm install @qwikdev/astro@0.5.15
+```
+
+## 0.5.14
+
+- **Slot regression fix** — fixed a slot rendering regression from 0.5.10
+- **Qwik core SW components** — updated to new Qwik core service worker components
+- **AIK upgrade reverted** — reverted astro-integration-kit upgrade that caused issues
+
+```bash
+npm install @qwikdev/astro@0.5.14
+```
+
+## 0.5.13
+
+- **Deno adapter demo** — added Deno adapter demo app
+- **Monorepo restructure** — renamed folders in `apps/` directory
+
+```bash
+npm install @qwikdev/astro@0.5.13
+```
+
+## 0.5.12
+
+- **Custom outDir** — fixed customization of the output directory
+
+```bash
+npm install @qwikdev/astro@0.5.12
+```
+
+## 0.5.11
+
+- **Dependency upgrades** — refreshed Qwik core SW components and dependencies
+
+```bash
+npm install @qwikdev/astro@0.5.11
+```
+
+## 0.5.10
+
+- **View Transitions fix** — components now work correctly when a route transition has the same component on both pages
+- **Biome adopted** — switched from ESLint/Prettier to Biome for linting and formatting
+- **Lefthook** — added pre-commit hooks for code style enforcement
+
+```bash
+npm install @qwikdev/astro@0.5.10
+```
+
+## 0.5.9
+
+- **Artifact merging** — `moveArtifacts` now merges directories instead of overwriting, fixing issues when build artifacts overlap
+
+```bash
+npm install @qwikdev/astro@0.5.9
+```
+
+## 0.5.8
+
+- **Astro Integration Kit exports** — proper exports configured with astro-integration-kit
+- **Symlink handling** — `crawlDirectory` now properly handles symlinks
+- **Dependencies updated**
+
+```bash
+npm install @qwikdev/astro@0.5.8
+```
+
+## 0.5.7
+
+- **Dependencies** — minor dependency updates
+
+```bash
+npm install @qwikdev/astro@0.5.7
+```
+
+## 0.5.6
+
+- **Dependencies** — minor dependency updates
+
+```bash
+npm install @qwikdev/astro@0.5.6
+```
+
+## 0.5.5
+
+- **Dependencies** — minor dependency updates
+
+```bash
+npm install @qwikdev/astro@0.5.5
+```
+
+## 0.5.4
+
+- **astro-integration-kit dependency** — added as explicit dependency
+
+```bash
+npm install @qwikdev/astro@0.5.4
+```
+
+## 0.5.3
+
+- **Package types fix** — fixed incorrect package type exports
+- **`sync$` fix** — `sync$` now works correctly in dev mode
+- **Astro Integration Kit migration** — began migrating internals to use astro-integration-kit
+- **Split file architecture** — integration code split into smaller, focused modules with HMR support
+
+```bash
+npm install @qwikdev/astro@0.5.3
+```
+
+## 0.5.2
+
+- **Changesets adopted** — switched to changesets for release management
+
+```bash
+npm install @qwikdev/astro@0.5.2
+```
+
+## 0.5.1
+
+- **Documentation updates** — updated community section and fixed missing links in README
+
+```bash
+npm install @qwikdev/astro@0.5.1
+```
+
+## 0.5.0
+
+Stabilization release. Version bump to mark the start of the 0.5.x series.
+
+```bash
+npm install @qwikdev/astro@0.5.0
+```
+
+## 0.4.11
+
+- **Reverted Qwik dependency** — back to `^1.4.0` from a pinned GitHub build hash
+
+```bash
+npm install @qwikdev/astro@0.4.11
+```
+
+## 0.4.10
+
+- **Qwik dependency pinned** — pointed to a specific Qwik build hash for testing
+
+```bash
+npm install @qwikdev/astro@0.4.10
+```
+
+## 0.4.9
+
+- **Speculative module fetching docs** — added documentation for the prefetch feature including instant interactivity, and guidance against using nanostores/global signals in SSR
+- **Custom events section** — documented Qwik's design decision around global signal state
+
+```bash
+npm install @qwikdev/astro@0.4.9
+```
+
+## 0.4.8
+
+- **Dev mode SW unregister** — automatically unregisters the service worker in dev mode to prevent stale SW from preview mode interfering
+
+```bash
+npm install @qwikdev/astro@0.4.8
+```
+
+## 0.4.7
+
+- **Prefetch isolation** — prefetch script placed outside the Qwik container when there is no `q:type=prefetch-bundles`
+- **Empty prefetch handling** — skips prefetch bundle graph script when there is nothing to prefetch
+- **Vercel adapter fixes** — hybrid output correctly places `q-chunks` in static folder; `_astro` directory in proper place
+- **Windows path fix** — fixed pathname handling on `build:start` for Windows
+- **Preview-only prefetch** — prefetch SW and bundle scripts now only used in preview mode
+
+```bash
+npm install @qwikdev/astro@0.4.7
+```
+
+## 0.4.6
+
+- **Windows path fix** — fixed drive letter handling in output path on Windows
+
+```bash
+npm install @qwikdev/astro@0.4.6
+```
+
+## 0.4.5
+
+- **Output directory simplified** — uses `outDir` directly instead of conditionally picking between client/output paths
+- **Qwik upgraded** — bumped `@builder.io/qwik` peer dependency to `^1.4.0`
+
+```bash
+npm install @qwikdev/astro@0.4.5
+```
+
+## 0.4.4
+
+- **Hybrid output support** — `hybrid` output mode now correctly handled alongside `server` mode for artifact placement
+
+```bash
+npm install @qwikdev/astro@0.4.4
+```
+
+## 0.4.3
+
+- **Vercel output path fix** — correctly uses `build.client` path for server/hybrid builds instead of `distDir`
+
+```bash
+npm install @qwikdev/astro@0.4.3
+```
+
+## 0.4.2
+
+- **Conditional prefetch scripts** — prefetch bundle graph script only injected when `q:type="prefetch-bundles"` is present in the HTML
+
+```bash
+npm install @qwikdev/astro@0.4.2
+```
+
+## 0.4.1
+
+- **Prefetch script placement fix** — improved detection of where to inject prefetch scripts, falling back to `qwik/json` script tag when `prefetch-bundles` is not present
+
+```bash
+npm install @qwikdev/astro@0.4.1
+```
+
+## 0.4.0
+
+Introduced **Speculative Module Fetching** for faster page loads.
+
+- **Speculative Module Fetching** — automatically prefetches Qwik bundles using a prefetch graph and service worker
+
+```bash
+npm install @qwikdev/astro@0.4.0
+```
+
+## 0.3.9
+
+- **Prefetch script rename** — renamed internal prefetch variables for clarity (`PREFETCH_SERVICE_WORKER` / `PREFETCH_GRAPH_CODE`), fixed script tag naming and placement
+
+```bash
+npm install @qwikdev/astro@0.3.9
+```
+
+## 0.3.8
+
+- **qwik-react support** — added support for `qwik-react` entrypoints
+- **Speculative module fetching** (initial) — early implementation of prefetch graph and service worker scripts
+- **Node adapter fix** — emits correct path for Node adapter
+- **Duplicate drive fix** — removed duplicate drive letter on Windows paths
+- **TypeScript** — added as a peer dependency
+
+```bash
+npm install @qwikdev/astro@0.3.8
+```
+
+## 0.3.7
+
+- **Prefetch rewrite** — rewrote prefetch service worker and bundle graph scripts as template strings instead of `.toString()` closures for better minification
+
+```bash
+npm install @qwikdev/astro@0.3.7
+```
+
+## 0.3.6
+
+- **Prefetch graph code** — added the initial prefetch graph and service worker registration code for speculative module fetching
+
+```bash
+npm install @qwikdev/astro@0.3.6
+```
+
+## 0.3.5
+
+- **qwikLoader removed from `injectScript`** — stopped injecting qwikLoader via Astro's `injectScript`, relying on Qwik's own handling
+- **Vite type fixes** — added `@ts-ignore` for Astro 4.1 Vite type incompatibilities
+
+```bash
+npm install @qwikdev/astro@0.3.5
+```
+
+## 0.3.4
+
+- **JSX framework docs** — added documentation on using Qwik alongside React, Solid, and Preact with `include`/`exclude` configuration
+
+```js
+// astro.config.mjs
+export default defineConfig({
+  integrations: [qwik(), react({ include: ['**/react/*'] })],
+});
+```
+
+```bash
+npm install @qwikdev/astro@0.3.4
+```
+
+## 0.3.3
+
+- **Windows drive fix** — fixed duplicate drive letter removal for `distDir` on Windows
+
+```bash
+npm install @qwikdev/astro@0.3.3
+```
+
+## 0.3.2
+
+- **Per-file jsxImportSource docs** — added documentation for using `@jsxImportSource` pragma when Qwik isn't the primary JSX source
+- **Output directory fix** — correctly uses `build.client` path for server output instead of relative path calculation
+
+```tsx
+/** @jsxImportSource @builder.io/qwik */
+```
+
+```bash
+npm install @qwikdev/astro@0.3.2
+```
+
+## 0.3.1
+
+- **Vite build fix** — prevents Vite from parsing `.astro` files during the Qwik build step
+- **esbuild hack moved** — reorganized the esbuild override plugin placement
+
+```bash
+npm install @qwikdev/astro@0.3.1
+```
+
+## 0.3.0
+
+Upgraded to **Vite 5**, **Astro 4.0**, and **Qwik 1.3**.
+
+
+### Breaking changes
+
+- **Astro 4.0 required**
+- **Qwik 1.3 required**
+- **Vite 5 required**
+
+
+### Migration steps
+
+1. Upgrade Astro to v4:
+
+```bash
+npx @astrojs/upgrade
+```
+
+2. Update the integration:
+
+```bash
+npm install @qwikdev/astro@0.3.0
+```
+
+## 0.2.9
+
+- **TypeScript in Astro files** — esbuild in dev mode now enables TypeScript support in `.astro` files
+
+```bash
+npm install @qwikdev/astro@0.2.9
+```
+
+## 0.2.8
+
+- **Configurable q:base** — `q:base` path is now configurable via environment variable instead of being hardcoded
+- **Path alias resolution** — added `vite-tsconfig-paths` so Rollup correctly resolves path aliases on build (fixes #26)
+
+```bash
+npm install @qwikdev/astro@0.2.8
+```
+
+## 0.2.7
+
+- **Dependency fix** — moved TypeScript back to `devDependencies` (was accidentally in `dependencies`)
+
+```bash
+npm install @qwikdev/astro@0.2.7
+```
+
+## 0.2.6
+
+- **q:base environment variable** — set `Q_BASE` env var for configurable base path; added TypeScript as dependency
+
+```bash
+npm install @qwikdev/astro@0.2.6
+```
+
+## 0.2.5
+
+- **AST entry files** — entry point scanning now uses AST parsing for more reliable detection
+- **Windows support** — fixed path issues for all drive letters
+- **Vite 4.5 revert** — reverted back to Vite 4.5 for Qwik compatibility
+
+```bash
+npm install @qwikdev/astro@0.2.5
+```
+
+## 0.2.4
+
+- **Contributing guide update** — improved contributing documentation with new information
+
+```bash
+npm install @qwikdev/astro@0.2.4
+```
+
+## 0.2.3
+
+- **MDX fix** — fixed MDX file handling
+- **Rollup 4 types** — proper TypeScript types for Rollup 4
+- **Updated peer dependencies**
+
+```bash
+npm install @qwikdev/astro@0.2.3
+```
+
+## 0.2.2
+
+- **Dependency update** — minor package.json metadata changes
+
+```bash
+npm install @qwikdev/astro@0.2.2
+```
+
+## 0.2.1
+
+- **Version bump only** — no code changes
+
+```bash
+npm install @qwikdev/astro@0.2.1
+```
+
+## 0.2.0
+
+Added **named slot support** and upgraded to Vite 5.
+
+- **Named slot support** — Qwik components can now use named slots inside Astro files. Use the standard `slot` attribute instead of `q:slot`:
+- **Vite 5 upgrade** — updated to Vite 5 (later reverted in 0.2.5 for Qwik compatibility)
+- **Dependency updates** — updated all dependencies
+
+```astro
+---
+import { MySlotComp } from '../components/my-slot-comp';
+---
+
+<MySlotComp>
+  <div slot="test">Content inside the slot named test!</div>
+</MySlotComp>
+```
+
+```bash
+npm install @qwikdev/astro@0.2.0
+```
+
+## 0.1.19
+
+- **Windows path fix** — resolved another Windows-specific pathing issue
+
+```bash
+npm install @qwikdev/astro@0.1.19
+```
+
+## 0.1.18
+
+- **Custom srcDir** — properly respects custom `srcDir` in Astro config
+
+```bash
+npm install @qwikdev/astro@0.1.18
+```
+
+## 0.1.17
+
+- **Prop spreading** — component props are now spread correctly
+
+```bash
+npm install @qwikdev/astro@0.1.17
+```
+
+## 0.1.16
+
+- **Default slots fix** — default slots inside Astro files now render correctly
+
+```bash
+npm install @qwikdev/astro@0.1.16
+```
+
+## 0.1.15
+
+- **Source directory fix** — correctly passes the source directory to `qwikVite()` options (fixes #22)
+- **Include/exclude options** — filter which entrypoints the Qwik optimizer processes (fixes #13)
+- **Custom Astro directories** — supports customizing source and output directories
+- **`fs-extra` moved** to production dependencies
+
+```js
+// astro.config.mjs
+import qwik from '@qwikdev/astro';
+
+export default defineConfig({
+  integrations: [
+    qwik({
+      include: ['**/qwik/*'],
+      exclude: ['**/react/*'],
+    }),
+  ],
+});
+```
+
+```bash
+npm install @qwikdev/astro@0.1.15
+```
+
+## 0.1.14
+
+- **Artifact handling** — moved to `fs-extra` utils for artifact management
+
+```bash
+npm install @qwikdev/astro@0.1.14
+```
+
+## 0.1.13
+
+- **Source directory fix** — correctly uses the project's configured source directory
+- **Entry directory refactor** — improved entry point directory resolution
+- **Props passing fix** — component props are now correctly passed through
+
+```bash
+npm install @qwikdev/astro@0.1.13
+```
+
+## 0.1.12
+
+- **Entry directory refactor** — improved how the entry directory is resolved
+
+```bash
+npm install @qwikdev/astro@0.1.12
+```
+
+## 0.1.11
+
+- **Manifest warning fix** — resolved manifest-related warnings; uses `rmSync` instead of deprecated `rmdirSync`
+- **Manifest type fix** — use empty `QwikManifest` object in dev mode to prevent warnings
+
+```bash
+npm install @qwikdev/astro@0.1.11
+```
+
+## 0.1.10
+
+- **Dev manifest handling** — uses `isDev` from `@builder.io/qwik/build` to conditionally pass manifest only in production
+
+```bash
+npm install @qwikdev/astro@0.1.10
+```
+
+## 0.1.9
+
+- **Manifest warning fix** — pass empty manifest object with type in dev mode instead of the production manifest; updated Astro peer dependency to `^3.5.2`
+
+```bash
+npm install @qwikdev/astro@0.1.9
+```
+
+## 0.1.7
+
+- **Multiline import fix** — fixed multiline import handling
+
+```bash
+npm install @qwikdev/astro@0.1.7
+```
+
+## 0.1.6
+
+- **Vercel SSR docs** — added documentation for deploying with SSR to Vercel
+
+```bash
+npm install @qwikdev/astro@0.1.6
+```
+
+## 0.1.5
+
+- **Cloudflare fix** — fixed `inlineDynamicImports` for Cloudflare deployments
+- **Node SSR** — client folder now only added for Node SSR builds
+
+```bash
+npm install @qwikdev/astro@0.1.5
+```
+
+## 0.1.4
+
+- **Contributing guide updated** — improved contributing docs with community links
+- **Client path simplified** — simplified artifact output path resolution
+
+```bash
+npm install @qwikdev/astro@0.1.4
+```
+
+## 0.1.3
+
+- **Rollup options** — added `inlineDynamicImports: false` to build rollup options
+
+```bash
+npm install @qwikdev/astro@0.1.3
+```
+
+## 0.1.2
+
+- **Dist workaround** — fixed distribution file resolution
+
+```bash
+npm install @qwikdev/astro@0.1.2
+```
+
+## 0.1.1
+
+- **SSR support** — server-side rendering now works
+
+```bash
+npm install @qwikdev/astro@0.1.1
+```
+
+## 0.1.0
+
+First stable release. Version bump to mark stability.
+
+```bash
+npm install @qwikdev/astro@0.1.0
+```
+
+## 0.0.30
+
+- **Windows path fix** — resolved Windows-specific pathing issues with temp files and `distDir` calculation
+- **Package files** — corrected files included in the published package
+
+```bash
+npm install @qwikdev/astro@0.0.30
+```
+
+## 0.0.29
+
+- **Readme fix** — minor readme content fix
+
+```bash
+npm install @qwikdev/astro@0.0.29
+```
+
+## 0.0.28
+
+- **Source files published** — package now ships TypeScript source files in `src/` instead of only `dist/`
+
+```bash
+npm install @qwikdev/astro@0.0.28
+```
+
+## 0.0.27
+
+- **Server rewrite in TypeScript** — `server.ts` rewritten with proper types, `check` function, and `SymbolMapper` support
+
+```bash
+npm install @qwikdev/astro@0.0.27
+```
+
+## 0.0.26
+
+- **q:base support** — set `Q_BASE` environment variable for configurable base path
+
+```bash
+npm install @qwikdev/astro@0.0.26
+```
+
+## 0.0.25
+
+- **Major integration rewrite** — full TypeScript rewrite of `index.ts` with proper types, improved entrypoint scanning, and better build lifecycle management
+
+```bash
+npm install @qwikdev/astro@0.0.25
+```
+
+## 0.0.24
+
+- **Kitchen sink demo** — added a comprehensive demo showcasing all features
+- **Multiple JSX frameworks** — documented how to use Qwik alongside React, Preact, or Solid
+- **Lazy loading docs** — added section on lazy loading behavior
+
+```bash
+npm install @qwikdev/astro@0.0.24
+```
+
+## 0.0.23
+
+- **Readme refinements** — minor wording improvements
+
+```bash
+npm install @qwikdev/astro@0.0.23
+```
+
+## 0.0.22
+
+- **Resumability demo** — added GIF showing button click resuming, chart comparing resumability vs hydration, and documentation on using multiple JSX frameworks
+
+```bash
+npm install @qwikdev/astro@0.0.22
+```
+
+## 0.0.21
+
+- **Readme wording** — minor text improvements
+
+```bash
+npm install @qwikdev/astro@0.0.21
+```
+
+## 0.0.20
+
+- **Fine-grained lazy loading docs** — added documentation explaining Qwik's lazy loading advantages over hydration, O(1) constant behavior vs O(n) linear
+
+```bash
+npm install @qwikdev/astro@0.0.20
+```
+
+## 0.0.19
+
+- **Readme fixes** — minor text corrections
+
+```bash
+npm install @qwikdev/astro@0.0.19
+```
+
+## 0.0.18
+
+- **Readme fixes** — minor heading punctuation fix
+
+```bash
+npm install @qwikdev/astro@0.0.18
+```
+
+## 0.0.17
+
+- **Readme fixes** — minor text corrections
+
+```bash
+npm install @qwikdev/astro@0.0.17
+```
+
+## 0.0.16
+
+- **Readme overhaul** — rewritten with better explanations of resumability, improved code examples, and links to Qwik documentation
+
+```bash
+npm install @qwikdev/astro@0.0.16
+```
+
+## 0.0.15
+
+- **Zero entrypoint support** — dev server now works even when no Qwik components exist yet; graceful handling when there are no entry points
+- **Build error fix** — fixed build error when project has 0 Qwik entrypoints
+- **Initial README** — added project documentation
+
+```bash
+npm install @qwikdev/astro@0.0.15
+```
+
+## 0.0.14
+
+- **Readme updates** — improved documentation and contributing guide link
+
+```bash
+npm install @qwikdev/astro@0.0.14
+```
+
+## 0.0.13
+
+- **Readme rewrite** — comprehensive README with installation guide, TypeScript config, key differences section, and code examples
+
+```bash
+npm install @qwikdev/astro@0.0.13
+```
+
+## 0.0.12
+
+- **Repository URL fix** — corrected the GitHub repository URL in `package.json`
+
+```bash
+npm install @qwikdev/astro@0.0.12
+```
+
+## 0.0.11
+
+- **Config hook reorder** — moved `astro:config:setup` before `astro:config:done` to ensure proper hook execution order; conditional renderer/qwikLoader injection only when entrypoints exist
+
+```bash
+npm install @qwikdev/astro@0.0.11
+```
+
+## 0.0.10
+
+- **Version bump only** — no code changes from 0.0.9
+
+```bash
+npm install @qwikdev/astro@0.0.10
+```
+
+## 0.0.9
+
+- **Build:done entrypoint check** — skips artifact moving when no entrypoints exist; improved log messages
+
+```bash
+npm install @qwikdev/astro@0.0.9
+```
+
+## 0.0.8
+
+- **Build:start entrypoint check** — skips build when no entrypoints exist, logging a message instead of failing
+
+```bash
+npm install @qwikdev/astro@0.0.8
+```
+
+## 0.0.7
+
+- **Version bump only** — no code changes from 0.0.6
+
+```bash
+npm install @qwikdev/astro@0.0.7
+```
+
+## 0.0.6
+
+- **Version bump only** — no code changes from 0.0.5
+
+```bash
+npm install @qwikdev/astro@0.0.6
+```
+
+## 0.0.5
+
+- **Version bump only** — no code changes from 0.0.4
+
+```bash
+npm install @qwikdev/astro@0.0.5
+```
+
+## 0.0.4
+
+- **Version bump only** — no code changes from 0.0.3
+
+```bash
+npm install @qwikdev/astro@0.0.4
+```
+
+## 0.0.3
+
+- **Package name change** — renamed from `astrojs-qwik` to `@qwikdev/astro`
+- **Qwik peer dependency** — added Qwik as a peer dependency
+- **Dependency cleanup** — removed unneeded dependencies, updated Vite deps
+
+```bash
+npm install @qwikdev/astro@0.0.3
+```
+
+## 0.0.2
+
+Initial published release.
+
+- **Hello world** — first working Qwik component rendering in Astro
+- **Dev mode** — Vite dev server integration working
+- **Astro preview** — SSG build and preview working
+- **Optimizer** — Qwik optimizer properly processes components
+- **qwikLoader fix** — loader now loads once per page instead of per container
+- **Entry point scanning** — automatically finds Qwik entry files in your source directory
+
+```bash
+npm install @qwikdev/astro@0.0.2
+```
+
+## 0.0.1
+
+- **Initial scaffolding** — project skeleton and basic integration structure
+
+```bash
+npm install @qwikdev/astro@0.0.1
+```
