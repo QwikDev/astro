@@ -2,6 +2,7 @@ import { modal } from "@qds.dev/ui";
 import { component$, useStyles$ } from "@qwik.dev/core";
 import { navItems } from "../nav-items";
 import { SearchModal } from "../search/search-modal";
+import { ThemeToggle } from "../../theme/theme-toggle";
 import styles from "./sidebar.css?inline";
 
 const SidebarContent = component$<{
@@ -51,6 +52,10 @@ const SidebarContent = component$<{
       </nav>
 
       <div class="sidebar-footer">
+        <div class="sidebar-theme-row">
+          <ThemeToggle />
+          <span>Theme</span>
+        </div>
         <a
           href="https://github.com/QwikDev/astro"
           target="_blank"

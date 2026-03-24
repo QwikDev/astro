@@ -93,6 +93,25 @@
   flex-shrink: 0;
 }
 
+.sidebar-theme-row {
+  display: none;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-size: var(--step--2);
+  color: var(--text-muted);
+  padding: var(--space-3xs) var(--space-2xs);
+}
+
+.sidebar-theme-row .theme-toggle {
+  width: auto;
+  height: auto;
+}
+
+.sidebar-theme-row .theme-toggle > svg {
+  inline-size: 14px;
+  block-size: 14px;
+}
+
 .sidebar-external {
   font-size: var(--step--2);
   color: var(--text-muted);
@@ -240,6 +259,10 @@
   }
 
   .sidebar-mobile-trigger {
+    display: flex;
+  }
+
+  .sidebar-theme-row {
     display: flex;
   }
 }

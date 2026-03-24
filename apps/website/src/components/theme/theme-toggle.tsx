@@ -1,8 +1,9 @@
-import { $, component$, useStyles$ } from "@qwik.dev/core";
+import { $, component$, useId, useStyles$ } from "@qwik.dev/core";
 import styles from "./theme-toggle.css?inline";
 
 export const ThemeToggle = component$(() => {
   useStyles$(styles);
+  const maskId = useId();
 
   const onClick$ = $(() => {
     const theme = document.documentElement.className;
@@ -31,7 +32,7 @@ export const ThemeToggle = component$(() => {
         height="24"
         viewBox="0 0 24 24"
       >
-        <mask class="moon" id="moon-mask">
+        <mask class="moon" id={maskId}>
           <rect x="0" y="0" width="100%" height="100%" fill="white" />
           <circle cx="24" cy="10" r="6" fill="black" />
         </mask>
@@ -40,7 +41,7 @@ export const ThemeToggle = component$(() => {
           cx="12"
           cy="12"
           r="6"
-          mask="url(#moon-mask)"
+          mask={`url(#${maskId})`}
           fill="currentColor"
         />
         <g class="sun-beams" stroke="currentColor">
