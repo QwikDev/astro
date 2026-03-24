@@ -44,9 +44,12 @@
   opacity: 0;
   animation: fade-in 0.5s forwards;
   animation-timing-function: var(--qa-fade);
+  user-select: none;
 }
 
 .tooltip {
+  --tx: 0px;
+  --ty: 0px;
   position: absolute;
   padding-block: var(--space-3xs);
   padding-inline: var(--space-2xs);
@@ -55,6 +58,7 @@
   scale: 0;
   left: 50%;
   top: 0;
+  transform: translate(var(--tx), var(--ty));
   transition: scale 500ms var(--overshoot-easing-function), opacity 200ms
     var(--overshoot-easing-function);
   pointer-events: none;

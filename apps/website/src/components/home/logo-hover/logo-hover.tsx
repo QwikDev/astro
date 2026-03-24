@@ -42,7 +42,8 @@ export const LogoHover = component$(() => {
       if (!logoRef.value) return;
       const x = clientX - rectRef.value.left + offset.x;
       const y = clientY - rectRef.value.top + offset.y;
-      logoRef.value.style.transform = `translate(${x}px, ${y}px)`;
+      logoRef.value.style.setProperty("--tx", `${x}px`);
+      logoRef.value.style.setProperty("--ty", `${y}px`);
     },
   );
 
