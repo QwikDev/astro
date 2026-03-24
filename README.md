@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://qwik.dev/astro">Documentation</a> · <a href="https://github.com/QwikDev/astro/issues">Report an Issue</a> · <a href="https://discord.com/channels/842438759945601056/1150941080355881080">Discord</a>
+  <a href="https://astro.qwik.dev/docs">Documentation</a> · <a href="https://github.com/QwikDev/astro/issues">Report an Issue</a> · <a href="https://discord.com/channels/842438759945601056/1150941080355881080">Discord</a>
 </p>
 
 ## Quick Start
