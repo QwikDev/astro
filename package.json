@@ -26,7 +26,7 @@
     "format": "biome format --write .",
     "lint": "biome check --write .",
     "build.create-qwikdev-astro": "pnpm -C ./libs/create-qwikdev-astro prod",
-    "postinstall": "test \"$NETLIFY\" = 'true' && exit 0 || lefthook install && playwright install --with-deps",
+    "postinstall": "test \"$CF_PAGES\" = '1' && exit 0 || lefthook install && playwright install --with-deps",
     "changeset": "changeset",
     "release": "pnpm build.create-qwikdev-astro && changeset publish",
     "test": "pnpm test.cli && pnpm test.platform",
