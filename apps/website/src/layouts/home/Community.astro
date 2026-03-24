@@ -4,6 +4,7 @@ import jackAvatar from "@assets/avatars/jack.png";
 import matthewAvatar from "@assets/avatars/matthew.png";
 import nateAvatar from "@assets/avatars/nate.png";
 import siguiAvatar from "@assets/avatars/sigui.png";
+import Footer from "@components/footer/Footer.astro";
 import { Icon } from "astro-icon/components";
 
 const team = {
@@ -234,33 +235,9 @@ const guides = [
 </div>
 <div class="grid-line" aria-hidden="true"></div>
 
-<footer class="footer">
-  <div class="footer-links">
-    <a href="https://github.com/QwikDev/astro" target="_blank" rel="noopener">
-      <Icon name="lucide:github" class="footer-icon" />
-      <span>GitHub</span>
-    </a>
-    <a
-      href="https://discord.com/channels/842438759945601056/1150941080355881080"
-      target="_blank"
-      rel="noopener"
-    >
-      <Icon name="lucide:message-circle" class="footer-icon" />
-      <span>Discord</span>
-    </a>
-    <a
-      href="https://github.com/QwikDev/astro/blob/main/contributing.md"
-      target="_blank"
-      rel="noopener"
-    >
-      <Icon name="lucide:heart" class="footer-icon" />
-      <span>Contributing</span>
-    </a>
-  </div>
-  <span class="footer-copy"
-    >&copy; {new Date().getFullYear()} Qwik Team. Built with Qwik + Astro.</span
-  >
-</footer>
+<div class="footer-wrap">
+  <Footer />
+</div>
 
 <style>
   .grid-line {
@@ -496,50 +473,17 @@ const guides = [
     color: var(--text-muted);
   }
 
-  .footer {
+  .footer-wrap {
     margin: 0 auto;
     max-width: var(--breakpoint-xl);
     border-inline: 1px solid var(--border);
-    padding: var(--space-m);
-    padding-top: var(--space-l);
-    padding-bottom: var(--space-2xl);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-m);
+    opacity: 0;
+    animation: community-fade-in 0.5s forwards;
+    animation-timing-function: var(--qa-fade);
+    animation-delay: 4.3s;
   }
 
-  .footer-links {
-    display: flex;
-    gap: var(--space-m);
-  }
-
-  .footer-links a {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3xs);
-    text-decoration: none;
-    font-size: var(--step--1);
-    color: var(--text-muted);
-    transition: color 0.2s;
-  }
-
-  .footer-links a:hover {
-    color: var(--text-hover);
-  }
-
-  .footer-icon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .footer-copy {
-    font-size: var(--step--2);
-    color: var(--text-muted);
-  }
-
-  .section,
-  .footer {
+  .section {
     opacity: 0;
     animation: community-fade-in 0.5s forwards;
     animation-timing-function: var(--qa-fade);
@@ -553,9 +497,6 @@ const guides = [
   }
   .stagger-3 {
     animation-delay: 4s;
-  }
-  .footer {
-    animation-delay: 4.3s;
   }
 
   @keyframes community-fade-in {

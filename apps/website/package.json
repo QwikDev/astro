@@ -5,7 +5,7 @@
   "scripts": {
     "astro": "astro",
     "sync": "astro sync",
-    "build": "pnpm fix && astro build && pagefind --site dist",
+    "build": "pnpm fix && astro build && pagefind --site dist && cp -r dist/pagefind public/pagefind",
     "check": "biome ci . && astro check",
     "check.format": "biome format .",
     "check.lint": "biome check .",

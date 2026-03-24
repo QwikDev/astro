@@ -158,18 +158,16 @@
   /* closed state (exit target) */
   transform: translateX(-100%);
   opacity: 1;
-  transition:
-    transform 0.25s cubic-bezier(0.32, 0, 0.67, 0),
-    display 0.25s cubic-bezier(0.32, 0, 0.67, 0) allow-discrete,
-    overlay 0.25s cubic-bezier(0.32, 0, 0.67, 0) allow-discrete;
+  transition: transform 0.25s cubic-bezier(0.32, 0, 0.67, 0), display 0.25s
+    cubic-bezier(0.32, 0, 0.67, 0) allow-discrete, overlay 0.25s
+    cubic-bezier(0.32, 0, 0.67, 0) allow-discrete;
 }
 
 .sidebar-sheet[open] {
   transform: translateX(0);
-  transition:
-    transform 0.3s cubic-bezier(0.32, 0.72, 0, 1),
-    display 0.3s cubic-bezier(0.32, 0.72, 0, 1) allow-discrete,
-    overlay 0.3s cubic-bezier(0.32, 0.72, 0, 1) allow-discrete;
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), display 0.3s
+    cubic-bezier(0.32, 0.72, 0, 1) allow-discrete, overlay 0.3s
+    cubic-bezier(0.32, 0.72, 0, 1) allow-discrete;
 }
 
 .sidebar-sheet::backdrop {
@@ -177,18 +175,16 @@
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   opacity: 0;
-  transition:
-    opacity 0.25s cubic-bezier(0.32, 0, 0.67, 0),
-    display 0.25s cubic-bezier(0.32, 0, 0.67, 0) allow-discrete,
-    overlay 0.25s cubic-bezier(0.32, 0, 0.67, 0) allow-discrete;
+  transition: opacity 0.25s cubic-bezier(0.32, 0, 0.67, 0), display 0.25s
+    cubic-bezier(0.32, 0, 0.67, 0) allow-discrete, overlay 0.25s
+    cubic-bezier(0.32, 0, 0.67, 0) allow-discrete;
 }
 
 .sidebar-sheet[open]::backdrop {
   opacity: 1;
-  transition:
-    opacity 0.3s cubic-bezier(0.32, 0.72, 0, 1),
-    display 0.3s cubic-bezier(0.32, 0.72, 0, 1) allow-discrete,
-    overlay 0.3s cubic-bezier(0.32, 0.72, 0, 1) allow-discrete;
+  transition: opacity 0.3s cubic-bezier(0.32, 0.72, 0, 1), display 0.3s
+    cubic-bezier(0.32, 0.72, 0, 1) allow-discrete, overlay 0.3s
+    cubic-bezier(0.32, 0.72, 0, 1) allow-discrete;
 }
 
 /* entry state */

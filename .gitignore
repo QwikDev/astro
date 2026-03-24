@@ -11,3 +11,4 @@ node_modules/
 /tests/unit/report/
 /tests/unit/coverage/
 .claude
+**/public/pagefind

@@ -11,11 +11,61 @@ import {
 import { navItems } from "../nav-items";
 import styles from "./search-modal.css?inline";
 
+type SearchResult = {
+  url: string;
+  excerpt: string;
+  meta?: { title?: string };
+};
+
+type Pagefind = {
+  search(query: string): Promise<{
+    results: Array<{ data(): Promise<SearchResult> }>;
+  }>;
+};
+
+declare global {
+  var __pagefind: Pagefind | undefined;
+}
+
 export const SearchModal = component$(() => {
   useStyles$(styles);
 
+  const isOpen = useSignal(false);
   const activeIndex = useSignal(-1);
   const listRef = useSignal<HTMLDivElement>();
+  const query = useSignal("");
+  const results = useSignal<SearchResult[]>();
+
+  // Load pagefind when the modal opens
+  useVisibleTask$(async ({ track }) => {
+    const open = track(() => isOpen.value);
+    if (!open || globalThis.__pagefind) return;
+
+    try {
+      const path = "/pagefind/pagefind.js";
+      globalThis.__pagefind = await import(path);
+    } catch {
+      // pagefind not available (dev mode before first build)
+    }
+  });
+
+  // Search when query changes
+  useVisibleTask$(async ({ track }) => {
+    const q = track(() => query.value);
+
+    if (!q.trim()) {
+      results.value = undefined;
+      return;
+    }
+
+    if (!globalThis.__pagefind) return;
+
+    const search = await globalThis.__pagefind.search(q);
+    const loaded: SearchResult[] = await Promise.all(
+      search.results.slice(0, 20).map((r) => r.data()),
+    );
+    results.value = loaded;
+  });
 
   useOnDocument(
     "keydown",
@@ -61,8 +111,11 @@ export const SearchModal = component$(() => {
     links?.[activeIndex.value]?.scrollIntoView({ block: "nearest" });
   });
 
+  const displayResults = results.value;
+  const hasQuery = query.value.trim().length > 0;
+
   return (
-    <modal.root>
+    <modal.root bind:open={isOpen}>
       <modal.trigger class="search-trigger" data-search-trigger>
         <span>Quick Search</span>
         <kbd>&#8984;K</kbd>
@@ -89,8 +142,8 @@ export const SearchModal = component$(() => {
             <input
               type="text"
               class="search-input"
-              data-search-input
               placeholder="Search documentation..."
+              bind:value={query}
               onKeyDown$={[preventArrowScroll$, handleKeyDown$]}
               onInput$={() => {
                 activeIndex.value = -1;
@@ -101,11 +154,80 @@ export const SearchModal = component$(() => {
 
           <div class="search-results">
             <div class="search-results-label">Results</div>
-            <div ref={listRef} class="search-results-list" data-search-results>
-              {navItems.map((item) => (
-                <a key={item.href} href={item.href} class="search-result">
-                  <div class="search-result-icon">
+            <div ref={listRef} class="search-results-list">
+              {hasQuery && displayResults ? (
+                displayResults.length > 0 ? (
+                  displayResults.map((r) => (
+                    <a key={r.url} href={r.url} class="search-result">
+                      <div class="search-result-icon">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                          <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                        </svg>
+                      </div>
+                      <div class="search-result-text">
+                        <div class="search-result-title">
+                          {r.meta?.title ?? r.url}
+                        </div>
+                        <p
+                          class="search-result-desc"
+                          dangerouslySetInnerHTML={r.excerpt}
+                        />
+                      </div>
+                      <svg
+                        class="search-result-chevron"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="m9 18 6-6-6-6" />
+                      </svg>
+                    </a>
+                  ))
+                ) : (
+                  <div class="search-no-results">
+                    No results found for "{query.value}"
+                  </div>
+                )
+              ) : (
+                navItems.map((item) => (
+                  <a key={item.href} href={item.href} class="search-result">
+                    <div class="search-result-icon">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                        dangerouslySetInnerHTML={item.icon}
+                      />
+                    </div>
+                    <div class="search-result-text">
+                      <div class="search-result-title">{item.label}</div>
+                      <p class="search-result-desc">{item.description}</p>
+                    </div>
                     <svg
+                      class="search-result-chevron"
                       width="16"
                       height="16"
                       viewBox="0 0 24 24"
@@ -115,35 +237,20 @@ export const SearchModal = component$(() => {
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       aria-hidden="true"
-                      dangerouslySetInnerHTML={item.icon}
-                    />
-                  </div>
-                  <div class="search-result-text">
-                    <div class="search-result-title">{item.label}</div>
-                    <p class="search-result-desc">{item.description}</p>
-                  </div>
-                  <svg
-                    class="search-result-chevron"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="m9 18 6-6-6-6" />
-                  </svg>
-                </a>
-              ))}
+                    >
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </a>
+                ))
+              )}
             </div>
           </div>
 
           <div class="search-footer">
-            <div class="search-footer-count" data-search-count>
-              {navItems.length} results found
+            <div class="search-footer-count">
+              {hasQuery && displayResults
+                ? `${displayResults.length} result${displayResults.length !== 1 ? "s" : ""} found`
+                : `${navItems.length} results found`}
             </div>
           </div>
         </div>
