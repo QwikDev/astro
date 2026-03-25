@@ -6,7 +6,7 @@ import {
   useOnDocument,
   useSignal,
   useStyles$,
-  useVisibleTask$,
+  useVisibleTask$
 } from "@qwik.dev/core";
 import { navItems } from "../nav-items";
 import styles from "./search-modal.css?inline";
@@ -62,7 +62,7 @@ export const SearchModal = component$(() => {
 
     const search = await globalThis.__pagefind.search(q);
     const loaded: SearchResult[] = await Promise.all(
-      search.results.slice(0, 20).map((r) => r.data()),
+      search.results.slice(0, 20).map((r) => r.data())
     );
     results.value = loaded;
   });
@@ -74,11 +74,11 @@ export const SearchModal = component$(() => {
       if ((event.metaKey || event.ctrlKey) && event.key === "k") {
         event.preventDefault();
         const trigger = document.querySelector(
-          "[data-search-trigger]",
+          "[data-search-trigger]"
         ) as HTMLButtonElement | null;
         trigger?.click();
       }
-    }),
+    })
   );
 
   const preventArrowScroll$ = sync$((e: KeyboardEvent) => {
@@ -88,8 +88,7 @@ export const SearchModal = component$(() => {
   });
 
   const handleKeyDown$ = $((e: KeyboardEvent) => {
-    const links =
-      listRef.value?.querySelectorAll<HTMLAnchorElement>(".search-result");
+    const links = listRef.value?.querySelectorAll<HTMLAnchorElement>(".search-result");
     const count = links?.length ?? 0;
     if (!count) return;
 
@@ -176,9 +175,7 @@ export const SearchModal = component$(() => {
                         </svg>
                       </div>
                       <div class="search-result-text">
-                        <div class="search-result-title">
-                          {r.meta?.title ?? r.url}
-                        </div>
+                        <div class="search-result-title">{r.meta?.title ?? r.url}</div>
                         <p
                           class="search-result-desc"
                           dangerouslySetInnerHTML={r.excerpt}

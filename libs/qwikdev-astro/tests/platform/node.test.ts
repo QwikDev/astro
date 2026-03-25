@@ -5,9 +5,7 @@ import { fileURLToPath } from "node:url";
 import { expect, test } from "@playwright/test";
 import { build } from "astro";
 
-const fixtureDir = fileURLToPath(
-  new URL("../fixtures/node/", import.meta.url)
-);
+const fixtureDir = fileURLToPath(new URL("../fixtures/node/", import.meta.url));
 const distDir = join(fixtureDir, "dist");
 const clientDir = join(distDir, "client");
 const serverDir = join(distDir, "server");
@@ -51,9 +49,7 @@ test.describe("Node Adapter Build", () => {
 
   test("client directory contains Qwik JS chunks", async () => {
     const files = await collectFiles(clientDir);
-    const qwikChunks = files.filter(
-      (f) => f.endsWith(".js") && f.includes("q-")
-    );
+    const qwikChunks = files.filter((f) => f.endsWith(".js") && f.includes("q-"));
     expect(qwikChunks.length).toBeGreaterThan(0);
   });
 

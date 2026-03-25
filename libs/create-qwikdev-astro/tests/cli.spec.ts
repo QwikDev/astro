@@ -1,6 +1,6 @@
 import { test } from "@japa/runner";
 import { TestContext } from "@japa/runner/core";
-import { run } from "@qwikdev/create-astro";
+import { run } from "@qwik.dev/create-astro";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 import pm from "panam";
 

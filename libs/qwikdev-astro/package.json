@@ -10,7 +10,7 @@
     },
     {
       "name": "Sigui Kessé Emmanuel",
-      "email": "dev@sikessem.com",
+      "email": "siguici@proton.me",
       "url": "https://x.com/siguici"
     },
     {
@@ -39,12 +39,7 @@
     "./server": "./server.ts",
     "./root": "./src/root.tsx"
   },
-  "files": [
-    "src",
-    "src/index.ts",
-    "server.ts",
-    "env.d.ts"
-  ],
+  "files": ["src", "src/index.ts", "server.ts", "env.d.ts"],
   "keywords": [
     "astro-integration",
     "astro-component",

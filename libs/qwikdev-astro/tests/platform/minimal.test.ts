@@ -1,13 +1,11 @@
 import { existsSync } from "node:fs";
-import { readdir, readFile, rm } from "node:fs/promises";
+import { readFile, readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, test } from "@playwright/test";
 import { build } from "astro";
 
-const fixtureDir = fileURLToPath(
-  new URL("../fixtures/minimal/", import.meta.url)
-);
+const fixtureDir = fileURLToPath(new URL("../fixtures/minimal/", import.meta.url));
 const distDir = join(fixtureDir, "dist");
 
 test.describe("Static Build Output", () => {
@@ -31,9 +29,7 @@ test.describe("Static Build Output", () => {
 
   test("build output contains Qwik JS chunks", async () => {
     const files = await collectFiles(distDir);
-    const qwikChunks = files.filter(
-      (f) => f.endsWith(".js") && f.includes("q-")
-    );
+    const qwikChunks = files.filter((f) => f.endsWith(".js") && f.includes("q-"));
     expect(qwikChunks.length).toBeGreaterThan(0);
   });
 

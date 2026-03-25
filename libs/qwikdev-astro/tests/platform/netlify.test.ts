@@ -5,9 +5,7 @@ import { fileURLToPath } from "node:url";
 import { expect, test } from "@playwright/test";
 import { build } from "astro";
 
-const fixtureDir = fileURLToPath(
-  new URL("../fixtures/netlify/", import.meta.url)
-);
+const fixtureDir = fileURLToPath(new URL("../fixtures/netlify/", import.meta.url));
 const distDir = join(fixtureDir, "dist");
 const netlifyDir = join(fixtureDir, ".netlify");
 
@@ -53,9 +51,7 @@ test.describe("Netlify Adapter Build", () => {
   test("build output contains Qwik JS chunks", async () => {
     const allDirs = [distDir, netlifyDir].filter(existsSync);
     const files = (await Promise.all(allDirs.map(collectFiles))).flat();
-    const qwikChunks = files.filter(
-      (f) => f.endsWith(".js") && f.includes("q-")
-    );
+    const qwikChunks = files.filter((f) => f.endsWith(".js") && f.includes("q-"));
     expect(qwikChunks.length).toBeGreaterThan(0);
   });
 

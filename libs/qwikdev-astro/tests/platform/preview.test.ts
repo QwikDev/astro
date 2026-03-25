@@ -5,9 +5,7 @@ import { expect, test } from "@playwright/test";
 import { build, preview } from "astro";
 import type { PreviewServer } from "astro";
 
-const fixtureDir = fileURLToPath(
-  new URL("../fixtures/minimal/", import.meta.url)
-);
+const fixtureDir = fileURLToPath(new URL("../fixtures/minimal/", import.meta.url));
 const distDir = join(fixtureDir, "dist");
 
 test.describe("Production Preview", () => {

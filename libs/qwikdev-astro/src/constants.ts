@@ -1,7 +1,6 @@
 import type { RenderOptions } from "@qwik.dev/core/server";
 import { z } from "astro/zod";
 
-
 export const INTEGRATION_NAME = "@qwik.dev/astro";
 
 export const SERVER_ENTRYPOINT = "@qwik.dev/astro/server";

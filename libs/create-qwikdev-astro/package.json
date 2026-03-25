@@ -1,5 +1,5 @@
 {
-  "name": "@qwikdev/create-astro",
+  "name": "@qwik.dev/create-astro",
   "type": "module",
   "license": "MIT",
   "version": "0.2.3",
@@ -14,19 +14,19 @@
   },
   "contributors": [
     {
-      "name": "Miško Hevery",
-      "email": "misko@hevery.com",
-      "url": "https://twitter.com/mhevery"
+      "name": "Sigui Kessé Emmanuel",
+      "email": "siguici@proton.me",
+      "url": "https://x.com/siguici"
     },
     {
       "name": "Jack Shelton",
       "email": "me@jackshelton.com",
-      "url": "https://twitter.com/TheJackShelton"
+      "url": "https://x.com/TheJackShelton"
     },
     {
-      "name": "Sigui Kessé Emmanuel",
-      "email": "contact@sigui.ci",
-      "url": "https://twitter.com/siguici"
+      "name": "Miško Hevery",
+      "email": "misko@hevery.com",
+      "url": "https://x.com/mhevery"
     }
   ],
   "repository": {
