@@ -1,7 +1,5 @@
 ---
-import { Image } from "astro:assets";
 import heroImage from "@assets/q-astro-hero.png";
-import pixelDesk from "@assets/pixel-desk.png";
 import { Background } from "@components/home/background/background";
 import { CLICopy } from "@components/home/cli-copy/cli-copy";
 import { LogoHover } from "@components/home/logo-hover/logo-hover";
@@ -15,64 +13,65 @@ import { Icon } from "astro-icon/components";
 <Background />
 <div class="grid-line" aria-hidden="true"></div>
 <div class="intro">
-  <div class="intro-header">
-    <ThemeToggle />
+  <div class="hero-pattern" aria-hidden="true"></div>
+
+  <div class="intro-content">
+    <div class="intro-header">
+      <ThemeToggle />
+    </div>
+
+    <LogoHover />
+
+    <span class="subtitle"
+      >Zero hydration. Zero compromise. The only
+      <span class="squiggle-container">
+        <span>instantly interactive</span>
+        <Squiggle />
+      </span> UI framework that's HTML and server-first, just like
+      <span class="squiggle-container">
+        <span>Astro</span>
+        <Squiggle
+          stroke="var(--rose-500)"
+          stroke-width="12"
+          style={{ transform: "translateY(-2px)" }}
+        />
+      </span>.
+    </span>
+
+    <div class="navigation">
+      <CLICopy>
+        <span data-copy-icon><Icon name="lucide:clipboard" /></span>
+        <span data-copy-success><Icon name="lucide:check" /></span>
+      </CLICopy>
+      <a href="/docs">
+        <LucidePlanet />
+        <span>Explore the docs</span>
+      </a>
+    </div>
   </div>
 
-  <canvas
-    id="hero-particles"
-    class="hero-image"
-    aria-label="Pixel art desk with astronaut, computer, and lightning bolt snow globe"
-    role="img"></canvas>
-  <img
-    src={pixelDesk.src}
-    alt=""
-    id="hero-particles-src"
-    style="display:none"
-  />
-
-  <LogoHover />
-
-  <span class="subtitle"
-    >Zero hydration. Zero compromise. The only
-    <span class="squiggle-container">
-      <span>instantly interactive</span>
-      <Squiggle />
-    </span> UI framework that's HTML and server-first, just like
-    <span class="squiggle-container">
-      <span>Astro</span>
-      <Squiggle
-        stroke="var(--rose-500)"
-        stroke-width="12"
-        style={{ transform: "translateY(-2px)" }}
-      />
-    </span>.
-  </span>
-
-  <div class="navigation">
-    <CLICopy>
-      <span data-copy-icon><Icon name="lucide:clipboard" /></span>
-      <span data-copy-success><Icon name="lucide:check" /></span>
-    </CLICopy>
-    <a href="/docs">
-      <LucidePlanet />
-      <span>Explore the docs</span>
-    </a>
-  </div>
+  <div class="hero-pattern" aria-hidden="true"></div>
 </div>
-
 <div class="grid-line" aria-hidden="true"></div>
 
 <style>
-  .hero-image {
-    width: 100%;
-    max-width: 300px;
-    aspect-ratio: 500 / 447;
-    border-radius: 8px;
-    cursor: none;
-    opacity: 0;
-    animation: fade-in 0.5s forwards;
-    animation-delay: 3.6s;
+  .hero-pattern {
+    height: 120px;
+    border-block: 1px solid var(--border);
+    background-image: repeating-linear-gradient(
+      315deg,
+      var(--pattern-fg) 0,
+      var(--pattern-fg) 1px,
+      transparent 0,
+      transparent 50%
+    );
+    background-size: 10px 10px;
+    background-attachment: fixed;
+    --pattern-fg: color-mix(in srgb, currentColor 5%, transparent);
+  }
+
+  :global(.dark) .hero-pattern {
+    --pattern-fg: color-mix(in srgb, white 10%, transparent);
   }
 
   a {
@@ -101,6 +100,9 @@ import { Icon } from "astro-icon/components";
     margin: 0 auto;
     max-width: var(--breakpoint-xl);
     border-inline: 1px solid var(--border);
+  }
+
+  .intro-content {
     padding: var(--space-m);
   }
 
@@ -109,7 +111,7 @@ import { Icon } from "astro-icon/components";
     justify-content: flex-end;
   }
 
-  .intro > span {
+  .intro-content > span {
     font-size: var(--step-1);
     margin-block: var(--space-m);
     display: block;
@@ -139,171 +141,13 @@ import { Icon } from "astro-icon/components";
   @keyframes fade-in {
     from {
       opacity: 0;
+      visibility: hidden;
       transform: translateY(var(--space-xs));
     }
     to {
       opacity: 1;
+      visibility: visible;
       transform: translateY(0);
     }
   }
 </style>
-
-<script>
-  const canvas = document.getElementById("hero-particles") as HTMLCanvasElement;
-  const ctx = canvas.getContext("2d")!;
-  const img = document.getElementById("hero-particles-src") as HTMLImageElement;
-
-  const PARTICLE_GAP = 3;
-  const DOT_RADIUS = 0.9;
-  const isTouch = matchMedia("(pointer: coarse)").matches;
-  const MOUSE_RADIUS = isTouch ? 70 : 40;
-  const SPRING = 0.08;
-  const DAMPING = 0.75;
-
-  interface Particle {
-    ox: number;
-    oy: number;
-    x: number;
-    y: number;
-    vx: number;
-    vy: number;
-    r: number;
-    g: number;
-    b: number;
-    a: number;
-  }
-
-  let particles: Particle[] = [];
-  let mouseX = -9999;
-  let mouseY = -9999;
-  let dpr = 1;
-  let cw = 350;
-  let ch = 313;
-  let rafId: number;
-
-  function init() {
-    dpr = window.devicePixelRatio || 1;
-    cw = canvas.clientWidth;
-    ch = canvas.clientHeight;
-    canvas.width = cw * dpr;
-    canvas.height = ch * dpr;
-    ctx.scale(dpr, dpr);
-
-    const tmpCanvas = document.createElement("canvas");
-    const tmpCtx = tmpCanvas.getContext("2d")!;
-    tmpCanvas.width = cw;
-    tmpCanvas.height = ch;
-
-    tmpCtx.drawImage(img, 0, 0, cw, ch);
-
-    const imageData = tmpCtx.getImageData(0, 0, cw, ch);
-    const data = imageData.data;
-
-    particles = [];
-    for (let y = 0; y < ch; y += PARTICLE_GAP) {
-      for (let x = 0; x < cw; x += PARTICLE_GAP) {
-        const i = (y * cw + x) * 4;
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const a = data[i + 3];
-
-        if (a < 10) continue;
-
-        particles.push({
-          ox: x,
-          oy: y,
-          x,
-          y,
-          vx: 0,
-          vy: 0,
-          r,
-          g,
-          b,
-          a: a / 255,
-        });
-      }
-    }
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, cw, ch);
-
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-
-      // Mouse repulsion with cubic falloff
-      const dx = p.x - mouseX;
-      const dy = p.y - mouseY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-
-      if (dist < MOUSE_RADIUS && dist > 0) {
-        const t = 1 - dist / MOUSE_RADIUS;
-        const force = t * t * t * 6; // cubic falloff
-        p.vx += (dx / dist) * force;
-        p.vy += (dy / dist) * force;
-      }
-
-      // Spring back to origin
-      p.vx += (p.ox - p.x) * SPRING;
-      p.vy += (p.oy - p.y) * SPRING;
-      p.vx *= DAMPING;
-      p.vy *= DAMPING;
-      p.x += p.vx;
-      p.y += p.vy;
-
-      ctx.fillStyle = `rgba(${p.r},${p.g},${p.b},${p.a})`;
-      ctx.fillRect(
-        p.x - DOT_RADIUS,
-        p.y - DOT_RADIUS,
-        DOT_RADIUS * 2,
-        DOT_RADIUS * 2,
-      );
-    }
-
-    rafId = requestAnimationFrame(draw);
-  }
-
-  function updatePointer(clientX: number, clientY: number) {
-    const rect = canvas.getBoundingClientRect();
-    mouseX = clientX - rect.left;
-    mouseY = clientY - rect.top;
-  }
-
-  canvas.addEventListener("mousemove", (e) =>
-    updatePointer(e.clientX, e.clientY),
-  );
-  canvas.addEventListener("mouseleave", () => {
-    mouseX = -9999;
-    mouseY = -9999;
-  });
-
-  canvas.addEventListener(
-    "touchmove",
-    (e) => {
-      e.preventDefault();
-      const t = e.touches[0];
-      updatePointer(t.clientX, t.clientY);
-    },
-    { passive: false },
-  );
-
-  canvas.addEventListener("touchend", () => {
-    mouseX = -9999;
-    mouseY = -9999;
-  });
-
-  function start() {
-    if (img.complete) {
-      init();
-      draw();
-    } else {
-      img.addEventListener("load", () => {
-        init();
-        draw();
-      });
-    }
-  }
-
-  start();
-</script>
