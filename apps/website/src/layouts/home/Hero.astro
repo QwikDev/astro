@@ -66,10 +66,13 @@ import { Icon } from "astro-icon/components";
 <style>
   .hero-image {
     width: 100%;
-    max-width: 350px;
+    max-width: 300px;
     aspect-ratio: 500 / 447;
     border-radius: 8px;
     cursor: none;
+    opacity: 0;
+    animation: fade-in 0.5s forwards;
+    animation-delay: 3.6s;
   }
 
   a {
@@ -151,7 +154,7 @@ import { Icon } from "astro-icon/components";
   const img = document.getElementById("hero-particles-src") as HTMLImageElement;
 
   const PARTICLE_GAP = 3;
-  const DOT_RADIUS = 1.2;
+  const DOT_RADIUS = 0.9;
   const isTouch = matchMedia("(pointer: coarse)").matches;
   const MOUSE_RADIUS = isTouch ? 70 : 40;
   const SPRING = 0.08;
