@@ -1,7 +1,7 @@
 import { assert } from "@japa/assert";
 import { configure, processCLIArgs, run } from "@japa/runner";
 import { TestContext } from "@japa/runner/core";
-import { PathTester } from "@qwikdev/create-astro/tester";
+import { PathTester } from "@qwik.dev/create-astro/tester";
 
 declare module "@japa/runner/core" {
   interface TestContext {

@@ -1,7 +1,7 @@
 import { test } from "@japa/runner";
-import app, { defaultDefinition } from "@qwikdev/create-astro/app";
-import { name, version } from "@qwikdev/create-astro/package.json";
-import { ProgramTester } from "@qwikdev/create-astro/tester";
+import app, { defaultDefinition } from "@qwik.dev/create-astro/app";
+import { name, version } from "@qwik.dev/create-astro/package.json";
+import { ProgramTester } from "@qwik.dev/create-astro/tester";
 import pm from "panam";
 
 process.env.NODE_ENV = "test";
