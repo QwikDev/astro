@@ -5,9 +5,7 @@ import { fileURLToPath } from "node:url";
 import { expect, test } from "@playwright/test";
 import { build } from "astro";
 
-const fixtureDir = fileURLToPath(
-  new URL("../fixtures/vercel/", import.meta.url)
-);
+const fixtureDir = fileURLToPath(new URL("../fixtures/vercel/", import.meta.url));
 const distDir = join(fixtureDir, "dist");
 const vercelDir = join(fixtureDir, ".vercel", "output");
 const staticDir = join(vercelDir, "static");
@@ -55,9 +53,7 @@ test.describe("Vercel Adapter Build", () => {
   test("static directory contains Qwik JS chunks", async () => {
     expect(existsSync(staticDir)).toBe(true);
     const files = await collectFiles(staticDir);
-    const qwikChunks = files.filter(
-      (f) => f.endsWith(".js") && f.includes("q-")
-    );
+    const qwikChunks = files.filter((f) => f.endsWith(".js") && f.includes("q-"));
     expect(qwikChunks.length).toBeGreaterThan(0);
   });
 

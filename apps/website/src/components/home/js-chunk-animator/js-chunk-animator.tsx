@@ -3,7 +3,7 @@ import {
   component$,
   useOnDocument,
   useSignal,
-  useStylesScoped$,
+  useStylesScoped$
 } from "@qwik.dev/core";
 import { JSChunk } from "../js-chunk/js-chunk";
 
@@ -82,15 +82,11 @@ export const JSChunkAnimator = component$(() => {
 
         // Find landing targets
         const targets = document.querySelectorAll(".cli-copy, .navigation a");
-        const targetRects = Array.from(targets).map((el) =>
-          el.getBoundingClientRect(),
-        );
+        const targetRects = Array.from(targets).map((el) => el.getBoundingClientRect());
 
         const newChunks = Array.from({ length: 3 }, (_, i) => {
           const targetRect =
-            targetRects[
-              i < 2 ? i : Math.floor(Math.random() * targetRects.length)
-            ];
+            targetRects[i < 2 ? i : Math.floor(Math.random() * targetRects.length)];
           const jitter = (Math.random() - 0.5) * (targetRect?.width ?? 60);
           const landX = targetRect
             ? targetRect.left + targetRect.width / 2 + jitter - centerX
@@ -102,13 +98,13 @@ export const JSChunkAnimator = component$(() => {
             y: topY,
             direction: landX,
             height,
-            rotation: Math.random() < 0.5 ? 360 : -360,
+            rotation: Math.random() < 0.5 ? 360 : -360
           };
         });
 
         chunks.value = [...chunks.value, ...newChunks];
       }
-    }),
+    })
   );
 
   return (
@@ -122,7 +118,7 @@ export const JSChunkAnimator = component$(() => {
             "--y": `${chunk.y}px`,
             "--direction": `${chunk.direction}px`,
             "--height": `${chunk.height}px`,
-            "--rotation": `${chunk.rotation}deg`,
+            "--rotation": `${chunk.rotation}deg`
           }}
         >
           <JSChunk />

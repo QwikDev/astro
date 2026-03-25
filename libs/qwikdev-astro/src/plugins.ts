@@ -7,17 +7,17 @@ import { SERVER_ENTRYPOINT, VIRTUAL_MODULES } from "./constants";
 export function createQwikManifestPlugin(
   getManifest: () => QwikManifest | null
 ): PluginOption {
-  const VIRTUAL_ID = VIRTUAL_MODULES["@qwik-client-manifest"];
+  const virtualId = VIRTUAL_MODULES["@qwik-client-manifest"];
 
   return {
     name: "astro-qwik-manifest",
     enforce: "pre",
     resolveId(id) {
-      if (id === "@qwik-client-manifest") return VIRTUAL_ID;
+      if (id === "@qwik-client-manifest") return virtualId;
       return undefined;
     },
     load(id) {
-      if (id !== VIRTUAL_ID) return undefined;
+      if (id !== virtualId) return undefined;
       const manifest = getManifest();
       return {
         code: `export const manifest = ${manifest ? JSON.stringify(manifest) : "undefined"};`,

@@ -51,12 +51,7 @@ describe("clientRouter script injection", () => {
   it("injects client router script when clientRouter is true", async () => {
     mockClientRouter = true;
     const ctx = makeCtx();
-    const result = await renderer.renderToStaticMarkup.call(
-      ctx,
-      makeComponent(),
-      {},
-      {}
-    );
+    const result = await renderer.renderToStaticMarkup.call(ctx, makeComponent(), {}, {});
     expect(result?.html).toContain("qwik-astro-client-router");
     expect(result?.html).toContain("astro:before-swap");
   });
@@ -64,12 +59,7 @@ describe("clientRouter script injection", () => {
   it("does not inject script when clientRouter is false", async () => {
     mockClientRouter = false;
     const ctx = makeCtx();
-    const result = await renderer.renderToStaticMarkup.call(
-      ctx,
-      makeComponent(),
-      {},
-      {}
-    );
+    const result = await renderer.renderToStaticMarkup.call(ctx, makeComponent(), {}, {});
     expect(result?.html).not.toContain("qwik-astro-client-router");
   });
 

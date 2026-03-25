@@ -6,8 +6,8 @@ export const Counter = component$<{ initial: number; renderOpts?: RenderOptions 
     const counter = useSignal(props.initial);
 
     useVisibleTask$(() => {
-      console.log("FROM VISIBLE TASK")
-    })
+      console.log("FROM VISIBLE TASK");
+    });
 
     return (
       <button

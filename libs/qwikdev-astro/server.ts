@@ -1,4 +1,4 @@
-import { renderOpts as globalRenderOpts, clientRouter } from "virtual:qwik-astro";
+import { clientRouter, renderOpts as globalRenderOpts } from "virtual:qwik-astro";
 import { type JSXNode, jsx } from "@qwik.dev/core";
 import { SSRComment } from "@qwik.dev/core/internal";
 import type { QwikManifest } from "@qwik.dev/core/optimizer";
@@ -33,13 +33,7 @@ function isInlineComponent(component: unknown): boolean {
     return false;
   }
   const codeStr = component.toString().toLowerCase();
-  const qwikJsxIdentifiers = [
-    "_jsxsorted",
-    "_jsxsplit",
-    "_jsxq",
-    "_jsxc",
-    "_jsxs",
-  ];
+  const qwikJsxIdentifiers = ["_jsxsorted", "_jsxsplit", "_jsxq", "_jsxc", "_jsxs"];
   return (
     qwikJsxIdentifiers.some((id) => codeStr.includes(id)) &&
     !hasSerializableState(component)
