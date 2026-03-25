@@ -1,8 +1,8 @@
 import { modal } from "@qds.dev/ui";
 import { component$, useStyles$ } from "@qwik.dev/core";
+import { ThemeToggle } from "../../theme/theme-toggle";
 import { navItems } from "../nav-items";
 import { SearchModal } from "../search/search-modal";
-import { ThemeToggle } from "../../theme/theme-toggle";
 import styles from "./sidebar.css?inline";
 
 const SidebarContent = component$<{

@@ -7,7 +7,7 @@
   },
   "organizeImports": {
     "enabled": true,
-    "ignore": [".astro", "dist", "node_modules"]
+    "ignore": [".astro", "dist", "node_modules", "public"]
   },
   "linter": {
     "enabled": true,
@@ -25,13 +25,13 @@
         "noShoutyConstants": "warn"
       }
     },
-    "ignore": [".astro", "dist", "node_modules"]
+    "ignore": [".astro", "dist", "node_modules", "public"]
   },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
     "indentStyle": "space",
     "lineWidth": 80,
-    "ignore": [".astro", "dist", "node_modules"]
+    "ignore": [".astro", "dist", "node_modules", "public"]
   }
 }
