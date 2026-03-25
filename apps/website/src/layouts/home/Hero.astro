@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import heroImage from "@assets/q-astro-hero.png";
+import pixelDesk from "@assets/pixel-desk.png";
 import { Background } from "@components/home/background/background";
 import { CLICopy } from "@components/home/cli-copy/cli-copy";
 import { LogoHover } from "@components/home/logo-hover/logo-hover";
@@ -17,24 +18,32 @@ import { Icon } from "astro-icon/components";
   <div class="intro-header">
     <ThemeToggle />
   </div>
-  
-<Spotlight>
- <Image loading="eager" fetchpriority="high" class="hero-image" src={heroImage} alt="Qwik + Astro" widths={[500, 800, 1200]} sizes="(max-width: 640px) 100vw, (max-width: 1240px) 80vw, 1200px" />
-</Spotlight>
 
-<LogoHover />
+  <Image
+    loading="eager"
+    fetchpriority="high"
+    class="hero-image"
+    src={pixelDesk}
+    alt="Pixel art desk with astronaut, computer, and lightning bolt snow globe"
+    widths={[500, 800, 1200]}
+    sizes="(max-width: 640px) 100vw, (max-width: 1240px) 80vw, 1200px"
+  />
 
-  <span
-    class="subtitle"
-    >Zero hydration. Zero compromise. The only 
+  <LogoHover />
+
+  <span class="subtitle"
+    >Zero hydration. Zero compromise. The only
     <span class="squiggle-container">
       <span>instantly interactive</span>
       <Squiggle />
-    </span> UI
-    framework that's HTML and server-first, just like 
+    </span> UI framework that's HTML and server-first, just like
     <span class="squiggle-container">
       <span>Astro</span>
-      <Squiggle stroke="var(--rose-500)" stroke-width="12" style={{ transform: 'translateY(-2px)' }} />
+      <Squiggle
+        stroke="var(--rose-500)"
+        stroke-width="12"
+        style={{ transform: "translateY(-2px)" }}
+      />
     </span>.
   </span>
 
@@ -52,85 +61,89 @@ import { Icon } from "astro-icon/components";
 
 <div class="grid-line" aria-hidden="true"></div>
 
-
 <style>
-    .hero-image {
-      object-fit: cover;
-      height: 250px;
-      border-radius: 8px;
-    }
-  
-    a {
-      text-decoration: none;
-      border: var(--space-4xs) solid var(--border-interactive);
-      padding: var(--space-3xs);
-      transition: background-color 0.35s;
-      transition-timing-function: var(--qa-hover);
-      display: flex;
-      align-items: center;
-      gap: var(--space-3xs);
-      box-shadow: var(--shadow-elevation-medium);
-    }
-  
-    a:hover {
-      background-color: var(--bg-hover);
-    }
-  
-    .grid-line {
-      width: 100%;
-      height: 1px;
-      background-color: var(--border);
-    }
-  
-    .intro {
-      margin: 0 auto;
-      max-width: var(--breakpoint-xl);
-      border-inline: 1px solid var(--border);
-      padding: var(--space-m);
-    }
+  .hero-image {
+    object-fit: contain;
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    border-radius: 8px;
+    mix-blend-mode: multiply;
+  }
 
-    .intro-header {
-      display: flex;
-      justify-content: flex-end;
-    }
-  
-    .intro > span {
-      font-size: var(--step-1);
-      margin-block: var(--space-m);
-      display: block;
-      animation: fade-in 0.5s forwards;
-      animation-delay: 2.8s;
+  :global(.dark) .hero-image {
+    mix-blend-mode: lighten;
+  }
+
+  a {
+    text-decoration: none;
+    border: var(--space-4xs) solid var(--border-interactive);
+    padding: var(--space-3xs);
+    transition: background-color 0.35s;
+    transition-timing-function: var(--qa-hover);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    box-shadow: var(--shadow-elevation-medium);
+  }
+
+  a:hover {
+    background-color: var(--bg-hover);
+  }
+
+  .grid-line {
+    width: 100%;
+    height: 1px;
+    background-color: var(--border);
+  }
+
+  .intro {
+    margin: 0 auto;
+    max-width: var(--breakpoint-xl);
+    border-inline: 1px solid var(--border);
+    padding: var(--space-m);
+  }
+
+  .intro-header {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .intro > span {
+    font-size: var(--step-1);
+    margin-block: var(--space-m);
+    display: block;
+    animation: fade-in 0.5s forwards;
+    animation-delay: 2.8s;
+    opacity: 0;
+  }
+
+  .navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    opacity: 0;
+    animation: fade-in 0.5s forwards;
+    animation-delay: 3.1s;
+  }
+
+  .squiggle-container {
+    display: inline-block;
+    position: relative;
+  }
+
+  .subtitle {
+    line-height: 1.7;
+  }
+
+  @keyframes fade-in {
+    from {
       opacity: 0;
+      transform: translateY(var(--space-xs));
     }
-  
-    .navigation {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-xs);
-      opacity: 0;
-      animation: fade-in 0.5s forwards;
-      animation-delay: 3.1s;
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
-  
-    .squiggle-container {
-      display: inline-block;
-      position: relative;
-    }
-  
-    .subtitle {
-      line-height: 1.7;
-    }
-  
-
-
-    @keyframes fade-in {
-      from {
-        opacity: 0;
-        transform: translateY(var(--space-xs));
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+  }
 </style>
