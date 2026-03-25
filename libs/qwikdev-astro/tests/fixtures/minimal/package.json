@@ -4,7 +4,7 @@
   "type": "module",
   "version": "0.0.1",
   "dependencies": {
-    "@qwikdev/astro": "workspace:*",
-    "astro": "5.8.0"
+    "@qwik.dev/astro": "workspace:*",
+    "astro": "6.0.6"
   }
 }

@@ -1,0 +1,124 @@
+---
+import { ClientRouter } from "astro:transitions";
+import { Sidebar } from "@components/docs/sidebar/sidebar";
+import { Toc } from "@components/docs/toc/toc";
+import { Background } from "@components/home/background/background";
+import "@fontsource-variable/unbounded";
+import "@fontsource/yusei-magic";
+import "../../styles/global.css";
+import Footer from "@components/footer/Footer.astro";
+import pkg from "@qwik.dev/astro/package.json";
+
+type TocItem = {
+  label: string;
+  id: string;
+  level: number;
+};
+
+interface Props {
+  title: string;
+  currentPath: string;
+  toc?: TocItem[];
+}
+
+const { title, currentPath, toc = [] } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Qwik + Astro documentation" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} — Qwik + Astro</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <script is:inline>
+      function setDarkMode(document) {
+        let theme = localStorage.getItem("darkMode") || "dark";
+        document.documentElement.className = theme;
+      }
+      setDarkMode(document);
+      document.addEventListener("astro:before-swap", (ev) => {
+        setDarkMode(ev.newDocument);
+      });
+    </script>
+    <Sidebar currentPath={currentPath} version={pkg.version} />
+
+    <header class="header">
+      <Background />
+    </header>
+
+    <main class="docs-main">
+      <div class="docs-content">
+        <div class="docs-article-col">
+          <article class="docs-article" data-pagefind-body>
+            <slot />
+          </article>
+          <Footer />
+        </div>
+        {toc.length > 0 && <Toc items={toc} />}
+      </div>
+    </main>
+
+    <div class="scroll-fog" aria-hidden="true"></div>
+
+  </body>
+</html>
+
+<style>
+  .header {
+    border-bottom: 1px solid var(--border);
+    margin-left: 320px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .header :global(div) {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .docs-main {
+    margin-left: 320px;
+    padding: var(--space-xl) var(--space-m);
+  }
+
+  .docs-content {
+    max-width: var(--breakpoint-xl);
+    margin: 0 auto;
+    display: flex;
+    gap: var(--space-xl);
+    align-items: flex-start;
+  }
+
+  .docs-article-col {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .scroll-fog {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20vh;
+    background: linear-gradient(to top, var(--bg), transparent);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  @media (max-width: 1024px) {
+    .header {
+      margin-left: 0;
+    }
+
+    .docs-main {
+      margin-left: 0;
+      padding-top: calc(var(--space-xl) + 48px);
+    }
+  }
+</style>

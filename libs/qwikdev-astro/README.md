@@ -1,4 +1,4 @@
-# @qwikdev/astro 💜
+# @qwik.dev/astro 💜
 
 The Qwik Astro integration automatically optimizes your project thanks to [JavaScript Streaming](https://github.com/QwikDev/astro/blob/main/README.md#what-is-javascript-streaming).
 
@@ -6,51 +6,51 @@ This project is a result of a year-long effort by some [dedicated Astronauts](ht
 
 ## Installation
 
-### The `@qwikdev/astro` CLI 🦾
+### The `@qwik.dev/astro` CLI 🦾
 
 To start a new Qwik Astro project, you can run the following command:
 
   - **With `NPM`**:
 
     ```bash
-    npm create @qwikdev/astro
+    npm create @qwik.dev/astro
     ```
 
   - **With `Yarn`**:
 
     ```bash
-    yarn create @qwikdev/astro
+    yarn create @qwik.dev/astro
     ```
 
   - **With `PNPM`**:
 
     ```bash
-    pnpm create @qwikdev/astro
+    pnpm create @qwik.dev/astro
     ```
 
   - **With `Bun`**:
 
     ```bash
-    bun create @qwikdev/astro
+    bun create @qwik.dev/astro
     ```
 
-  For more advanced CLI configuration options, see the [@qwikdev/astro CLI documentation](https://github.com/QwikDev/astro/blob/main/libs/create-qwikdev-astro/README.md).
+  For more advanced CLI configuration options, see the [@qwik.dev/astro CLI documentation](https://github.com/QwikDev/astro/blob/main/libs/create-qwikdev-astro/README.md).
 
   > The CLI is still in beta, if you encounter any problems, please [open an issue](https://github.com/QwikDev/astro/issues) and try one of the other methods below.
 
 ### Have an existing project?
 
-To install `@qwikdev/astro` in an existing project, run the following from your project directory and follow the prompts:
+To install `@qwik.dev/astro` in an existing project, run the following from your project directory and follow the prompts:
 
 ```sh
 # Using NPM
-npx astro add @qwikdev/astro
+npx astro add @qwik.dev/astro
 
 # Using Yarn
-yarn astro add @qwikdev/astro
+yarn astro add @qwik.dev/astro
 
 # Using PNPM
-pnpm astro add @qwikdev/astro
+pnpm astro add @qwik.dev/astro
 ```
 
 ### Setting up the TypeScript Config (Existing or Manual)
@@ -60,7 +60,7 @@ The integration needs the following in `tsconfig.json` for typescript to recogni
 ```ts
 "compilerOptions": {
   "jsx": "react-jsx",
-  "jsxImportSource": "@builder.io/qwik"
+  "jsxImportSource": "@qwik.dev/core"
 }
 ```
 
@@ -69,7 +69,7 @@ The integration needs the following in `tsconfig.json` for typescript to recogni
 If you don't intend to use Qwik as your primary `jsxImportSource`, add:
 
 ```
-/** @jsxImportSource @builder.io/qwik */
+/** @jsxImportSource @qwik.dev/core */
 ```
 
 at the top of each Qwik component file.
@@ -80,28 +80,28 @@ If you face any issues, [post them on Github](https://github.com/QwikDev/astro/i
 
 ### Manual Installation
 
-First, install the `@qwikdev/astro` integration like so:
+First, install the `@qwik.dev/astro` integration like so:
 
 ```sh
-npm install @qwikdev/astro
+npm install @qwik.dev/astro
 ```
 
-Typically, package managers install peer dependencies. However, if you get a `Cannot find package '@builder.io/qwik'` warning when starting Astro, install Qwik.
+Typically, package managers install peer dependencies. However, if you get a `Cannot find package '@qwik.dev/core'` warning when starting Astro, install Qwik.
 
 ```sh
-npm install @builder.io/qwik
+npm install @qwik.dev/core
 ```
 
 Now, add the integration to your `astro.config.*` file using the `integrations` property:
 
-```diff lang="js" "qwikdev()"
+```diff lang="js" "qwik()"
   // astro.config.mjs
   import { defineConfig } from 'astro/config';
-+ import qwikdev from '@qwikdev/astro';
++ import qwik from '@qwik.dev/astro';
 
   export default defineConfig({
     // ...
-    integrations: [qwikdev()],
+    integrations: [qwik()],
     //             ^^^^^
   });
 ```
@@ -123,7 +123,7 @@ When using Qwik inside a meta framework like Astro or Qwik City, components are 
 For example here's how to create a counter component in Qwik (e.g. at `src/components/counter.tsx`).
 
 ```tsx
-import { component$, useSignal } from "@builder.io/qwik";
+import { component$, useSignal } from "@qwik.dev/core";
 
 export const Counter = component$(() => {
   const counter = useSignal(0);
@@ -187,7 +187,7 @@ Qwik works well in Astro due to Resumability and its ability to lazy load code i
 
 ### Instant interactivity
 
-As of `@qwikdev/astro` v0.4, there is support for [Speculative Module Fetching](https://qwik.builder.io/docs/advanced/speculative-module-fetching/) in Astro.
+As of `@qwik.dev/astro` v0.4, there is support for [Speculative Module Fetching](https://qwik.builder.io/docs/advanced/speculative-module-fetching/) in Astro.
 
 This enables instant interactivity for your Qwik components. Speculative module fetching will prefetch the application bundles in the background of a service worker, so that when needed, the code is already present in the browser cache.
 
@@ -242,7 +242,7 @@ For example, you can place all Qwik components in a folder named `qwik`. Then, c
 
 ```tsx
 import { defineConfig } from "astro/config";
-import qwik from "@qwikdev/astro";
+import qwik from "@qwik.dev/astro";
 import react from "@astrojs/react";
 
 export default defineConfig({
@@ -267,12 +267,12 @@ If you're using React, use the [Qwik-React integration](https://qwik.dev/docs/in
 ```tsx
 import { defineConfig } from "astro/config";
 
-import qwikdev from "@qwikdev/astro";
-import { qwikReact } from "@builder.io/qwik-react/vite";
+import qwik from "@qwik.dev/astro";
+import { qwikReact } from "@qwik.dev/react/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [qwikdev()],
+  integrations: [qwik()],
   vite: {
     plugins: [qwikReact()],
   },
@@ -287,7 +287,7 @@ The Qwik-React integration allows you to use React components directly in Qwik.
 
 ```tsx
 /** @jsxImportSource react */
-import { qwikify$ } from "@builder.io/qwik-react";
+import { qwikify$ } from "@qwik.dev/react";
 import { useState } from "react";
 
 const ReactCounter = () => {
@@ -347,7 +347,7 @@ For named slots within Astro, instead of adding `q:slot` on the markup, add `slo
 **my-slot-comp.tsx**
 
 ```tsx
-import { Slot, component$, useSignal } from "@builder.io/qwik";
+import { Slot, component$, useSignal } from "@qwik.dev/core";
 
 export const MySlotComp = component$<{ initial: number }>((props) => {
   return (
@@ -380,7 +380,7 @@ export const MySlotComp = component$<{ initial: number }>((props) => {
 
 - [Using Qwik in Astro over React and Vanilla JS](https://thenewstack.io/how-quiks-astro-integration-beats-both-react-and-vanilla-js/).
 
-- [Initial @qwikdev/astro Alpha Post](https://www.builder.io/blog/astro-qwik)
+- [Initial @qwik.dev/astro Alpha Post](https://www.builder.io/blog/astro-qwik)
 
 ## Videos
 

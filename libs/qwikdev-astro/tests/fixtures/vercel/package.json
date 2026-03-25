@@ -1,0 +1,11 @@
+{
+  "name": "vercel-fixture",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "dependencies": {
+    "@astrojs/vercel": "10.0.1",
+    "@qwik.dev/astro": "workspace:*",
+    "astro": "6.0.6"
+  }
+}

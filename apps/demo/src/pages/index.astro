@@ -1,5 +1,6 @@
 ---
 import { Counter as NativeCounter } from "@components/qwik/counter";
+import { ClientRouter } from "astro:transitions";
 ---
 
 <html lang="en">
@@ -9,10 +10,13 @@ import { Counter as NativeCounter } from "@components/qwik/counter";
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro</title>
+		<ClientRouter />
 	</head>
 	<body>
 		<div style={{ height: "1000px" }}>
 			<NativeCounter initial={2} />
+			<NativeCounter initial={2} />
+			<a href="/about">About</a>
 		</div>
 	</body>
 </html>

@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from "astro:transitions";
 import { JSChunkAnimator } from "@components/home/js-chunk-animator/js-chunk-animator";
 import "../styles/global.css";
 
@@ -9,19 +10,31 @@ interface Props {
 const { title } = Astro.props;
 
 import "@fontsource-variable/unbounded";
+import "@fontsource/yusei-magic";
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="description" content="Qwik + Astro integration" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<ClientRouter />
 	</head>
 	<body>
+		<script is:inline>
+			function setDarkMode(document) {
+				let theme = localStorage.getItem("darkMode") || "dark";
+				document.documentElement.className = theme;
+			}
+			setDarkMode(document);
+			document.addEventListener("astro:before-swap", (ev) => {
+				setDarkMode(ev.newDocument);
+			});
+		</script>
 		<slot />
 		<JSChunkAnimator />
 	</body>

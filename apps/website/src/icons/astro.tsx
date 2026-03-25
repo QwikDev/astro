@@ -1,4 +1,4 @@
-import { type PropsOf, component$ } from "@builder.io/qwik";
+import { type PropsOf, component$ } from "@qwik.dev/core";
 
 export const AstroIcon = component$((props: PropsOf<"svg">) => {
   return (
@@ -18,7 +18,7 @@ export const AstroIcon = component$((props: PropsOf<"svg">) => {
       />
       <path
         d="M0 69.5866C0 69.5866 14.3139 62.6137 28.6678 62.6137L39.4901 29.1204C39.8953 27.5007 41.0783 26.3999 42.4139 26.3999C43.7495 26.3999 44.9325 27.5007 45.3377 29.1204L56.1601 62.6137C73.1601 62.6137 84.8278 69.5866 84.8278 69.5866C84.8278 69.5866 60.5145 3.35233 60.467 3.21944C59.7692 1.2612 58.5911 0 57.0029 0H27.8274C26.2392 0 25.1087 1.2612 24.3634 3.21944C24.3108 3.34983 0 69.5866 0 69.5866Z"
-        fill="white"
+        fill="currentColor"
       />
       <defs>
         <linearGradient

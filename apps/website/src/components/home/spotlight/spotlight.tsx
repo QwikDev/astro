@@ -1,4 +1,4 @@
-import { $, Slot, component$, useSignal, useStyles$ } from "@builder.io/qwik";
+import { $, Slot, component$, useSignal, useStyles$ } from "@qwik.dev/core";
 import styles from "./spotlight.css?inline";
 
 export const Spotlight = component$(() => {
@@ -29,7 +29,6 @@ export const Spotlight = component$(() => {
   });
 
   const onPointerLeave$ = $(() => {
-    console.log("leave");
     if (!overlayRef.value) return;
 
     overlayRef.value.classList.add("leaving");
@@ -57,8 +56,8 @@ export const Spotlight = component$(() => {
                         circle var(--space-4xl) at var(--x-pos) var(--y-pos),
                         transparent 0%,
                         transparent 30%,
-                        var(--off-black) 70%
-                    )`
+                        var(--bg) 70%
+                    )`,
         }}
       />
     </div>

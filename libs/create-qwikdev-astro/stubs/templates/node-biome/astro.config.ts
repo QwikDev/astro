@@ -1,4 +1,4 @@
-import qwikdev from "@qwikdev/astro";
+import qwik from "@qwik.dev/astro";
 import { defineConfig } from "astro/config";
 
 import node from "@astrojs/node";
@@ -9,5 +9,5 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
-  integrations: [qwikdev()],
+  integrations: [qwik()],
 });

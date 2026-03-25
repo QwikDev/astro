@@ -1,6 +1,7 @@
-declare module "virtual:qwikdev-astro" {
-  import type { RenderOptions } from "@builder.io/qwik/server";
+declare module "virtual:qwik-astro" {
+  import type { RenderOptions } from "@qwik.dev/core/server";
 
   const renderOpts: RenderOptions;
-  export { renderOpts };
+  const clientRouter: boolean;
+  export { renderOpts, clientRouter };
 }

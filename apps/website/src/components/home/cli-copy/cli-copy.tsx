@@ -4,8 +4,8 @@ import {
   component$,
   useSignal,
   useStyles$,
-  useTask$
-} from "@builder.io/qwik";
+  useTask$,
+} from "@qwik.dev/core";
 import styles from "./cli-copy.css?inline";
 
 export const CLICopy = component$((props: PropsOf<"button">) => {
@@ -28,7 +28,7 @@ export const CLICopy = component$((props: PropsOf<"button">) => {
       type="button"
       class="cli-copy"
       onClick$={() => {
-        navigator.clipboard.writeText("npm create @qwikdev/astro@latest");
+        navigator.clipboard.writeText("npm create @qwik.dev/astro@latest");
         isCopied.value = true;
         hasInteracted.value = true;
       }}

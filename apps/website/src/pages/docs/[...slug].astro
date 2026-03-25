@@ -1,0 +1,209 @@
+---
+import { getCollection, render } from "astro:content";
+import DocsLayout from "@layouts/docs/DocsLayout.astro";
+
+export async function getStaticPaths() {
+  const docs = await getCollection("docs");
+  return docs.map((entry) => ({
+    params: { slug: entry.id === "installation" ? undefined : entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+
+const currentPath = entry.id === "installation" ? "/docs" : `/docs/${entry.id}`;
+
+const toc = headings
+  .filter((h) => h.depth <= 3)
+  .map((h) => ({
+    label: h.text,
+    id: h.slug,
+    level: h.depth,
+  }));
+---
+
+<DocsLayout title={entry.data.title} currentPath={currentPath} toc={toc}>
+  <section class="docs-hero">
+    <span class="docs-label">{entry.data.label}</span>
+    <h1>{entry.data.title}</h1>
+    <p class="docs-intro">{entry.data.description}</p>
+  </section>
+
+  <div class="docs-prose">
+    <Content />
+  </div>
+</DocsLayout>
+
+<style>
+  .docs-hero {
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-xl);
+  }
+
+  .docs-label {
+    font-size: 10px;
+    color: var(--rose-500);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: var(--space-2xs);
+  }
+
+  h1 {
+    font-size: var(--step-5);
+    margin-bottom: var(--space-m);
+  }
+
+  @media (max-width: 640px) {
+    h1 {
+      font-size: var(--step-3);
+    }
+  }
+
+  .docs-intro {
+    font-size: var(--step-1);
+    color: var(--text-muted);
+    max-width: 48ch;
+    line-height: 1.7;
+  }
+
+  .docs-prose :global(h2) {
+    font-size: var(--step-2);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-m);
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--border);
+  }
+
+  .docs-prose :global(h2:first-child) {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  .docs-prose :global(h3) {
+    font-size: var(--step-1);
+    margin-top: var(--space-l);
+    margin-bottom: var(--space-s);
+  }
+
+  .docs-prose :global(p) {
+    font-size: var(--step-0);
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: var(--space-m);
+    max-width: 60ch;
+  }
+
+  .docs-prose :global(p code),
+  .docs-prose :global(li code) {
+    font-family: monospace;
+    font-size: 0.85em;
+    color: var(--rose-300);
+    background: var(--bg-code);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  :global(.light) .docs-prose :global(p code),
+  :global(.light) .docs-prose :global(li code) {
+    background: var(--rose-50);
+    border-color: var(--rose-200);
+    color: var(--rose-700);
+  }
+
+  .docs-prose :global(a) {
+    color: var(--link);
+    text-underline-offset: 4px;
+  }
+
+  .docs-prose :global(strong) {
+    color: var(--text);
+  }
+
+  .docs-prose :global(blockquote) {
+    border-left: var(--space-4xs) dotted var(--rose-500);
+    padding-left: var(--space-m);
+    margin-bottom: var(--space-m);
+    color: var(--text-muted);
+    font-size: var(--step-0);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .docs-prose :global(blockquote p) {
+    margin-bottom: 0;
+  }
+
+  .docs-prose :global(ul) {
+    list-style: none;
+    padding: 0;
+    margin-bottom: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+  }
+
+  .docs-prose {
+    counter-reset: docs-ol;
+  }
+
+  .docs-prose :global(ol) {
+    list-style: none;
+    padding: 0;
+    margin-bottom: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-l);
+  }
+
+  .docs-prose :global(li) {
+    font-size: var(--step-0);
+    color: var(--text-muted);
+    padding-left: var(--space-m);
+    position: relative;
+  }
+
+  .docs-prose :global(ul > li::before) {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    background-color: var(--rose-500);
+  }
+
+  .docs-prose :global(ol > li) {
+    counter-increment: docs-ol;
+  }
+
+  .docs-prose :global(ol > li::before) {
+    content: counter(docs-ol) ".";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: 600;
+    color: var(--rose-500);
+    font-size: var(--step-0);
+  }
+
+  .docs-prose :global(pre) {
+    background-color: var(--bg-code) !important;
+    border: 1px solid var(--border);
+    padding: var(--space-m);
+    margin-bottom: var(--space-m);
+    overflow-x: auto;
+    font-size: var(--step--1);
+  }
+
+  .docs-prose :global(pre code) {
+    color: inherit;
+    font-size: inherit;
+    background: none;
+  }
+</style>

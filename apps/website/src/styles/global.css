@@ -1,3 +1,9 @@
+@property --scrollbar-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 :root {
   /* colors */
   --off-black: #0a0a0a;
@@ -105,6 +111,21 @@
   --breakpoint-sm: 640px;
   --breakpoint-xl: 1240px;
 
+  /* Semantic tokens (dark default) */
+  --bg: var(--off-black);
+  --bg-surface: #1a1a1a;
+  --bg-code: #151515;
+  --bg-code-header: #2a2a2a;
+  --bg-hover: var(--neutral-950);
+  --text: var(--purple-50);
+  --text-muted: var(--neutral-400);
+  --text-hover: var(--purple-50);
+  --border: var(--neutral-950);
+  --border-interactive: var(--neutral-800);
+  --link: var(--purple-300);
+  --topo-url: url("/topo-pattern.svg");
+  --topo-opacity: 0.5;
+
   /* Shadows */
   --shadow-color: 0deg 0% 0%;
   --shadow-elevation-low:
@@ -127,11 +148,17 @@
     33.1px 53.1px 70.4px -2.5px hsl(var(--shadow-color) / 0.34);
 }
 
+:focus-visible:not(input):not(textarea):not(select) {
+  outline: 9px double black;
+  box-shadow: 0 0 0 6px white;
+}
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
+
 /* 2. Remove default margin */
 * {
   margin: 0;
@@ -150,21 +177,27 @@ body,
 p,
 button,
 a {
-  color: var(--purple-50);
+  color: var(--text);
 }
 
 button {
   cursor: pointer;
 }
 
+html:not(:has(dialog:modal)) {
+  container-type: inline-size;
+}
+
 body {
+  --scrollbar-width: calc(100vw - 100cqw);
   /* 3. Add accessible line-height */
   line-height: 1.5;
   /* 4. Improve text rendering */
   -webkit-font-smoothing: antialiased;
-  background-color: var(--off-black);
-  font-family: "Unbounded Variable", sans-serif;
+  background-color: var(--bg);
+  font-family: "Yusei Magic", sans-serif;
 }
+
 /* 5. Improve media defaults */
 img,
 picture,
@@ -174,6 +207,7 @@ svg {
   display: block;
   max-width: 100%;
 }
+
 /* 6. Inherit fonts for form controls */
 input,
 button,
@@ -181,6 +215,7 @@ textarea,
 select {
   font: inherit;
 }
+
 /* 7. Avoid text overflows */
 p,
 h1,
@@ -191,10 +226,12 @@ h5,
 h6 {
   overflow-wrap: break-word;
 }
+
 /* 8. Improve line wrapping */
 p {
   text-wrap: pretty;
 }
+
 h1,
 h2,
 h3,
@@ -202,4 +239,50 @@ h4,
 h5,
 h6 {
   text-wrap: balance;
+}
+
+h1 {
+  line-height: 1.1;
+}
+
+pre > code span {
+  color: var(--shiki-dark) !important;
+  background-color: transparent !important;
+}
+
+.light pre > code span {
+  color: var(--shiki-light) !important;
+  background-color: transparent !important;
+}
+
+.light pre {
+  background-color: var(--bg-code) !important;
+  border: 1px solid var(--border);
+}
+
+.light .background-wrapper > div {
+  background: url("/topo-pattern-light.svg") repeat !important;
+  background-size: 600px 600px !important;
+}
+
+.light .card-topo {
+  background: url("/topo-pattern-light.svg") repeat !important;
+  background-size: 400px 400px !important;
+}
+
+.light {
+  --bg: #f9f9f9;
+  --bg-surface: #ffffff;
+  --bg-code: #f6f6f6;
+  --bg-code-header: #ede9fe;
+  --bg-hover: #f0f0f0;
+  --text: var(--purple-950);
+  --text-muted: var(--neutral-600);
+  --text-hover: var(--purple-950);
+  --border: #e5e5e5;
+  --border-interactive: #d1d1d1;
+  --link: var(--purple-700);
+  --topo-url: url("/topo-pattern-light.svg");
+  --topo-opacity: 0.4;
+  --shadow-color: 0deg 0% 24%;
 }

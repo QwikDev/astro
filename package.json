@@ -26,26 +26,35 @@
     "format": "biome format --write .",
     "lint": "biome check --write .",
     "build.create-qwikdev-astro": "pnpm -C ./libs/create-qwikdev-astro prod",
-    "postinstall": "lefthook install && playwright install --with-deps",
+    "postinstall": "test \"$CF_PAGES\" = '1' && exit 0 || lefthook install && playwright install --with-deps",
     "changeset": "changeset",
     "release": "pnpm build.create-qwikdev-astro && changeset publish",
-    "test": "pnpm test:cli && pnpm test:e2e",
-    "test:cli": "pnpm -C ./libs/create-qwikdev-astro test",
-    "test:e2e": "playwright test --pass-with-no-tests",
-    "test:e2e.ui": "playwright test --ui",
-    "test:e2e.report": "playwright show-report"
+    "test": "pnpm test.cli && pnpm test.platform",
+    "test.cli": "pnpm -C ./libs/create-qwikdev-astro test",
+    "test.platform": "playwright test --pass-with-no-tests",
+    "test.platform.ui": "playwright test --ui",
+    "test.platform.report": "playwright show-report"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "@biomejs/biome",
+      "@parcel/watcher",
+      "esbuild",
+      "lefthook",
+      "sharp"
+    ]
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@builder.io/qwik": "^1.14.1",
     "@changesets/cli": "^2.29.4",
-    "@inox-tools/astro-tests": "^0.6.1",
-    "@playwright/test": "^1.53.0",
-    "@qwikdev/astro": "workspace:*",
+    "@playwright/test": "^1.58.2",
+    "@qwik.dev/astro": "workspace:*",
+    "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@324116a",
     "@qwikdev/create-astro": "workspace:*",
     "@types/node": "^22.15.31",
-    "astro": "^5.9.2",
+    "astro": "6.0.6",
     "lefthook": "^1.11.13",
-    "pkg-pr-new": "^0.0.35"
+    "pkg-pr-new": "^0.0.35",
+    "vitest": "^4.0.18"
   }
 }

@@ -136,22 +136,22 @@ export class Application extends Program<Definition, Input> {
         desc: "Walk through steps without executing"
       })
       .example(
-        "npm create @qwikdev/astro@latest",
+        "npm create @qwik.dev/astro@latest",
         "Create a project with default options"
       )
       .example(
-        "npm create @qwikdev/astro@latest ./qwik-astro-app",
+        "npm create @qwik.dev/astro@latest ./qwik-astro-app",
         "Create a project in a specific directory"
       )
       .example(
-        "npm create @qwikdev/astro@latest ./qwik-astro-app node",
+        "npm create @qwik.dev/astro@latest ./qwik-astro-app node",
         "Create a project using a server adapter"
       )
       .example(
-        "npm create @qwikdev/astro@latest ./qwik-astro-app node --it",
+        "npm create @qwik.dev/astro@latest ./qwik-astro-app node --it",
         "Create a project in interactive command mode"
       )
-      .usage("npm create @qwikdev/astro [destination] [adapter] [...options]");
+      .usage("npm create @qwik.dev/astro [destination] [adapter] [...options]");
   }
 
   parse(args: string[]): Definition {
@@ -351,7 +351,7 @@ export class Application extends Program<Definition, Input> {
     this.info("Adding @QwikDev/astro...");
     try {
       if (!input.dryRun) {
-        await pm.x("astro add @qwikdev/astro", { cwd: input.outDir });
+        await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir });
       }
 
       if (input.copy) {
@@ -400,7 +400,7 @@ export class Application extends Program<Definition, Input> {
       "--template",
       input.template,
       "--add",
-      "@qwikdev/astro",
+      "@qwik.dev/astro",
       input.install ? "--install" : "--no-install",
       input.git ? "--git" : "--no-git"
     ];
@@ -544,7 +544,7 @@ export class Application extends Program<Definition, Input> {
               [
                 "commit",
                 "-m",
-                `${addChanges ? "➕ Add @qwikdev/astro" : "Initial commit 🎉"}`
+                `${addChanges ? "➕ Add @qwik.dev/astro" : "Initial commit 🎉"}`
               ],
               { cwd: outDir }
             ).result

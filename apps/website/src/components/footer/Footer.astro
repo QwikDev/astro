@@ -1,0 +1,73 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="https://github.com/QwikDev/astro" target="_blank" rel="noopener">
+      <Icon name="lucide:github" class="footer-icon" />
+      <span>GitHub</span>
+    </a>
+    <a
+      href="https://discord.com/channels/842438759945601056/1150941080355881080"
+      target="_blank"
+      rel="noopener"
+    >
+      <Icon name="lucide:message-circle" class="footer-icon" />
+      <span>Discord</span>
+    </a>
+    <a
+      href="https://github.com/QwikDev/astro/blob/main/contributing.md"
+      target="_blank"
+      rel="noopener"
+    >
+      <Icon name="lucide:heart" class="footer-icon" />
+      <span>Contributing</span>
+    </a>
+  </div>
+  <span class="footer-copy"
+    >&copy; {new Date().getFullYear()} Qwik Team. Built with Qwik + Astro.</span
+  >
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: var(--space-m);
+    padding-top: var(--space-l);
+    padding-bottom: var(--space-2xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-m);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: var(--space-m);
+  }
+
+  .footer-links a {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    text-decoration: none;
+    font-size: var(--step--1);
+    color: var(--text-muted);
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover {
+    color: var(--text-hover);
+  }
+
+  .footer-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .footer-copy {
+    font-size: var(--step--2);
+    color: var(--text-muted);
+  }
+</style>

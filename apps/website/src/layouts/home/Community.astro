@@ -1,0 +1,512 @@
+---
+import { Image } from "astro:assets";
+import jackAvatar from "@assets/avatars/jack.png";
+import matthewAvatar from "@assets/avatars/matthew.png";
+import nateAvatar from "@assets/avatars/nate.png";
+import siguiAvatar from "@assets/avatars/sigui.png";
+import Footer from "@components/footer/Footer.astro";
+import { Icon } from "astro-icon/components";
+
+const team = {
+  jack: {
+    name: "Jack Shelton",
+    login: "thejackshelton",
+    bio: "Sharing the joy of fast and beautiful web experiences.",
+    role: "Integration architecture",
+    avatar: "/avatars/jack.png",
+  },
+  sigui: {
+    name: "SIGUI Kessé Emmanuel",
+    login: "siguici",
+    bio: "Code wizard by day, open-source ninja by night.",
+    role: "CLI & tooling",
+    avatar: "/avatars/sigui.png",
+  },
+  matthew: {
+    name: "Matthew Phillips",
+    login: "matthewp",
+    role: "Astro Core",
+    avatar: "/avatars/matthew.png",
+  },
+  nate: {
+    name: "Nate Moore",
+    login: "natemoo-re",
+    role: "Astro Core",
+    avatar: "/avatars/nate.png",
+  },
+};
+
+const videos = [
+  {
+    id: "OSIjoqVK51o",
+    title: "DevWorld 2024",
+    desc: "A match made in performance heaven",
+    thumb: "https://img.youtube.com/vi/OSIjoqVK51o/mqdefault.jpg",
+  },
+  {
+    id: "W-j2HH1GdjU",
+    title: "Learn with Jason",
+    desc: "Building with the Qwik Astro integration",
+    thumb: "https://img.youtube.com/vi/W-j2HH1GdjU/mqdefault.jpg",
+  },
+  {
+    id: "LIKxkSzHqeo",
+    title: "Announcement",
+    desc: "Steve's original Qwik Astro reveal",
+    thumb: "https://img.youtube.com/vi/LIKxkSzHqeo/mqdefault.jpg",
+  },
+  {
+    id: "wKvkYUNBa5k",
+    title: "Awesome's deep dive",
+    desc: "How Astro just got even faster",
+    thumb: "https://img.youtube.com/vi/wKvkYUNBa5k/mqdefault.jpg",
+  },
+  {
+    id: "OgRfNfCMvvQ",
+    title: "Lazy Loading talk",
+    desc: "A New Era of Effective Lazy Loading",
+    thumb: "https://img.youtube.com/vi/OgRfNfCMvvQ/mqdefault.jpg",
+  },
+];
+
+const guides = [
+  {
+    title: "Embed Stackblitz performantly",
+    href: "https://thenewstack.io/how-to-build-embed-components-with-astro-qwik-and-stackblitz/",
+  },
+  {
+    title: "Site Search with Fuse.js",
+    href: "https://thenewstack.io/how-to-build-site-search-with-astro-qwik-and-fuse-js/",
+  },
+  {
+    title: "Qwik as a React alternative in Astro",
+    href: "https://thenewstack.io/take-a-qwik-break-from-react-with-astro/",
+  },
+  {
+    title: "Qwik beats React and Vanilla JS",
+    href: "https://thenewstack.io/how-quiks-astro-integration-beats-both-react-and-vanilla-js/",
+  },
+  {
+    title: "Deploy with Vercel SSR Adapter",
+    href: "https://dev.to/reeshee/qwik-look-at-resumability-with-astro-on-vercel-44fj",
+  },
+  {
+    title: "Netlify's Guide to Qwik Astro",
+    href: "https://developers.netlify.com/guides/adding-resumability-to-astro-with-qwik/",
+  },
+  {
+    title: "Initial @qwik.dev/astro alpha post",
+    href: "https://www.builder.io/blog/astro-qwik",
+  },
+];
+---
+
+<div class="section stagger-1">
+  <h2>Community</h2>
+
+  <div class="subsection">
+    <h3>
+      <Icon name="lucide:play-circle" class="section-icon" /> Talks & Videos
+    </h3>
+    <div class="videos">
+      {
+        videos.map((v) => (
+          <a
+            href={`https://www.youtube.com/watch?v=${v.id}`}
+            target="_blank"
+            rel="noopener"
+          >
+            <div class="card-topo" aria-hidden="true" />
+            <Image src={v.thumb} alt={v.title} width={320} height={180} />
+            <div class="video-text">
+              <span class="video-title">{v.title}</span>
+              <span class="video-desc">{v.desc}</span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3><Icon name="lucide:book-open" class="section-icon" /> Guides</h3>
+    <div class="guide-list">
+      {
+        guides.map((g) => (
+          <a href={g.href} target="_blank" rel="noopener" class="guide-link">
+            <Icon name="lucide:arrow-up-right" class="guide-arrow" />
+            {g.title}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<div class="grid-line" aria-hidden="true"></div>
+<div class="section stagger-2">
+  <h2>Maintainers</h2>
+  <div class="team-grid team-grid-2">
+    <a
+      href={`https://github.com/${team.jack.login}`}
+      target="_blank"
+      rel="noopener"
+      class="team-card"
+    >
+      <div class="card-topo" aria-hidden="true"></div>
+      <Image
+        src={jackAvatar}
+        alt={team.jack.name}
+        width={72}
+        height={72}
+        class="team-avatar"
+      />
+      <span class="team-name">{team.jack.name}</span>
+      <span class="team-role">{team.jack.role}</span>
+      <span class="team-bio">{team.jack.bio}</span>
+      <span class="team-github">@{team.jack.login}</span>
+    </a>
+    <a
+      href={`https://github.com/${team.sigui.login}`}
+      target="_blank"
+      rel="noopener"
+      class="team-card"
+    >
+      <div class="card-topo" aria-hidden="true"></div>
+      <Image
+        src={siguiAvatar}
+        alt={team.sigui.name}
+        width={72}
+        height={72}
+        class="team-avatar"
+      />
+      <span class="team-name">{team.sigui.name}</span>
+      <span class="team-role">{team.sigui.role}</span>
+      <span class="team-bio">{team.sigui.bio}</span>
+      <span class="team-github">@{team.sigui.login}</span>
+    </a>
+  </div>
+</div>
+
+<div class="grid-line" aria-hidden="true"></div>
+<div class="section stagger-3">
+  <h2>Special Thanks</h2>
+  <p class="thanks-text">
+    This integration would not be possible without the Astro core team.
+  </p>
+  <div class="team-grid team-grid-2">
+    <a
+      href={`https://github.com/${team.matthew.login}`}
+      target="_blank"
+      rel="noopener"
+      class="team-card"
+    >
+      <div class="card-topo" aria-hidden="true"></div>
+      <Image
+        src={matthewAvatar}
+        alt={team.matthew.name}
+        width={72}
+        height={72}
+        class="team-avatar"
+      />
+      <span class="team-name">{team.matthew.name}</span>
+      <span class="team-role">{team.matthew.role}</span>
+      <span class="team-github">@{team.matthew.login}</span>
+    </a>
+    <a
+      href={`https://github.com/${team.nate.login}`}
+      target="_blank"
+      rel="noopener"
+      class="team-card"
+    >
+      <div class="card-topo" aria-hidden="true"></div>
+      <Image
+        src={nateAvatar}
+        alt={team.nate.name}
+        width={72}
+        height={72}
+        class="team-avatar"
+      />
+      <span class="team-name">{team.nate.name}</span>
+      <span class="team-role">{team.nate.role}</span>
+      <span class="team-github">@{team.nate.login}</span>
+    </a>
+  </div>
+</div>
+<div class="grid-line" aria-hidden="true"></div>
+
+<div class="footer-wrap">
+  <Footer />
+</div>
+
+<style>
+  .grid-line {
+    width: 100%;
+    height: 1px;
+    background-color: var(--border);
+  }
+
+  .community-wrap {
+    position: relative;
+  }
+
+  .section {
+    margin: 0 auto;
+    max-width: var(--breakpoint-xl);
+    border-inline: 1px solid var(--border);
+    padding: var(--space-m);
+    padding-block: var(--space-l);
+  }
+
+  h2 {
+    font-size: var(--step-2);
+    margin-bottom: var(--space-m);
+  }
+
+  h3 {
+    font-size: var(--step-0);
+    margin-bottom: var(--space-s);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+  }
+
+  .section-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--purple-500);
+  }
+
+  .subsection {
+    margin-bottom: var(--space-l);
+  }
+
+  .videos {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-xs);
+    position: relative;
+  }
+
+  @media (max-width: 900px) {
+    .videos {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .videos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 390px) {
+    .videos {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .videos a {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: border-color 0.35s;
+    transition-timing-function: var(--qa-hover);
+    background-color: var(--bg);
+    position: relative;
+  }
+
+  .videos a:hover {
+    border-color: var(--rose-500);
+  }
+
+  .videos a:hover .video-title {
+    color: var(--rose-500);
+  }
+
+  .videos img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .video-text {
+    padding: var(--space-2xs) var(--space-s);
+    padding-bottom: var(--space-s);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    position: relative;
+  }
+
+  .video-title {
+    font-size: var(--step--1);
+    transition: color 0.2s;
+  }
+
+  .video-desc {
+    font-size: var(--step--2);
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* Guides */
+  .guide-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+  }
+
+  .guide-link {
+    font-size: var(--step--1);
+    color: var(--link);
+    text-decoration: none;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+  }
+
+  .guide-link:hover {
+    color: var(--text-hover);
+  }
+
+  .guide-arrow {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+
+  .thanks-text {
+    font-size: var(--step-0);
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: var(--space-m);
+  }
+
+  /* Team */
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xs);
+  }
+
+  @media (max-width: 900px) {
+    .team-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .team-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .team-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    .team-grid-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .team-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-3xs);
+    text-decoration: none;
+    padding: var(--space-m);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.35s;
+    transition-timing-function: var(--qa-hover);
+  }
+
+  .team-card:hover {
+    border-color: var(--rose-500);
+  }
+
+  .card-topo {
+    position: absolute;
+    inset: 0;
+    background: url("/topo-pattern.svg") repeat;
+    background-size: 400px 400px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .team-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 9999px;
+    margin-bottom: var(--space-3xs);
+  }
+
+  .team-name {
+    font-size: var(--step-0);
+    transition: color 0.2s;
+  }
+
+  .team-role {
+    font-size: 10px;
+    color: var(--rose-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .team-bio {
+    font-size: var(--step--2);
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  .team-github {
+    font-size: var(--step--2);
+    color: var(--text-muted);
+  }
+
+  .footer-wrap {
+    margin: 0 auto;
+    max-width: var(--breakpoint-xl);
+    border-inline: 1px solid var(--border);
+    opacity: 0;
+    animation: community-fade-in 0.5s forwards;
+    animation-timing-function: var(--qa-fade);
+    animation-delay: 4.3s;
+  }
+
+  .section {
+    opacity: 0;
+    animation: community-fade-in 0.5s forwards;
+    animation-timing-function: var(--qa-fade);
+  }
+
+  .stagger-1 {
+    animation-delay: 3.4s;
+  }
+  .stagger-2 {
+    animation-delay: 3.7s;
+  }
+  .stagger-3 {
+    animation-delay: 4s;
+  }
+
+  @keyframes community-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(var(--space-xs));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

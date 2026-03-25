@@ -1,35 +1,48 @@
-import { renderOpts as globalRenderOpts } from "virtual:qwikdev-astro";
-import { type JSXNode, jsx } from "@builder.io/qwik";
-import { isDev } from "@builder.io/qwik/build";
-import type { QwikManifest } from "@builder.io/qwik/optimizer";
-import { type RenderToStreamOptions, renderToStream } from "@builder.io/qwik/server";
+import { renderOpts as globalRenderOpts, clientRouter } from "virtual:qwik-astro";
+import { type JSXNode, jsx } from "@qwik.dev/core";
+import { SSRComment } from "@qwik.dev/core/internal";
+import type { QwikManifest } from "@qwik.dev/core/optimizer";
+import { type RenderToStreamOptions, renderToStream } from "@qwik.dev/core/server";
 import type { SSRResult } from "astro";
 
-const containerMap = new WeakMap<SSRResult, boolean>();
+const CLIENT_ROUTER_SCRIPT = `(function(){window.addEventListener("error",e=>{e.message&&(e.message.includes("replaceWith")||e.message.includes("has already been declared"))&&e.preventDefault()}),window.addEventListener("unhandledrejection",e=>{e.reason?.message?.includes("replaceWith")&&e.preventDefault()}),document.addEventListener("astro:before-swap",()=>{document.querySelectorAll("[q\\\\:container]").forEach(e=>{e.qDestroy&&e.qDestroy()}),document.qVNodeData=void 0}),document.addEventListener("astro:after-swap",()=>{window._qwikEv?.push&&window._qwikEv.push("e:qvisible"),document.dispatchEvent(new Event("readystatechange")),document.querySelectorAll('script[crossorigin="anonymous"],script[q\\\\:type="preload"]').forEach(s=>{if(s.textContent){var n=document.createElement("script");n.textContent=s.textContent;document.head.appendChild(n)}}),window.dispatchEvent(new Event("load"))})})();`;
 
+const containerMap = new WeakMap<SSRResult, boolean>();
 type RendererContext = {
   result: SSRResult;
 };
 
+/** Detects component$() components via the SERIALIZABLE_STATE symbol that survives minification. */
+function hasSerializableState(component: Function): boolean {
+  const symbols = Object.getOwnPropertySymbols(component);
+  return symbols.some((s) => {
+    const val = (component as any)[s];
+    return Array.isArray(val);
+  });
+}
+
 /**
- *  Because inline components are very much like normal functions, it's hard to distinguish them from normal functions.
- *
- * We currently identify them through the jsx transform function call.
+ * Inline components are plain functions that use Qwik JSX transforms.
+ * We identify them through the jsx transform function call in their source.
  *
  * In Qwik v1, the identifiers are _jsxQ - _jsxC - _jsxS
- *
- * In Qwik v2, it is jsxsplit and I believe jsxSorted
- *
+ * In Qwik v2, the identifiers are _jsxSorted and _jsxSplit
  */
 function isInlineComponent(component: unknown): boolean {
   if (typeof component !== "function") {
     return false;
   }
-  const codeStr = component?.toString().toLowerCase();
-  const qwikJsxIdentifiers = ["_jsxq", "_jsxc", "_jsxs", "jsxsplit"];
+  const codeStr = component.toString().toLowerCase();
+  const qwikJsxIdentifiers = [
+    "_jsxsorted",
+    "_jsxsplit",
+    "_jsxq",
+    "_jsxc",
+    "_jsxs",
+  ];
   return (
     qwikJsxIdentifiers.some((id) => codeStr.includes(id)) &&
-    component.name !== "QwikComponent"
+    !hasSerializableState(component)
   );
 }
 
@@ -37,21 +50,18 @@ function isQwikComponent(component: unknown) {
   if (typeof component !== "function") {
     return false;
   }
-  if (isInlineComponent(component)) {
-    return true;
-  }
-  if (component.name !== "QwikComponent") {
-    return false;
-  }
-
-  return true;
+  return (
+    hasSerializableState(component) ||
+    component.name === "QwikComponent" ||
+    isInlineComponent(component)
+  );
 }
 
 async function check(this: RendererContext, component: unknown) {
   try {
     return isQwikComponent(component);
   } catch (error) {
-    console.error("Error in check function of @qwikdev/astro: ", error);
+    console.error("Error in check function of @qwik.dev/astro: ", error);
     return false;
   }
 }
@@ -69,27 +79,16 @@ export async function renderToStaticMarkup(
 
     let html = "";
 
-    // https://qwik.dev/docs/advanced/qwikloader/#qwikloader
-    const isInitialContainer = !containerMap.has(this.result);
-
     const renderToStreamOpts: RenderToStreamOptions = {
       ...(props.renderOpts ?? globalRenderOpts ?? {}),
       containerAttributes: {
-        style: "display: contents",
-        ...(isDev && { "q-astro-marker": "" })
+        style: "display: contents"
       },
-      qwikLoader: isInitialContainer ? { include: "always" } : { include: "never" },
       containerTagName: "div",
-      ...(isDev && {
-        symbolMapper: globalThis.symbolMapperFn,
-        manifest: {} as QwikManifest
-      }),
+      manifest: (props.manifest ?? {}) as QwikManifest,
       serverData: props,
-      qwikPrefetchServiceWorker: {
-        include: false
-      },
       stream: {
-        write: (chunk) => {
+        write: (chunk: string) => {
           html += chunk;
         }
       }
@@ -107,17 +106,22 @@ export async function renderToStaticMarkup(
     }
 
     const slots: { [key: string]: unknown } = {};
-    let defaultSlot: JSXNode<"span"> | undefined = undefined;
+    let defaultSlot: JSXNode | undefined = undefined;
+    const slotMarkers = new Map<string, string>();
 
     /** slot handling
      *  https://qwik.dev/docs/components/slots/#slots
      *  https://docs.astro.build/en/basics/astro-components/#slots
+     *
+     *  SSRComment placeholder during SSR, replaced with actual
+     *  slot content after render.
      */
     for (const [key, value] of Object.entries(slotted)) {
+      const markerId = `astro-slot:${key}`;
+      slotMarkers.set(`<!--${markerId}-->`, String(value));
       const namedSlot = key !== "default" && { "q:slot": key };
-      const jsxElement = jsx("span", {
-        dangerouslySetInnerHTML: String(value),
-        style: "display: contents",
+      const jsxElement = jsx(SSRComment as any, {
+        data: markerId,
         ...namedSlot,
         "q:key": Math.random().toString(26).split(".").pop()
       });
@@ -133,40 +137,26 @@ export async function renderToStaticMarkup(
     const qwikComponentJSX = jsx(component, {
       ...props,
       children: [defaultSlot, ...slotValues]
-    });
+    }) as Parameters<typeof renderToStream>[0];
 
+    const isInitialContainer = !containerMap.has(this.result);
     if (isInitialContainer) {
       containerMap.set(this.result, true);
-      renderToStreamOpts.containerAttributes!["q-astro-marker"] = "first";
     }
 
     await renderToStream(qwikComponentJSX, renderToStreamOpts);
 
-    const isClientRouter = Array.from(this.result._metadata.renderedScripts).some(
-      (path) => path.includes("ClientRouter.astro")
-    );
+    for (const [marker, content] of slotMarkers) {
+      html = html.replace(marker, content);
+    }
 
-    /** With View Transitions, rerun so that signals work
-     * https://docs.astro.build/en/guides/view-transitions/#data-astro-rerun
-     */
-    const htmlWithRerun = html.replace(
-      '<script q:func="qwik/json">',
-      '<script q:func="qwik/json" data-astro-rerun>'
-    );
+    if (clientRouter && isInitialContainer) {
+      html += `<script qwik-astro-client-router data-astro-exec="">${CLIENT_ROUTER_SCRIPT}</script>`;
+    }
 
-    /** Adds support for visible tasks with Astro's client router */
-    const htmlWithObservers =
-      isClientRouter &&
-      htmlWithRerun +
-        `
-      ${isInitialContainer ? `<script data-qwik-astro-client-router>document.addEventListener('astro:after-swap',()=>{const e=document.querySelectorAll('[on\\\\:qvisible]');if(e.length){const o=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.dispatchEvent(new CustomEvent('qvisible')),o.unobserve(e.target))})});e.forEach(e=>o.observe(e))}});</script>` : ""}
-    `;
-
-    return {
-      html: isClientRouter ? htmlWithObservers : html
-    };
+    return { html };
   } catch (error) {
-    console.error("Error in renderToStaticMarkup function of @qwikdev/astro: ", error);
+    console.error("Error in renderToStaticMarkup function of @qwik.dev/astro: ", error);
     throw error;
   }
 }

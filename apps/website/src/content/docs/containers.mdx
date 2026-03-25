@@ -1,0 +1,59 @@
+---
+title: Containers vs. Islands
+label: Architecture
+description: Qwik uses containers instead of islands.
+order: 3
+---
+
+## How containers work
+
+While Astro generally adopts an islands architecture with other frameworks, Qwik uses a different strategy known as [Qwik containers](https://qwik.builder.io/docs/advanced/containers/). Despite the differences in approach, both share similar limitations.
+
+In the DOM, notice there aren't any `<astro-island>` custom elements — this is because to Astro, Qwik looks like static data.
+
+> In Qwik, the handlers themselves are the roots / entrypoints of the application.
+
+## Communicating across containers
+
+One common limitation is trying to pass state into another island or container. Sharing state is crucial in modern web development.
+
+### Why not use global signals or nanostores?
+
+Other frameworks with Astro address this by using [nano stores](https://github.com/nanostores/nanostores), or global signals. We do not recommend this approach — they can lead to unexpected behavior in an SSR context.
+
+> On the server, global state is shared across requests, and the lack of data isolation can (and will) lead to bugs, memory leaks and has security implications.
+
+### Custom Events
+
+In Qwik, it was a design decision to not include global signal state. Instead, use **custom events**, which offer several advantages:
+
+- Performance (avoid unnecessary state synchronization)
+- Does not wake up the framework on page load
+- Micro Frontend (MFE) Support
+- Different versions can exist on the page
+- Event Driven
+- Decoupled
+
+[This example](https://github.com/thejackshelton/astro-qwik-global-state-example/blob/main/src/components/counter.tsx) shows how custom events can be used throughout your application.
+
+## Named Slots
+
+For named slots within Astro, instead of adding `q:slot` on the markup, add `slot` instead.
+
+```tsx
+import { Slot, component$ } from "@qwik.dev/core";
+
+export const MySlotComp = component$(() => {
+  return (
+    <>
+      <Slot name="test" />
+    </>
+  );
+});
+```
+
+```astro
+<MySlotComp>
+  <div slot="test">Content inside the slot named test!</div>
+</MySlotComp>
+```

@@ -26,6 +26,12 @@
     }
   },
 
+  "css": {
+    "parser": {
+      "cssModules": true
+    }
+  },
+
   "json": {
     "formatter": {
       "enabled": true
@@ -47,7 +53,8 @@
         "recommended": true
       },
       "performance": {
-        "recommended": true
+        "recommended": true,
+        "noDelete": "off"
       },
       "recommended": true,
       "style": {

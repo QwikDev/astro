@@ -3,8 +3,8 @@ import {
   component$,
   useOnDocument,
   useSignal,
-  useStylesScoped$
-} from "@builder.io/qwik";
+  useStylesScoped$,
+} from "@qwik.dev/core";
 import { JSChunk } from "../js-chunk/js-chunk";
 
 export const JSChunkAnimator = component$(() => {
@@ -23,7 +23,7 @@ export const JSChunkAnimator = component$(() => {
 
   useStylesScoped$(`
     .chunk-container {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
       width: 100%;
@@ -33,7 +33,7 @@ export const JSChunkAnimator = component$(() => {
     }
 
     .animated-chunk {
-      position: fixed;
+      position: absolute;
       animation: 
         fadeIn 0.2s linear forwards,
         popUpJS 0.3s cubic-bezier(0.2, 0.8, 0.3, 1) forwards,
@@ -77,25 +77,38 @@ export const JSChunkAnimator = component$(() => {
 
         hasInteracted.value = true;
         const rect = jsElement.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const topY = rect.top - 30;
+        const centerX = rect.left + rect.width / 2 + window.scrollX;
+        const topY = rect.top - 30 + window.scrollY;
+
+        // Find landing targets
+        const targets = document.querySelectorAll(".cli-copy, .navigation a");
+        const targetRects = Array.from(targets).map((el) =>
+          el.getBoundingClientRect(),
+        );
 
         const newChunks = Array.from({ length: 3 }, (_, i) => {
-          const direction = (Math.random() - 0.5) * 400;
-          const height = i === 0 ? -180 : -120;
+          const targetRect =
+            targetRects[
+              i < 2 ? i : Math.floor(Math.random() * targetRects.length)
+            ];
+          const jitter = (Math.random() - 0.5) * (targetRect?.width ?? 60);
+          const landX = targetRect
+            ? targetRect.left + targetRect.width / 2 + jitter - centerX
+            : (Math.random() - 0.5) * 400;
+          const height = -140 - Math.random() * 80;
           return {
             id: nextId.value++,
             x: centerX,
             y: topY,
-            direction,
+            direction: landX,
             height,
-            rotation: Math.random() < 0.5 ? 360 : -360
+            rotation: Math.random() < 0.5 ? 360 : -360,
           };
         });
 
         chunks.value = [...chunks.value, ...newChunks];
       }
-    })
+    }),
   );
 
   return (
@@ -109,7 +122,7 @@ export const JSChunkAnimator = component$(() => {
             "--y": `${chunk.y}px`,
             "--direction": `${chunk.direction}px`,
             "--height": `${chunk.height}px`,
-            "--rotation": `${chunk.rotation}deg`
+            "--rotation": `${chunk.rotation}deg`,
           }}
         >
           <JSChunk />

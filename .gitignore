@@ -10,3 +10,5 @@ node_modules/
 /playwright/.cache/
 /tests/unit/report/
 /tests/unit/coverage/
+.claude
+**/public/pagefind

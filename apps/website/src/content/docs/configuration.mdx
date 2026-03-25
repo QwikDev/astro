@@ -1,0 +1,57 @@
+---
+title: Configuration
+label: Reference
+description: Options for customizing the @qwik.dev/astro integration.
+order: 5
+---
+
+## Integration options
+
+The integration accepts the following options:
+
+```ts
+import { defineConfig } from "astro/config";
+import qwik from "@qwik.dev/astro";
+
+export default defineConfig({
+  integrations: [
+    qwik({
+      include: "**/qwik/*",
+      exclude: "**/legacy/*",
+      debug: true,
+      clientRouter: true,
+      renderOpts: {
+        base: "/build/",
+      },
+    }),
+  ],
+});
+```
+
+## clientRouter
+
+Enable this option when using Astro's `<ClientRouter />` component for SPA-style page transitions. It manages Qwik container cleanup as Astro navigations happen: destroying old containers, clearing vnode data, and re-initializing event observers on the new page.
+
+```ts
+qwik({ clientRouter: true })
+```
+
+> Astro does not expose a server-side API for integrations to detect `<ClientRouter />` usage, so this option is required when using client-side navigation for the time being.
+
+## renderOpts
+
+Options passed to Qwik's `renderToStream` for every component. This is useful for configuring the `base` path when serving Qwik assets from a CDN or custom location:
+
+```ts
+qwik({
+  renderOpts: {
+    base: "https://cdn.example.com/myapp/build/",
+  },
+})
+```
+
+## Caching the build directory
+
+Qwik outputs content-hashed client-side chunks to `/build/q-[hash].js`. Deployment platforms like Vercel, Netlify, and Cloudflare handle caching automatically.
+
+If you are self-hosting, make sure your server sets appropriate cache headers for the `/build/` directory.

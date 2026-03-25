@@ -1,11 +1,26 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import Dashboard from "@layouts/home/Dashboard.astro";
+import Community from "@layouts/home/Community.astro";
 import Hero from "@layouts/home/Hero.astro";
 ---
 
 <Layout title="Qwik + Astro">
   <main>
     <Hero />
+    <Community />
   </main>
+  <div class="scroll-fog" aria-hidden="true"></div>
 </Layout>
+
+<style>
+  .scroll-fog {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20vh;
+    background: linear-gradient(to top, var(--bg), transparent);
+    pointer-events: none;
+    z-index: 10;
+  }
+</style>

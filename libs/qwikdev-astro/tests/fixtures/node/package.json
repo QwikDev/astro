@@ -1,0 +1,11 @@
+{
+  "name": "node-fixture",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "dependencies": {
+    "@astrojs/node": "10.0.2",
+    "@qwik.dev/astro": "workspace:*",
+    "astro": "6.0.6"
+  }
+}

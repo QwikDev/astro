@@ -11,16 +11,11 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/react": "^4.3.0",
-    "@builder.io/qwik": "^1.14.1",
-    "@deno/astro-adapter": "^0.3.1",
-    "@qwikdev/astro": "workspace:*",
-    "@types/react": "^18.3.23",
-    "@types/react-dom": "^18.3.7",
-    "astro": "^5.9.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "@astrojs/check": "^0.9.8",
+    "@deno/astro-adapter": "^0.3.2",
+    "@qwik.dev/core": "2.0.0-beta.29",
+    "@qwik.dev/astro": "workspace:*",
+    "astro": "6.0.6",
     "typescript": "^5.8.3"
   }
 }

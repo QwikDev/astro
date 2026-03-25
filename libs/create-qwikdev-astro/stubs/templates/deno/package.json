@@ -1,5 +1,5 @@
 {
-  "name": "@qwikdev/astro-deno-eslint-prettier-starter",
+  "name": "@qwik.dev/astro-deno-eslint-prettier-starter",
   "type": "module",
   "private": true,
   "scripts": {
@@ -21,11 +21,11 @@
     "start": "astro dev --open"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@builder.io/qwik": "^1.14.1",
+    "@astrojs/check": "^0.9.8",
     "@deno/astro-adapter": "^0.3.1",
-    "@qwikdev/astro": "^0.8",
-    "astro": "^5.8.0"
+    "@qwik.dev/core": "2.0.0-beta.29",
+    "@qwik.dev/astro": "^0.8",
+    "astro": "^6.0.6"
   },
   "devDependencies": {
     "@types/eslint": "^8.56.10",

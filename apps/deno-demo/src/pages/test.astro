@@ -1,5 +1,4 @@
 ---
-import { ViewTransitions } from "astro:transitions";
 import { Counter } from "@components/qwik/counter";
 ---
 
@@ -10,12 +9,11 @@ import { Counter } from "@components/qwik/counter";
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro</title>
-		<ViewTransitions />
 	</head>
 	<body>
-		<div style={{ height: '1000px' }}>
+		<div style={{ height: "1000px" }}>
 			<Counter initial={5} />
-            <a href="/">Back home</a>
+			<a href="/">Back home</a>
 		</div>
 	</body>
 </html>

@@ -1,39 +1,43 @@
 import { defineConfig } from "@playwright/test";
 
 /**
- * See https://playwright.dev/docs/test-configuration.
+ * Each adapter test runs its own Astro build() which registers global state.
+ * Tests run sequentially (workers: 1) with each file in its own worker process.
  */
 export default defineConfig({
   projects: [
     {
-      name: "qwikdev-astro",
-      testDir: "./libs/qwikdev-astro/tests/e2e"
+      name: "static",
+      testMatch: "minimal.test.ts",
+      testDir: "./libs/qwikdev-astro/tests/platform"
+    },
+    {
+      name: "preview",
+      testMatch: "preview.test.ts",
+      testDir: "./libs/qwikdev-astro/tests/platform"
+    },
+    {
+      name: "node",
+      testMatch: "node.test.ts",
+      testDir: "./libs/qwikdev-astro/tests/platform"
+    },
+    {
+      name: "vercel",
+      testMatch: "vercel.test.ts",
+      testDir: "./libs/qwikdev-astro/tests/platform"
+    },
+    {
+      name: "netlify",
+      testMatch: "netlify.test.ts",
+      testDir: "./libs/qwikdev-astro/tests/platform"
     }
   ],
-  timeout: 30000,
-  /* Run tests in files in parallel */
-  fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
+  timeout: 60000,
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
   workers: 1,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://127.0.0.1:3000',
-
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry"
-  },
-
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: "pnpm dev",
-    url: "http://localhost:4321",
-    reuseExistingServer: !process.env.CI
   }
 });

@@ -1,5 +1,5 @@
 {
-  "name": "@qwikdev/astro",
+  "name": "@qwik.dev/astro",
   "description": "Use Qwik components and Resumability within Astro",
   "version": "0.8.3",
   "contributors": [
@@ -37,10 +37,14 @@
     ".": "./src/index.ts",
     "./package.json": "./package.json",
     "./server": "./server.ts",
-    "./utils": "./src/utils.ts",
-    "./q-astro-manifest.json": "./q-astro-manifest.json"
+    "./root": "./src/root.tsx"
   },
-  "files": ["src", "src/index.ts", "server.ts", "env.d.ts"],
+  "files": [
+    "src",
+    "src/index.ts",
+    "server.ts",
+    "env.d.ts"
+  ],
   "keywords": [
     "astro-integration",
     "astro-component",
@@ -54,17 +58,16 @@
   "publishConfig": {
     "access": "public"
   },
-  "bugs": "https://github.com/thejackshelton/@qwikdev/astro/issues",
+  "bugs": "https://github.com/QwikDev/astro/issues",
   "dependencies": {
-    "@inox-tools/aik-mod": "^0.11.0",
-    "astro-integration-kit": "^0.18.0"
+    "astro-integration-kit": "^0.20.0"
   },
   "devDependencies": {
-    "@builder.io/qwik": "^1.14.1",
-    "astro": "^5.9.2",
-    "vite": "^6.3.5"
+    "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@324116a",
+    "astro": "6.0.6",
+    "vite": "^7.3"
   },
   "peerDependencies": {
-    "@builder.io/qwik": ">=1.14.1"
+    "@qwik.dev/core": ">=2.0.0-beta.29"
   }
 }

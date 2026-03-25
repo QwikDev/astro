@@ -6,6 +6,7 @@ import { CLICopy } from "@components/home/cli-copy/cli-copy";
 import { LogoHover } from "@components/home/logo-hover/logo-hover";
 import { Spotlight } from "@components/home/spotlight/spotlight";
 import { Squiggle } from "@components/home/squiggle/squiggle";
+import { ThemeToggle } from "@components/theme/theme-toggle";
 import { LucidePlanet } from "@icons/lucide-planet";
 import { Icon } from "astro-icon/components";
 ---
@@ -13,9 +14,12 @@ import { Icon } from "astro-icon/components";
 <Background />
 <div class="grid-line" aria-hidden="true"></div>
 <div class="intro">
+  <div class="intro-header">
+    <ThemeToggle />
+  </div>
   
 <Spotlight>
- <Image loading="eager" class="hero-image" src={heroImage} alt="Qwik + Astro" />
+ <Image loading="eager" fetchpriority="high" class="hero-image" src={heroImage} alt="Qwik + Astro" widths={[500, 800, 1200]} sizes="(max-width: 640px) 100vw, (max-width: 1240px) 80vw, 1200px" />
 </Spotlight>
 
 <LogoHover />
@@ -48,6 +52,7 @@ import { Icon } from "astro-icon/components";
 
 <div class="grid-line" aria-hidden="true"></div>
 
+
 <style>
     .hero-image {
       object-fit: cover;
@@ -57,7 +62,7 @@ import { Icon } from "astro-icon/components";
   
     a {
       text-decoration: none;
-      border: var(--space-4xs) solid var(--neutral-800);
+      border: var(--space-4xs) solid var(--border-interactive);
       padding: var(--space-3xs);
       transition: background-color 0.35s;
       transition-timing-function: var(--qa-hover);
@@ -68,20 +73,25 @@ import { Icon } from "astro-icon/components";
     }
   
     a:hover {
-      background-color: var(--neutral-950);
+      background-color: var(--bg-hover);
     }
   
     .grid-line {
       width: 100%;
       height: 1px;
-      background-color: var(--neutral-950);
+      background-color: var(--border);
     }
   
     .intro {
       margin: 0 auto;
       max-width: var(--breakpoint-xl);
-      border-inline: 1px solid var(--neutral-950);
+      border-inline: 1px solid var(--border);
       padding: var(--space-m);
+    }
+
+    .intro-header {
+      display: flex;
+      justify-content: flex-end;
     }
   
     .intro > span {
@@ -89,7 +99,7 @@ import { Icon } from "astro-icon/components";
       margin-block: var(--space-m);
       display: block;
       animation: fade-in 0.5s forwards;
-      animation-delay: 2s;
+      animation-delay: 2.8s;
       opacity: 0;
     }
   
@@ -97,6 +107,9 @@ import { Icon } from "astro-icon/components";
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-xs);
+      opacity: 0;
+      animation: fade-in 0.5s forwards;
+      animation-delay: 3.1s;
     }
   
     .squiggle-container {
@@ -108,16 +121,16 @@ import { Icon } from "astro-icon/components";
       line-height: 1.7;
     }
   
+
+
     @keyframes fade-in {
       from {
         opacity: 0;
         transform: translateY(var(--space-xs));
-        filter: blur(8px);
       }
       to {
         opacity: 1;
         transform: translateY(0);
-        filter: blur(0);
       }
     }
 </style>

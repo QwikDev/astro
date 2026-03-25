@@ -15,7 +15,7 @@ jobs:
         os: [ubuntu-latest]
         node: [20.11]
         experimental: [false]
-    name: 👷 CI @qwikdev/astro Node-${{ matrix.node }} under ${{ matrix.os }}
+    name: 👷 CI @qwik.dev/astro Node-${{ matrix.node }} under ${{ matrix.os }}
 
     steps:
       - name: 🚚 Get latest code

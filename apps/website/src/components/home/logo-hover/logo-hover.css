@@ -2,6 +2,7 @@
   margin-block: var(--space-m);
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-xs);
   line-height: 1;
 }
@@ -39,28 +40,71 @@
   animation-timing-function: var(--qa-fade);
 }
 
+.word {
+  opacity: 0;
+  animation: fade-in 0.5s forwards;
+  animation-timing-function: var(--qa-fade);
+  user-select: none;
+}
+
 .tooltip {
+  --tx: 0px;
+  --ty: 0px;
   position: absolute;
   padding-block: var(--space-3xs);
   padding-inline: var(--space-2xs);
-  background: hsl(var(--dark));
-  border: 2px dotted hsl(var(--primary));
-  color: hsl(var(--light));
+  color: var(--text);
   opacity: 0;
   scale: 0;
   left: 50%;
   top: 0;
+  transform: translate(var(--tx), var(--ty));
   transition: scale 500ms var(--overshoot-easing-function), opacity 200ms
     var(--overshoot-easing-function);
   pointer-events: none;
-  background: var(--off-black);
-  border: 1px solid white;
+  background: var(--bg);
+  border: 1px solid var(--text);
   border-radius: 9999999px;
   box-shadow: var(--shadow-elevation-high);
   z-index: 1000;
 }
 
+.logo-reveal {
+  align-items: center;
+  opacity: 0;
+  scale: 0;
+  animation: logo-pop 0.6s forwards;
+  animation-timing-function: var(--overshoot-easing-function);
+}
+
+.logo-reveal svg {
+  height: 1.2em;
+  width: auto;
+}
+
+@keyframes logo-pop {
+  from {
+    opacity: 0;
+    scale: 0;
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+    filter: blur(0);
+  }
+}
+
 .qwik-logo,
 .astro-logo {
   will-change: transform;
+}
+
+/* Safari doesn't clip box-shadow to border-radius on SVG elements */
+@supports (hanging-punctuation: first) {
+  .tooltip {
+    box-shadow: none;
+    filter: drop-shadow(0px 3px 4px hsl(var(--shadow-color) / 0.34))
+      drop-shadow(4px 8px 12px hsl(var(--shadow-color) / 0.34));
+  }
 }

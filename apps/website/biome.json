@@ -1,5 +1,10 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "css": {
+    "parser": {
+      "cssModules": true
+    }
+  },
   "organizeImports": {
     "enabled": true,
     "ignore": [".astro", "dist", "node_modules"]
@@ -8,6 +13,12 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "correctness": {
+        "noUnknownProperty": "off"
+      },
       "style": {
         "useBlockStatements": "off",
         "useShorthandArrayType": "error",
