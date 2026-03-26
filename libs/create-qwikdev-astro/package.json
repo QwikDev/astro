@@ -9,7 +9,7 @@
     "build": "tsdown",
     "prod": "pnpm check && pnpm build",
     "start": "tsdown --watch",
-    "test": "pnm tsx bin/test.ts",
+    "test": "pnpm tsx bin/test.ts",
     "tsx": "tsx"
   },
   "contributors": [
@@ -138,25 +138,25 @@
   "dependencies": {
     "@clack/prompts": "^0.11.0",
     "cross-spawn": "^7.0.6",
-    "fs-extra": "^11.3.0",
+    "fs-extra": "^11.3.4",
     "kleur": "^4.1.5",
     "panam": "^0.3.0",
-    "tsx": "^4.20.1",
+    "tsx": "^4.21.0",
     "which": "^5.0.0",
     "which-pm-runs": "^1.1.0",
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@japa/assert": "^4.0.1",
-    "@japa/runner": "^4.2.0",
+    "@japa/assert": "^4.2.0",
+    "@japa/runner": "^4.5.0",
     "@types/cross-spawn": "^6.0.6",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^24.0.0",
+    "@types/node": "^24.12.0",
     "@types/which": "^3.0.4",
     "@types/which-pm-runs": "^1.0.2",
-    "@types/yargs": "^17.0.33",
-    "rimraf": "^6.0.1",
-    "tsdown": "^0.20.1",
-    "typescript": "^5.8.3"
+    "@types/yargs": "^17.0.35",
+    "rimraf": "^6.1.3",
+    "tsdown": "^0.20.3",
+    "typescript": "^5.9.3"
   }
 }

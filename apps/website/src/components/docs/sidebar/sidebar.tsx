@@ -119,10 +119,7 @@ export const Sidebar = component$<{
 
       {/* Mobile sidebar using QDS modal */}
       <modal.root>
-        <modal.trigger
-          class="sidebar-mobile-trigger"
-          aria-label="Open navigation"
-        >
+        <modal.trigger class="sidebar-mobile-trigger" aria-label="Open navigation">
           <svg
             width="20"
             height="20"
@@ -142,10 +139,7 @@ export const Sidebar = component$<{
 
         <modal.content class="sidebar-sheet">
           <modal.title class="sr-only">Navigation</modal.title>
-          <modal.close
-            class="sidebar-sheet-close"
-            aria-label="Close navigation"
-          >
+          <modal.close class="sidebar-sheet-close" aria-label="Close navigation">
             <svg
               width="18"
               height="18"

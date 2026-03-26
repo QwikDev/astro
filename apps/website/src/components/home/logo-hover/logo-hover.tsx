@@ -1,10 +1,4 @@
-import {
-  $,
-  type Signal,
-  component$,
-  useSignal,
-  useStyles$,
-} from "@qwik.dev/core";
+import { $, type Signal, component$, useSignal, useStyles$ } from "@qwik.dev/core";
 import qwikAstroLogo from "../../../assets/qwik-v2-logo.svg?raw";
 import { AstroIcon } from "../../../icons/astro";
 import { QwikIcon } from "../../../icons/qwik";
@@ -23,15 +17,11 @@ export const LogoHover = component$(() => {
   });
 
   const moveCursor = $(
-    (
-      logoRef: Signal<HTMLElement | undefined>,
-      clientX: number,
-      clientY: number,
-    ) => {
+    (logoRef: Signal<HTMLElement | undefined>, clientX: number, clientY: number) => {
       if (!logoRef.value) return;
       logoRef.value.style.left = `${clientX}px`;
       logoRef.value.style.top = `${clientY}px`;
-    },
+    }
   );
 
   const hideCursor = $((logoRef: Signal<HTMLElement | undefined>) => {
@@ -61,11 +51,7 @@ export const LogoHover = component$(() => {
         >
           QWIK
         </span>
-        <span
-          class="word"
-          data-intro
-          style="animation-delay: 0.35s; opacity: 0;"
-        >
+        <span class="word" data-intro style="animation-delay: 0.35s; opacity: 0;">
           +
         </span>
         <span
@@ -80,11 +66,7 @@ export const LogoHover = component$(() => {
         >
           ASTRO
         </span>
-        <span
-          class="word"
-          data-intro
-          style="animation-delay: 1.05s; opacity: 0;"
-        >
+        <span class="word" data-intro style="animation-delay: 1.05s; opacity: 0;">
           =
         </span>
         <span
