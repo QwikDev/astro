@@ -1,4 +1,10 @@
-import { $, type Signal, component$, useSignal, useStyles$ } from "@qwik.dev/core";
+import {
+  $,
+  type Signal,
+  component$,
+  useSignal,
+  useStyles$,
+} from "@qwik.dev/core";
 import qwikAstroLogo from "../../../assets/qwik-v2-logo.svg?raw";
 import { AstroIcon } from "../../../icons/astro";
 import { QwikIcon } from "../../../icons/qwik";
@@ -13,12 +19,15 @@ export const LogoHover = component$(() => {
   const astroRect = useSignal<DOMRect>();
 
   const handleMouseEnter = $(
-    (logoRef: Signal<HTMLElement | undefined>, rectRef: Signal<DOMRect | undefined>) => {
+    (
+      logoRef: Signal<HTMLElement | undefined>,
+      rectRef: Signal<DOMRect | undefined>,
+    ) => {
       if (!logoRef.value) return;
       logoRef.value.style.opacity = "1";
       logoRef.value.style.scale = "1";
       rectRef.value = logoRef.value.getBoundingClientRect();
-    }
+    },
   );
 
   const handleMouseMove = $(
@@ -27,7 +36,7 @@ export const LogoHover = component$(() => {
       rectRef: Signal<DOMRect | undefined>,
       clientX: number,
       clientY: number,
-      offset = { x: 10, y: -45 }
+      offset = { x: 10, y: -45 },
     ) => {
       if (!rectRef.value) return;
       if (!logoRef.value) return;
@@ -35,7 +44,7 @@ export const LogoHover = component$(() => {
       const y = clientY - rectRef.value.top + offset.y;
       logoRef.value.style.setProperty("--tx", `${x}px`);
       logoRef.value.style.setProperty("--ty", `${y}px`);
-    }
+    },
   );
 
   const handleMouseLeave = $((logoRef: Signal<HTMLElement | undefined>) => {
@@ -49,6 +58,7 @@ export const LogoHover = component$(() => {
       <h1>
         <span
           class="word"
+          data-intro
           style="animation-delay: 0s; opacity: 0;"
           onMouseEnter$={() => handleMouseEnter(qwikLogoRef, qwikRect)}
           onMouseMove$={({ clientX, clientY }) =>
@@ -58,12 +68,13 @@ export const LogoHover = component$(() => {
         >
           QWIK
         </span>
-        <span class="word" style="animation-delay: 0.4s; opacity: 0;">
+        <span class="word" data-intro style="animation-delay: 0.35s; opacity: 0;">
           +
         </span>
         <span
           class="word"
-          style="animation-delay: 0.8s; opacity: 0;"
+          data-intro
+          style="animation-delay: 0.7s; opacity: 0;"
           onMouseEnter$={() => handleMouseEnter(astroLogoRef, astroRect)}
           onMouseMove$={({ clientX, clientY }) =>
             handleMouseMove(astroLogoRef, astroRect, clientX, clientY)
@@ -72,12 +83,13 @@ export const LogoHover = component$(() => {
         >
           ASTRO
         </span>
-        <span class="word" style="animation-delay: 1.2s; opacity: 0;">
+        <span class="word" data-intro style="animation-delay: 1.05s; opacity: 0;">
           =
         </span>
         <span
           class="logo-reveal"
-          style="animation-delay: 2.2s; opacity: 0;"
+          data-intro
+          style="animation-delay: 1.6s; opacity: 0;"
           dangerouslySetInnerHTML={qwikAstroLogo}
         />
       </h1>

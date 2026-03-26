@@ -36,15 +36,12 @@
 .letter {
   display: inline-block;
   opacity: 0;
-  animation: fade-in 0.5s forwards;
-  animation-timing-function: var(--qa-fade);
+  animation: fade-in 0.6s var(--ease-smooth) forwards;
 }
 
 .word {
   opacity: 0;
-  visibility: hidden;
-  animation: fade-in 0.5s forwards;
-  animation-timing-function: var(--qa-fade);
+  animation: fade-in 0.6s var(--ease-smooth) forwards;
   user-select: none;
 }
 

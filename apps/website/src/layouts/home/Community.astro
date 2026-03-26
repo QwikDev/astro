@@ -13,27 +13,27 @@ const team = {
     login: "thejackshelton",
     bio: "Sharing the joy of fast and beautiful web experiences.",
     role: "Integration architecture",
-    avatar: "/avatars/jack.png"
+    avatar: "/avatars/jack.png",
   },
   sigui: {
     name: "SIGUI Kessé Emmanuel",
     login: "siguici",
     bio: "Code wizard by day, open-source ninja by night.",
     role: "CLI & tooling",
-    avatar: "/avatars/sigui.png"
+    avatar: "/avatars/sigui.png",
   },
   matthew: {
     name: "Matthew Phillips",
     login: "matthewp",
     role: "Astro Core",
-    avatar: "/avatars/matthew.png"
+    avatar: "/avatars/matthew.png",
   },
   nate: {
     name: "Nate Moore",
     login: "natemoo-re",
     role: "Astro Core",
-    avatar: "/avatars/nate.png"
-  }
+    avatar: "/avatars/nate.png",
+  },
 };
 
 const videos = [
@@ -41,67 +41,67 @@ const videos = [
     id: "OSIjoqVK51o",
     title: "DevWorld 2024",
     desc: "A match made in performance heaven",
-    thumb: "https://img.youtube.com/vi/OSIjoqVK51o/mqdefault.jpg"
+    thumb: "https://img.youtube.com/vi/OSIjoqVK51o/mqdefault.jpg",
   },
   {
     id: "W-j2HH1GdjU",
     title: "Learn with Jason",
     desc: "Building with the Qwik Astro integration",
-    thumb: "https://img.youtube.com/vi/W-j2HH1GdjU/mqdefault.jpg"
+    thumb: "https://img.youtube.com/vi/W-j2HH1GdjU/mqdefault.jpg",
   },
   {
     id: "LIKxkSzHqeo",
     title: "Announcement",
     desc: "Steve's original Qwik Astro reveal",
-    thumb: "https://img.youtube.com/vi/LIKxkSzHqeo/mqdefault.jpg"
+    thumb: "https://img.youtube.com/vi/LIKxkSzHqeo/mqdefault.jpg",
   },
   {
     id: "wKvkYUNBa5k",
     title: "Awesome's deep dive",
     desc: "How Astro just got even faster",
-    thumb: "https://img.youtube.com/vi/wKvkYUNBa5k/mqdefault.jpg"
+    thumb: "https://img.youtube.com/vi/wKvkYUNBa5k/mqdefault.jpg",
   },
   {
     id: "OgRfNfCMvvQ",
     title: "Lazy Loading talk",
     desc: "A New Era of Effective Lazy Loading",
-    thumb: "https://img.youtube.com/vi/OgRfNfCMvvQ/mqdefault.jpg"
-  }
+    thumb: "https://img.youtube.com/vi/OgRfNfCMvvQ/mqdefault.jpg",
+  },
 ];
 
 const guides = [
   {
     title: "Embed Stackblitz performantly",
-    href: "https://thenewstack.io/how-to-build-embed-components-with-astro-qwik-and-stackblitz/"
+    href: "https://thenewstack.io/how-to-build-embed-components-with-astro-qwik-and-stackblitz/",
   },
   {
     title: "Site Search with Fuse.js",
-    href: "https://thenewstack.io/how-to-build-site-search-with-astro-qwik-and-fuse-js/"
+    href: "https://thenewstack.io/how-to-build-site-search-with-astro-qwik-and-fuse-js/",
   },
   {
     title: "Qwik as a React alternative in Astro",
-    href: "https://thenewstack.io/take-a-qwik-break-from-react-with-astro/"
+    href: "https://thenewstack.io/take-a-qwik-break-from-react-with-astro/",
   },
   {
     title: "Qwik beats React and Vanilla JS",
-    href: "https://thenewstack.io/how-quiks-astro-integration-beats-both-react-and-vanilla-js/"
+    href: "https://thenewstack.io/how-quiks-astro-integration-beats-both-react-and-vanilla-js/",
   },
   {
     title: "Deploy with Vercel SSR Adapter",
-    href: "https://dev.to/reeshee/qwik-look-at-resumability-with-astro-on-vercel-44fj"
+    href: "https://dev.to/reeshee/qwik-look-at-resumability-with-astro-on-vercel-44fj",
   },
   {
     title: "Netlify's Guide to Qwik Astro",
-    href: "https://developers.netlify.com/guides/adding-resumability-to-astro-with-qwik/"
+    href: "https://developers.netlify.com/guides/adding-resumability-to-astro-with-qwik/",
   },
   {
     title: "Initial @qwik.dev/astro alpha post",
-    href: "https://www.builder.io/blog/astro-qwik"
-  }
+    href: "https://www.builder.io/blog/astro-qwik",
+  },
 ];
 ---
 
-<div class="section stagger-1">
+<div class="section stagger-1" data-intro>
   <h2>Community</h2>
 
   <div class="subsection">
@@ -144,7 +144,7 @@ const guides = [
 </div>
 
 <div class="grid-line" aria-hidden="true"></div>
-<div class="section stagger-2">
+<div class="section stagger-2" data-intro>
   <h2>Maintainers</h2>
   <div class="team-grid team-grid-2">
     <a
@@ -189,7 +189,7 @@ const guides = [
 </div>
 
 <div class="grid-line" aria-hidden="true"></div>
-<div class="section stagger-3">
+<div class="section stagger-3" data-intro>
   <h2>Special Thanks</h2>
   <p class="thanks-text">
     This integration would not be possible without the Astro core team.
@@ -235,7 +235,7 @@ const guides = [
 </div>
 <div class="grid-line" aria-hidden="true"></div>
 
-<div class="footer-wrap">
+<div class="footer-wrap" data-intro>
   <Footer />
 </div>
 
@@ -478,35 +478,31 @@ const guides = [
     max-width: var(--breakpoint-xl);
     border-inline: 1px solid var(--border);
     opacity: 0;
-    animation: community-fade-in 0.5s forwards;
-    animation-timing-function: var(--qa-fade);
+    animation: community-fade-in 0.8s var(--ease-smooth) forwards;
     animation-delay: 4.3s;
   }
 
   .section {
     opacity: 0;
-    animation: community-fade-in 0.5s forwards;
-    animation-timing-function: var(--qa-fade);
+    animation: community-fade-in 0.8s var(--ease-smooth) forwards;
   }
 
   .stagger-1 {
-    animation-delay: 3.4s;
+    animation-delay: 3.5s;
   }
   .stagger-2 {
-    animation-delay: 3.7s;
+    animation-delay: 3.8s;
   }
   .stagger-3 {
-    animation-delay: 4s;
+    animation-delay: 4.1s;
   }
 
   @keyframes community-fade-in {
     from {
       opacity: 0;
-      transform: translateY(var(--space-xs));
     }
     to {
       opacity: 1;
-      transform: translateY(0);
     }
   }
 </style>
