@@ -42,9 +42,8 @@
 .word {
   opacity: 0;
   pointer-events: none;
-  animation:
-    fade-in 0.6s var(--ease-smooth) forwards,
-    enable-hover 0s 2.5s forwards;
+  animation: fade-in 0.6s var(--ease-smooth) forwards, enable-hover 0s 2.5s
+    forwards;
   user-select: none;
 }
 
@@ -64,9 +63,8 @@
   scale: 0;
   pointer-events: none;
   transform: translate(-50%, -50%);
-  transition:
-    scale 500ms var(--overshoot-easing-function),
-    opacity 200ms var(--overshoot-easing-function);
+  transition: scale 500ms var(--overshoot-easing-function), opacity 200ms
+    var(--overshoot-easing-function);
   background: var(--bg);
   border: 1px solid var(--text);
   border-radius: 9999999px;

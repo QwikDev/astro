@@ -57,7 +57,7 @@ export const Spotlight = component$(() => {
                         transparent 0%,
                         transparent 30%,
                         var(--bg) 70%
-                    )`
+                    )`,
         }}
       />
     </div>

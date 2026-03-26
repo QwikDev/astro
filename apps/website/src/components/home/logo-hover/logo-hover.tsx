@@ -61,7 +61,11 @@ export const LogoHover = component$(() => {
         >
           QWIK
         </span>
-        <span class="word" data-intro style="animation-delay: 0.35s; opacity: 0;">
+        <span
+          class="word"
+          data-intro
+          style="animation-delay: 0.35s; opacity: 0;"
+        >
           +
         </span>
         <span
@@ -76,7 +80,11 @@ export const LogoHover = component$(() => {
         >
           ASTRO
         </span>
-        <span class="word" data-intro style="animation-delay: 1.05s; opacity: 0;">
+        <span
+          class="word"
+          data-intro
+          style="animation-delay: 1.05s; opacity: 0;"
+        >
           =
         </span>
         <span
