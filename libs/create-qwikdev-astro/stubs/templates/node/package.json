@@ -23,7 +23,7 @@
     "@astrojs/check": "^0.9.8",
     "@astrojs/node": "^10.0.2",
     "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@9d29f75",
-    "@qwik.dev/astro": "^0.8",
+    "@qwik.dev/astro": "https://pkg.pr.new/QwikDev/astro/@qwik.dev/astro@6ed9ed1",
     "astro": "^6.0.6"
   },
   "devDependencies": {
