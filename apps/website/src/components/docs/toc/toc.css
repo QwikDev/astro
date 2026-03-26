@@ -6,6 +6,7 @@
   gap: var(--space-l);
   width: 220px;
   flex-shrink: 0;
+  max-height: calc(100vh - var(--space-xl) * 2);
 }
 
 .toc-title {
@@ -14,6 +15,34 @@
   font-weight: 700;
   display: block;
   margin-bottom: var(--space-3xs);
+}
+
+.toc-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.toc-scroll:hover {
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-muted) transparent;
+}
+
+.toc-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.toc-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.toc-scroll:hover::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
 }
 
 .toc-nav {
@@ -44,6 +73,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3xs);
+  padding-bottom: var(--space-xl);
 }
 
 .toc-external {

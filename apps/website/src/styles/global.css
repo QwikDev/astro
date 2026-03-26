@@ -240,6 +240,7 @@ h4,
 h5,
 h6 {
   text-wrap: balance;
+  scroll-margin-top: var(--space-xl);
 }
 
 h1 {
