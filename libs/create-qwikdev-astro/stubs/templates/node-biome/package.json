@@ -21,7 +21,7 @@
   "dependencies": {
     "@astrojs/check": "^0.9.8",
     "@astrojs/node": "^10.0.2",
-    "@qwik.dev/core": "2.0.0-beta.29",
+    "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@9d29f75",
     "@qwik.dev/astro": "^0.8",
     "astro": "^6.0.6"
   },

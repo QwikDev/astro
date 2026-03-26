@@ -13,7 +13,7 @@
   "dependencies": {
     "@astrojs/check": "^0.9.8",
     "@deno/astro-adapter": "^0.3.2",
-    "@qwik.dev/core": "2.0.0-beta.29",
+    "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@9d29f75",
     "@qwik.dev/astro": "workspace:*",
     "astro": "6.0.6",
     "typescript": "^5.8.3"
