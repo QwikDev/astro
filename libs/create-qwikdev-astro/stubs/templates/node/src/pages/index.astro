@@ -1,65 +1,113 @@
 ---
-import astroLogo from "../assets/astro.svg?url";
-import qwikLogo from "../assets/qwik.svg?url";
+import qwikastroLogo from "../assets/qwik-astro-logo.svg?url";
+import iconComponents from "../assets/icon-components.svg?url";
+import iconPages from "../assets/icon-pages.svg?url";
+import iconLayouts from "../assets/icon-layouts.svg?url";
+import iconConfig from "../assets/icon-config.svg?url";
 import { Counter } from "../components/counter.tsx";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Qwik + Astro">
-	<main id="app">
-    <div class="brand">
-      <a href="https://qwik.dev" target="_blank" rel="noreferrer">
-        <img src={qwikLogo} class="logo qwik" alt="Qwik logo" />
-      </a>
-      <a href="https://github.com/QwikDev/astro" target="_blank" rel="noreferrer">
-        <span class="love">💜</span>
-      </a>
-      <a href="https://astro.build" target="_blank" rel="noreferrer">
-        <img src={astroLogo} class="logo" alt="Astro logo" />
-      </a>
-    </div>
+  <main>
+    <a
+      href="https://github.com/QwikDev/astro"
+      target="_blank"
+      rel="noreferrer"
+      class="logo-link"
+    >
+      <img src={qwikastroLogo} class="logo" alt="QwikAstro logo" />
+    </a>
+
     <h1>Qwik + Astro</h1>
-		<p class="motivation">
-      Thanks to <a href="https://github.com/QwikDev/astro" title="@QwikDev/astro integration">@QwikDev/astro</a>, seamlessly integrate your Qwik components into your Astro project, as shown with the counter below.
-    </p>
+
     <Counter />
-    <p class="read-the-docs">
-      Click on the Qwik and Astro logos to learn more
-    </p>
-	</main>
+
+    <nav class="cards">
+      <div class="card">
+        <img src={iconComponents} class="card-icon" alt="" />
+        <h2>Components</h2>
+        <p>
+          Add Qwik components in <code>src/components</code> and import them into
+          any page.
+        </p>
+      </div>
+      <div class="card">
+        <img src={iconPages} class="card-icon" alt="" />
+        <h2>Pages</h2>
+        <p>
+          Create routes by adding <code>.astro</code> files to <code
+            >src/pages</code
+          >.
+        </p>
+      </div>
+      <div class="card">
+        <img src={iconLayouts} class="card-icon" alt="" />
+        <h2>Layouts</h2>
+        <p>Wrap pages with shared structure in <code>src/layouts</code>.</p>
+      </div>
+      <div class="card">
+        <img src={iconConfig} class="card-icon" alt="" />
+        <h2>Config</h2>
+        <p>Customize the integration in <code>astro.config.ts</code>.</p>
+      </div>
+    </nav>
+  </main>
 </Layout>
 
-<style is:global>
-#app {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
+<style>
+  .logo-link {
+    display: block;
+    transition:
+      transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+      filter 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    &:hover {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 2rem rgba(134, 124, 216, 0.4));
+    }
   }
-  .brand {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .love {
-    display: inline-block;
-    font-size: 1.5em;
-  }
+
   .logo {
-    height: 6em;
-    padding: 1.5em;
+    height: 120px;
+    margin-bottom: 1.5rem;
   }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
+
+  h1 {
+    margin-bottom: 1.5rem;
   }
-  .logo.qwik:hover {
-    filter: drop-shadow(0 0 2em #673ab8aa);
+
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
   }
-  .motivation {
-    font-size: 1.25em;
-    font-weight: 300;
+
+  .card {
+    flex: 1 1 16rem;
+    text-align: left;
+    padding: 1.25rem;
+    border: 1px solid #222222;
+    border-radius: 8px;
+    background-color: #111111;
+
+    & h2 {
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    & p {
+      color: #888888;
+      line-height: 1.8;
+    }
   }
-  .read-the-docs {
-    color: #888;
+
+  .card-icon {
+    width: 1.25em;
+    height: 1.25em;
+    margin-bottom: 0.5rem;
+    filter: brightness(0) invert(1);
+    opacity: 0.7;
   }
 </style>

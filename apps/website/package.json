@@ -25,7 +25,7 @@
     "@iconify-json/lucide": "^1.2.47",
     "@qds.dev/ui": "^0.14.3",
     "@qwik.dev/astro": "workspace:*",
-    "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@807d10c",
+    "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@9d29f75",
     "astro": "6.0.6",
     "astro-icon": "^1.1.5",
     "pagefind": "^1.4.0",

@@ -1,53 +1,51 @@
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-body {
+* {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+a {
+  &:hover {
+    color: #d1d4f4;
+  }
 }
 
 button {
+  font: inherit;
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: 1px solid #454545;
   padding: 0.6em 1.2em;
-  font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
   background-color: #1a1a1a;
+  color: #f1f3fc;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: border-color 0.25s, background-color 0.25s;
+
+  &:hover {
+    border-color: #867cd8;
+    background-color: #222222;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #867cd8;
+    outline-offset: 2px;
+  }
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+code {
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+  background-color: #1a1a1a;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  color: #888;
 }

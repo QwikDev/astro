@@ -2,12 +2,5 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 2rem;
 }
-
-.counter {
-  border: 1px solid black;
-}
-.card {
-  padding: 2em;
-}
-
