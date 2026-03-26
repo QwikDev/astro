@@ -15,56 +15,49 @@ export const LogoHover = component$(() => {
 
   const astroLogoRef = useSignal<HTMLElement>();
   const qwikLogoRef = useSignal<HTMLElement>();
-  const qwikRect = useSignal<DOMRect>();
-  const astroRect = useSignal<DOMRect>();
 
-  const handleMouseEnter = $(
+  const showCursor = $((logoRef: Signal<HTMLElement | undefined>) => {
+    if (!logoRef.value) return;
+    logoRef.value.style.opacity = "1";
+    logoRef.value.style.scale = "1";
+  });
+
+  const moveCursor = $(
     (
       logoRef: Signal<HTMLElement | undefined>,
-      rectRef: Signal<DOMRect | undefined>,
-    ) => {
-      if (!logoRef.value) return;
-      logoRef.value.style.opacity = "1";
-      logoRef.value.style.scale = "1";
-      rectRef.value = logoRef.value.getBoundingClientRect();
-    },
-  );
-
-  const handleMouseMove = $(
-    (
-      logoRef: Signal<HTMLElement | undefined>,
-      rectRef: Signal<DOMRect | undefined>,
       clientX: number,
       clientY: number,
-      offset = { x: 10, y: -45 },
     ) => {
-      if (!rectRef.value) return;
       if (!logoRef.value) return;
-      const x = clientX - rectRef.value.left + offset.x;
-      const y = clientY - rectRef.value.top + offset.y;
-      logoRef.value.style.setProperty("--tx", `${x}px`);
-      logoRef.value.style.setProperty("--ty", `${y}px`);
+      logoRef.value.style.left = `${clientX}px`;
+      logoRef.value.style.top = `${clientY}px`;
     },
   );
 
-  const handleMouseLeave = $((logoRef: Signal<HTMLElement | undefined>) => {
+  const hideCursor = $((logoRef: Signal<HTMLElement | undefined>) => {
     if (!logoRef.value) return;
     logoRef.value.style.opacity = "0";
     logoRef.value.style.scale = "0";
   });
 
   return (
-    <div class="logo-hover">
+    <div
+      class="logo-hover"
+      onMouseLeave$={() => {
+        hideCursor(qwikLogoRef);
+        hideCursor(astroLogoRef);
+      }}
+    >
       <h1>
         <span
-          class="word"
+          class="word hoverable"
           data-intro
           style="animation-delay: 0s; opacity: 0;"
-          onMouseEnter$={() => handleMouseEnter(qwikLogoRef, qwikRect)}
+          onMouseEnter$={() => showCursor(qwikLogoRef)}
           onMouseMove$={({ clientX, clientY }) =>
-            handleMouseMove(qwikLogoRef, qwikRect, clientX, clientY)
+            moveCursor(qwikLogoRef, clientX, clientY)
           }
-          onMouseLeave$={() => handleMouseLeave(qwikLogoRef)}
+          onMouseLeave$={() => hideCursor(qwikLogoRef)}
         >
           QWIK
         </span>
@@ -72,14 +65,14 @@ export const LogoHover = component$(() => {
           +
         </span>
         <span
-          class="word"
+          class="word hoverable"
           data-intro
           style="animation-delay: 0.7s; opacity: 0;"
-          onMouseEnter$={() => handleMouseEnter(astroLogoRef, astroRect)}
+          onMouseEnter$={() => showCursor(astroLogoRef)}
           onMouseMove$={({ clientX, clientY }) =>
-            handleMouseMove(astroLogoRef, astroRect, clientX, clientY)
+            moveCursor(astroLogoRef, clientX, clientY)
           }
-          onMouseLeave$={() => handleMouseLeave(astroLogoRef)}
+          onMouseLeave$={() => hideCursor(astroLogoRef)}
         >
           ASTRO
         </span>
@@ -93,8 +86,8 @@ export const LogoHover = component$(() => {
           dangerouslySetInnerHTML={qwikAstroLogo}
         />
       </h1>
-      <QwikIcon ref={qwikLogoRef} class="qwik-logo tooltip" />
-      <AstroIcon ref={astroLogoRef} class="astro-logo tooltip" />
+      <QwikIcon ref={qwikLogoRef} class="qwik-logo logo-cursor" />
+      <AstroIcon ref={astroLogoRef} class="astro-logo logo-cursor" />
     </div>
   );
 });

@@ -41,28 +41,37 @@
 
 .word {
   opacity: 0;
-  animation: fade-in 0.6s var(--ease-smooth) forwards;
+  pointer-events: none;
+  animation:
+    fade-in 0.6s var(--ease-smooth) forwards,
+    enable-hover 0s 2.5s forwards;
   user-select: none;
 }
 
-.tooltip {
-  --tx: 0px;
-  --ty: 0px;
-  position: absolute;
-  padding-block: var(--space-3xs);
-  padding-inline: var(--space-2xs);
-  color: var(--text);
+.hoverable {
+  cursor: none;
+}
+
+@keyframes enable-hover {
+  to {
+    pointer-events: auto;
+  }
+}
+
+.logo-cursor {
+  position: fixed;
   opacity: 0;
   scale: 0;
-  left: 50%;
-  top: 0;
-  transform: translate(var(--tx), var(--ty));
-  transition: scale 500ms var(--overshoot-easing-function), opacity 200ms
-    var(--overshoot-easing-function);
   pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition:
+    scale 500ms var(--overshoot-easing-function),
+    opacity 200ms var(--overshoot-easing-function);
   background: var(--bg);
   border: 1px solid var(--text);
   border-radius: 9999999px;
+  padding-block: var(--space-3xs);
+  padding-inline: var(--space-2xs);
   box-shadow: var(--shadow-elevation-high);
   z-index: 1000;
 }
@@ -103,7 +112,7 @@
 
 /* Safari doesn't clip box-shadow to border-radius on SVG elements */
 @supports (hanging-punctuation: first) {
-  .tooltip {
+  .logo-cursor {
     box-shadow: none;
     filter: drop-shadow(0px 3px 4px hsl(var(--shadow-color) / 0.34))
       drop-shadow(4px 8px 12px hsl(var(--shadow-color) / 0.34));
