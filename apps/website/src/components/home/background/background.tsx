@@ -5,7 +5,7 @@ export const Background = component$(() => {
   useStylesScoped$(styles);
 
   return (
-    <div class="background-wrapper" aria-hidden="true">
+    <div class="background-wrapper" data-intro aria-hidden="true">
       <div />
       <span />
     </div>

@@ -95,6 +95,7 @@
 
   /* Animations */
   --qa-fade: cubic-bezier(0.8, -0.4, 0.5, 1);
+  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
   --qa-hover: linear(
     0,
     0.417 25.5%,
@@ -268,6 +269,12 @@ pre > code span {
 .light .card-topo {
   background: url("/topo-pattern-light.svg") repeat !important;
   background-size: 400px 400px !important;
+}
+
+/* Skip intro animations on SPA revisit */
+[data-revisit] [data-intro] {
+  animation-delay: 0s !important;
+  animation-duration: 0s !important;
 }
 
 .light {

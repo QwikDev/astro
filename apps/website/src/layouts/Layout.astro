@@ -33,6 +33,7 @@ import "@fontsource/yusei-magic";
 			setDarkMode(document);
 			document.addEventListener("astro:before-swap", (ev) => {
 				setDarkMode(ev.newDocument);
+				ev.newDocument.documentElement.setAttribute("data-revisit", "");
 			});
 		</script>
 		<slot />

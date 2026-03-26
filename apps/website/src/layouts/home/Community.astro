@@ -101,7 +101,7 @@ const guides = [
 ];
 ---
 
-<div class="section stagger-1">
+<div class="section stagger-1" data-intro>
   <h2>Community</h2>
 
   <div class="subsection">
@@ -144,7 +144,7 @@ const guides = [
 </div>
 
 <div class="grid-line" aria-hidden="true"></div>
-<div class="section stagger-2">
+<div class="section stagger-2" data-intro>
   <h2>Maintainers</h2>
   <div class="team-grid team-grid-2">
     <a
@@ -189,7 +189,7 @@ const guides = [
 </div>
 
 <div class="grid-line" aria-hidden="true"></div>
-<div class="section stagger-3">
+<div class="section stagger-3" data-intro>
   <h2>Special Thanks</h2>
   <p class="thanks-text">
     This integration would not be possible without the Astro core team.
@@ -235,7 +235,7 @@ const guides = [
 </div>
 <div class="grid-line" aria-hidden="true"></div>
 
-<div class="footer-wrap">
+<div class="footer-wrap" data-intro>
   <Footer />
 </div>
 
@@ -478,35 +478,31 @@ const guides = [
     max-width: var(--breakpoint-xl);
     border-inline: 1px solid var(--border);
     opacity: 0;
-    animation: community-fade-in 0.5s forwards;
-    animation-timing-function: var(--qa-fade);
+    animation: community-fade-in 0.8s var(--ease-smooth) forwards;
     animation-delay: 4.3s;
   }
 
   .section {
     opacity: 0;
-    animation: community-fade-in 0.5s forwards;
-    animation-timing-function: var(--qa-fade);
+    animation: community-fade-in 0.8s var(--ease-smooth) forwards;
   }
 
   .stagger-1 {
-    animation-delay: 3.4s;
+    animation-delay: 3.5s;
   }
   .stagger-2 {
-    animation-delay: 3.7s;
+    animation-delay: 3.8s;
   }
   .stagger-3 {
-    animation-delay: 4s;
+    animation-delay: 4.1s;
   }
 
   @keyframes community-fade-in {
     from {
       opacity: 0;
-      transform: translateY(var(--space-xs));
     }
     to {
       opacity: 1;
-      transform: translateY(0);
     }
   }
 </style>

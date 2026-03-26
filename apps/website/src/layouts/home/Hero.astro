@@ -11,18 +11,18 @@ import { Icon } from "astro-icon/components";
 ---
 
 <Background />
-<div class="grid-line" aria-hidden="true"></div>
-<div class="intro">
-  <div class="hero-pattern" aria-hidden="true"></div>
+<div class="grid-line" data-intro aria-hidden="true"></div>
+<div class="intro" data-intro>
+  <div class="hero-pattern" data-intro aria-hidden="true"></div>
 
   <div class="intro-content">
-    <div class="intro-header">
+    <div class="intro-header" data-intro>
       <ThemeToggle />
     </div>
 
     <LogoHover />
 
-    <span class="subtitle"
+    <span class="subtitle" data-intro
       >Zero hydration. Zero compromise. The only
       <span class="squiggle-container">
         <span>instantly interactive</span>
@@ -38,7 +38,7 @@ import { Icon } from "astro-icon/components";
       </span>.
     </span>
 
-    <div class="navigation">
+    <div class="navigation" data-intro>
       <CLICopy>
         <span data-copy-icon><Icon name="lucide:clipboard" /></span>
         <span data-copy-success><Icon name="lucide:check" /></span>
@@ -50,9 +50,9 @@ import { Icon } from "astro-icon/components";
     </div>
   </div>
 
-  <div class="hero-pattern" aria-hidden="true"></div>
+  <div class="hero-pattern" data-intro aria-hidden="true"></div>
 </div>
-<div class="grid-line" aria-hidden="true"></div>
+<div class="grid-line" data-intro aria-hidden="true"></div>
 
 <style>
   .hero-pattern {
@@ -68,6 +68,14 @@ import { Icon } from "astro-icon/components";
     background-size: 10px 10px;
     background-attachment: fixed;
     --pattern-fg: color-mix(in srgb, currentColor 5%, transparent);
+    opacity: 0;
+    animation: fade-in 1s var(--ease-smooth) forwards;
+    animation-delay: 0.2s;
+  }
+
+  /* bottom curtain seals the hero */
+  .intro > .hero-pattern:last-child {
+    animation-delay: 2.8s;
   }
 
   :global(.dark) .hero-pattern {
@@ -94,12 +102,23 @@ import { Icon } from "astro-icon/components";
     width: 100%;
     height: 1px;
     background-color: var(--border);
+    opacity: 0;
+    animation: fade-in 1s var(--ease-smooth) forwards;
+    animation-delay: 0.1s;
+  }
+
+  /* bottom grid line follows the bottom pattern */
+  .intro + .grid-line {
+    animation-delay: 2.9s;
   }
 
   .intro {
     margin: 0 auto;
     max-width: var(--breakpoint-xl);
     border-inline: 1px solid var(--border);
+    opacity: 0;
+    animation: fade-in 1s var(--ease-smooth) forwards;
+    animation-delay: 0.1s;
   }
 
   .intro-content {
@@ -109,14 +128,17 @@ import { Icon } from "astro-icon/components";
   .intro-header {
     display: flex;
     justify-content: flex-end;
+    opacity: 0;
+    animation: fade-in 0.8s var(--ease-smooth) forwards;
+    animation-delay: 4.6s;
   }
 
   .intro-content > span {
     font-size: var(--step-1);
     margin-block: var(--space-m);
     display: block;
-    animation: fade-in 0.5s forwards;
-    animation-delay: 2.8s;
+    animation: fade-in 0.8s var(--ease-smooth) forwards;
+    animation-delay: 2.1s;
     opacity: 0;
   }
 
@@ -125,8 +147,8 @@ import { Icon } from "astro-icon/components";
     flex-wrap: wrap;
     gap: var(--space-xs);
     opacity: 0;
-    animation: fade-in 0.5s forwards;
-    animation-delay: 3.1s;
+    animation: fade-in 0.8s var(--ease-smooth) forwards;
+    animation-delay: 2.4s;
   }
 
   .squiggle-container {
@@ -141,13 +163,9 @@ import { Icon } from "astro-icon/components";
   @keyframes fade-in {
     from {
       opacity: 0;
-      visibility: hidden;
-      transform: translateY(var(--space-xs));
     }
     to {
       opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
     }
   }
 </style>
