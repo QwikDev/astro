@@ -5,6 +5,22 @@ import { fileURLToPath } from "node:url";
 import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
 import pm from "panam/pm";
 
+/**
+ * Assert that a panam command result indicates success.
+ * panam resolves `{ status: false, error }` instead of throwing on failure,
+ * so callers must check explicitly.
+ */
+export function assertPmResult(
+  result: { status: boolean; error?: unknown },
+  label: string
+): void {
+  if (!result.status) {
+    throw new Error(
+      `${label} failed${result.error ? `: ${result.error}` : ""}`
+    );
+  }
+}
+
 export const __filename = getModuleFilename();
 export const __dirname = path.dirname(__filename);
 

@@ -12,6 +12,27 @@ const KNOWN_FRAMEWORKS: Record<string, FrameworkInfo["name"]> = {
 type ASTNode = Record<string, unknown>;
 
 /**
+ * Check whether the config source contains any import from `@qwik.dev/astro`.
+ * This is intentionally a broad check — if the import exists, we must ensure
+ * the package is installed before `astro add` tries to load the config,
+ * regardless of whether the integration is fully registered.
+ */
+export function hasQwikImport(configSource: string): boolean {
+  const parsed = parseSync("astro.config.ts", configSource, {
+    sourceType: "module"
+  });
+
+  for (const node of (parsed.program?.body ?? [])) {
+    const n = node as unknown as ASTNode;
+    if (n.type !== "ImportDeclaration") continue;
+    const source = n.source as ASTNode | undefined;
+    if ((source?.value as string) === "@qwik.dev/astro") return true;
+  }
+
+  return false;
+}
+
+/**
  * Detect React, Preact, and Solid integrations in an astro.config source string.
  * Uses oxc-parser for AST-based analysis.
  */

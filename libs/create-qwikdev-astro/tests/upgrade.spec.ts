@@ -9,7 +9,7 @@ import upgradeApp, { defaultUpgradeDefinition } from "../src/upgrade.js";
 process.env.NODE_ENV = "test";
 process.env.CI = "1";
 
-const root = "labs";
+const root = "/tmp/qwik-astro-test-upgrade";
 const upgradeProject = "upgrade-test";
 
 const upgradeTester = new ProgramTester(upgradeApp);
@@ -157,7 +157,7 @@ test.group("upgrade rewrite execution", (group) => {
 
   test("rewrites astro.config imports", async ({ assert }) => {
     const { rewriteAstroConfig } = await import("../src/upgrade-rewrite.js");
-    const absDir = join(process.cwd(), projectDir);
+    const absDir = projectDir;
 
     const result = rewriteAstroConfig(absDir, false);
     assert.isTrue(result.changed);
@@ -170,7 +170,7 @@ test.group("upgrade rewrite execution", (group) => {
 
   test("rewrites tsconfig jsxImportSource", async ({ assert }) => {
     const { rewriteTsconfig } = await import("../src/upgrade-rewrite.js");
-    const absDir = join(process.cwd(), projectDir);
+    const absDir = projectDir;
 
     const result = rewriteTsconfig(absDir, false);
     assert.isTrue(result.changed);
@@ -183,7 +183,7 @@ test.group("upgrade rewrite execution", (group) => {
 
   test("rewrites source file imports", async ({ assert }) => {
     const { rewriteImports } = await import("../src/upgrade-rewrite.js");
-    const absDir = join(process.cwd(), projectDir);
+    const absDir = projectDir;
 
     const result = rewriteImports(absDir, false);
     assert.isTrue(result.changedFiles.length >= 1);
@@ -198,7 +198,7 @@ test.group("upgrade rewrite execution", (group) => {
 
   test("rewrites @jsxImportSource pragma comments", async ({ assert }) => {
     const { rewritePragmaComments } = await import("../src/upgrade-rewrite.js");
-    const absDir = join(process.cwd(), projectDir);
+    const absDir = projectDir;
 
     const result = rewritePragmaComments(absDir, false);
     assert.isTrue(result.changedFiles.length >= 1);
@@ -214,7 +214,7 @@ test.group("upgrade rewrite execution", (group) => {
   test("dry-run does not modify files", async ({ assert }) => {
     const { rewriteAstroConfig, rewriteTsconfig, rewriteImports, rewritePragmaComments } =
       await import("../src/upgrade-rewrite.js");
-    const absDir = join(process.cwd(), projectDir);
+    const absDir = projectDir;
 
     rewriteAstroConfig(absDir, true);
     rewriteTsconfig(absDir, true);
@@ -246,7 +246,7 @@ test.group("upgrade full execution with package install", (group) => {
   });
 
   test("full upgrade swaps packages and rewrites files", async ({ assert }) => {
-    const absDir = join(process.cwd(), projectDir);
+    const absDir = projectDir;
 
     // Install deps so pm.remove/pm.add have a real project to work with
     await pm.install({ cwd: absDir });

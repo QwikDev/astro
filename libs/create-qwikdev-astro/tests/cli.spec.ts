@@ -19,7 +19,7 @@ process.env.NODE_ENV = "test";
 process.env.CI = "1";
 
 const integration = "@qwik.dev/astro";
-const root = "labs";
+const root = "/tmp/qwik-astro-test-cli";
 const project = "test-app";
 
 delete process.env.npm_config_user_agent;
