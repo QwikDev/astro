@@ -33,6 +33,97 @@ export function hasQwikImport(configSource: string): boolean {
 }
 
 /**
+ * Check whether the config source has qwik() registered in the integrations array.
+ * This is a more precise check than hasQwikImport — it confirms the integration is
+ * actually wired up, not just imported.
+ *
+ * Conservative: only returns true when inline `export default defineConfig({...})`
+ * with a literal array integrations is detected. Variable-exported and callback
+ * configs return false (safe fallback — astro add will run).
+ *
+ * False negatives are safe. False positives would incorrectly skip astro add.
+ */
+export function isQwikRegistered(configSource: string): boolean {
+  const parsed = parseSync("astro.config.ts", configSource, {
+    sourceType: "module"
+  });
+
+  const body = parsed.program?.body ?? [];
+
+  // Step 1: Collect import bindings from @qwik.dev/astro
+  // e.g., `import qwik from "@qwik.dev/astro"` -> binding "qwik"
+  const qwikBindings = new Set<string>();
+
+  for (const node of body) {
+    const n = node as unknown as ASTNode;
+    if (n.type !== "ImportDeclaration") continue;
+    const source = n.source as ASTNode | undefined;
+    if ((source?.value as string) !== "@qwik.dev/astro") continue;
+    const specifiers = (n.specifiers as ASTNode[]) ?? [];
+    for (const spec of specifiers) {
+      if (spec.type === "ImportDefaultSpecifier") {
+        const local = spec.local as ASTNode;
+        qwikBindings.add(local.name as string);
+      }
+    }
+  }
+
+  if (qwikBindings.size === 0) return false;
+
+  // Step 2: Find the integrations array from inline default export
+  // Handles:
+  //   export default { integrations: [qwik()] }
+  //   export default defineConfig({ integrations: [qwik()] })
+  // Does NOT handle variable or callback patterns (returns false — safe fallback)
+  let integrationsArray: ASTNode | null = null;
+
+  for (const node of body) {
+    const n = node as unknown as ASTNode;
+    if (n.type !== "ExportDefaultDeclaration") continue;
+
+    const decl = n.declaration as ASTNode;
+    let configObject: ASTNode | null = null;
+
+    if (decl.type === "ObjectExpression") {
+      configObject = decl;
+    } else if (decl.type === "CallExpression") {
+      const args = (decl.arguments as ASTNode[]) ?? [];
+      // Only handle the inline object case — NOT callback () => ({...})
+      if (args[0]?.type === "ObjectExpression") {
+        configObject = args[0];
+      }
+    }
+
+    if (!configObject) break; // variable/callback pattern — safe fallback
+
+    const props = (configObject.properties as ASTNode[]) ?? [];
+    for (const prop of props) {
+      const key = prop.key as ASTNode;
+      if (key.name === "integrations" || key.value === "integrations") {
+        integrationsArray = prop.value as ASTNode;
+        break;
+      }
+    }
+
+    break;
+  }
+
+  if (!integrationsArray || integrationsArray.type !== "ArrayExpression") return false;
+
+  // Step 3: Check if any call in the array uses a qwik binding
+  const elements = (integrationsArray.elements as ASTNode[]) ?? [];
+  for (const el of elements) {
+    if (!el || el.type !== "CallExpression") continue;
+    const callee = el.callee as ASTNode;
+    if (callee.type === "Identifier" && qwikBindings.has(callee.name as string)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
  * Detect React, Preact, and Solid integrations in an astro.config source string.
  * Uses oxc-parser for AST-based analysis.
  */
