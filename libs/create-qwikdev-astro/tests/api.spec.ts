@@ -1,8 +1,8 @@
 import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
-import app, { defaultDefinition } from "@qwik.dev/create-astro/app";
+import app, { defaultDefinition } from "../src/app.js";
 import { name, version } from "@qwik.dev/create-astro/package.json";
-import { ProgramTester } from "@qwik.dev/create-astro/tester";
+import { ProgramTester } from "../src/tester.js";
 
 declare module "@japa/runner/core" {
   interface TestContext {

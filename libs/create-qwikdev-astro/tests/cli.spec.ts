@@ -1,11 +1,11 @@
 import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import { TestContext } from "@japa/runner/core";
-import { run } from "@qwik.dev/create-astro";
-import { ProgramTester } from "@qwik.dev/create-astro/tester";
-import type { PathTester } from "@qwik.dev/create-astro/tester";
-import upgradeApp, { defaultUpgradeDefinition } from "@qwik.dev/create-astro/upgrade";
-import addApp, { defaultAddDefinition } from "@qwik.dev/create-astro/add";
+import { run } from "../src/index.js";
+import { ProgramTester } from "../src/tester.js";
+import type { PathTester } from "../src/tester.js";
+import upgradeApp, { defaultUpgradeDefinition } from "../src/upgrade.js";
+import addApp, { defaultAddDefinition } from "../src/add-flow/command.js";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 import pm from "panam";
 
