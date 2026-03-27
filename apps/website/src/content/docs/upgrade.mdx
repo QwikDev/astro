@@ -68,6 +68,26 @@ npm install @qwik.dev/astro @qwik.dev/core
 ```
 
 
+### Migrating Qwik v1 ecosystem libraries
+
+If your project uses Qwik v1 libraries like **Qwik UI Headless**, **Qwikest Icons**, or other community packages built for `@builder.io/qwik`, they won't work out of the box with Qwik v2.
+
+Your options:
+
+1. **Use an AI agent to migrate the source** — give the library repo (or just the source files you need) to an AI coding agent and have it do the migration. The changes are mechanical: update imports from `@builder.io/qwik` to `@qwik.dev/core`, fix any changed APIs, and patch or vendor the result into your project.
+
+2. **Vendor and patch** — copy the source files you need directly into your project, update the imports, and maintain them locally until an official v2-compatible release is available.
+
+3. **Check for v2 releases** — some libraries may already have Qwik v2 compatible versions published. Check the library's repo or npm page for a `v2`, `next`, or `qwik2` tagged release.
+
+For most v1 libraries, the migration is straightforward — the core API surface between v1 and v2 is similar. The main changes are:
+
+- `@builder.io/qwik` → `@qwik.dev/core`
+- Some lifecycle and API changes (check the [Qwik v2 migration guide](https://qwikdev-build-v2.qwik-8nx.pages.dev/docs/upgrade/) for details)
+
+> **Tip:** If you point an AI agent like Claude at a v1 library's repo with the instruction "migrate this to Qwik v2", it can handle the import rewrites, API adjustments, and produce a working patch or set of source files you can drop into your project.
+
+
 ### New features
 
 - **Client router** — enable SPA-style navigation support with Astro's `ClientRouter`:
