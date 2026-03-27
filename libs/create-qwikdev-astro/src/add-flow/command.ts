@@ -5,6 +5,7 @@ import pkg from "../../package.json";
 import { type Definition as BaseDefinition, Program } from "../core.js";
 import { resolveAbsoluteDir } from "../utils.js";
 import { detectConfigFrameworks } from "./detect-config.js";
+import { injectQwikIntegration } from "./inject-qwik.js";
 import { determineJsxStrategy } from "./jsx-strategy.js";
 import { generateWarning, rewriteConfig } from "./rewrite-config.js";
 import { scaffoldQwikComponent } from "./scaffold.js";
@@ -91,8 +92,8 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
 
       // Step 1: Locate astro.config file
       const configExtensions = [".mts", ".ts", ".mjs", ".js"];
-      let configPath: string | null = null;
-      let configSource: string | null = null;
+      let configPath = "";
+      let configSource = "";
 
       for (const ext of configExtensions) {
         const candidate = join(input.absDir, `astro.config${ext}`);
@@ -103,32 +104,13 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
         }
       }
 
-      // Step 2: No astro.config — run astro add directly
-      if (!configPath || configSource === null) {
-        this.warn("No astro.config file found — running astro add directly.");
-        if (!input.dryRun) {
-          await pm.x("astro add @qwik.dev/astro", { cwd: input.absDir });
-        } else {
-          this.info(`Would run: astro add @qwik.dev/astro via ${pm.name}`);
-        }
-        const strategy = determineJsxStrategy("primary");
-        this.persistTsconfig(input, strategy);
-        await scaffoldQwikComponent(input.absDir, strategy, input.dryRun);
-        this.outro("Qwik added successfully!");
-        return 0;
-      }
-
-      // Step 3: Detect existing frameworks in config
+      // Step 2: Detect existing frameworks in config
       const configResult = detectConfigFrameworks(configSource);
 
-      // Step 4: Handle each outcome
+      // Step 3: Handle each outcome
       if (configResult.outcome === "none") {
         // No other frameworks — add Qwik as primary
-        if (!input.dryRun) {
-          await pm.x("astro add @qwik.dev/astro", { cwd: input.absDir });
-        } else {
-          this.info(`Would run: astro add @qwik.dev/astro via ${pm.name}`);
-        }
+        await this.injectAndInstall(configPath, configSource, input);
         const strategy = determineJsxStrategy("primary");
         this.persistTsconfig(input, strategy);
         await scaffoldQwikComponent(input.absDir, strategy, input.dryRun);
@@ -141,11 +123,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
         configResult.outcome === "already-configured"
       ) {
         this.warn(generateWarning(configResult));
-        if (!input.dryRun) {
-          await pm.x("astro add @qwik.dev/astro", { cwd: input.absDir });
-        } else {
-          this.info(`Would run: astro add @qwik.dev/astro via ${pm.name}`);
-        }
+        await this.injectAndInstall(configPath, configSource, input);
         // Do NOT silently set jsxImportSource — the user was warned the config is
         // unsafe or already-configured. They must handle JSX ownership manually.
         this.info(
@@ -180,18 +158,37 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
       }
 
       await scaffoldQwikComponent(input.absDir, strategy, input.dryRun);
-
-      if (!input.dryRun) {
-        await pm.x("astro add @qwik.dev/astro", { cwd: input.absDir });
-      } else {
-        this.info(`Would run: astro add @qwik.dev/astro via ${pm.name}`);
-      }
+      await this.injectAndInstall(configPath, configSource, input);
 
       this.outro("Qwik added successfully!");
       return 0;
     } catch (err) {
       this.error(String(err));
       return 1;
+    }
+  }
+
+  private async injectAndInstall(
+    configPath: string,
+    configSource: string,
+    input: AddInput
+  ): Promise<void> {
+    const rewritten = injectQwikIntegration(configSource);
+    if (rewritten !== null) {
+      if (!input.dryRun) {
+        writeFileSync(configPath, rewritten, "utf-8");
+        this.info(`Updated: ${configPath}`);
+      } else {
+        this.info(`Would update: ${configPath}`);
+      }
+    } else {
+      this.warn("Could not inject Qwik into config — please add it manually.");
+    }
+
+    if (!input.dryRun) {
+      await pm.add(["@qwik.dev/astro@latest"], { cwd: input.absDir });
+    } else {
+      this.info("Would install: @qwik.dev/astro@latest");
     }
   }
 
