@@ -16,33 +16,21 @@
 
 ## Quick Start
 
-```bash
-npm create @qwik.dev/astro@latest
-```
-```bash
-pnpm create @qwik.dev/astro@latest
-```
-```bash
-yarn create @qwik.dev/astro
-```
-```bash
-bun create @qwik.dev/astro
-```
+| Package Manager | Command |
+| --- | --- |
+| npm | `npm create @qwik.dev/astro@latest` |
+| pnpm | `pnpm create @qwik.dev/astro@latest` |
+| yarn | `yarn create @qwik.dev/astro` |
+| bun | `bun create @qwik.dev/astro` |
 
-Or add to an existing Astro project:
+### Add to an existing project
 
-```bash
-npm create @qwik.dev/astro@latest ./my-project --add
-```
-```bash
-pnpm create @qwik.dev/astro@latest ./my-project --add
-```
-```bash
-yarn create @qwik.dev/astro ./my-project --add
-```
-```bash
-bun create @qwik.dev/astro ./my-project --add
-```
+| Package Manager | Command |
+| --- | --- |
+| npm | `npm create @qwik.dev/astro@latest ./my-project --add` |
+| pnpm | `pnpm create @qwik.dev/astro@latest ./my-project --add` |
+| yarn | `yarn create @qwik.dev/astro ./my-project --add` |
+| bun | `bun create @qwik.dev/astro ./my-project --add` |
 
 See the [CLI documentation](libs/create-qwikdev-astro/README.md) for all available commands and options.
 
