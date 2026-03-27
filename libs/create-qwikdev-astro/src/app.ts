@@ -198,11 +198,12 @@ export class Application extends Program<Definition, Input> {
 	async interact(definition: Definition): Promise<Input> {
 		let destination = definition.destination;
 		if (destination === defaultDefinition.destination) {
+			const defaultDest = definition.add ? "./" : definition.destination;
 			destination = await this.scanString(
-				`Where would you like to create your new project? ${this.gray(
+				`Where would you like to ${definition.add ? "add @qwik.dev/astro" : "create your new project"}? ${this.gray(
 					`(Use './' for current directory)`,
 				)}`,
-				definition.destination,
+				defaultDest,
 			);
 		}
 
