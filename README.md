@@ -72,6 +72,19 @@ Run the upgrade script from your project directory:
 npm create @qwik.dev/astro@latest upgrade
 ```
 
+The upgrade script handles package swaps and import rewrites automatically. However, it does not cover Astro-specific breaking changes:
+
+- **`<ViewTransitions />` renamed to `<ClientRouter />`** — Astro renamed this component. Update your layouts accordingly.
+- **`clientRouter` is now required in the integration config** — `@qwik.dev/astro` requires a `clientRouter: true | false` property in your `astro.config`:
+
+  ```js
+  import qwik from "@qwik.dev/astro";
+
+  export default defineConfig({
+    integrations: [qwik({ clientRouter: true })],
+  });
+  ```
+
 If the script doesn't work for your setup, follow the [manual upgrade guide](https://astro.qwik.dev/docs/upgrade/).
 
 ## Contributing
