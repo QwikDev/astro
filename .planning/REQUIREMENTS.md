@@ -38,8 +38,8 @@ Requirements for the CLI upgrade command and multi-framework add-flow milestone.
 
 ### Integration
 
-- [ ] **INT-01**: Both commands wired into `src/app.ts` CLI entrypoint
-- [ ] **INT-02**: `package.json` updated with `oxc-parser` and `magic-string` dependencies
+- [x] **INT-01**: Both commands wired into `src/app.ts` CLI entrypoint
+- [x] **INT-02**: `package.json` updated with `oxc-parser` and `magic-string` dependencies
 - [ ] **INT-03**: `tests/cli.spec.ts` updated with CLI argument parsing tests for both commands
 
 ## v2 Requirements
@@ -91,8 +91,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MFD-07 | Phase 2 | Complete |
 | MFD-08 | Phase 2 | Complete |
 | MFD-09 | Phase 2 | Complete |
-| INT-01 | Phase 3 | Pending |
-| INT-02 | Phase 3 | Pending |
+| INT-01 | Phase 3 | Complete |
+| INT-02 | Phase 3 | Complete |
 | INT-03 | Phase 3 | Pending |
 
 **Coverage:**
