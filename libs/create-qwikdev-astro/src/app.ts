@@ -713,7 +713,13 @@ export class Application extends Program<Definition, Input> {
 			this.step(`Installing${input.template ? " new " : " "}dependencies...`);
 
 			if (!input.dryRun) {
-				await pm.install({ cwd: input.outDir });
+				try {
+					const installResult = await pm.install({ cwd: input.outDir });
+					assertPmResult(installResult, "install dependencies");
+				} catch (e) {
+					this.error(`Dependency installation failed: ${e instanceof Error ? e.message : e}`);
+					return false;
+				}
 			}
 
 			ranInstall = true;

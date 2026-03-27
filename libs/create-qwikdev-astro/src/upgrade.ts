@@ -9,7 +9,7 @@ import {
   rewriteTsconfig,
   scanForAsyncPatterns
 } from "./upgrade-rewrite";
-import { getPackageJson, resolveAbsoluteDir } from "./utils";
+import { assertPmResult, getPackageJson, resolveAbsoluteDir } from "./utils";
 
 const MIGRATION_DOCS_URL = "https://qwikdev-build-v2.qwik-8nx.pages.dev/docs/upgrade/";
 
@@ -165,7 +165,8 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       this.step("Running @astrojs/upgrade...");
       if (!input.dryRun) {
         try {
-          await pm.dlx("@astrojs/upgrade", { cwd: input.absDir });
+          const dlxResult = await pm.dlx("@astrojs/upgrade", { cwd: input.absDir });
+          assertPmResult(dlxResult, "@astrojs/upgrade");
           results.astroUpgradeRan = true;
         } catch {
           this.error(
@@ -203,14 +204,16 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       if (!input.dryRun) {
         if (toRemove.length > 0) {
           try {
-            await pm.remove(toRemove, { cwd: input.absDir });
+            const removeResult = await pm.remove(toRemove, { cwd: input.absDir });
+            assertPmResult(removeResult, `remove old packages: ${toRemove.join(", ")}`);
           } catch {
             failures.push(`Failed to remove old packages: ${toRemove.join(", ")}`);
             this.warn(`Failed to remove old packages: ${toRemove.join(", ")}`);
           }
         }
         try {
-          await pm.add(newPackages, { cwd: input.absDir });
+          const addResult = await pm.add(newPackages, { cwd: input.absDir });
+          assertPmResult(addResult, `install new packages: ${newPackages.join(", ")}`);
           results.removedPackages = toRemove;
           results.installedPackages = newPackages;
         } catch {
