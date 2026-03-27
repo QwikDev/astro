@@ -203,6 +203,34 @@ test.group("--add flow multi-framework detection", (group) => {
     }
   }).disableTimeout();
 
+  test("--add with no destination defaults to current directory, not ./qwik-astro-app", async ({
+    assert
+  }) => {
+    // When --add is used without a positional destination arg, interact() should
+    // default to "./" (current project), not "./qwik-astro-app" (new subdirectory).
+    //
+    // Reproduces: user runs `pnpm dlx ... --add`, hits Enter on the prompt default,
+    // and ends up targeting a nonexistent subdirectory instead of the current project.
+    //
+    // In non-interactive mode (CI=1), scanString returns its initialValue directly
+    // without prompting. So calling interact() in CI mode lets us observe what
+    // default value would be shown to the user.
+
+    // Clear any leftover intercepts from previous tests
+    app.interactions.clear();
+
+    const definition = app.parse(["--add"]);
+    const input = await app.interact(definition);
+
+    // BUG: outDir ends with /qwik-astro-app because interact() passes the
+    // default "./qwik-astro-app" as initialValue even when --add is set.
+    // EXPECTED: outDir should be cwd (the default should be "./" for --add).
+    assert.isFalse(
+      input.outDir.endsWith("qwik-astro-app"),
+      `--add default should resolve to cwd, not ./qwik-astro-app. Got: ${input.outDir}`
+    );
+  }).disableTimeout();
+
   test("--add on React project detects framework and applies exclude", async ({
     assert
   }) => {
