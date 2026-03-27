@@ -11,7 +11,7 @@ import {
 } from "./upgrade-rewrite";
 import { getPackageJson, resolveAbsoluteDir } from "./utils";
 
-const MIGRATION_DOCS_URL = "https://qwik.dev/docs/migration/v2/";
+const MIGRATION_DOCS_URL = "https://qwikdev-build-v2.qwik-8nx.pages.dev/docs/upgrade/";
 
 export type UpgradeDefinition = BaseDefinition & {
   directory: string;

@@ -6,7 +6,7 @@ export async function getStaticPaths() {
   const docs = await getCollection("docs");
   return docs.map((entry) => ({
     params: { slug: entry.id === "installation" ? undefined : entry.id },
-    props: { entry }
+    props: { entry },
   }));
 }
 
@@ -20,7 +20,7 @@ const toc = headings
   .map((h) => ({
     label: h.text,
     id: h.slug,
-    level: h.depth
+    level: h.depth,
   }));
 ---
 

@@ -181,6 +181,9 @@ export default defineIntegration({
 
         if (!builder?.buildApp) return;
 
+        const astroViteConfig = { ...vite };
+        delete (astroViteConfig as Record<string, unknown>).builder;
+
         const originalBuildApp = builder.buildApp;
         builder.buildApp = async (b: ViteBuilder) => {
           const entrypoints = await scanQwikEntrypoints(config, filter, options?.debug);
@@ -195,7 +198,8 @@ export default defineIntegration({
               debug: options?.debug ?? false,
               onManifest: (manifest) => {
                 qwikManifest = manifest;
-              }
+              },
+              astroViteConfig
             });
           }
 
