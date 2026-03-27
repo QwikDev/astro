@@ -4,7 +4,7 @@ import pm from "panam/pm";
 import pkg from "../../package.json";
 import { type Definition as BaseDefinition, Program } from "../core.js";
 import { assertPmResult, resolveAbsoluteDir } from "../utils.js";
-import { detectConfigFrameworks, hasQwikImport } from "./detect-config.js";
+import { detectConfigFrameworks, hasQwikImport, isQwikRegistered } from "./detect-config.js";
 import { determineJsxStrategy } from "./jsx-strategy.js";
 import { generateWarning, rewriteConfig } from "./rewrite-config.js";
 import { scaffoldQwikComponent } from "./scaffold.js";
@@ -125,13 +125,17 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
       // first so `astro add` can load the config without crashing.
       const qwikImported = hasQwikImport(configSource);
 
+      // Step 3b: Check if qwik() is already registered in the integrations array.
+      // If so, skip astro add to prevent duplicate integration entries.
+      const qwikRegistered = isQwikRegistered(configSource);
+
       // Step 4: Detect existing JSX frameworks in config
       const configResult = detectConfigFrameworks(configSource);
 
       // Step 5: Handle each outcome
       if (configResult.outcome === "none") {
         // No other frameworks — add Qwik as primary
-        await this.installQwik(input, qwikImported);
+        await this.installQwik(input, qwikImported, qwikRegistered);
         const strategy = determineJsxStrategy("primary");
         this.persistTsconfig(input, strategy);
         await scaffoldQwikComponent(input.absDir, strategy, input.dryRun);
@@ -144,7 +148,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
         configResult.outcome === "already-configured"
       ) {
         this.warn(generateWarning(configResult));
-        await this.installQwik(input, qwikImported);
+        await this.installQwik(input, qwikImported, qwikRegistered);
         // Do NOT silently set jsxImportSource — the user was warned the config is
         // unsafe or already-configured. They must handle JSX ownership manually.
         this.info(
@@ -179,7 +183,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
       }
 
       await scaffoldQwikComponent(input.absDir, strategy, input.dryRun);
-      await this.installQwik(input, qwikImported);
+      await this.installQwik(input, qwikImported, qwikRegistered);
 
       this.outro("Qwik added successfully!");
       return 0;
@@ -190,16 +194,28 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
   }
 
   /**
-   * Install @qwik.dev/astro. If the config already imports the package,
-   * install it first so `astro add` can load the config without crashing,
-   * then run `astro add` to finish any remaining setup.
+   * Install @qwik.dev/astro.
+   *
+   * - If the config already imports the package (`qwikImported`), pre-install
+   *   it so `astro add` can load the config without crashing.
+   * - If qwik() is already registered in the integrations array (`qwikRegistered`),
+   *   skip `astro add` entirely to prevent duplicate integration entries.
+   * - Otherwise run `astro add` as usual.
    */
-  private async installQwik(input: AddInput, qwikImported: boolean): Promise<void> {
+  private async installQwik(
+    input: AddInput,
+    qwikImported: boolean,
+    qwikRegistered: boolean
+  ): Promise<void> {
     if (input.dryRun) {
       if (qwikImported) {
         this.info("@qwik.dev/astro found in config — would pre-install packages.");
       }
-      this.info(`Would run: astro add @qwik.dev/astro via ${pm.name}`);
+      if (qwikRegistered) {
+        this.info("Would skip astro add (already registered in config).");
+      } else {
+        this.info(`Would run: astro add @qwik.dev/astro via ${pm.name}`);
+      }
       return;
     }
 
@@ -209,6 +225,11 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
         await pm.add(["@qwik.dev/astro", "@qwik.dev/core"], { cwd: input.absDir }),
         "pm.add @qwik.dev/astro"
       );
+    }
+
+    if (qwikRegistered) {
+      this.info("@qwik.dev/astro already registered in config — skipping astro add.");
+      return;
     }
 
     assertPmResult(

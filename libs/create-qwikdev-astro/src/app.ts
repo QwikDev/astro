@@ -6,7 +6,7 @@ import pm from "panam/pm";
 import pkg from "../package.json";
 import { ensureString } from "./console";
 import { type Definition as BaseDefinition, Program } from "./core";
-import { hasQwikImport } from "./add-flow/detect-config";
+import { hasQwikImport, isQwikRegistered } from "./add-flow/detect-config";
 import {
   __dirname,
   assertPmResult,
@@ -351,14 +351,17 @@ export class Application extends Program<Definition, Input> {
       // first so `astro add` can load the config without crashing.
       if (!input.dryRun) {
         const configExts = [".mts", ".ts", ".mjs", ".js"];
-        let needsPreInstall = false;
+        let configSource: string | null = null;
         for (const ext of configExts) {
           const configPath = path.join(input.outDir, `astro.config${ext}`);
           if (fs.existsSync(configPath)) {
-            needsPreInstall = hasQwikImport(fs.readFileSync(configPath, "utf-8"));
+            configSource = fs.readFileSync(configPath, "utf-8");
             break;
           }
         }
+
+        const needsPreInstall = configSource !== null && hasQwikImport(configSource);
+        const alreadyRegistered = configSource !== null && isQwikRegistered(configSource);
 
         if (needsPreInstall) {
           this.info("@qwik.dev/astro found in config — installing before astro add.");
@@ -368,10 +371,14 @@ export class Application extends Program<Definition, Input> {
           );
         }
 
-        assertPmResult(
-          await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
-          "astro add @qwik.dev/astro"
-        );
+        if (alreadyRegistered) {
+          this.info("@qwik.dev/astro already registered in config — skipping astro add.");
+        } else {
+          assertPmResult(
+            await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
+            "astro add @qwik.dev/astro"
+          );
+        }
       }
 
       if (input.copy) {
