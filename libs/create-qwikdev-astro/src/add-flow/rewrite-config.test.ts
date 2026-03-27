@@ -73,12 +73,12 @@ export default {
   const output = rewriteConfig(source, result);
   assert(output !== null, "returns non-null for safe outcome");
   assert(
-    output?.includes(`react({ include: ['src/components/react/**/*'] })`),
+    output?.includes(`react({ include: ['src/components/react/**/*'] })`) === true,
     "include property added inside react call"
   );
   // Verify non-edit regions are unchanged
   const nonEditPrefix = source.slice(0, reactCallStart);
-  assert(output?.startsWith(nonEditPrefix), "prefix before react() unchanged");
+  assert(output?.startsWith(nonEditPrefix) === true, "prefix before react() unchanged");
 }
 
 // -----------------------------------------------------------------------
@@ -120,7 +120,7 @@ export default {
   const output = rewriteConfig(source, result);
   assert(output !== null, "returns non-null for safe outcome");
   assert(
-    output?.includes(`react({ include: ['src/components/react/**/*'], ssr: true })`),
+    output?.includes(`react({ include: ['src/components/react/**/*'], ssr: true })`) === true,
     "include added before existing ssr option"
   );
 }
@@ -156,7 +156,7 @@ export default {
   const output = rewriteConfig(source, result);
   assert(output !== null, "returns non-null for safe outcome");
   assert(
-    output?.includes(`qwik({ exclude: ['src/components/react/**/*'] })`),
+    output?.includes(`qwik({ exclude: ['src/components/react/**/*'] })`) === true,
     "exclude property added inside qwik call"
   );
 }
@@ -286,7 +286,7 @@ export default {
   const tabOutput = rewriteConfig(tabSource, tabResult);
   assert(tabOutput !== null, "tab-indented config returns non-null");
   // Verify the tab character is preserved outside the edit region
-  assert(tabOutput?.includes("\t"), "tab character preserved in output");
+  assert(tabOutput?.includes("\t") === true, "tab character preserved in output");
 
   // 4-space-indented config
   const spaceSource = `import react from '@astrojs/react';
@@ -322,9 +322,9 @@ export default {
   const spaceOutput = rewriteConfig(spaceSource, spaceResult);
   assert(spaceOutput !== null, "4-space-indented config returns non-null");
   // Verify 4-space indentation preserved outside edit region
-  assert(spaceOutput?.includes("    integrations"), "4-space indentation preserved");
+  assert(spaceOutput?.includes("    integrations") === true, "4-space indentation preserved");
   // Verify the edit was applied
-  assert(spaceOutput?.includes("include:"), "include property added");
+  assert(spaceOutput?.includes("include:") === true, "include property added");
 }
 
 // -----------------------------------------------------------------------
