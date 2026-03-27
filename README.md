@@ -16,21 +16,47 @@
 
 ## Quick Start
 
-| Package Manager | Command |
-| --- | --- |
-| npm | `npm create @qwik.dev/astro@latest` |
-| pnpm | `pnpm create @qwik.dev/astro@latest` |
-| yarn | `yarn create @qwik.dev/astro` |
-| bun | `bun create @qwik.dev/astro` |
+**npm**
+```bash
+npm create @qwik.dev/astro@latest
+```
+
+**pnpm**
+```bash
+pnpm create @qwik.dev/astro@latest
+```
+
+**yarn**
+```bash
+yarn create @qwik.dev/astro
+```
+
+**bun**
+```bash
+bun create @qwik.dev/astro
+```
 
 ### Add to an existing project
 
-| Package Manager | Command |
-| --- | --- |
-| npm | `npm create @qwik.dev/astro@latest ./my-project --add` |
-| pnpm | `pnpm create @qwik.dev/astro@latest ./my-project --add` |
-| yarn | `yarn create @qwik.dev/astro ./my-project --add` |
-| bun | `bun create @qwik.dev/astro ./my-project --add` |
+**npm**
+```bash
+npm create @qwik.dev/astro@latest ./my-project --add
+```
+
+**pnpm**
+```bash
+pnpm create @qwik.dev/astro@latest ./my-project --add
+```
+
+**yarn**
+```bash
+yarn create @qwik.dev/astro ./my-project --add
+```
+
+**bun**
+```bash
+bun create @qwik.dev/astro ./my-project --add
+```
 
 See the [CLI documentation](libs/create-qwikdev-astro/README.md) for all available commands and options.
 
@@ -44,7 +70,7 @@ For a step-by-step migration guide, see [Upgrading to v2](https://astro.qwik.dev
 
 ## Contributing
 
-See our [Contributing Guide](https://qwik.dev/astro/contributing) to get started.
+See our [Contributing Guide](https://astro.qwik.dev/docs/contributing/) to get started.
 
 ## Help
 
