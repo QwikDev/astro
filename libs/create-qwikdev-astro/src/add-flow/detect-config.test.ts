@@ -105,7 +105,7 @@ export default {
   assert(result.notes.length > 0, "has explanatory note");
 }
 
-console.log("\nTest 6: Bare react() returns safe with include edit scoped to src/components/react");
+console.log("\nTest 6: Bare react() returns safe with exclude edit for Qwik directory");
 {
   const src = `
 import react from '@astrojs/react';
@@ -116,10 +116,27 @@ export default {
   const result = detectConfigFrameworks(src);
   assertEqual(result.outcome, "safe", "outcome is safe (react without include is safe to scope)");
   assert(result.edits.length === 1, "exactly one edit emitted");
+  assert(result.edits[0]?.type === "add-exclude", "edit type is add-exclude");
   assert(
-    result.edits[0]?.value?.includes("src/components/react") ?? false,
-    "edit value contains src/components/react/**/*"
+    result.edits[0]?.value?.includes("src/components/qwik") ?? false,
+    "edit value contains src/components/qwik/**/*"
   );
+}
+
+console.log("\nTest 7: Multiple frameworks get exclude edits for Qwik directory");
+{
+  const src = `
+import react from '@astrojs/react';
+import solid from '@astrojs/solid-js';
+export default {
+  integrations: [react(), solid()]
+};
+`.trim();
+  const result = detectConfigFrameworks(src);
+  assertEqual(result.outcome, "safe", "outcome is safe");
+  assert(result.edits.length === 2, "two edits emitted");
+  assert(result.edits.every(e => e.type === "add-exclude"), "all edits are add-exclude");
+  assert(result.edits.every(e => e.value.includes("src/components/qwik")), "all edits target qwik directory");
 }
 
 console.log(`\nResults: ${passed} passed, ${failed} failed`);

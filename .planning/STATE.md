@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-26)
 Phase: 3 of 3 (Integration) — complete
 Plan: All plans complete (8/8)
 Status: Milestone complete
-Last activity: 2026-03-26 — Phase 3 verified, all must-haves satisfied
+Last activity: 2026-03-27 - Completed quick task 2: Fix P1/P2 CLI bugs — add-flow JSX ownership, JSONC tsconfig, upgrade abort, test script typo
 
 Progress: [██████████] 100%
 
@@ -98,8 +98,15 @@ None yet.
 
 None yet.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 1 | Fix P1/P2 issues from Codex review on add/upgrade CLI commands | 2026-03-27 | e148752 | [1-fix-p1-p2-issues-from-codex-review-on-ad](./quick/1-fix-p1-p2-issues-from-codex-review-on-ad/) |
+| 2 | Fix P1/P2 CLI bugs: add-flow JSX ownership, JSONC tsconfig, upgrade abort, test script typo | 2026-03-27 | c3a4940 | [2-fix-p1-p2-cli-bugs-add-flow-scoping-jsx-](./quick/2-fix-p1-p2-cli-bugs-add-flow-scoping-jsx-/) |
+
 ## Session Continuity
 
-Last session: 2026-03-27T03:22:02.818Z
-Stopped at: Completed quick-fix 01
+Last session: 2026-03-27T03:34:15Z
+Stopped at: Completed quick-fix 02
 Resume file: None
