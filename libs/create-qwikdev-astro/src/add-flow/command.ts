@@ -144,8 +144,10 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
         } else {
           this.info(`Would run: astro add @qwik.dev/astro via ${pm.name}`);
         }
-        const strategy = determineJsxStrategy("primary");
-        this.persistTsconfig(input, strategy);
+        // Do NOT silently set jsxImportSource — the user was warned the config is
+        // unsafe or already-configured. They must handle JSX ownership manually.
+        this.info("Skipping tsconfig jsxImportSource — configure JSX ownership manually if needed.");
+        const strategy = determineJsxStrategy("secondary");
         await scaffoldQwikComponent(input.absDir, strategy, input.dryRun);
         this.outro("Qwik added successfully!");
         return 0;
@@ -158,7 +160,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
           { value: "primary", label: "Yes — Qwik owns tsconfig jsxImportSource" },
           { value: "secondary", label: "No — keep existing framework as primary" }
         ],
-        "secondary"
+        "primary"
       ) as "primary" | "secondary";
 
       const strategy = determineJsxStrategy(choice);
@@ -196,7 +198,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
     if (!existsSync(tsconfigPath)) return;
 
     const tsconfigRaw = readFileSync(tsconfigPath, "utf-8");
-    const tsconfig = JSON.parse(tsconfigRaw);
+    const tsconfig = JSON.parse(this.stripJsonComments(tsconfigRaw));
     tsconfig.compilerOptions = tsconfig.compilerOptions ?? {};
     tsconfig.compilerOptions.jsxImportSource = strategy.tsconfigSource;
 
@@ -205,6 +207,41 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
     } else {
       this.info(`Would set jsxImportSource to ${strategy.tsconfigSource} in tsconfig.json`);
     }
+  }
+
+  private stripJsonComments(text: string): string {
+    let result = '';
+    let i = 0;
+    while (i < text.length) {
+      // Skip strings
+      if (text[i] === '"') {
+        const start = i;
+        i++;
+        while (i < text.length && text[i] !== '"') {
+          if (text[i] === '\\') i++; // skip escaped char
+          i++;
+        }
+        i++; // closing quote
+        result += text.slice(start, i);
+        continue;
+      }
+      // Single-line comment
+      if (text[i] === '/' && text[i + 1] === '/') {
+        while (i < text.length && text[i] !== '\n') i++;
+        continue;
+      }
+      // Block comment
+      if (text[i] === '/' && text[i + 1] === '*') {
+        i += 2;
+        while (i < text.length && !(text[i] === '*' && text[i + 1] === '/')) i++;
+        i += 2;
+        continue;
+      }
+      result += text[i];
+      i++;
+    }
+    // Remove trailing commas before } or ]
+    return result.replace(/,\s*([}\]])/g, '$1');
   }
 }
 

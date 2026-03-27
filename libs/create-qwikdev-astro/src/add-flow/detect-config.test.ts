@@ -105,6 +105,23 @@ export default {
   assert(result.notes.length > 0, "has explanatory note");
 }
 
+console.log("\nTest 6: Bare react() returns safe with include edit scoped to src/components/react");
+{
+  const src = `
+import react from '@astrojs/react';
+export default {
+  integrations: [react()]
+};
+`.trim();
+  const result = detectConfigFrameworks(src);
+  assertEqual(result.outcome, "safe", "outcome is safe (react without include is safe to scope)");
+  assert(result.edits.length === 1, "exactly one edit emitted");
+  assert(
+    result.edits[0]?.value?.includes("src/components/react") ?? false,
+    "edit value contains src/components/react/**/*"
+  );
+}
+
 console.log(`\nResults: ${passed} passed, ${failed} failed`);
 if (failed > 0) {
   process.exit(1);

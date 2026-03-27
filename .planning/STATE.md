@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: complete
-stopped_at: All phases complete — milestone v1.0 ready
-last_updated: "2026-03-27T02:54:31.202Z"
-last_activity: 2026-03-26 — Roadmap created, phases defined
+status: completed
+stopped_at: Completed quick-fix 01
+last_updated: "2026-03-27T03:22:08.353Z"
+last_activity: 2026-03-26 — Phase 3 verified, all must-haves satisfied
 progress:
   total_phases: 3
   completed_phases: 3
@@ -87,6 +87,8 @@ Recent decisions affecting current work:
 - [Phase 03-integration]: rewriteConfig actual signature is 2-param (source, result) — used actual implementation not plan interface
 - [Phase 03-integration]: subcommand detection uses args.slice(2).find(not-flag) to correctly skip flags before finding subcommand name
 - [Phase 03-integration]: tsdown entry points required alongside package.json exports — test runner resolves to dist/ which must be explicitly built
+- [Phase quick-fix]: Framework include patterns scoped to src/components/{name}/**/* to prevent Qwik file routing through wrong frameworks
+- [Phase quick-fix]: @builder.io/qwik-city excluded from upgrade OLD_PACKAGES — no router migration logic exists
 
 ### Pending Todos
 
@@ -98,6 +100,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T02:54:31.200Z
-Stopped at: Completed 03-integration 03-02-PLAN.md
+Last session: 2026-03-27T03:22:02.818Z
+Stopped at: Completed quick-fix 01
 Resume file: None
