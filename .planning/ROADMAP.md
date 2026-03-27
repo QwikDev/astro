@@ -59,7 +59,11 @@ Plans:
   1. User runs `create-qwikdev-astro upgrade` and `create-qwikdev-astro add` from the CLI without errors
   2. `oxc-parser` and `magic-string` are listed in package.json dependencies and resolve correctly at runtime
   3. CLI argument parsing tests for both commands pass in the test suite
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — AddCommand orchestrator and CLI subcommand routing
+- [ ] 03-02-PLAN.md — CLI argument parsing tests for upgrade and add commands
 
 ## Progress
 
@@ -70,4 +74,4 @@ Phases 1 and 2 execute in parallel. Phase 3 follows both.
 |-------|----------------|--------|-----------|
 | 1. Upgrade Command | 3/3 | Complete   | 2026-03-27 |
 | 2. Multi-Framework Add-Flow | 0/3 | Planned | - |
-| 3. Integration | 0/TBD | Not started | - |
+| 3. Integration | 0/2 | Planned | - |
