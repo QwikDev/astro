@@ -1,15 +1,15 @@
-import pkg from "../package.json";
 import pm from "panam/pm";
+import pkg from "../package.json";
 import { type Definition as BaseDefinition, Program } from "./core";
-import { validateProject, checkGitStatus } from "./upgrade-preflight";
+import { checkGitStatus, validateProject } from "./upgrade-preflight";
 import {
-  rewriteImports,
-  rewriteTsconfig,
   rewriteAstroConfig,
+  rewriteImports,
   rewritePragmaComments,
+  rewriteTsconfig,
   scanForAsyncPatterns
 } from "./upgrade-rewrite";
-import { resolveAbsoluteDir, getPackageJson } from "./utils";
+import { getPackageJson, resolveAbsoluteDir } from "./utils";
 
 const MIGRATION_DOCS_URL = "https://qwik.dev/docs/migration/v2/";
 
@@ -115,7 +115,9 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
 
       if (definition.no) {
         // --no flag: abort on dirty git
-        this.cancel("Aborting upgrade due to uncommitted changes. Please commit or stash your changes first.");
+        this.cancel(
+          "Aborting upgrade due to uncommitted changes. Please commit or stash your changes first."
+        );
         process.exit(0);
       }
 
@@ -166,7 +168,9 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
           await pm.x("@astrojs/upgrade", { cwd: input.absDir });
           results.astroUpgradeRan = true;
         } catch {
-          this.error("@astrojs/upgrade failed. Please run it manually before retrying the Qwik upgrade.");
+          this.error(
+            "@astrojs/upgrade failed. Please run it manually before retrying the Qwik upgrade."
+          );
           return 1;
         }
       } else {
@@ -179,8 +183,8 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       // Note: @builder.io/qwik-city is NOT removed here because router migration
       // (import rewriting, replacement package install) is out of scope.
       // Removing it without migration would break apps that depend on it.
-      const OLD_PACKAGES = ["@builder.io/qwik", "@qwikdev/astro"];
-      const NEW_PACKAGES = ["@qwik.dev/astro@latest", "@qwik.dev/core@latest"];
+      const oldPackages = ["@builder.io/qwik", "@qwikdev/astro"];
+      const newPackages = ["@qwik.dev/astro@latest", "@qwik.dev/core@latest"];
 
       let pkgJson: Record<string, any> = {};
       try {
@@ -195,7 +199,7 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
         ...((pkgJson.peerDependencies as Record<string, string> | undefined) ?? {})
       };
 
-      const toRemove = OLD_PACKAGES.filter((pkg) => pkg in allDeps);
+      const toRemove = oldPackages.filter((pkg) => pkg in allDeps);
 
       if (!input.dryRun) {
         if (toRemove.length > 0) {
@@ -207,20 +211,22 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
           }
         }
         try {
-          await pm.x(`add ${NEW_PACKAGES.join(" ")}`, { cwd: input.absDir });
+          await pm.x(`add ${newPackages.join(" ")}`, { cwd: input.absDir });
           results.removedPackages = toRemove;
-          results.installedPackages = NEW_PACKAGES;
+          results.installedPackages = newPackages;
         } catch {
-          failures.push("Failed to install new packages: " + NEW_PACKAGES.join(" "));
-          this.warn("Failed to install new packages. Run manually: " + NEW_PACKAGES.join(" "));
+          failures.push(`Failed to install new packages: ${newPackages.join(" ")}`);
+          this.warn(
+            `Failed to install new packages. Run manually: ${newPackages.join(" ")}`
+          );
         }
       } else {
         if (toRemove.length > 0) {
           this.info(`Would remove: ${toRemove.join(", ")}`);
         }
-        this.info(`Would install: ${NEW_PACKAGES.join(", ")}`);
+        this.info(`Would install: ${newPackages.join(", ")}`);
         results.removedPackages = toRemove;
-        results.installedPackages = NEW_PACKAGES;
+        results.installedPackages = newPackages;
       }
 
       // Bail if package swap failed — config/import rewriting on inconsistent
@@ -238,8 +244,13 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       this.step("Rewriting astro.config...");
       const configResult = rewriteAstroConfig(input.absDir, input.dryRun);
       if (configResult.changed && configResult.filePath) {
-        results.configChanges.push({ file: configResult.filePath, replacements: configResult.replacements });
-        this.info(`Updated: ${configResult.filePath} (${configResult.replacements.join(", ")})`);
+        results.configChanges.push({
+          file: configResult.filePath,
+          replacements: configResult.replacements
+        });
+        this.info(
+          `Updated: ${configResult.filePath} (${configResult.replacements.join(", ")})`
+        );
       } else if (configResult.filePath) {
         this.info("astro.config already up-to-date.");
       } else {
@@ -251,7 +262,9 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       const tsconfigResult = rewriteTsconfig(input.absDir, input.dryRun);
       results.tsconfigChanged = tsconfigResult.changed;
       if (tsconfigResult.changed) {
-        this.info(`Updated jsxImportSource: ${tsconfigResult.oldValue} -> ${tsconfigResult.newValue}`);
+        this.info(
+          `Updated jsxImportSource: ${tsconfigResult.oldValue} -> ${tsconfigResult.newValue}`
+        );
       } else {
         this.info("tsconfig.json already up-to-date or not found.");
       }
@@ -269,13 +282,18 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       this.step("Updating @jsxImportSource pragma comments...");
       const pragmaResult = rewritePragmaComments(input.absDir, input.dryRun);
       if (pragmaResult.changedFiles.length > 0) {
-        this.info(`Updated pragma comments in ${pragmaResult.changedFiles.length} file(s).`);
+        this.info(
+          `Updated pragma comments in ${pragmaResult.changedFiles.length} file(s).`
+        );
       } else {
         this.info("No pragma comments needed updating.");
       }
 
       // Merge unique changed source files from both steps
-      const allChangedFiles = new Set([...importsResult.changedFiles, ...pragmaResult.changedFiles]);
+      const allChangedFiles = new Set([
+        ...importsResult.changedFiles,
+        ...pragmaResult.changedFiles
+      ]);
       results.sourceFilesChanged = Array.from(allChangedFiles);
 
       // Step 7: Scan for async patterns
@@ -305,30 +323,33 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
 
     if (results.dryRun) {
       // Dry-run mode: list planned actions with "[would]" prefix
-      lines.push(this.cyan("[would]") + " Run @astrojs/upgrade");
+      lines.push(`${this.cyan("[would]")} Run @astrojs/upgrade`);
 
       if (results.removedPackages.length > 0) {
-        lines.push(this.cyan("[would]") + ` Remove: ${results.removedPackages.join(", ")}`);
+        lines.push(
+          `${this.cyan("[would]")} Remove: ${results.removedPackages.join(", ")}`
+        );
       }
-      lines.push(this.cyan("[would]") + ` Install: ${results.installedPackages.join(", ")}`);
+      lines.push(
+        `${this.cyan("[would]")} Install: ${results.installedPackages.join(", ")}`
+      );
 
       if (results.configChanges.length > 0) {
         for (const change of results.configChanges) {
-          lines.push(this.cyan("[would]") + ` Rewrite: ${change.file}`);
+          lines.push(`${this.cyan("[would]")} Rewrite: ${change.file}`);
         }
       }
 
       if (results.tsconfigChanged) {
-        lines.push(this.cyan("[would]") + " Rewrite: tsconfig.json jsxImportSource");
+        lines.push(`${this.cyan("[would]")} Rewrite: tsconfig.json jsxImportSource`);
       }
 
       if (results.sourceFilesChanged.length > 0) {
         lines.push(
-          this.cyan("[would]") +
-          ` Rewrite imports in ${results.sourceFilesChanged.length} source file(s):`
+          `${this.cyan("[would]")} Rewrite imports in ${results.sourceFilesChanged.length} source file(s):`
         );
         for (const file of results.sourceFilesChanged) {
-          lines.push("  " + this.gray(file));
+          lines.push(`  ${this.gray(file)}`);
         }
       }
 
@@ -368,19 +389,17 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       lines.push(this.cyan("Files changed:"));
       if (changedFiles.length > 0) {
         for (const file of changedFiles) {
-          lines.push("  " + file);
+          lines.push(`  ${file}`);
         }
       } else {
-        lines.push("  " + this.gray("No files modified."));
+        lines.push(`  ${this.gray("No files modified.")}`);
       }
 
       if (results.asyncWarnings.length > 0) {
         lines.push("");
         lines.push(this.yellow("Warnings:"));
         lines.push(
-          this.yellow(
-            "  Async useComputed$ and useResource$ behavior changed in Qwik v2"
-          )
+          this.yellow("  Async useComputed$ and useResource$ behavior changed in Qwik v2")
         );
         for (const w of results.asyncWarnings) {
           lines.push(
@@ -401,10 +420,7 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
   }
 }
 
-export function upgrade(
-  name = pkg.name,
-  version = pkg.version
-): UpgradeCommand {
+export function upgrade(name = pkg.name, version = pkg.version): UpgradeCommand {
   return new UpgradeCommand(name, version);
 }
 

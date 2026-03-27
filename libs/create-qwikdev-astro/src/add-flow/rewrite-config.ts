@@ -48,7 +48,11 @@ export function rewriteConfig(
       const existingInner = innerContent.slice(1, -1).trim();
       if (existingInner === "") {
         // Empty object: react({}) → react({ include: [...] })
-        ms.overwrite(absoluteBraceOpen + 1, edit.span.end - 2, ` ${propName}: ${edit.value} `);
+        ms.overwrite(
+          absoluteBraceOpen + 1,
+          edit.span.end - 2,
+          ` ${propName}: ${edit.value} `
+        );
       } else {
         // Has properties: insert new property + comma at start
         // Find the exact position after the opening brace in the source

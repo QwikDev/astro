@@ -1,13 +1,13 @@
 import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import { TestContext } from "@japa/runner/core";
+import { emptyDirSync, ensureDirSync } from "fs-extra";
+import pm from "panam";
+import addApp, { defaultAddDefinition } from "../src/add-flow/command.js";
 import { run } from "../src/index.js";
 import { ProgramTester } from "../src/tester.js";
 import type { PathTester } from "../src/tester.js";
 import upgradeApp, { defaultUpgradeDefinition } from "../src/upgrade.js";
-import addApp, { defaultAddDefinition } from "../src/add-flow/command.js";
-import { emptyDirSync, ensureDirSync } from "fs-extra";
-import pm from "panam";
 
 declare module "@japa/runner/core" {
   interface TestContext {

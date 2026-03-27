@@ -1,12 +1,12 @@
-import pkg from "../../package.json";
-import pm from "panam/pm";
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import pm from "panam/pm";
+import pkg from "../../package.json";
 import { type Definition as BaseDefinition, Program } from "../core.js";
 import { resolveAbsoluteDir } from "../utils.js";
 import { detectConfigFrameworks } from "./detect-config.js";
-import { rewriteConfig, generateWarning } from "./rewrite-config.js";
 import { determineJsxStrategy } from "./jsx-strategy.js";
+import { generateWarning, rewriteConfig } from "./rewrite-config.js";
 import { scaffoldQwikComponent } from "./scaffold.js";
 
 export type AddDefinition = BaseDefinition & {
@@ -27,9 +27,7 @@ export const defaultAddDefinition = {
   no: undefined
 } as const;
 
-export function defineAddDefinition(
-  definition: Partial<AddDefinition>
-): AddDefinition {
+export function defineAddDefinition(definition: Partial<AddDefinition>): AddDefinition {
   return { ...defaultAddDefinition, ...definition };
 }
 
@@ -40,7 +38,10 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
       .alias("h", "help")
       .useYes()
       .useNo()
-      .command("* [directory]", "Add Qwik to an existing Astro project with multi-framework support")
+      .command(
+        "* [directory]",
+        "Add Qwik to an existing Astro project with multi-framework support"
+      )
       .argument("directory", {
         type: "string",
         default: defaultAddDefinition.directory,
@@ -137,7 +138,10 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
         return 0;
       }
 
-      if (configResult.outcome === "unsafe" || configResult.outcome === "already-configured") {
+      if (
+        configResult.outcome === "unsafe" ||
+        configResult.outcome === "already-configured"
+      ) {
         this.warn(generateWarning(configResult));
         if (!input.dryRun) {
           await pm.x("astro add @qwik.dev/astro", { cwd: input.absDir });
@@ -146,7 +150,9 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
         }
         // Do NOT silently set jsxImportSource — the user was warned the config is
         // unsafe or already-configured. They must handle JSX ownership manually.
-        this.info("Skipping tsconfig jsxImportSource — configure JSX ownership manually if needed.");
+        this.info(
+          "Skipping tsconfig jsxImportSource — configure JSX ownership manually if needed."
+        );
         const strategy = determineJsxStrategy("secondary");
         await scaffoldQwikComponent(input.absDir, strategy, input.dryRun);
         this.outro("Qwik added successfully!");
@@ -154,14 +160,14 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
       }
 
       // outcome === "safe" — prompt for JSX strategy, rewrite config, scaffold
-      const choice = await this.scanChoice(
+      const choice = (await this.scanChoice(
         "Should Qwik be the primary JSX source?",
         [
           { value: "primary", label: "Yes — Qwik owns tsconfig jsxImportSource" },
           { value: "secondary", label: "No — keep existing framework as primary" }
         ],
         "primary"
-      ) as "primary" | "secondary";
+      )) as "primary" | "secondary";
 
       const strategy = determineJsxStrategy(choice);
       this.persistTsconfig(input, strategy);
@@ -191,7 +197,10 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
     }
   }
 
-  private persistTsconfig(input: AddInput, strategy: import("./jsx-strategy.js").JsxStrategy): void {
+  private persistTsconfig(
+    input: AddInput,
+    strategy: import("./jsx-strategy.js").JsxStrategy
+  ): void {
     if (strategy.tsconfigSource === null) return;
 
     const tsconfigPath = join(input.absDir, "tsconfig.json");
@@ -203,14 +212,16 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
     tsconfig.compilerOptions.jsxImportSource = strategy.tsconfigSource;
 
     if (!input.dryRun) {
-      writeFileSync(tsconfigPath, JSON.stringify(tsconfig, null, 2) + "\n", "utf-8");
+      writeFileSync(tsconfigPath, `${JSON.stringify(tsconfig, null, 2)}\n`, "utf-8");
     } else {
-      this.info(`Would set jsxImportSource to ${strategy.tsconfigSource} in tsconfig.json`);
+      this.info(
+        `Would set jsxImportSource to ${strategy.tsconfigSource} in tsconfig.json`
+      );
     }
   }
 
   private stripJsonComments(text: string): string {
-    let result = '';
+    let result = "";
     let i = 0;
     while (i < text.length) {
       // Skip strings
@@ -218,7 +229,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
         const start = i;
         i++;
         while (i < text.length && text[i] !== '"') {
-          if (text[i] === '\\') i++; // skip escaped char
+          if (text[i] === "\\") i++; // skip escaped char
           i++;
         }
         i++; // closing quote
@@ -226,14 +237,14 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
         continue;
       }
       // Single-line comment
-      if (text[i] === '/' && text[i + 1] === '/') {
-        while (i < text.length && text[i] !== '\n') i++;
+      if (text[i] === "/" && text[i + 1] === "/") {
+        while (i < text.length && text[i] !== "\n") i++;
         continue;
       }
       // Block comment
-      if (text[i] === '/' && text[i + 1] === '*') {
+      if (text[i] === "/" && text[i + 1] === "*") {
         i += 2;
-        while (i < text.length && !(text[i] === '*' && text[i + 1] === '/')) i++;
+        while (i < text.length && !(text[i] === "*" && text[i + 1] === "/")) i++;
         i += 2;
         continue;
       }
@@ -241,14 +252,11 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
       i++;
     }
     // Remove trailing commas before } or ]
-    return result.replace(/,\s*([}\]])/g, '$1');
+    return result.replace(/,\s*([}\]])/g, "$1");
   }
 }
 
-export function add(
-  name = pkg.name,
-  version = pkg.version
-): AddCommand {
+export function add(name = pkg.name, version = pkg.version): AddCommand {
   return new AddCommand(name, version);
 }
 

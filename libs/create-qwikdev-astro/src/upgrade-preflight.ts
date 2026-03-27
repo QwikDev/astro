@@ -54,7 +54,7 @@ export function validateProject(dir: string): ProjectValidationResult {
     };
   }
 
-  if (!hasOldQwik && !hasNewQwik && !hasQwikAstroOld && !hasQwikAstroNew) {
+  if (!(hasOldQwik || hasNewQwik || hasQwikAstroOld || hasQwikAstroNew)) {
     return {
       valid: false,
       reason: "No Qwik packages found",

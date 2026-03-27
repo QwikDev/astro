@@ -3,7 +3,7 @@
  *
  * Run with: npx tsx src/add-flow/rewrite-config.test.ts
  */
-import { rewriteConfig, generateWarning } from "./rewrite-config.js";
+import { generateWarning, rewriteConfig } from "./rewrite-config.js";
 import type { MultiFrameworkResult } from "./types.js";
 
 let passed = 0;
@@ -73,12 +73,12 @@ export default {
   const output = rewriteConfig(source, result);
   assert(output !== null, "returns non-null for safe outcome");
   assert(
-    output!.includes(`react({ include: ['src/components/react/**/*'] })`),
+    output?.includes(`react({ include: ['src/components/react/**/*'] })`),
     "include property added inside react call"
   );
   // Verify non-edit regions are unchanged
   const nonEditPrefix = source.slice(0, reactCallStart);
-  assert(output!.startsWith(nonEditPrefix), "prefix before react() unchanged");
+  assert(output?.startsWith(nonEditPrefix), "prefix before react() unchanged");
 }
 
 // -----------------------------------------------------------------------
@@ -91,7 +91,7 @@ export default {
   integrations: [react({ ssr: true })]
 };`;
 
-  const callText = `react({ ssr: true })`;
+  const callText = "react({ ssr: true })";
   const reactCallStart = source.indexOf(callText);
   const reactCallEnd = reactCallStart + callText.length;
 
@@ -120,7 +120,7 @@ export default {
   const output = rewriteConfig(source, result);
   assert(output !== null, "returns non-null for safe outcome");
   assert(
-    output!.includes(`react({ include: ['src/components/react/**/*'], ssr: true })`),
+    output?.includes(`react({ include: ['src/components/react/**/*'], ssr: true })`),
     "include added before existing ssr option"
   );
 }
@@ -135,7 +135,7 @@ export default {
   integrations: [qwik()]
 };`;
 
-  const callText = `qwik()`;
+  const callText = "qwik()";
   const qwikCallStart = source.indexOf(callText);
   const qwikCallEnd = qwikCallStart + callText.length;
 
@@ -156,7 +156,7 @@ export default {
   const output = rewriteConfig(source, result);
   assert(output !== null, "returns non-null for safe outcome");
   assert(
-    output!.includes(`qwik({ exclude: ['src/components/react/**/*'] })`),
+    output?.includes(`qwik({ exclude: ['src/components/react/**/*'] })`),
     "exclude property added inside qwik call"
   );
 }
@@ -164,7 +164,9 @@ export default {
 // -----------------------------------------------------------------------
 // Test 4: outcome "unsafe" → rewriteConfig returns null, generateWarning returns explanation
 // -----------------------------------------------------------------------
-console.log("\nTest 4: unsafe outcome returns null from rewriteConfig, warning from generateWarning");
+console.log(
+  "\nTest 4: unsafe outcome returns null from rewriteConfig, warning from generateWarning"
+);
 {
   const source = `import react from '@astrojs/react';
 const extras = [react()];
@@ -284,7 +286,7 @@ export default {
   const tabOutput = rewriteConfig(tabSource, tabResult);
   assert(tabOutput !== null, "tab-indented config returns non-null");
   // Verify the tab character is preserved outside the edit region
-  assert(tabOutput!.includes("\t"), "tab character preserved in output");
+  assert(tabOutput?.includes("\t"), "tab character preserved in output");
 
   // 4-space-indented config
   const spaceSource = `import react from '@astrojs/react';
@@ -320,9 +322,9 @@ export default {
   const spaceOutput = rewriteConfig(spaceSource, spaceResult);
   assert(spaceOutput !== null, "4-space-indented config returns non-null");
   // Verify 4-space indentation preserved outside edit region
-  assert(spaceOutput!.includes("    integrations"), "4-space indentation preserved");
+  assert(spaceOutput?.includes("    integrations"), "4-space indentation preserved");
   // Verify the edit was applied
-  assert(spaceOutput!.includes("include:"), "include property added");
+  assert(spaceOutput?.includes("include:"), "include property added");
 }
 
 // -----------------------------------------------------------------------

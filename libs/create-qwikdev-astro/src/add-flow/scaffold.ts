@@ -1,5 +1,5 @@
-import { readFile, mkdir, writeFile } from "node:fs/promises";
-import { join, dirname } from "node:path";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { JsxStrategy } from "./jsx-strategy.js";
 
@@ -7,7 +7,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 /** Path to the Counter.tsx template in the stubs directory */
-const COUNTER_TEMPLATE_PATH = join(__dirname, "..", "..", "stubs", "templates", "qwik-component", "Counter.tsx");
+const COUNTER_TEMPLATE_PATH = join(
+  __dirname,
+  "..",
+  "..",
+  "stubs",
+  "templates",
+  "qwik-component",
+  "Counter.tsx"
+);
 
 /**
  * Scaffold a Qwik example Counter component into the target project.

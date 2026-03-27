@@ -1,5 +1,5 @@
 import { readdir } from "node:fs/promises";
-import { join, extname } from "node:path";
+import { extname, join } from "node:path";
 import type { SourceSignal } from "./types.js";
 
 /** Extensions to scan */
@@ -112,7 +112,9 @@ function detectSignalsInContent(
  *
  * Returns one SourceSignal per framework per file (deduplicated).
  */
-export async function detectSourceFrameworks(projectDir: string): Promise<SourceSignal[]> {
+export async function detectSourceFrameworks(
+  projectDir: string
+): Promise<SourceSignal[]> {
   // Prefer scanning src/ if it exists, fall back to projectDir
   const srcDir = join(projectDir, "src");
   const scanDir = await readdir(srcDir)

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, readFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { determineJsxStrategy } from "./jsx-strategy.js";
@@ -34,9 +34,17 @@ import { scaffoldQwikComponent } from "./scaffold.js";
     const strategy = determineJsxStrategy("primary");
     const outPath = await scaffoldQwikComponent(tmpDir, strategy);
     const content = await readFile(outPath, "utf-8");
-    assert.ok(!content.startsWith("/** @jsxImportSource"), "primary should NOT have pragma");
-    assert.ok(content.includes("@qwik.dev/core"), "should still import from @qwik.dev/core");
-    console.log("PASS: scaffoldQwikComponent (primary) writes Counter.tsx WITHOUT pragma");
+    assert.ok(
+      !content.startsWith("/** @jsxImportSource"),
+      "primary should NOT have pragma"
+    );
+    assert.ok(
+      content.includes("@qwik.dev/core"),
+      "should still import from @qwik.dev/core"
+    );
+    console.log(
+      "PASS: scaffoldQwikComponent (primary) writes Counter.tsx WITHOUT pragma"
+    );
   } finally {
     await rm(tmpDir, { recursive: true });
   }
@@ -53,7 +61,9 @@ import { scaffoldQwikComponent } from "./scaffold.js";
       content.startsWith("/** @jsxImportSource @qwik.dev/core */"),
       "secondary should have pragma as first line"
     );
-    console.log("PASS: scaffoldQwikComponent (secondary) writes Counter.tsx WITH pragma as first line");
+    console.log(
+      "PASS: scaffoldQwikComponent (secondary) writes Counter.tsx WITH pragma as first line"
+    );
   } finally {
     await rm(tmpDir, { recursive: true });
   }
@@ -66,10 +76,15 @@ import { scaffoldQwikComponent } from "./scaffold.js";
     const strategy = determineJsxStrategy("primary");
     const outPath = await scaffoldQwikComponent(tmpDir, strategy);
     // Verify the path includes the expected directory structure
-    assert.ok(outPath.includes("src/components/qwik"), "output path should be under src/components/qwik");
+    assert.ok(
+      outPath.includes("src/components/qwik"),
+      "output path should be under src/components/qwik"
+    );
     // Verify file was written (readFile would throw if it didn't exist)
     await readFile(outPath, "utf-8");
-    console.log("PASS: scaffoldQwikComponent creates src/components/qwik/ directory if it doesn't exist");
+    console.log(
+      "PASS: scaffoldQwikComponent creates src/components/qwik/ directory if it doesn't exist"
+    );
   } finally {
     await rm(tmpDir, { recursive: true });
   }

@@ -114,7 +114,11 @@ export default {
 };
 `.trim();
   const result = detectConfigFrameworks(src);
-  assertEqual(result.outcome, "safe", "outcome is safe (react without include is safe to scope)");
+  assertEqual(
+    result.outcome,
+    "safe",
+    "outcome is safe (react without include is safe to scope)"
+  );
   assert(result.edits.length === 1, "exactly one edit emitted");
   assert(result.edits[0]?.type === "add-exclude", "edit type is add-exclude");
   assert(
@@ -135,8 +139,14 @@ export default {
   const result = detectConfigFrameworks(src);
   assertEqual(result.outcome, "safe", "outcome is safe");
   assert(result.edits.length === 2, "two edits emitted");
-  assert(result.edits.every(e => e.type === "add-exclude"), "all edits are add-exclude");
-  assert(result.edits.every(e => e.value.includes("src/components/qwik")), "all edits target qwik directory");
+  assert(
+    result.edits.every((e) => e.type === "add-exclude"),
+    "all edits are add-exclude"
+  );
+  assert(
+    result.edits.every((e) => e.value.includes("src/components/qwik")),
+    "all edits target qwik directory"
+  );
 }
 
 console.log(`\nResults: ${passed} passed, ${failed} failed`);

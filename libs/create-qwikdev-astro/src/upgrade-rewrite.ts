@@ -279,13 +279,14 @@ export function scanForAsyncPatterns(
     const lines = content.split("\n");
     for (let i = 0; i < lines.length; i++) {
       asyncPattern.lastIndex = 0;
-      let match: RegExpExecArray | null;
-      while ((match = asyncPattern.exec(lines[i])) !== null) {
+      let match: RegExpExecArray | null = asyncPattern.exec(lines[i]);
+      while (match !== null) {
         results.push({
           file,
           line: i + 1,
           pattern: `use${match[1]}$`
         });
+        match = asyncPattern.exec(lines[i]);
       }
     }
   }

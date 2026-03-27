@@ -1,7 +1,7 @@
 import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
-import app, { defaultDefinition } from "../src/app.js";
 import { name, version } from "@qwik.dev/create-astro/package.json";
+import app, { defaultDefinition } from "../src/app.js";
 import { ProgramTester } from "../src/tester.js";
 
 declare module "@japa/runner/core" {
@@ -393,9 +393,7 @@ for (const [key, choices] of Object.entries(answers)) {
 
           case input.how_to_start:
             if (answer === "template") {
-              assert.isTrue(
-                definition.get("template").equals("minimal")
-              );
+              assert.isTrue(definition.get("template").equals("minimal"));
             } else {
               assert.isTrue(definition.get("adapter").equals(answer));
             }
@@ -410,7 +408,10 @@ for (const [key, choices] of Object.entries(answers)) {
             break;
 
           case input.install:
-            if (definition.get("template").isString() && !definition.get("template").equals("")) {
+            if (
+              definition.get("template").isString() &&
+              !definition.get("template").equals("")
+            ) {
               assert.isTrue(definition.get("install").isTrue());
             } else {
               assert.isTrue(definition.get("install").equals(answer));

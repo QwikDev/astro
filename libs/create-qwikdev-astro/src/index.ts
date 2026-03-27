@@ -1,6 +1,6 @@
+import addApp from "./add-flow/command.js";
 import app from "./app";
 import upgradeApp from "./upgrade.js";
-import addApp from "./add-flow/command.js";
 
 export { app };
 

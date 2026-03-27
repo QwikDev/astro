@@ -3,7 +3,7 @@
  *
  * Run with: npx tsx src/add-flow/detect-source.test.ts
  */
-import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { detectSourceFrameworks } from "./detect-source.js";
@@ -38,7 +38,9 @@ await withTempDir(async (dir) => {
     `import React from 'react';\nexport default function App() { return <div />; }`
   );
   const signals = await detectSourceFrameworks(dir);
-  const reactSignals = signals.filter((s: { framework: string }) => s.framework === "react");
+  const reactSignals = signals.filter(
+    (s: { framework: string }) => s.framework === "react"
+  );
   assert(reactSignals.length > 0, "found react signal");
   assert(reactSignals[0]?.signal === "import", "signal type is import");
 });
@@ -48,10 +50,12 @@ await withTempDir(async (dir) => {
   await mkdir(join(dir, "src"));
   await writeFile(
     join(dir, "src/Widget.jsx"),
-    `/** @jsxImportSource react */\nexport default function Widget() { return <span />; }`
+    "/** @jsxImportSource react */\nexport default function Widget() { return <span />; }"
   );
   const signals = await detectSourceFrameworks(dir);
-  const reactSignals = signals.filter((s: { framework: string }) => s.framework === "react");
+  const reactSignals = signals.filter(
+    (s: { framework: string }) => s.framework === "react"
+  );
   assert(reactSignals.length > 0, "found react signal");
   assert(reactSignals[0]?.signal === "pragma", "signal type is pragma");
 });
@@ -64,17 +68,16 @@ await withTempDir(async (dir) => {
     `import { useState } from 'react';\nexport default function Counter() { const [n, setN] = useState(0); return n; }`
   );
   const signals = await detectSourceFrameworks(dir);
-  const reactSignals = signals.filter((s: { framework: string }) => s.framework === "react");
+  const reactSignals = signals.filter(
+    (s: { framework: string }) => s.framework === "react"
+  );
   assert(reactSignals.length > 0, "found react signal for useState import");
 });
 
 console.log("\nTest 4: Directory with no framework signals returns empty array");
 await withTempDir(async (dir) => {
   await mkdir(join(dir, "src"));
-  await writeFile(
-    join(dir, "src/plain.ts"),
-    `export const greeting = "hello world";`
-  );
+  await writeFile(join(dir, "src/plain.ts"), `export const greeting = "hello world";`);
   const signals = await detectSourceFrameworks(dir);
   assert(signals.length === 0, "no signals returned for plain file");
 });

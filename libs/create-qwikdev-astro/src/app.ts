@@ -168,7 +168,9 @@ export class Application extends Program<Definition, Input> {
         definition.force ?? (definition.add ? false : !!definition.yes && !definition.no),
       copy: !!definition.copy,
       biome: definition.biome ?? (!!definition.yes && !definition.no),
-      install: definition.install ?? (!!definition.template || (!!definition.yes && !definition.no)),
+      install:
+        definition.install ??
+        (!!definition.template || (!!definition.yes && !definition.no)),
       ci: definition.ci ?? (!!definition.yes && !definition.no),
       git: definition.git ?? (!!definition.yes && !definition.no),
       dryRun: !!definition.dryRun,
@@ -239,9 +241,7 @@ export class Application extends Program<Definition, Input> {
           "minimal"
         );
       } else {
-        ensureString(starter, (v): v is Adapter =>
-          ["none", "node", "deno"].includes(v)
-        );
+        ensureString(starter, (v): v is Adapter => ["none", "node", "deno"].includes(v));
         adapter = starter as Adapter;
       }
     }
@@ -299,11 +299,10 @@ export class Application extends Program<Definition, Input> {
       "Would you like to add CI workflow?"
     );
 
-    const fallbackName = sanitizePackageName(destination) || sanitizePackageName(path.basename(outDir));
+    const fallbackName =
+      sanitizePackageName(destination) || sanitizePackageName(path.basename(outDir));
     const packageName =
-      exists && (!force || copy)
-        ? getPackageJson(outDir).name
-        : fallbackName;
+      exists && (!force || copy) ? getPackageJson(outDir).name : fallbackName;
 
     return {
       destination,

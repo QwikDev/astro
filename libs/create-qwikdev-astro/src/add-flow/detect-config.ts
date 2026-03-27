@@ -1,9 +1,5 @@
 import { parseSync } from "oxc-parser";
-import type {
-  ConfigEdit,
-  FrameworkInfo,
-  MultiFrameworkResult
-} from "./types.js";
+import type { ConfigEdit, FrameworkInfo, MultiFrameworkResult } from "./types.js";
 
 /** Recognized framework integrations and their package names */
 const KNOWN_FRAMEWORKS: Record<string, FrameworkInfo["name"]> = {
@@ -40,7 +36,7 @@ export function detectConfigFrameworks(configSource: string): MultiFrameworkResu
     if (n.type !== "ImportDeclaration") continue;
     const source = n.source as ASTNode | undefined;
     const packageName = source?.value as string | undefined;
-    if (!packageName || !KNOWN_FRAMEWORKS[packageName]) continue;
+    if (!(packageName && KNOWN_FRAMEWORKS[packageName])) continue;
     const specifiers = (n.specifiers as ASTNode[]) ?? [];
     for (const spec of specifiers) {
       if (spec.type === "ImportDefaultSpecifier") {
