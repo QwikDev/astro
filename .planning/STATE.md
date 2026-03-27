@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed quick-fix 06
-last_updated: "2026-03-26T00:00:00.000Z"
-last_activity: 2026-03-27 — Completed quick task 9: add @builder.io/qwik npm alias and ecosystem warning to upgrade script
+stopped_at: Completed quick task 10
+last_updated: "2026-03-27T00:00:00.000Z"
+last_activity: 2026-03-27 — Completed quick task 10: fix duplicate qwik() integration entry when --add on already-configured project
 progress:
   total_phases: 3
   completed_phases: 3
@@ -90,6 +90,7 @@ Recent decisions affecting current work:
 - [Phase quick-fix]: Framework include patterns scoped to src/components/{name}/**/* to prevent Qwik file routing through wrong frameworks
 - [Phase quick-fix]: Safe auto-config uses add-exclude (not add-include) so existing frameworks keep processing files in all directories they already handle
 - [Phase quick-fix]: @builder.io/qwik-city excluded from upgrade OLD_PACKAGES — no router migration logic exists
+- [Quick-10]: isQwikRegistered uses conservative detection (inline defineConfig only) — false negatives are safe, false positives would wrongly skip astro add
 
 ### Pending Todos
 
@@ -111,6 +112,7 @@ None yet.
 | 6 | Fix TS2345 boolean\|undefined errors in rewrite-config.test.ts | 2026-03-27 | a608196 | [6-fix-ts2345-errors-in-rewrite-config-test](./quick/6-fix-ts2345-errors-in-rewrite-config-test/) |
 | 7 | Evaluate magic-regexp adoption — verdict: do not adopt (12 regex patterns, 8 trivial, net-negative ROI) | 2026-03-27 | n/a (eval only) | [7-is-there-enough-regex-present-that-it-wo](./quick/7-is-there-enough-regex-present-that-it-wo/) |
 | 9 | Add @builder.io/qwik npm alias install and ecosystem warning to upgrade script | 2026-03-27 | faa77f4 | [9-add-builder-io-qwik-npm-alias-to-upgrade](./quick/9-add-builder-io-qwik-npm-alias-to-upgrade/) |
+| 10 | Fix duplicate qwik() integration entry when --add on already-configured project | 2026-03-27 | 3b4a499 | [10-fix-duplicate-qwik-astro-addition-when-a](./quick/10-fix-duplicate-qwik-astro-addition-when-a/) |
 
 ## Session Continuity
 
