@@ -176,13 +176,14 @@ export function detectConfigFrameworks(configSource: string): MultiFrameworkResu
     };
   }
 
-  // Safe to add includes — populate edits
+  // Safe to add includes — scope each framework to its own directory
+  // so Qwik files under src/components/qwik/ are NOT matched
   for (const fw of frameworks) {
     edits.push({
       type: "add-include",
       framework: fw.name,
       span: fw.integrationCallSpan,
-      value: '["**/*.tsx"]'
+      value: `["src/components/${fw.name}/**/*"]`
     });
   }
 

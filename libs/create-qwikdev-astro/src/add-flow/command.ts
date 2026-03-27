@@ -5,7 +5,6 @@ import { join } from "node:path";
 import { type Definition as BaseDefinition, Program } from "../core.js";
 import { resolveAbsoluteDir } from "../utils.js";
 import { detectConfigFrameworks } from "./detect-config.js";
-import { detectSourceFrameworks } from "./detect-source.js";
 import { rewriteConfig, generateWarning } from "./rewrite-config.js";
 import { determineJsxStrategy } from "./jsx-strategy.js";
 import { scaffoldQwikComponent } from "./scaffold.js";
@@ -112,14 +111,16 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
           this.info(`Would run: astro add @qwik.dev/astro via ${pm.name}`);
         }
         const strategy = determineJsxStrategy("primary");
+        this.persistTsconfig(input, strategy);
         await scaffoldQwikComponent(input.absDir, strategy, input.dryRun);
         this.outro("Qwik added successfully!");
         return 0;
       }
 
-      // Step 3: Detect existing frameworks in config and source
+      // Step 3: Detect existing frameworks in config
       const configResult = detectConfigFrameworks(configSource);
-      await detectSourceFrameworks(input.absDir);
+      // TODO: detectSourceFrameworks(input.absDir) can be wired here later
+      // for heuristic JSX strategy suggestions based on source file analysis
 
       // Step 4: Handle each outcome
       if (configResult.outcome === "none") {
@@ -130,6 +131,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
           this.info(`Would run: astro add @qwik.dev/astro via ${pm.name}`);
         }
         const strategy = determineJsxStrategy("primary");
+        this.persistTsconfig(input, strategy);
         await scaffoldQwikComponent(input.absDir, strategy, input.dryRun);
         this.outro("Qwik added successfully!");
         return 0;
@@ -143,6 +145,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
           this.info(`Would run: astro add @qwik.dev/astro via ${pm.name}`);
         }
         const strategy = determineJsxStrategy("primary");
+        this.persistTsconfig(input, strategy);
         await scaffoldQwikComponent(input.absDir, strategy, input.dryRun);
         this.outro("Qwik added successfully!");
         return 0;
@@ -159,6 +162,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
       ) as "primary" | "secondary";
 
       const strategy = determineJsxStrategy(choice);
+      this.persistTsconfig(input, strategy);
       const rewrittenSource = rewriteConfig(configSource, configResult);
 
       if (rewrittenSource !== null) {
@@ -182,6 +186,24 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
     } catch (err) {
       this.error(String(err));
       return 1;
+    }
+  }
+
+  private persistTsconfig(input: AddInput, strategy: import("./jsx-strategy.js").JsxStrategy): void {
+    if (strategy.tsconfigSource === null) return;
+
+    const tsconfigPath = join(input.absDir, "tsconfig.json");
+    if (!existsSync(tsconfigPath)) return;
+
+    const tsconfigRaw = readFileSync(tsconfigPath, "utf-8");
+    const tsconfig = JSON.parse(tsconfigRaw);
+    tsconfig.compilerOptions = tsconfig.compilerOptions ?? {};
+    tsconfig.compilerOptions.jsxImportSource = strategy.tsconfigSource;
+
+    if (!input.dryRun) {
+      writeFileSync(tsconfigPath, JSON.stringify(tsconfig, null, 2) + "\n", "utf-8");
+    } else {
+      this.info(`Would set jsxImportSource to ${strategy.tsconfigSource} in tsconfig.json`);
     }
   }
 }

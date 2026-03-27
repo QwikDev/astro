@@ -16,7 +16,7 @@ TestContext.macro("path", function (path: string) {
 processCLIArgs(process.argv.splice(2));
 
 configure({
-  files: ["tests/**/*.spec.ts"],
+  files: ["tests/**/*.spec.ts", "src/**/*.test.ts"],
   plugins: [assert()]
 });
 
