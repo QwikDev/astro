@@ -88,6 +88,7 @@ Recent decisions affecting current work:
 - [Phase 03-integration]: subcommand detection uses args.slice(2).find(not-flag) to correctly skip flags before finding subcommand name
 - [Phase 03-integration]: tsdown entry points required alongside package.json exports — test runner resolves to dist/ which must be explicitly built
 - [Phase quick-fix]: Framework include patterns scoped to src/components/{name}/**/* to prevent Qwik file routing through wrong frameworks
+- [Phase quick-fix]: Safe auto-config uses add-exclude (not add-include) so existing frameworks keep processing files in all directories they already handle
 - [Phase quick-fix]: @builder.io/qwik-city excluded from upgrade OLD_PACKAGES — no router migration logic exists
 
 ### Pending Todos
@@ -104,9 +105,10 @@ None yet.
 |---|-------------|------|--------|-----------|
 | 1 | Fix P1/P2 issues from Codex review on add/upgrade CLI commands | 2026-03-27 | e148752 | [1-fix-p1-p2-issues-from-codex-review-on-ad](./quick/1-fix-p1-p2-issues-from-codex-review-on-ad/) |
 | 2 | Fix P1/P2 CLI bugs: add-flow JSX ownership, JSONC tsconfig, upgrade abort, test script typo | 2026-03-27 | c3a4940 | [2-fix-p1-p2-cli-bugs-add-flow-scoping-jsx-](./quick/2-fix-p1-p2-cli-bugs-add-flow-scoping-jsx-/) |
+| 3 | Fix add-flow safe mode: switch from add-include to add-exclude, fix test runner source import | 2026-03-27 | 5c62ec7 | [3-fix-add-flow-safe-auto-config-breaking-e](./quick/3-fix-add-flow-safe-auto-config-breaking-e/) |
 
 ## Session Continuity
 
-Last session: 2026-03-27T03:34:15Z
-Stopped at: Completed quick-fix 02
+Last session: 2026-03-27T03:44:05Z
+Stopped at: Completed quick-fix 03
 Resume file: None
