@@ -29,12 +29,12 @@ Requirements for the CLI upgrade command and multi-framework add-flow milestone.
 - [x] **MFD-01**: AST-based detection of React/Preact/Solid integrations in `astro.config.*` via oxc-parser
 - [x] **MFD-02**: Source layout detection of framework file signals (imports, pragmas)
 - [x] **MFD-03**: Detection returns structured `MultiFrameworkResult` with outcome/frameworks/notes/edits
-- [ ] **MFD-04**: Auto-configure adds `include` to Qwik and `exclude` to secondary integrations when safe
-- [ ] **MFD-05**: Config rewriting uses magic-string for targeted source edits preserving formatting
-- [ ] **MFD-06**: Warn-only fallback when auto-config is unsafe (files outside dedicated folder, dynamic exclude)
-- [ ] **MFD-07**: JSX import source prompt asks whether Qwik should be primary
-- [ ] **MFD-08**: Per-file `@jsxImportSource` pragma added to example component when Qwik is secondary
-- [ ] **MFD-09**: Example Qwik component scaffolded under `src/components/qwik/`
+- [x] **MFD-04**: Auto-configure adds `include` to Qwik and `exclude` to secondary integrations when safe
+- [x] **MFD-05**: Config rewriting uses magic-string for targeted source edits preserving formatting
+- [x] **MFD-06**: Warn-only fallback when auto-config is unsafe (files outside dedicated folder, dynamic exclude)
+- [x] **MFD-07**: JSX import source prompt asks whether Qwik should be primary
+- [x] **MFD-08**: Per-file `@jsxImportSource` pragma added to example component when Qwik is secondary
+- [x] **MFD-09**: Example Qwik component scaffolded under `src/components/qwik/`
 
 ### Integration
 
@@ -85,12 +85,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MFD-01 | Phase 2 | Complete |
 | MFD-02 | Phase 2 | Complete |
 | MFD-03 | Phase 2 | Complete |
-| MFD-04 | Phase 2 | Pending |
-| MFD-05 | Phase 2 | Pending |
-| MFD-06 | Phase 2 | Pending |
-| MFD-07 | Phase 2 | Pending |
-| MFD-08 | Phase 2 | Pending |
-| MFD-09 | Phase 2 | Pending |
+| MFD-04 | Phase 2 | Complete |
+| MFD-05 | Phase 2 | Complete |
+| MFD-06 | Phase 2 | Complete |
+| MFD-07 | Phase 2 | Complete |
+| MFD-08 | Phase 2 | Complete |
+| MFD-09 | Phase 2 | Complete |
 | INT-01 | Phase 3 | Pending |
 | INT-02 | Phase 3 | Pending |
 | INT-03 | Phase 3 | Pending |

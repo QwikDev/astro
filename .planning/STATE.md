@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-upgrade-command 01-02-PLAN.md
-last_updated: "2026-03-27T02:21:29.221Z"
+stopped_at: Completed 02-multi-framework-add-flow 02-03-PLAN.md
+last_updated: "2026-03-27T02:22:40.069Z"
 last_activity: 2026-03-26 — Roadmap created, phases defined
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 6
-  completed_plans: 3
+  completed_plans: 5
   percent: 17
 ---
 
@@ -53,6 +53,8 @@ Progress: [██░░░░░░░░] 17%
 | Phase 01-upgrade-command P01 | 2 | 2 tasks | 2 files |
 | Phase 02-multi-framework-add-flow P01 | 3 | 2 tasks | 6 files |
 | Phase 01-upgrade-command P02 | 2min | 2 tasks | 2 files |
+| Phase 02-multi-framework-add-flow P03 | 3 | 2 tasks | 4 files |
+| Phase 02-multi-framework-add-flow P02 | 3min | 1 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -72,6 +74,10 @@ Recent decisions affecting current work:
 - [Phase 02-multi-framework-add-flow]: DetectionOutcome 'unsafe' returned when spread elements found in integrations array
 - [Phase 01-upgrade-command]: PACKAGE_MAP keys processed longest-first to prevent @builder.io/qwik prefix from overwriting already-replaced subpath specifiers
 - [Phase 01-upgrade-command]: pm.x() failures in migration pipeline warn and continue rather than abort — partial migration better than hard failure
+- [Phase 02-multi-framework-add-flow]: Counter.tsx template has no pragma — pragma prepended at scaffold time based on strategy choice
+- [Phase 02-multi-framework-add-flow]: determineJsxStrategy is pure logic — interactive prompt wiring deferred to Phase 3 CLI integration
+- [Phase 02-multi-framework-add-flow]: magic-string prependRight for empty-arg calls (react()) — overwrite on zero-length range throws; appendLeft for existing-args calls
+- [Phase 02-multi-framework-add-flow]: rewriteConfig returns null for non-safe DetectionOutcome values — caller uses generateWarning for user-facing messaging
 
 ### Pending Todos
 
@@ -83,6 +89,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T02:21:29.219Z
-Stopped at: Completed 01-upgrade-command 01-02-PLAN.md
+Last session: 2026-03-27T02:22:40.068Z
+Stopped at: Completed 02-multi-framework-add-flow 02-03-PLAN.md
 Resume file: None
