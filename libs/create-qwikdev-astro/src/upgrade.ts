@@ -11,6 +11,8 @@ import {
 } from "./upgrade-rewrite";
 import { resolveAbsoluteDir, getPackageJson } from "./utils";
 
+const MIGRATION_DOCS_URL = "https://qwik.dev/docs/migration/v2/";
+
 export type UpgradeDefinition = BaseDefinition & {
   directory: string;
   dryRun?: boolean;
@@ -280,8 +282,104 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
     }
   }
 
-  private printSummary(_results: UpgradeResults): void {
-    // Implemented in Task 2
+  private printSummary(results: UpgradeResults): void {
+    const lines: string[] = [];
+
+    if (results.dryRun) {
+      // Dry-run mode: list planned actions with "[would]" prefix
+      lines.push(this.cyan("[would]") + " Run @astrojs/upgrade");
+
+      if (results.removedPackages.length > 0) {
+        lines.push(this.cyan("[would]") + ` Remove: ${results.removedPackages.join(", ")}`);
+      }
+      lines.push(this.cyan("[would]") + ` Install: ${results.installedPackages.join(", ")}`);
+
+      if (results.configChanges.length > 0) {
+        for (const change of results.configChanges) {
+          lines.push(this.cyan("[would]") + ` Rewrite: ${change.file}`);
+        }
+      }
+
+      if (results.tsconfigChanged) {
+        lines.push(this.cyan("[would]") + " Rewrite: tsconfig.json jsxImportSource");
+      }
+
+      if (results.sourceFilesChanged.length > 0) {
+        lines.push(
+          this.cyan("[would]") +
+          ` Rewrite imports in ${results.sourceFilesChanged.length} source file(s):`
+        );
+        for (const file of results.sourceFilesChanged) {
+          lines.push("  " + this.gray(file));
+        }
+      }
+
+      if (results.asyncWarnings.length > 0) {
+        lines.push("");
+        lines.push(this.yellow("Async pattern warnings:"));
+        for (const w of results.asyncWarnings) {
+          lines.push(this.yellow(`  ${w.file}:${w.line} — async ${w.pattern}`));
+        }
+      }
+
+      lines.push("");
+      lines.push(this.gray("No files were modified. Run without --dry-run to apply."));
+
+      this.note(lines.join("\n"), "Dry Run Report");
+      this.outro("Dry run complete");
+    } else {
+      // Actual run: summarize what changed
+      lines.push(this.cyan("Packages:"));
+      lines.push(
+        `  Removed: ${results.removedPackages.length > 0 ? results.removedPackages.join(", ") : this.gray("None")}`
+      );
+      lines.push(`  Installed: ${results.installedPackages.join(", ")}`);
+
+      const changedFiles: string[] = [];
+      for (const change of results.configChanges) {
+        changedFiles.push(change.file);
+      }
+      if (results.tsconfigChanged) {
+        changedFiles.push("tsconfig.json");
+      }
+      for (const file of results.sourceFilesChanged) {
+        changedFiles.push(file);
+      }
+
+      lines.push("");
+      lines.push(this.cyan("Files changed:"));
+      if (changedFiles.length > 0) {
+        for (const file of changedFiles) {
+          lines.push("  " + file);
+        }
+      } else {
+        lines.push("  " + this.gray("No files modified."));
+      }
+
+      if (results.asyncWarnings.length > 0) {
+        lines.push("");
+        lines.push(this.yellow("Warnings:"));
+        lines.push(
+          this.yellow(
+            "  Async useComputed$ and useResource$ behavior changed in Qwik v2"
+          )
+        );
+        for (const w of results.asyncWarnings) {
+          lines.push(
+            this.yellow(`  ${w.file}:${w.line} — async ${w.pattern} may need review`)
+          );
+        }
+      }
+
+      lines.push("");
+      lines.push(this.cyan("Next steps:"));
+      lines.push("  Review changed files");
+      lines.push(`  Run your project: ${this.gray(`${pm.name} run dev`)}`);
+      lines.push(`  Migration docs: ${this.gray(MIGRATION_DOCS_URL)}`);
+
+      this.note(lines.join("\n"), "Upgrade Summary");
+      this.outro("Upgrade complete!");
+    }
   }
 }
 
