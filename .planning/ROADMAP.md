@@ -13,8 +13,8 @@ This milestone ships two parallel workstreams — the upgrade command (0.x to 1.
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Upgrade Command** - Implement `upgrade [directory]` for 0.x to 1.0 migration in `src/upgrade*` (completed 2026-03-27)
-- [ ] **Phase 2: Multi-Framework Add-Flow** - Implement AST-based framework detection and safe config rewriting in `src/add*`
-- [ ] **Phase 3: Integration** - Wire both commands into shared entrypoint, add dependencies, and add tests
+- [x] **Phase 2: Multi-Framework Add-Flow** - Implement AST-based framework detection and safe config rewriting in `src/add*` (completed 2026-03-26)
+- [x] **Phase 3: Integration** - Wire both commands into shared entrypoint, add dependencies, and add tests (completed 2026-03-26)
 
 ## Phase Details
 
@@ -31,9 +31,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Types, preflight validation, and UpgradeCommand skeleton
-- [ ] 01-02-PLAN.md — Core migration pipeline: @astrojs/upgrade, package swap, source rewriting
-- [ ] 01-03-PLAN.md — Dry-run report and summary output
+- [x] 01-01-PLAN.md — Types, preflight validation, and UpgradeCommand skeleton
+- [x] 01-02-PLAN.md — Core migration pipeline: @astrojs/upgrade, package swap, source rewriting
+- [x] 01-03-PLAN.md — Dry-run report and summary output
 
 ### Phase 2: Multi-Framework Add-Flow
 **Goal**: Users adding Qwik to a project with React, Preact, or Solid already present get automatic safe configuration of JSX boundaries without breaking existing framework components
@@ -47,9 +47,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Types, AST-based config detection, and source layout detection
-- [ ] 02-02-PLAN.md — Config rewriting with magic-string and safety warnings
-- [ ] 02-03-PLAN.md — JSX strategy prompt logic and component scaffolding
+- [x] 02-01-PLAN.md — Types, AST-based config detection, and source layout detection
+- [x] 02-02-PLAN.md — Config rewriting with magic-string and safety warnings
+- [x] 02-03-PLAN.md — JSX strategy prompt logic and component scaffolding
 
 ### Phase 3: Integration
 **Goal**: Both commands are reachable through the CLI entrypoint, new dependencies are declared, and CLI argument parsing is verified by tests
@@ -62,8 +62,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — AddCommand orchestrator and CLI subcommand routing
-- [ ] 03-02-PLAN.md — CLI argument parsing tests for upgrade and add commands
+- [x] 03-01-PLAN.md — AddCommand orchestrator and CLI subcommand routing
+- [x] 03-02-PLAN.md — CLI argument parsing tests for upgrade and add commands
 
 ## Progress
 
@@ -72,6 +72,6 @@ Phases 1 and 2 execute in parallel. Phase 3 follows both.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Upgrade Command | 3/3 | Complete   | 2026-03-27 |
-| 2. Multi-Framework Add-Flow | 0/3 | Planned | - |
-| 3. Integration | 1/2 | In Progress|  |
+| 1. Upgrade Command | 3/3 | Complete | 2026-03-27 |
+| 2. Multi-Framework Add-Flow | 3/3 | Complete | 2026-03-26 |
+| 3. Integration | 2/2 | Complete | 2026-03-26 |
