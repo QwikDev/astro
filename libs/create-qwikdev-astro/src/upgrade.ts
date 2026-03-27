@@ -16,6 +16,17 @@ export type UpgradeDefinition = BaseDefinition & {
   dryRun?: boolean;
 };
 
+export type UpgradeResults = {
+  dryRun: boolean;
+  astroUpgradeRan: boolean;
+  removedPackages: string[];
+  installedPackages: string[];
+  configChanges: { file: string; replacements: string[] }[];
+  tsconfigChanged: boolean;
+  sourceFilesChanged: string[];
+  asyncWarnings: { file: string; line: number; pattern: string }[];
+};
+
 export type UpgradeInput = {
   directory: string;
   absDir: string;
@@ -132,16 +143,15 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
   }
 
   async execute(input: UpgradeInput): Promise<number> {
-    const results = {
+    const results: UpgradeResults = {
+      dryRun: input.dryRun,
       astroUpgradeRan: false,
-      packagesSwapped: false,
-      removedPackages: [] as string[],
-      installedPackages: [] as string[],
-      configRewritten: false,
-      tsconfigRewritten: false,
-      sourceFilesChanged: [] as string[],
-      pragmaFilesChanged: [] as string[],
-      asyncWarnings: [] as { file: string; line: number; pattern: string }[]
+      removedPackages: [],
+      installedPackages: [],
+      configChanges: [],
+      tsconfigChanged: false,
+      sourceFilesChanged: [],
+      asyncWarnings: []
     };
 
     try {
@@ -190,7 +200,6 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
         }
         try {
           await pm.x(`add ${NEW_PACKAGES.join(" ")}`, { cwd: input.absDir });
-          results.packagesSwapped = true;
           results.removedPackages = toRemove;
           results.installedPackages = NEW_PACKAGES;
         } catch {
@@ -208,8 +217,8 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       // Step 3: Rewrite astro.config
       this.step("Rewriting astro.config...");
       const configResult = rewriteAstroConfig(input.absDir, input.dryRun);
-      results.configRewritten = configResult.changed;
-      if (configResult.changed) {
+      if (configResult.changed && configResult.filePath) {
+        results.configChanges.push({ file: configResult.filePath, replacements: configResult.replacements });
         this.info(`Updated: ${configResult.filePath} (${configResult.replacements.join(", ")})`);
       } else if (configResult.filePath) {
         this.info("astro.config already up-to-date.");
@@ -220,7 +229,7 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       // Step 4: Rewrite tsconfig
       this.step("Rewriting tsconfig.json...");
       const tsconfigResult = rewriteTsconfig(input.absDir, input.dryRun);
-      results.tsconfigRewritten = tsconfigResult.changed;
+      results.tsconfigChanged = tsconfigResult.changed;
       if (tsconfigResult.changed) {
         this.info(`Updated jsxImportSource: ${tsconfigResult.oldValue} -> ${tsconfigResult.newValue}`);
       } else {
@@ -230,7 +239,6 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       // Step 5: Rewrite source file imports
       this.step("Rewriting source file imports...");
       const importsResult = rewriteImports(input.absDir, input.dryRun);
-      results.sourceFilesChanged = importsResult.changedFiles;
       if (importsResult.changedFiles.length > 0) {
         this.info(`Updated ${importsResult.changedFiles.length} source file(s).`);
       } else {
@@ -240,12 +248,15 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       // Step 6: Rewrite @jsxImportSource pragma comments
       this.step("Updating @jsxImportSource pragma comments...");
       const pragmaResult = rewritePragmaComments(input.absDir, input.dryRun);
-      results.pragmaFilesChanged = pragmaResult.changedFiles;
       if (pragmaResult.changedFiles.length > 0) {
         this.info(`Updated pragma comments in ${pragmaResult.changedFiles.length} file(s).`);
       } else {
         this.info("No pragma comments needed updating.");
       }
+
+      // Merge unique changed source files from both steps
+      const allChangedFiles = new Set([...importsResult.changedFiles, ...pragmaResult.changedFiles]);
+      results.sourceFilesChanged = Array.from(allChangedFiles);
 
       // Step 7: Scan for async patterns
       this.step("Checking for deprecated patterns...");
@@ -260,13 +271,17 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
         this.info("No deprecated async patterns found.");
       }
 
-      this.outro("Upgrade complete!");
+      this.printSummary(results);
 
       return 0;
     } catch (err) {
       this.error(String(err));
       return 1;
     }
+  }
+
+  private printSummary(_results: UpgradeResults): void {
+    // Implemented in Task 2
   }
 }
 
