@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-26)
 Phase: 3 of 3 (Integration) — complete
 Plan: All plans complete (8/8)
 Status: Milestone complete
-Last activity: 2026-03-27 - Completed quick task 7: Is there enough regex present that it would be worth using magic-regexp? Evaluate
+Last activity: 2026-03-27 - Completed quick task 12: Fix persistTsconfigForAdd comment-stripping and strengthen add-flow regression test
 
 Progress: [██████████] 100%
 

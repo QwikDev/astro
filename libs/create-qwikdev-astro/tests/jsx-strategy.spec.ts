@@ -64,4 +64,19 @@ test.group("scaffoldQwikComponent", () => {
       await rm(tmpDir, { recursive: true });
     }
   });
+
+  test("template resolves to real Counter.tsx with Qwik component content", async ({ assert }) => {
+    const tmpDir = await mkdtemp(join(tmpdir(), "scaffold-template-"));
+    try {
+      const strategy = determineJsxStrategy("primary");
+      const outPath = await scaffoldQwikComponent(tmpDir, strategy);
+      const content = await readFile(outPath, "utf-8");
+      // Verify it read a real template, not an empty/error file
+      assert.include(content, "component$");
+      assert.include(content, "import");
+      assert.isTrue(content.length > 50, "Template should have substantial content");
+    } finally {
+      await rm(tmpDir, { recursive: true });
+    }
+  });
 });
