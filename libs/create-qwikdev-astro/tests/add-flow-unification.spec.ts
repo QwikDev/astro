@@ -127,6 +127,44 @@ function writeDirWithoutPackageJson(dir: string) {
   writeFileSync(join(dir, "src", "placeholder.txt"), "leftover from failed run");
 }
 
+/**
+ * React+Astro project WITHOUT qwik registered.  Used by the e2e test so the
+ * full `astro add @qwik.dev/astro` path actually runs (not short-circuited by
+ * the alreadyRegistered guard).
+ */
+function writeReactAstroProjectNoQwik(dir: string) {
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+
+  writeFileSync(
+    join(dir, "astro.config.mjs"),
+    `import react from "@astrojs/react";\nimport { defineConfig } from "astro/config";\n\nexport default defineConfig({\n  integrations: [react()],\n});\n`
+  );
+
+  writeFileSync(
+    join(dir, "tsconfig.json"),
+    JSON.stringify({ compilerOptions: { jsxImportSource: "react" } }, null, 2)
+  );
+
+  writeFileSync(
+    join(dir, "package.json"),
+    JSON.stringify(
+      {
+        name: "react-only-add-test",
+        type: "module",
+        dependencies: {
+          astro: "^6.0.6",
+          "@astrojs/react": "^4.0.0",
+          react: "^19.0.0",
+          "react-dom": "^19.0.0"
+        }
+      },
+      null,
+      2
+    )
+  );
+}
+
 function cleanup() {
   rmSync(fixtureRoot, { recursive: true, force: true });
 }
@@ -272,6 +310,47 @@ test.group("--add flow multi-framework detection", (group) => {
     assert.isTrue(existsSync(counterPath), "Counter.tsx should exist");
 
     // Counter.tsx should contain the pragma (since secondary)
+    const counterContent = readFileSync(counterPath, "utf-8");
+    assert.include(counterContent, "/** @jsxImportSource @qwik.dev/core */");
+  }).disableTimeout();
+});
+
+// ── --add e2e with real install ────────────────────────────────────────
+
+test.group("--add e2e with real install (React project)", (group) => {
+  group.each.setup(() => cleanup);
+  group.each.teardown(cleanup);
+
+  test("--add on React project with install enabled adds qwik and preserves react", async ({
+    assert
+  }) => {
+    writeReactAstroProjectNoQwik(fixtureRoot);
+
+    // Real install so astro add @qwik.dev/astro can run
+    await pm.install({ cwd: fixtureRoot });
+
+    // Intercept JSX strategy prompt — choose "secondary" (React stays primary)
+    app.intercept("Should Qwik be the primary JSX source?", "secondary");
+
+    const result = await run([pm.name, "create", fixtureRoot, "--add", "--yes"]);
+
+    assert.equal(result, 0, "Expected --add flow to exit 0");
+
+    // Config should have qwik() added
+    const configAfter = readFileSync(join(fixtureRoot, "astro.config.mjs"), "utf-8");
+    assert.include(configAfter, "qwik", "Config should contain qwik integration");
+    // React must be preserved
+    assert.include(configAfter, "react(", "Config should still contain react integration");
+    // Exclude pattern added for secondary strategy
+    assert.include(configAfter, "exclude", "Config should contain exclude pattern for secondary strategy");
+
+    // tsconfig should keep react as primary (secondary strategy)
+    const tsconfig = JSON.parse(readFileSync(join(fixtureRoot, "tsconfig.json"), "utf-8"));
+    assert.equal(tsconfig.compilerOptions.jsxImportSource, "react");
+
+    // Counter.tsx should be scaffolded with pragma (secondary)
+    const counterPath = join(fixtureRoot, "src", "components", "qwik", "Counter.tsx");
+    assert.isTrue(existsSync(counterPath), "Counter.tsx should be scaffolded");
     const counterContent = readFileSync(counterPath, "utf-8");
     assert.include(counterContent, "/** @jsxImportSource @qwik.dev/core */");
   }).disableTimeout();
