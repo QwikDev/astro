@@ -166,7 +166,8 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
           await pm.x("@astrojs/upgrade", { cwd: input.absDir });
           results.astroUpgradeRan = true;
         } catch {
-          this.warn("@astrojs/upgrade failed or is unavailable — continuing with Qwik-specific migration.");
+          this.error("@astrojs/upgrade failed. Please run it manually before retrying the Qwik upgrade.");
+          return 1;
         }
       } else {
         this.info(`Would run @astrojs/upgrade via ${pm.name}`);
