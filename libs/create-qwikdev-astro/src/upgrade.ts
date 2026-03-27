@@ -165,7 +165,7 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       this.step("Running @astrojs/upgrade...");
       if (!input.dryRun) {
         try {
-          await pm.x("@astrojs/upgrade", { cwd: input.absDir });
+          await pm.dlx("@astrojs/upgrade", { cwd: input.absDir });
           results.astroUpgradeRan = true;
         } catch {
           this.error(
@@ -203,14 +203,14 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       if (!input.dryRun) {
         if (toRemove.length > 0) {
           try {
-            await pm.x(`remove ${toRemove.join(" ")}`, { cwd: input.absDir });
+            await pm.remove(toRemove, { cwd: input.absDir });
           } catch {
             failures.push(`Failed to remove old packages: ${toRemove.join(", ")}`);
             this.warn(`Failed to remove old packages: ${toRemove.join(", ")}`);
           }
         }
         try {
-          await pm.x(`add ${newPackages.join(" ")}`, { cwd: input.absDir });
+          await pm.add(newPackages, { cwd: input.absDir });
           results.removedPackages = toRemove;
           results.installedPackages = newPackages;
         } catch {

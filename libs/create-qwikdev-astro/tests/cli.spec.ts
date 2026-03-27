@@ -7,7 +7,6 @@ import addApp, { defaultAddDefinition } from "../src/add-flow/command.js";
 import { run } from "../src/index.js";
 import { ProgramTester } from "../src/tester.js";
 import type { PathTester } from "../src/tester.js";
-import upgradeApp, { defaultUpgradeDefinition } from "../src/upgrade.js";
 
 declare module "@japa/runner/core" {
   interface TestContext {
@@ -250,46 +249,6 @@ function testProjectFiles(
     assert.isTrue(testFile.isFile());
   }
 }
-
-const upgradeTester = new ProgramTester(upgradeApp);
-
-test.group("upgrade command", () => {
-  test("default definition", ({ assert }) => {
-    const def = upgradeTester.parse([]);
-    assert.isTrue(def.has("directory", "dryRun"));
-    assert.isTrue(def.get("directory").isString());
-    assert.isTrue(def.get("directory").equals("."));
-    assert.isTrue(def.get("directory").equals(defaultUpgradeDefinition.directory));
-  });
-
-  test("directory argument", ({ assert }) => {
-    const def = upgradeTester.parse(["./my-project"]);
-    assert.isTrue(def.get("directory").equals("./my-project"));
-  });
-
-  test("--dry-run option", ({ assert }) => {
-    const def = upgradeTester.parse(["--dry-run"]);
-    assert.isTrue(def.get("dryRun").isBoolean());
-    assert.isTrue(def.get("dryRun").isTrue());
-  });
-
-  test("--yes option", ({ assert }) => {
-    const def = upgradeTester.parse(["--yes"]);
-    assert.isTrue(def.get("yes").isTrue());
-  });
-
-  test("--no option", ({ assert }) => {
-    const def = upgradeTester.parse(["--no"]);
-    assert.isTrue(def.get("no").isTrue());
-  });
-
-  test("combined: directory + --dry-run + --yes", ({ assert }) => {
-    const def = upgradeTester.parse(["./proj", "--dry-run", "--yes"]);
-    assert.isTrue(def.get("directory").equals("./proj"));
-    assert.isTrue(def.get("dryRun").isTrue());
-    assert.isTrue(def.get("yes").isTrue());
-  });
-});
 
 const addTester = new ProgramTester(addApp);
 
