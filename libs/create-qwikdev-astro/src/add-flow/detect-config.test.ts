@@ -60,7 +60,7 @@ export default {
   const result = detectConfigFrameworks(src);
   assertEqual(result.outcome, "safe", "outcome is safe");
   assert(result.frameworks.length === 2, "two frameworks found");
-  const names = result.frameworks.map((f) => f.name).sort();
+  const names = result.frameworks.map((f: { name: string }) => f.name).sort();
   assertEqual(names, ["preact", "solid"], "framework names are preact and solid");
 }
 

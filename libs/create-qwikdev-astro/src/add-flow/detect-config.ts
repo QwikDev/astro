@@ -1,7 +1,6 @@
 import { parseSync } from "oxc-parser";
 import type {
   ConfigEdit,
-  DetectionOutcome,
   FrameworkInfo,
   MultiFrameworkResult
 } from "./types.js";
@@ -15,23 +14,6 @@ const KNOWN_FRAMEWORKS: Record<string, FrameworkInfo["name"]> = {
 
 /** AST node types used for walking */
 type ASTNode = Record<string, unknown>;
-
-/**
- * Walk an AST node and call the visitor for each node.
- */
-function walk(node: unknown, visitor: (n: ASTNode) => void): void {
-  if (!node || typeof node !== "object") return;
-  const obj = node as ASTNode;
-  visitor(obj);
-  for (const key of Object.keys(obj)) {
-    const child = obj[key];
-    if (Array.isArray(child)) {
-      for (const item of child) walk(item, visitor);
-    } else if (child && typeof child === "object") {
-      walk(child, visitor);
-    }
-  }
-}
 
 /**
  * Detect React, Preact, and Solid integrations in an astro.config source string.
@@ -54,7 +36,7 @@ export function detectConfigFrameworks(configSource: string): MultiFrameworkResu
   const bindingToPackage = new Map<string, string>();
 
   for (const node of body) {
-    const n = node as ASTNode;
+    const n = node as unknown as ASTNode;
     if (n.type !== "ImportDeclaration") continue;
     const source = n.source as ASTNode | undefined;
     const packageName = source?.value as string | undefined;
@@ -72,7 +54,7 @@ export function detectConfigFrameworks(configSource: string): MultiFrameworkResu
   let integrationsArray: ASTNode | null = null;
 
   for (const node of body) {
-    const n = node as ASTNode;
+    const n = node as unknown as ASTNode;
     if (n.type !== "ExportDefaultDeclaration") continue;
 
     const decl = n.declaration as ASTNode;

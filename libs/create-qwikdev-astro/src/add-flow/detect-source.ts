@@ -1,5 +1,5 @@
-import { readdir, readFile } from "node:fs/promises";
-import { join, extname, relative } from "node:path";
+import { readdir } from "node:fs/promises";
+import { join, extname } from "node:path";
 import type { SourceSignal } from "./types.js";
 
 /** Extensions to scan */
@@ -127,7 +127,6 @@ export async function detectSourceFrameworks(projectDir: string): Promise<Source
     // Read only first MAX_READ_BYTES bytes
     let content: string;
     try {
-      const buffer = Buffer.alloc(MAX_READ_BYTES);
       const { createReadStream } = await import("node:fs");
       const stream = createReadStream(filePath, { start: 0, end: MAX_READ_BYTES - 1 });
       const chunks: Buffer[] = [];

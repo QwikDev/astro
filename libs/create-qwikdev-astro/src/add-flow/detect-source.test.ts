@@ -38,7 +38,7 @@ await withTempDir(async (dir) => {
     `import React from 'react';\nexport default function App() { return <div />; }`
   );
   const signals = await detectSourceFrameworks(dir);
-  const reactSignals = signals.filter((s) => s.framework === "react");
+  const reactSignals = signals.filter((s: { framework: string }) => s.framework === "react");
   assert(reactSignals.length > 0, "found react signal");
   assert(reactSignals[0]?.signal === "import", "signal type is import");
 });
@@ -51,7 +51,7 @@ await withTempDir(async (dir) => {
     `/** @jsxImportSource react */\nexport default function Widget() { return <span />; }`
   );
   const signals = await detectSourceFrameworks(dir);
-  const reactSignals = signals.filter((s) => s.framework === "react");
+  const reactSignals = signals.filter((s: { framework: string }) => s.framework === "react");
   assert(reactSignals.length > 0, "found react signal");
   assert(reactSignals[0]?.signal === "pragma", "signal type is pragma");
 });
@@ -64,7 +64,7 @@ await withTempDir(async (dir) => {
     `import { useState } from 'react';\nexport default function Counter() { const [n, setN] = useState(0); return n; }`
   );
   const signals = await detectSourceFrameworks(dir);
-  const reactSignals = signals.filter((s) => s.framework === "react");
+  const reactSignals = signals.filter((s: { framework: string }) => s.framework === "react");
   assert(reactSignals.length > 0, "found react signal for useState import");
 });
 
