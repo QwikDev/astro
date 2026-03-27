@@ -118,6 +118,15 @@ export default defineConfig({
   );
 }
 
+/** Non-empty directory with leftover files but NO package.json — triggers crash in interact() line 322.
+ * Reproduces: a previous failed `pnpm dlx ... --add` leaves qwik-astro-app/ with only src/,
+ * then a retry hits `getPackageJson(outDir)` → ENOENT because notEmptyDir is true but package.json is missing. */
+function writeDirWithoutPackageJson(dir: string) {
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(join(dir, "src"), { recursive: true });
+  writeFileSync(join(dir, "src", "placeholder.txt"), "leftover from failed run");
+}
+
 function cleanup() {
   rmSync(fixtureRoot, { recursive: true, force: true });
 }
@@ -153,6 +162,40 @@ test.group("--add flow multi-framework detection", (group) => {
     // Primary strategy sets jsxImportSource to "@qwik.dev/core"
     const tsconfig = JSON.parse(tsconfigRaw);
     assert.equal(tsconfig.compilerOptions.jsxImportSource, "@qwik.dev/core");
+  }).disableTimeout();
+
+  test("--add on non-empty dir without package.json does not crash in interact", async ({
+    assert
+  }) => {
+    writeDirWithoutPackageJson(fixtureRoot);
+
+    // interact() is only reached when isIt() returns true (non-CI, non-test).
+    // Temporarily unset CI/NODE_ENV so the interactive path is exercised,
+    // which hits getPackageJson(outDir) on line 322 when notEmptyDir is true.
+    // Before fix: throws "File package.json not found" (ENOENT).
+    // After fix: falls back to sanitized directory name.
+    const origCI = process.env.CI;
+    const origNodeEnv = process.env.NODE_ENV;
+    delete process.env.CI;
+    delete process.env.NODE_ENV;
+
+    try {
+      // Intercept all prompts that interact() would ask
+      app.intercept("Where would you like to create your new project?", fixtureRoot);
+      app.intercept("Do you want to add @qwik.dev/astro to your existing project?", true);
+      app.intercept("Copy template files safely (without overwriting existing files)?", true);
+      app.intercept("Would you like to install pnpm dependencies?", false);
+      app.intercept("Would you like to save the changes with Git?", false);
+      app.intercept("Would you like to add CI workflow?", false);
+
+      // This must not throw — interact() should handle missing package.json gracefully
+      const result = await run([pm.name, "create", fixtureRoot, "--add"]);
+
+      assert.isTrue(result === 0 || result === 1, `Expected exit 0 or 1, got ${result}`);
+    } finally {
+      process.env.CI = origCI;
+      process.env.NODE_ENV = origNodeEnv;
+    }
   }).disableTimeout();
 
   test("--add on React project detects framework and applies exclude", async ({
