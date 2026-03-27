@@ -16,7 +16,9 @@ export default defineConfig((options) => {
       "src/core.ts",
       "src/index.ts",
       "src/tester.ts",
-      "src/utils.ts"
+      "src/utils.ts",
+      "src/upgrade.ts",
+      "src/add-flow/command.ts"
     ]
   };
 });

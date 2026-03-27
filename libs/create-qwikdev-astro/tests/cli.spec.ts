@@ -2,7 +2,10 @@ import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import { TestContext } from "@japa/runner/core";
 import { run } from "@qwik.dev/create-astro";
+import { ProgramTester } from "@qwik.dev/create-astro/tester";
 import type { PathTester } from "@qwik.dev/create-astro/tester";
+import upgradeApp, { defaultUpgradeDefinition } from "@qwik.dev/create-astro/upgrade";
+import addApp, { defaultAddDefinition } from "@qwik.dev/create-astro/add";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 import pm from "panam";
 
@@ -247,3 +250,82 @@ function testProjectFiles(
     assert.isTrue(testFile.isFile());
   }
 }
+
+const upgradeTester = new ProgramTester(upgradeApp);
+
+test.group("upgrade command", () => {
+  test("default definition", ({ assert }) => {
+    const def = upgradeTester.parse([]);
+    assert.isTrue(def.has("directory", "dryRun"));
+    assert.isTrue(def.get("directory").isString());
+    assert.isTrue(def.get("directory").equals("."));
+    assert.isTrue(def.get("directory").equals(defaultUpgradeDefinition.directory));
+  });
+
+  test("directory argument", ({ assert }) => {
+    const def = upgradeTester.parse(["./my-project"]);
+    assert.isTrue(def.get("directory").equals("./my-project"));
+  });
+
+  test("--dry-run option", ({ assert }) => {
+    const def = upgradeTester.parse(["--dry-run"]);
+    assert.isTrue(def.get("dryRun").isBoolean());
+    assert.isTrue(def.get("dryRun").isTrue());
+  });
+
+  test("--yes option", ({ assert }) => {
+    const def = upgradeTester.parse(["--yes"]);
+    assert.isTrue(def.get("yes").isTrue());
+  });
+
+  test("--no option", ({ assert }) => {
+    const def = upgradeTester.parse(["--no"]);
+    assert.isTrue(def.get("no").isTrue());
+  });
+
+  test("combined: directory + --dry-run + --yes", ({ assert }) => {
+    const def = upgradeTester.parse(["./proj", "--dry-run", "--yes"]);
+    assert.isTrue(def.get("directory").equals("./proj"));
+    assert.isTrue(def.get("dryRun").isTrue());
+    assert.isTrue(def.get("yes").isTrue());
+  });
+});
+
+const addTester = new ProgramTester(addApp);
+
+test.group("add command", () => {
+  test("default definition", ({ assert }) => {
+    const def = addTester.parse([]);
+    assert.isTrue(def.has("directory", "dryRun"));
+    assert.isTrue(def.get("directory").isString());
+    assert.isTrue(def.get("directory").equals("."));
+    assert.isTrue(def.get("directory").equals(defaultAddDefinition.directory));
+  });
+
+  test("directory argument", ({ assert }) => {
+    const def = addTester.parse(["./my-project"]);
+    assert.isTrue(def.get("directory").equals("./my-project"));
+  });
+
+  test("--dry-run option", ({ assert }) => {
+    const def = addTester.parse(["--dry-run"]);
+    assert.isTrue(def.get("dryRun").isBoolean());
+    assert.isTrue(def.get("dryRun").isTrue());
+  });
+
+  test("--yes option", ({ assert }) => {
+    const def = addTester.parse(["--yes"]);
+    assert.isTrue(def.get("yes").isTrue());
+  });
+
+  test("--no option", ({ assert }) => {
+    const def = addTester.parse(["--no"]);
+    assert.isTrue(def.get("no").isTrue());
+  });
+
+  test("combined: directory + --dry-run", ({ assert }) => {
+    const def = addTester.parse(["./proj", "--dry-run"]);
+    assert.isTrue(def.get("directory").equals("./proj"));
+    assert.isTrue(def.get("dryRun").isTrue());
+  });
+});

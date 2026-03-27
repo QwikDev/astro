@@ -108,6 +108,26 @@
         "default": "./dist/utils.cjs"
       }
     },
+    "./upgrade": {
+      "import": {
+        "types": "./dist/upgrade.d.mts",
+        "default": "./dist/upgrade.mjs"
+      },
+      "require": {
+        "types": "./dist/upgrade.d.cts",
+        "default": "./dist/upgrade.cjs"
+      }
+    },
+    "./add": {
+      "import": {
+        "types": "./dist/add-flow/command.d.mts",
+        "default": "./dist/add-flow/command.mjs"
+      },
+      "require": {
+        "types": "./dist/add-flow/command.d.cts",
+        "default": "./dist/add-flow/command.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "files": [
