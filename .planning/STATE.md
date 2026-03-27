@@ -5,7 +5,7 @@ milestone_name: milestone
 status: completed
 stopped_at: Completed quick task 10
 last_updated: "2026-03-27T00:00:00.000Z"
-last_activity: 2026-03-27 — Completed quick task 10: fix duplicate qwik() integration entry when --add on already-configured project
+last_activity: 2026-03-27 — Completed quick task 11: unify --add flag flow with add subcommand multi-framework detection
 progress:
   total_phases: 3
   completed_phases: 3
@@ -113,9 +113,10 @@ None yet.
 | 7 | Evaluate magic-regexp adoption — verdict: do not adopt (12 regex patterns, 8 trivial, net-negative ROI) | 2026-03-27 | n/a (eval only) | [7-is-there-enough-regex-present-that-it-wo](./quick/7-is-there-enough-regex-present-that-it-wo/) |
 | 9 | Add @builder.io/qwik npm alias install and ecosystem warning to upgrade script | 2026-03-27 | faa77f4 | [9-add-builder-io-qwik-npm-alias-to-upgrade](./quick/9-add-builder-io-qwik-npm-alias-to-upgrade/) |
 | 10 | Fix duplicate qwik() integration entry when --add on already-configured project | 2026-03-27 | 3b4a499 | [10-fix-duplicate-qwik-astro-addition-when-a](./quick/10-fix-duplicate-qwik-astro-addition-when-a/) |
+| 11 | Unify --add flag flow with add subcommand multi-framework detection | 2026-03-27 | 5eefd54 | [11-unify-add-and-add-flows-so-documented-pa](./quick/11-unify-add-and-add-flows-so-documented-pa/) |
 
 ## Session Continuity
 
-Last session: 2026-03-27T05:41:08Z
-Stopped at: Completed quick task 09
+Last session: 2026-03-27T19:27:01Z
+Stopped at: Completed quick task 11
 Resume file: None
