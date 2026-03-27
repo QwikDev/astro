@@ -84,13 +84,10 @@ export function generateWarning(result: MultiFrameworkResult): string {
           ? notes
           : "The integrations array contains spread elements, which cannot be statically analyzed.",
         "",
-        `Please configure ${frameworkNames} manually by adding include/exclude options:`,
+        `Please configure ${frameworkNames} manually by adding exclude options to skip Qwik files:`,
         "",
-        "  // For each non-Qwik framework, add an include pattern:",
-        "  react({ include: ['src/components/react/**/*'] })",
-        "",
-        "  // For Qwik, add the corresponding exclude pattern:",
-        "  qwik({ exclude: ['src/components/react/**/*'] })"
+        "  // For each non-Qwik framework, add an exclude pattern:",
+        "  react({ exclude: ['src/components/qwik/**/*'] })"
       ].join("\n");
     }
 
