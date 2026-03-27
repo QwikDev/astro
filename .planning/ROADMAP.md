@@ -12,7 +12,7 @@ This milestone ships two parallel workstreams — the upgrade command (0.x to 1.
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Upgrade Command** - Implement `upgrade [directory]` for 0.x to 1.0 migration in `src/upgrade*`
+- [x] **Phase 1: Upgrade Command** - Implement `upgrade [directory]` for 0.x to 1.0 migration in `src/upgrade*` (completed 2026-03-27)
 - [ ] **Phase 2: Multi-Framework Add-Flow** - Implement AST-based framework detection and safe config rewriting in `src/add*`
 - [ ] **Phase 3: Integration** - Wire both commands into shared entrypoint, add dependencies, and add tests
 
@@ -68,6 +68,6 @@ Phases 1 and 2 execute in parallel. Phase 3 follows both.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Upgrade Command | 2/3 | In Progress|  |
+| 1. Upgrade Command | 3/3 | Complete   | 2026-03-27 |
 | 2. Multi-Framework Add-Flow | 0/3 | Planned | - |
 | 3. Integration | 0/TBD | Not started | - |

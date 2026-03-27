@@ -19,8 +19,8 @@ Requirements for the CLI upgrade command and multi-framework add-flow milestone.
 - [x] **UPG-08**: Command rewrites source file imports (`@builder.io/qwik` to `@qwik.dev/core`, `@qwikdev/astro` to `@qwik.dev/astro`)
 - [x] **UPG-09**: Command rewrites `@jsxImportSource` pragma comments
 - [x] **UPG-10**: Command warns on async `useComputed$` and `useResource$` patterns
-- [ ] **UPG-11**: Command prints summary report with changed files and docs link
-- [ ] **UPG-12**: `--dry-run` prints planned changes without writing
+- [x] **UPG-11**: Command prints summary report with changed files and docs link
+- [x] **UPG-12**: `--dry-run` prints planned changes without writing
 - [x] **UPG-13**: `--yes` accepts all safe defaults without prompts
 - [x] **UPG-14**: `--no` declines optional actions but runs required steps
 
@@ -78,8 +78,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UPG-08 | Phase 1 | Complete |
 | UPG-09 | Phase 1 | Complete |
 | UPG-10 | Phase 1 | Complete |
-| UPG-11 | Phase 1 | Pending |
-| UPG-12 | Phase 1 | Pending |
+| UPG-11 | Phase 1 | Complete |
+| UPG-12 | Phase 1 | Complete |
 | UPG-13 | Phase 1 | Complete |
 | UPG-14 | Phase 1 | Complete |
 | MFD-01 | Phase 2 | Complete |
