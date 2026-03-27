@@ -5,7 +5,7 @@ milestone_name: milestone
 status: completed
 stopped_at: Completed quick task 13
 last_updated: "2026-03-27T00:00:00.000Z"
-last_activity: 2026-03-27 — Completed quick task 13: fix scaffold.ts Counter.tsx template path for bundled dist/ CLI
+last_activity: 2026-03-27 — Completed quick task 15: hardened assertPmResult usage in upgrade.ts/app.ts; JSONC tsconfig parsing in upgrade-rewrite.ts
 progress:
   total_phases: 3
   completed_phases: 3
@@ -116,9 +116,10 @@ None yet.
 | 11 | Unify --add flag flow with add subcommand multi-framework detection | 2026-03-27 | 5eefd54 | [11-unify-add-and-add-flows-so-documented-pa](./quick/11-unify-add-and-add-flows-so-documented-pa/) |
 | 12 | Fix persistTsconfigForAdd to strip JSONC comments before parsing; extract stripJsonComments to utils.ts | 2026-03-27 | 37d2498 | [12-fix-persisttsconfigforadd-comment-stripp](./quick/12-fix-persisttsconfigforadd-comment-stripp/) |
 | 13 | Fix scaffold.ts Counter.tsx template path — import shared __dirname from utils.ts, single .. traversal | 2026-03-27 | c64565b | [13-fix-scaffold-ts-counter-tsx-template-pat](./quick/13-fix-scaffold-ts-counter-tsx-template-pat/) |
+| 15 | Fix unchecked panam results (assertPmResult) in upgrade.ts/app.ts; JSONC tsconfig parsing in upgrade-rewrite.ts | 2026-03-27 | e8d1f61 | [15-fix-production-readiness-issues-assertpm](./quick/15-fix-production-readiness-issues-assertpm/) |
 
 ## Session Continuity
 
-Last session: 2026-03-27T19:50:00Z
-Stopped at: Completed quick task 13
+Last session: 2026-03-27T23:41:51Z
+Stopped at: Completed quick task 15
 Resume file: None
