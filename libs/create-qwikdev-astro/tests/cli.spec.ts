@@ -1,8 +1,17 @@
+import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import { TestContext } from "@japa/runner/core";
 import { run } from "@qwik.dev/create-astro";
+import type { PathTester } from "@qwik.dev/create-astro/tester";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 import pm from "panam";
+
+declare module "@japa/runner/core" {
+  interface TestContext {
+    assert: Assert;
+    path(path: string): PathTester;
+  }
+}
 
 process.env.NODE_ENV = "test";
 process.env.CI = "1";
@@ -68,8 +77,11 @@ const getGeneratedFiles = (options: GeneratedOptions = {}): string[] => {
 
   if (!options.template) {
     files.push(
-      "src/assets/astro.svg",
-      "src/assets/qwik.svg",
+      "src/assets/qwik-astro-logo.svg",
+      "src/assets/icon-components.svg",
+      "src/assets/icon-config.svg",
+      "src/assets/icon-layouts.svg",
+      "src/assets/icon-pages.svg",
       "src/components/counter.module.css",
       "src/components/counter.tsx",
       "src/layouts/Layout.astro",
@@ -151,6 +163,19 @@ test.group(`create ${integration} app`, (group) => {
       template: true
     });
   }).disableTimeout();
+
+  test("with template and --no-install fails", async ({ assert }) => {
+    const destination = `${root}/${project}`;
+    const result = await run([
+      pm.name,
+      "create",
+      destination,
+      "--template",
+      "minimal",
+      "--no-install"
+    ]);
+    assert.equal(result, 1);
+  });
 });
 
 test.group(`create ${integration} with yes and no options`, (group) => {

@@ -19,12 +19,32 @@
 ```bash
 npm create @qwik.dev/astro@latest
 ```
+```bash
+pnpm create @qwik.dev/astro@latest
+```
+```bash
+yarn create @qwik.dev/astro
+```
+```bash
+bun create @qwik.dev/astro
+```
 
 Or add to an existing Astro project:
 
 ```bash
-npx astro add @qwik.dev/astro
+npm create @qwik.dev/astro@latest ./my-project --add
 ```
+```bash
+pnpm create @qwik.dev/astro@latest ./my-project --add
+```
+```bash
+yarn create @qwik.dev/astro ./my-project --add
+```
+```bash
+bun create @qwik.dev/astro ./my-project --add
+```
+
+See the [CLI documentation](libs/create-qwikdev-astro/README.md) for all available commands and options.
 
 For full installation instructions, guides, and API reference, visit **[qwik.dev/astro](https://qwik.dev/astro)**.
 

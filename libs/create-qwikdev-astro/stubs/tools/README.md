@@ -1,8 +1,8 @@
-# [@QwikDev/astro](https://github.com/QwikDev/astro) Starter Kit
+# [@qwik.dev/astro](https://github.com/QwikDev/astro) Starter Kit
 
 ## Overview
 
-Welcome to the [@QwikDev/astro](https://github.com/QwikDev/astro) starter kit! This kit enables seamless integration of Qwik components into your Astro projects, combining the efficiency of Qwik's component-based architecture with the flexibility of Astro's static site generation.
+Welcome to the [@qwik.dev/astro](https://github.com/QwikDev/astro) starter kit! This kit enables seamless integration of Qwik components into your Astro projects, combining the efficiency of Qwik's component-based architecture with the flexibility of Astro's static site generation.
 
 ## 🚀 Project Structure
 
@@ -61,4 +61,4 @@ All commands are run from the root of the project, from a terminal:
 
 - [Qwik GitHub Repository](https://github.com/BuilderIO/qwik) - Contribute or report issues to the Qwik project.
 
-- [Qwik + Astro GitHub Repository](https://github.com/QwikDev/astro) - Explore and contribute to the @QwikDev/astro integration project.
+- [Qwik + Astro GitHub Repository](https://github.com/QwikDev/astro) - Explore and contribute to the @qwik.dev/astro integration project.

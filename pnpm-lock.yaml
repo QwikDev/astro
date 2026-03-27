@@ -197,6 +197,18 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  libs/create-qwikdev-astro/labs/test-app:
+    dependencies:
+      '@qwik.dev/astro':
+        specifier: ^0.9.0
+        version: 0.9.0(@qwik.dev/core@2.0.0-beta.30(prettier@3.8.1)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3)))(astro@6.1.1(@netlify/blobs@10.7.4)(@types/node@25.5.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3))
+      '@qwik.dev/core':
+        specifier: ^2.0.0-beta.30
+        version: 2.0.0-beta.30(prettier@3.8.1)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
+      astro:
+        specifier: ^6.1.1
+        version: 6.1.1(@netlify/blobs@10.7.4)(@types/node@25.5.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
+
   libs/qwikdev-astro:
     dependencies:
       astro-integration-kit:
@@ -1663,6 +1675,11 @@ packages:
   '@quansync/fs@1.0.0':
     resolution: {integrity: sha512-4TJ3DFtlf1L5LDMaM6CanJ/0lckGNtJcMjQ1NAV6zDmA0tEHKZtxNKin8EgPaVX1YzljbxckyT2tJrpQKAtngQ==}
 
+  '@qwik.dev/astro@0.9.0':
+    resolution: {integrity: sha512-tentHwFzc4SaeUlIwsEd3X9e3tep6eXZUWaBzjlzQpWpKmrqjw1BqNZKdZzf6kA9aum1hOCUrHIJ/o2mQ2//Ug==}
+    peerDependencies:
+      '@qwik.dev/core': '>=2.0.0-beta.30 <3.0.0'
+
   '@qwik.dev/core@2.0.0-beta.30':
     resolution: {integrity: sha512-H8KTNdBUJMmNQWIBHpl3KO6rpZbvHDRFyUTVi9vhrMpMKH2AXO83EZ6VlGlNn8Rr+BAAj0/vNwnM0fXVTo/8IQ==}
     engines: {node: ^20.3.0 || >=21.0.0}
@@ -2444,6 +2461,11 @@ packages:
 
   astro@6.0.6:
     resolution: {integrity: sha512-Fg25tok0RF+ToCcfdfNdtkv7MutTfbE0Lc4UhZpQyoc8/iiTdAaNw1nHPxPD6Nfa/ql3lGAp9uOWaTTnnFY2Zg==}
+    engines: {node: '>=22.12.0', npm: '>=9.6.5', pnpm: '>=7.1.0'}
+    hasBin: true
+
+  astro@6.1.1:
+    resolution: {integrity: sha512-vq8sHpu1JsY1fWAunn+tdKNbVDmLQNiVdyuGsVT2csgITdFGXXVAyEXFWc1DzkMN0ehElPeiHnqItyQOJK+GqA==}
     engines: {node: '>=22.12.0', npm: '>=9.6.5', pnpm: '>=7.1.0'}
     hasBin: true
 
@@ -7663,6 +7685,13 @@ snapshots:
     dependencies:
       quansync: 1.0.0
 
+  '@qwik.dev/astro@0.9.0(@qwik.dev/core@2.0.0-beta.30(prettier@3.8.1)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3)))(astro@6.1.1(@netlify/blobs@10.7.4)(@types/node@25.5.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3))':
+    dependencies:
+      '@qwik.dev/core': 2.0.0-beta.30(prettier@3.8.1)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
+      astro-integration-kit: 0.20.0(astro@6.1.1(@netlify/blobs@10.7.4)(@types/node@25.5.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3))
+    transitivePeerDependencies:
+      - astro
+
   '@qwik.dev/core@2.0.0-beta.30(prettier@3.8.1)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.2(@opentelemetry/api@1.9.0)(@types/node@22.19.15)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3)))':
     dependencies:
       '@qwik.dev/optimizer': 2.0.1-beta.0
@@ -7673,6 +7702,16 @@ snapshots:
     optionalDependencies:
       prettier: 3.8.1
       vitest: 4.1.2(@opentelemetry/api@1.9.0)(@types/node@22.19.15)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
+
+  '@qwik.dev/core@2.0.0-beta.30(prettier@3.8.1)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))':
+    dependencies:
+      '@qwik.dev/optimizer': 2.0.1-beta.0
+      csstype: 3.2.3
+      launch-editor: 2.13.2
+      rollup: 4.60.0
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3)
+    optionalDependencies:
+      prettier: 3.8.1
 
   '@qwik.dev/core@2.0.0-beta.30(prettier@3.8.1)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.2(@opentelemetry/api@1.9.0)(@types/node@22.19.15)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3)))':
     dependencies:
@@ -8403,6 +8442,11 @@ snapshots:
       astro: 6.0.6(@netlify/blobs@10.7.4)(@types/node@25.5.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
       pathe: 2.0.3
 
+  astro-integration-kit@0.20.0(astro@6.1.1(@netlify/blobs@10.7.4)(@types/node@25.5.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)):
+    dependencies:
+      astro: 6.1.1(@netlify/blobs@10.7.4)(@types/node@25.5.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
+      pathe: 2.0.3
+
   astro@6.0.6(@netlify/blobs@10.7.4)(@types/node@22.19.15)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3):
     dependencies:
       '@astrojs/compiler': 3.0.1
@@ -8502,6 +8546,100 @@ snapshots:
       '@astrojs/compiler': 3.0.1
       '@astrojs/internal-helpers': 0.8.0
       '@astrojs/markdown-remark': 7.0.1
+      '@astrojs/telemetry': 3.3.0
+      '@capsizecss/unpack': 4.0.0
+      '@clack/prompts': 1.1.0
+      '@oslojs/encoding': 1.1.0
+      '@rollup/pluginutils': 5.3.0(rollup@4.60.0)
+      aria-query: 5.3.2
+      axobject-query: 4.1.0
+      ci-info: 4.4.0
+      clsx: 2.1.1
+      common-ancestor-path: 2.0.0
+      cookie: 1.1.1
+      devalue: 5.6.4
+      diff: 8.0.4
+      dlv: 1.1.3
+      dset: 3.1.4
+      es-module-lexer: 2.0.0
+      esbuild: 0.27.4
+      flattie: 1.1.1
+      fontace: 0.4.1
+      github-slugger: 2.0.0
+      html-escaper: 3.0.3
+      http-cache-semantics: 4.2.0
+      js-yaml: 4.1.1
+      magic-string: 0.30.21
+      magicast: 0.5.2
+      mrmime: 2.0.1
+      neotraverse: 0.6.18
+      obug: 2.1.1
+      p-limit: 7.3.0
+      p-queue: 9.1.0
+      package-manager-detector: 1.6.0
+      piccolore: 0.1.3
+      picomatch: 4.0.4
+      rehype: 13.0.2
+      semver: 7.7.4
+      shiki: 4.0.2
+      smol-toml: 1.6.1
+      svgo: 4.0.1
+      tinyclip: 0.1.12
+      tinyexec: 1.0.4
+      tinyglobby: 0.2.15
+      tsconfck: 3.1.6(typescript@5.9.3)
+      ultrahtml: 1.6.0
+      unifont: 0.7.4
+      unist-util-visit: 5.1.0
+      unstorage: 1.17.5(@netlify/blobs@10.7.4)(@vercel/functions@3.4.3)
+      vfile: 6.0.3
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3)
+      vitefu: 1.1.2(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
+      xxhash-wasm: 1.1.0
+      yargs-parser: 22.0.0
+      zod: 4.3.6
+    optionalDependencies:
+      sharp: 0.34.5
+    transitivePeerDependencies:
+      - '@azure/app-configuration'
+      - '@azure/cosmos'
+      - '@azure/data-tables'
+      - '@azure/identity'
+      - '@azure/keyvault-secrets'
+      - '@azure/storage-blob'
+      - '@capacitor/preferences'
+      - '@deno/kv'
+      - '@netlify/blobs'
+      - '@planetscale/database'
+      - '@types/node'
+      - '@upstash/redis'
+      - '@vercel/blob'
+      - '@vercel/functions'
+      - '@vercel/kv'
+      - aws4fetch
+      - db0
+      - idb-keyval
+      - ioredis
+      - jiti
+      - less
+      - lightningcss
+      - rollup
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - typescript
+      - uploadthing
+      - yaml
+
+  astro@6.1.1(@netlify/blobs@10.7.4)(@types/node@25.5.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3):
+    dependencies:
+      '@astrojs/compiler': 3.0.1
+      '@astrojs/internal-helpers': 0.8.0
+      '@astrojs/markdown-remark': 7.1.0
       '@astrojs/telemetry': 3.3.0
       '@capsizecss/unpack': 4.0.0
       '@clack/prompts': 1.1.0

@@ -1,8 +1,14 @@
+import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import app, { defaultDefinition } from "@qwik.dev/create-astro/app";
 import { name, version } from "@qwik.dev/create-astro/package.json";
 import { ProgramTester } from "@qwik.dev/create-astro/tester";
-import pm from "panam";
+
+declare module "@japa/runner/core" {
+  interface TestContext {
+    assert: Assert;
+  }
+}
 
 process.env.NODE_ENV = "test";
 process.env.CI = "1";
@@ -12,50 +18,41 @@ const projectName = "my-qwik-astro-app";
 
 enum input {
   which_destination,
-  use_adapter,
-  which_adapter,
-  use_template,
-  what_template,
+  how_to_start,
+  which_template,
   add,
   force,
   copy,
   biome,
   install,
-  ci,
   git,
-  package_name
+  ci
 }
 
 const questions = {
   [input.which_destination]: "Where would you like to create your new project?",
-  [input.use_adapter]: "Would you like to use a server adapter?",
-  [input.which_adapter]: "Which adapter do you prefer?",
-  [input.use_template]: "Would you like to use the default template?",
-  [input.what_template]: "What template would you like to use?",
-  [input.add]: "Do you want to add @QwikDev/astro to your existing project?",
+  [input.how_to_start]: "How would you like to start?",
+  [input.which_template]: "Which Astro template?",
+  [input.add]: "Do you want to add @qwik.dev/astro to your existing project?",
   [input.force]: "Would you like to force the copy?",
   [input.copy]: "Copy template files safely (without overwriting existing files)?",
   [input.biome]: "Would you prefer Biome over ESLint/Prettier?",
   [input.install]: `Would you like to install .* dependencies?`,
-  [input.ci]: "Would you like to add CI workflow?",
   [input.git]: "Would you like to initialize Git?",
-  [input.package_name]: "What should be the name of this package?"
+  [input.ci]: "Would you like to add CI workflow?"
 } as const;
 
 const answers = {
   [input.which_destination]: [".", projectName],
-  [input.use_adapter]: [true, false],
-  [input.what_template]: ["qwik", "astro"],
-  [input.use_template]: [true, false],
-  [input.which_adapter]: ["none", "node", "deno"],
+  [input.how_to_start]: ["none", "node", "deno", "template"],
+  [input.which_template]: ["minimal", "blog"],
   [input.add]: [true, false],
   [input.force]: [true, false],
   [input.copy]: [true, false],
   [input.biome]: [true, false],
   [input.install]: [true, false],
-  [input.ci]: [true, false],
   [input.git]: [true, false],
-  [input.package_name]: [projectName, ""]
+  [input.ci]: [true, false]
 } as const;
 
 test.group(`${name}@${version} API`, () => {
@@ -378,7 +375,7 @@ test.group("aliases", () => {
 });
 
 for (const [key, choices] of Object.entries(answers)) {
-  const index = Number(key);
+  const index = Number(key) as input;
   const question = questions[index];
 
   test.group(`${question}`, () => {
@@ -394,24 +391,18 @@ for (const [key, choices] of Object.entries(answers)) {
             assert.isTrue(definition.get("destination").equals(answer));
             break;
 
-          case input.which_adapter:
-            if (
-              (
-                await tester.scanBoolean(parsed.definition, questions[input.use_adapter])
-              ).isTrue()
-            ) {
+          case input.how_to_start:
+            if (answer === "template") {
+              assert.isTrue(
+                definition.get("template").equals("minimal")
+              );
+            } else {
               assert.isTrue(definition.get("adapter").equals(answer));
             }
             break;
 
-          case input.what_template:
-            if (
-              (
-                await tester.scanBoolean(parsed.definition, questions[input.use_template])
-              ).isTrue()
-            ) {
-              assert.isTrue(definition.get("template").equals(answer));
-            }
+          case input.which_template:
+            assert.isTrue(definition.get("template").equals(answer));
             break;
 
           case input.biome:
@@ -419,14 +410,19 @@ for (const [key, choices] of Object.entries(answers)) {
             break;
 
           case input.install:
-            assert.isTrue(definition.get("install").equals(answer));
+            if (definition.get("template").isString() && !definition.get("template").equals("")) {
+              assert.isTrue(definition.get("install").isTrue());
+            } else {
+              assert.isTrue(definition.get("install").equals(answer));
+            }
+            break;
+
+          case input.git:
+            assert.isTrue(definition.get("git").equals(answer));
             break;
 
           case input.ci:
             assert.isTrue(definition.get("ci").equals(answer));
-            break;
-          case input.git:
-            assert.isTrue(definition.get("git").equals(answer));
             break;
         }
       });
