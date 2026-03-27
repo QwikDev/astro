@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed quick task 10
+stopped_at: Completed quick task 13
 last_updated: "2026-03-27T00:00:00.000Z"
-last_activity: 2026-03-27 — Completed quick task 12: fix persistTsconfigForAdd JSONC comment stripping; extract stripJsonComments to utils.ts
+last_activity: 2026-03-27 — Completed quick task 13: fix scaffold.ts Counter.tsx template path for bundled dist/ CLI
 progress:
   total_phases: 3
   completed_phases: 3
@@ -115,9 +115,10 @@ None yet.
 | 10 | Fix duplicate qwik() integration entry when --add on already-configured project | 2026-03-27 | 3b4a499 | [10-fix-duplicate-qwik-astro-addition-when-a](./quick/10-fix-duplicate-qwik-astro-addition-when-a/) |
 | 11 | Unify --add flag flow with add subcommand multi-framework detection | 2026-03-27 | 5eefd54 | [11-unify-add-and-add-flows-so-documented-pa](./quick/11-unify-add-and-add-flows-so-documented-pa/) |
 | 12 | Fix persistTsconfigForAdd to strip JSONC comments before parsing; extract stripJsonComments to utils.ts | 2026-03-27 | 37d2498 | [12-fix-persisttsconfigforadd-comment-stripp](./quick/12-fix-persisttsconfigforadd-comment-stripp/) |
+| 13 | Fix scaffold.ts Counter.tsx template path — import shared __dirname from utils.ts, single .. traversal | 2026-03-27 | c64565b | [13-fix-scaffold-ts-counter-tsx-template-pat](./quick/13-fix-scaffold-ts-counter-tsx-template-pat/) |
 
 ## Session Continuity
 
-Last session: 2026-03-27T19:42:26Z
-Stopped at: Completed quick task 12
+Last session: 2026-03-27T19:50:00Z
+Stopped at: Completed quick task 13
 Resume file: None
