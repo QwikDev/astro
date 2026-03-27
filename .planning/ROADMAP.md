@@ -68,6 +68,6 @@ Phases 1 and 2 execute in parallel. Phase 3 follows both.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Upgrade Command | 1/3 | In Progress|  |
+| 1. Upgrade Command | 2/3 | In Progress|  |
 | 2. Multi-Framework Add-Flow | 0/3 | Planned | - |
 | 3. Integration | 0/TBD | Not started | - |
