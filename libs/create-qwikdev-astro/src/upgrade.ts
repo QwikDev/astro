@@ -1,7 +1,15 @@
 import pkg from "../package.json";
+import pm from "panam/pm";
 import { type Definition as BaseDefinition, Program } from "./core";
 import { validateProject, checkGitStatus } from "./upgrade-preflight";
-import { resolveAbsoluteDir } from "./utils";
+import {
+  rewriteImports,
+  rewriteTsconfig,
+  rewriteAstroConfig,
+  rewritePragmaComments,
+  scanForAsyncPatterns
+} from "./upgrade-rewrite";
+import { resolveAbsoluteDir, getPackageJson } from "./utils";
 
 export type UpgradeDefinition = BaseDefinition & {
   directory: string;
@@ -124,21 +132,141 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
   }
 
   async execute(input: UpgradeInput): Promise<number> {
-    this.intro("Upgrading Qwik + Astro project...");
+    const results = {
+      astroUpgradeRan: false,
+      packagesSwapped: false,
+      removedPackages: [] as string[],
+      installedPackages: [] as string[],
+      configRewritten: false,
+      tsconfigRewritten: false,
+      sourceFilesChanged: [] as string[],
+      pragmaFilesChanged: [] as string[],
+      asyncWarnings: [] as { file: string; line: number; pattern: string }[]
+    };
 
-    this.step("Preflight checks passed");
+    try {
+      this.intro("Upgrading Qwik + Astro project...");
 
-    // TODO: Delegate to @astrojs/upgrade for Astro-level upgrades
+      // Step 1: Delegate to @astrojs/upgrade
+      this.step("Running @astrojs/upgrade...");
+      if (!input.dryRun) {
+        try {
+          await pm.x("@astrojs/upgrade", { cwd: input.absDir });
+          results.astroUpgradeRan = true;
+        } catch {
+          this.warn("@astrojs/upgrade failed or is unavailable — continuing with Qwik-specific migration.");
+        }
+      } else {
+        this.info(`Would run @astrojs/upgrade via ${pm.name}`);
+      }
 
-    // TODO: Swap packages (@builder.io/qwik -> @qwik.dev/core, @qwikdev/astro -> @qwik.dev/astro)
+      // Step 2: Swap packages
+      this.step("Swapping Qwik packages...");
+      const OLD_PACKAGES = ["@builder.io/qwik", "@builder.io/qwik-city", "@qwikdev/astro"];
+      const NEW_PACKAGES = ["@qwik.dev/astro@latest", "@qwik.dev/core@latest"];
 
-    // TODO: Rewrite source files (update imports, API changes)
+      let pkgJson: Record<string, any> = {};
+      try {
+        pkgJson = getPackageJson(input.absDir);
+      } catch {
+        // No package.json — skip package swap
+      }
 
-    // TODO: Print upgrade summary
+      const allDeps = {
+        ...((pkgJson.dependencies as Record<string, string> | undefined) ?? {}),
+        ...((pkgJson.devDependencies as Record<string, string> | undefined) ?? {}),
+        ...((pkgJson.peerDependencies as Record<string, string> | undefined) ?? {})
+      };
 
-    this.outro("Upgrade complete!");
+      const toRemove = OLD_PACKAGES.filter((pkg) => pkg in allDeps);
 
-    return 0;
+      if (!input.dryRun) {
+        if (toRemove.length > 0) {
+          try {
+            await pm.x(`remove ${toRemove.join(" ")}`, { cwd: input.absDir });
+          } catch {
+            this.warn(`Failed to remove old packages: ${toRemove.join(", ")}`);
+          }
+        }
+        try {
+          await pm.x(`add ${NEW_PACKAGES.join(" ")}`, { cwd: input.absDir });
+          results.packagesSwapped = true;
+          results.removedPackages = toRemove;
+          results.installedPackages = NEW_PACKAGES;
+        } catch {
+          this.warn("Failed to install new packages. Run manually: " + NEW_PACKAGES.join(" "));
+        }
+      } else {
+        if (toRemove.length > 0) {
+          this.info(`Would remove: ${toRemove.join(", ")}`);
+        }
+        this.info(`Would install: ${NEW_PACKAGES.join(", ")}`);
+        results.removedPackages = toRemove;
+        results.installedPackages = NEW_PACKAGES;
+      }
+
+      // Step 3: Rewrite astro.config
+      this.step("Rewriting astro.config...");
+      const configResult = rewriteAstroConfig(input.absDir, input.dryRun);
+      results.configRewritten = configResult.changed;
+      if (configResult.changed) {
+        this.info(`Updated: ${configResult.filePath} (${configResult.replacements.join(", ")})`);
+      } else if (configResult.filePath) {
+        this.info("astro.config already up-to-date.");
+      } else {
+        this.info("No astro.config file found — skipped.");
+      }
+
+      // Step 4: Rewrite tsconfig
+      this.step("Rewriting tsconfig.json...");
+      const tsconfigResult = rewriteTsconfig(input.absDir, input.dryRun);
+      results.tsconfigRewritten = tsconfigResult.changed;
+      if (tsconfigResult.changed) {
+        this.info(`Updated jsxImportSource: ${tsconfigResult.oldValue} -> ${tsconfigResult.newValue}`);
+      } else {
+        this.info("tsconfig.json already up-to-date or not found.");
+      }
+
+      // Step 5: Rewrite source file imports
+      this.step("Rewriting source file imports...");
+      const importsResult = rewriteImports(input.absDir, input.dryRun);
+      results.sourceFilesChanged = importsResult.changedFiles;
+      if (importsResult.changedFiles.length > 0) {
+        this.info(`Updated ${importsResult.changedFiles.length} source file(s).`);
+      } else {
+        this.info("No source file imports needed updating.");
+      }
+
+      // Step 6: Rewrite @jsxImportSource pragma comments
+      this.step("Updating @jsxImportSource pragma comments...");
+      const pragmaResult = rewritePragmaComments(input.absDir, input.dryRun);
+      results.pragmaFilesChanged = pragmaResult.changedFiles;
+      if (pragmaResult.changedFiles.length > 0) {
+        this.info(`Updated pragma comments in ${pragmaResult.changedFiles.length} file(s).`);
+      } else {
+        this.info("No pragma comments needed updating.");
+      }
+
+      // Step 7: Scan for async patterns
+      this.step("Checking for deprecated patterns...");
+      const asyncWarnings = scanForAsyncPatterns(input.absDir);
+      results.asyncWarnings = asyncWarnings;
+      for (const warning of asyncWarnings) {
+        this.warn(
+          `${warning.file}:${warning.line} — async ${warning.pattern} may behave differently in Qwik v2. See migration docs.`
+        );
+      }
+      if (asyncWarnings.length === 0) {
+        this.info("No deprecated async patterns found.");
+      }
+
+      this.outro("Upgrade complete!");
+
+      return 0;
+    } catch (err) {
+      this.error(String(err));
+      return 1;
+    }
   }
 }
 
