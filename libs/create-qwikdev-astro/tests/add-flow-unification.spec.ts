@@ -28,11 +28,12 @@ function writeReactAstroProject(dir: string) {
 
   writeFileSync(
     join(dir, "astro.config.mjs"),
-    `import react from "@astrojs/react";
+    `import qwik from "@qwik.dev/astro";
+import react from "@astrojs/react";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  integrations: [react()],
+  integrations: [react(), qwik()],
 });
 `
   );
@@ -88,8 +89,8 @@ test.group("--add flow multi-framework detection", (group) => {
     // Config should contain exclude pattern (from rewriteConfig)
     const configAfter = readFileSync(join(fixtureRoot, "astro.config.mjs"), "utf-8");
     assert.include(configAfter, "exclude");
-    // Config should still contain react()
-    assert.include(configAfter, "react()");
+    // Config should still contain react (not removed, just extended with exclude)
+    assert.include(configAfter, "react(");
 
     // tsconfig should still have jsxImportSource: "react" (not overwritten since secondary)
     const tsconfig = JSON.parse(readFileSync(join(fixtureRoot, "tsconfig.json"), "utf-8"));

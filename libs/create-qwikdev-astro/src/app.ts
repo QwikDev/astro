@@ -6,7 +6,10 @@ import pm from "panam/pm";
 import pkg from "../package.json";
 import { ensureString } from "./console";
 import { type Definition as BaseDefinition, Program } from "./core";
-import { hasQwikImport, isQwikRegistered } from "./add-flow/detect-config";
+import { detectConfigFrameworks, hasQwikImport, isQwikRegistered } from "./add-flow/detect-config";
+import { determineJsxStrategy } from "./add-flow/jsx-strategy";
+import { generateWarning, rewriteConfig } from "./add-flow/rewrite-config";
+import { scaffoldQwikComponent } from "./add-flow/scaffold";
 import {
   __dirname,
   assertPmResult,
@@ -347,38 +350,115 @@ export class Application extends Program<Definition, Input> {
   async runAdd(input: Input) {
     this.info("Adding @qwik.dev/astro...");
     try {
-      // If the config already imports @qwik.dev/astro, install the package
-      // first so `astro add` can load the config without crashing.
-      if (!input.dryRun) {
-        const configExts = [".mts", ".ts", ".mjs", ".js"];
-        let configSource: string | null = null;
-        for (const ext of configExts) {
-          const configPath = path.join(input.outDir, `astro.config${ext}`);
-          if (fs.existsSync(configPath)) {
-            configSource = fs.readFileSync(configPath, "utf-8");
-            break;
+      // Step 1: Locate astro.config file
+      const configExts = [".mts", ".ts", ".mjs", ".js"];
+      let configPath: string | null = null;
+      let configSource: string | null = null;
+
+      for (const ext of configExts) {
+        const candidate = path.join(input.outDir, `astro.config${ext}`);
+        if (fs.existsSync(candidate)) {
+          configPath = candidate;
+          configSource = fs.readFileSync(candidate, "utf-8");
+          break;
+        }
+      }
+
+      // Step 2: Pre-install and registration checks (existing behavior)
+      const needsPreInstall = configSource !== null && hasQwikImport(configSource);
+      const alreadyRegistered = configSource !== null && isQwikRegistered(configSource);
+
+      if (!input.dryRun && needsPreInstall) {
+        this.info("@qwik.dev/astro found in config — installing before astro add.");
+        assertPmResult(
+          await pm.add(["@qwik.dev/astro", "@qwik.dev/core"], { cwd: input.outDir }),
+          "pm.add @qwik.dev/astro"
+        );
+      }
+
+      // Step 3: Multi-framework detection
+      if (configSource !== null) {
+        const configResult = detectConfigFrameworks(configSource);
+
+        if (configResult.outcome === "safe") {
+          // Prompt for JSX strategy
+          const choice = (await this.scanChoice(
+            "Should Qwik be the primary JSX source?",
+            [
+              { value: "primary", label: "Yes — Qwik owns tsconfig jsxImportSource" },
+              { value: "secondary", label: "No — keep existing framework as primary" }
+            ],
+            "primary"
+          )) as "primary" | "secondary";
+
+          const strategy = determineJsxStrategy(choice);
+
+          // Persist tsconfig change if primary
+          this.persistTsconfigForAdd(input, strategy);
+
+          // Rewrite config with exclude patterns
+          const rewrittenSource = rewriteConfig(configSource, configResult);
+          if (rewrittenSource !== null && configPath !== null && !input.dryRun) {
+            fs.writeFileSync(configPath, rewrittenSource, "utf-8");
           }
-        }
 
-        const needsPreInstall = configSource !== null && hasQwikImport(configSource);
-        const alreadyRegistered = configSource !== null && isQwikRegistered(configSource);
+          // Scaffold Qwik component
+          await scaffoldQwikComponent(input.outDir, strategy, input.dryRun);
 
-        if (needsPreInstall) {
-          this.info("@qwik.dev/astro found in config — installing before astro add.");
-          assertPmResult(
-            await pm.add(["@qwik.dev/astro", "@qwik.dev/core"], { cwd: input.outDir }),
-            "pm.add @qwik.dev/astro"
-          );
-        }
+          // Install qwik via astro add (or skip if already registered)
+          if (!input.dryRun) {
+            if (alreadyRegistered) {
+              this.info("@qwik.dev/astro already registered in config — skipping astro add.");
+            } else {
+              assertPmResult(
+                await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
+                "astro add @qwik.dev/astro"
+              );
+            }
+          }
+        } else if (configResult.outcome === "unsafe" || configResult.outcome === "already-configured") {
+          // Warn and proceed without auto-config
+          this.warn(generateWarning(configResult));
+          const strategy = determineJsxStrategy("secondary");
+          await scaffoldQwikComponent(input.outDir, strategy, input.dryRun);
 
-        if (alreadyRegistered) {
-          this.info("@qwik.dev/astro already registered in config — skipping astro add.");
+          if (!input.dryRun) {
+            if (alreadyRegistered) {
+              this.info("@qwik.dev/astro already registered in config — skipping astro add.");
+            } else {
+              assertPmResult(
+                await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
+                "astro add @qwik.dev/astro"
+              );
+            }
+          }
         } else {
+          // outcome === "none" — no other frameworks, add as primary
+          if (!input.dryRun) {
+            if (alreadyRegistered) {
+              this.info("@qwik.dev/astro already registered in config — skipping astro add.");
+            } else {
+              assertPmResult(
+                await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
+                "astro add @qwik.dev/astro"
+              );
+            }
+          }
+          const strategy = determineJsxStrategy("primary");
+          this.persistTsconfigForAdd(input, strategy);
+          await scaffoldQwikComponent(input.outDir, strategy, input.dryRun);
+        }
+      } else {
+        // No config file found — just run astro add directly
+        if (!input.dryRun) {
           assertPmResult(
             await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
             "astro add @qwik.dev/astro"
           );
         }
+        const strategy = determineJsxStrategy("primary");
+        this.persistTsconfigForAdd(input, strategy);
+        await scaffoldQwikComponent(input.outDir, strategy, input.dryRun);
       }
 
       if (input.copy) {
@@ -386,6 +466,30 @@ export class Application extends Program<Definition, Input> {
       }
     } catch (e: any) {
       this.panic(`${e.message ?? e}: . Please try it manually.`);
+    }
+  }
+
+  private persistTsconfigForAdd(
+    input: Input,
+    strategy: import("./add-flow/jsx-strategy.js").JsxStrategy
+  ): void {
+    if (strategy.tsconfigSource === null) return;
+
+    const tsconfigPath = path.join(input.outDir, "tsconfig.json");
+    if (!fs.existsSync(tsconfigPath)) return;
+
+    const tsconfigRaw = fs.readFileSync(tsconfigPath, "utf-8");
+    let tsconfig: any;
+    try {
+      tsconfig = JSON.parse(tsconfigRaw);
+    } catch {
+      return; // Can't parse — don't touch it
+    }
+    tsconfig.compilerOptions = tsconfig.compilerOptions ?? {};
+    tsconfig.compilerOptions.jsxImportSource = strategy.tsconfigSource;
+
+    if (!input.dryRun) {
+      fs.writeFileSync(tsconfigPath, `${JSON.stringify(tsconfig, null, 2)}\n`, "utf-8");
     }
   }
 
