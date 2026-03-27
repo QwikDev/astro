@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { test } from "@japa/runner";
 import type { TestContext } from "@japa/runner/core";
 import pm from "panam";
-import { hasQwikImport } from "../src/add-flow/detect-config.js";
+import { hasQwikImport, isQwikRegistered } from "../src/add-flow/detect-config.js";
 import { run } from "../src/index.js";
 
 declare module "@japa/runner/core" {
@@ -118,6 +118,37 @@ test.group("hasQwikImport", () => {
   });
 });
 
+// ── isQwikRegistered unit tests ───────────────────────────────────────
+
+test.group("isQwikRegistered", () => {
+  test("true for inline defineConfig with qwik() in integrations", ({ assert }) => {
+    // qwik() is in the integrations array — should detect it
+    assert.isTrue(isQwikRegistered(INLINE_CONFIG));
+  });
+
+  test("false for variable-exported config (conservative)", ({ assert }) => {
+    // `const config = defineConfig({...}); export default config;`
+    // Not handled by inline detection — safe fallback: astro add will run
+    assert.isFalse(isQwikRegistered(VARIABLE_CONFIG));
+  });
+
+  test("false for callback-based defineConfig (conservative)", ({ assert }) => {
+    // `defineConfig(() => ({...}))` — callback arg, not object arg
+    // Safe fallback: astro add will run
+    assert.isFalse(isQwikRegistered(CALLBACK_CONFIG));
+  });
+
+  test("false for stale import without registration", ({ assert }) => {
+    // qwik is imported but integrations array is empty — NOT registered
+    // astro add should still run to complete setup
+    assert.isFalse(isQwikRegistered(STALE_IMPORT_CONFIG));
+  });
+
+  test("false for clean config with no qwik at all", ({ assert }) => {
+    assert.isFalse(isQwikRegistered(CLEAN_CONFIG));
+  });
+});
+
 // ── integration: --add flow ───────────────────────────────────────────
 
 test.group("--add on existing project with @qwik.dev/astro already in config", (group) => {
@@ -152,5 +183,21 @@ test.group("--add on existing project with @qwik.dev/astro already in config", (
     assert.equal(result, 0);
     const pkg = JSON.parse(readFileSync(join(fixtureRoot, "package.json"), "utf-8"));
     assert.isDefined(pkg.dependencies["@qwik.dev/astro"]);
+  }).disableTimeout();
+
+  test("does not duplicate integration when qwik already in config", async ({ assert }) => {
+    writeExistingProject(INLINE_CONFIG);
+
+    const result = await run([pm.name, "create", fixtureRoot, "--add", "--no"]);
+
+    assert.equal(result, 0);
+
+    // Key assertion: config content should NOT have duplicates
+    const configAfter = readFileSync(join(fixtureRoot, "astro.config.ts"), "utf-8");
+    // Should not contain qwikDev (the aliased name astro add would introduce)
+    assert.notInclude(configAfter, "qwikDev");
+    // Count occurrences of qwik() — should be exactly 1
+    const qwikCalls = configAfter.match(/qwik\(\)/g) ?? [];
+    assert.equal(qwikCalls.length, 1, "qwik() should appear exactly once in integrations");
   }).disableTimeout();
 });
