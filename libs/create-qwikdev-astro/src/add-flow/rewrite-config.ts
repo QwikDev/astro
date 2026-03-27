@@ -32,8 +32,6 @@ export function rewriteConfig(
     if (openParenIdx === -1) continue;
 
     const innerContent = callText.slice(openParenIdx + 1, -1).trim();
-    const absoluteOpenParen = edit.span.start + openParenIdx;
-
     if (innerContent === "") {
       // No arguments: react() → react({ include: [...] })
       // The parens are empty, so start === end — use appendLeft on the closing paren position
