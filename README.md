@@ -66,7 +66,13 @@ For full installation instructions, guides, and API reference, visit **[qwik.dev
 
 This is the v2 branch (`build/v2`), which supports **Qwik v2** and **Astro 6+** under the new `@qwik.dev/astro` package name. If you need Astro <5 or Qwik v1, use the [`@qwikdev/astro`](https://www.npmjs.com/package/@qwikdev/astro) package (without the dot).
 
-For a step-by-step migration guide, see [Upgrading to v2](https://astro.qwik.dev/docs/upgrade/).
+Run the upgrade script from your project directory:
+
+```sh
+npm create @qwik.dev/astro@latest upgrade
+```
+
+If the script doesn't work for your setup, follow the [manual upgrade guide](https://astro.qwik.dev/docs/upgrade/).
 
 ## Contributing
 
