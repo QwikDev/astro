@@ -5,6 +5,7 @@ import { emptyDirSync, ensureDirSync } from "fs-extra";
 import pm from "panam";
 import { ProgramTester } from "../src/tester.js";
 import upgradeApp, { defaultUpgradeDefinition } from "../src/upgrade.js";
+import { stripJsonComments } from "../src/utils.js";
 
 process.env.NODE_ENV = "test";
 process.env.CI = "1";
@@ -283,34 +284,30 @@ test.group("upgrade full execution with package install", (group) => {
       hasNewQwik: false
     } as any);
 
-    // pm.dlx("@astrojs/upgrade") may fail in minimal fixture (no real astro project),
-    // which causes execute to return 1 before reaching file rewrites.
-    // A return of 1 is acceptable here — it proves dlx was called (not exec).
-    // A return of 0 means the full flow succeeded including file rewrites.
-    if (result.isSuccess()) {
-      const configContent = readFileSync(join(projectDir, "astro.config.mjs"), "utf-8");
-      assert.isTrue(configContent.includes("@qwik.dev/astro"));
-      assert.isFalse(configContent.includes("@qwikdev/astro"));
+    assert.isTrue(
+      result.isSuccess(),
+      `Expected upgrade to succeed but got exit code: ${result.result}`
+    );
 
-      const tsconfig = JSON.parse(
-        readFileSync(join(projectDir, "tsconfig.json"), "utf-8")
-      );
-      assert.equal(tsconfig.compilerOptions.jsxImportSource, "@qwik.dev/core");
+    const configContent = readFileSync(join(projectDir, "astro.config.mjs"), "utf-8");
+    assert.isTrue(configContent.includes("@qwik.dev/astro"));
+    assert.isFalse(configContent.includes("@qwikdev/astro"));
 
-      const counterContent = readFileSync(
-        join(projectDir, "src", "components", "counter.tsx"),
-        "utf-8"
-      );
-      assert.isTrue(counterContent.includes("@qwik.dev/core"));
-      assert.isFalse(counterContent.includes("@builder.io/qwik"));
+    const tsconfig = JSON.parse(
+      stripJsonComments(readFileSync(join(projectDir, "tsconfig.json"), "utf-8"))
+    );
+    assert.equal(tsconfig.compilerOptions.jsxImportSource, "@qwik.dev/core");
 
-      const pkgJson = JSON.parse(readFileSync(join(projectDir, "package.json"), "utf-8"));
-      const allDeps = { ...pkgJson.dependencies, ...pkgJson.devDependencies };
-      assert.isFalse("@builder.io/qwik" in allDeps);
-      assert.isFalse("@qwikdev/astro" in allDeps);
-    } else {
-      // @astrojs/upgrade dlx failed (expected in minimal fixture) — that's OK
-      assert.isTrue(result.isFailure());
-    }
+    const counterContent = readFileSync(
+      join(projectDir, "src", "components", "counter.tsx"),
+      "utf-8"
+    );
+    assert.isTrue(counterContent.includes("@qwik.dev/core"));
+    assert.isFalse(counterContent.includes("@builder.io/qwik"));
+
+    const pkgJson = JSON.parse(readFileSync(join(projectDir, "package.json"), "utf-8"));
+    const allDeps = { ...pkgJson.dependencies, ...pkgJson.devDependencies };
+    assert.isFalse("@builder.io/qwik" in allDeps);
+    assert.isFalse("@qwikdev/astro" in allDeps);
   }).disableTimeout();
 });
