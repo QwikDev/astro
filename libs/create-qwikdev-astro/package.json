@@ -130,10 +130,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist",
-    "stubs"
-  ],
+  "files": ["dist", "stubs"],
   "bin": "./dist/cli.mjs",
   "keywords": [
     "astro-integration",
