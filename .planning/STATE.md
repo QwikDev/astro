@@ -5,7 +5,7 @@ milestone_name: milestone
 status: completed
 stopped_at: Completed quick-fix 01
 last_updated: "2026-03-27T03:22:08.353Z"
-last_activity: 2026-03-26 — Phase 3 verified, all must-haves satisfied
+last_activity: 2026-03-27 — Completed quick task 4: fix test imports + unsafe warning copy
 progress:
   total_phases: 3
   completed_phases: 3
@@ -106,9 +106,10 @@ None yet.
 | 1 | Fix P1/P2 issues from Codex review on add/upgrade CLI commands | 2026-03-27 | e148752 | [1-fix-p1-p2-issues-from-codex-review-on-ad](./quick/1-fix-p1-p2-issues-from-codex-review-on-ad/) |
 | 2 | Fix P1/P2 CLI bugs: add-flow JSX ownership, JSONC tsconfig, upgrade abort, test script typo | 2026-03-27 | c3a4940 | [2-fix-p1-p2-cli-bugs-add-flow-scoping-jsx-](./quick/2-fix-p1-p2-cli-bugs-add-flow-scoping-jsx-/) |
 | 3 | Fix add-flow safe mode: switch from add-include to add-exclude, fix test runner source import | 2026-03-27 | 5c62ec7 | [3-fix-add-flow-safe-auto-config-breaking-e](./quick/3-fix-add-flow-safe-auto-config-breaking-e/) |
+| 4 | Fix test imports to use relative source paths, update unsafe warning to match add-exclude strategy | 2026-03-27 | 1ceaa22 | [4-fix-test-imports-to-not-depend-on-dist-a](./quick/4-fix-test-imports-to-not-depend-on-dist-a/) |
 
 ## Session Continuity
 
-Last session: 2026-03-27T03:44:05Z
-Stopped at: Completed quick-fix 03
+Last session: 2026-03-27T03:55:10Z
+Stopped at: Completed quick-fix 04
 Resume file: None
