@@ -103,9 +103,13 @@ export function injectQwikIntegration(source: string): string | null {
       const inner = source.slice(objStart + 1).trimStart();
       if (inner.length === 0 || source[objStart + 1] === "}") {
         // Empty object
-        ms.overwrite(objStart, (configObject.end as number), `{\n  integrations: [qwik()]\n}`);
+        ms.overwrite(
+          objStart,
+          configObject.end as number,
+          "{\n  integrations: [qwik()]\n}"
+        );
       } else {
-        ms.appendLeft(objStart + 1, `\n  integrations: [qwik()],`);
+        ms.appendLeft(objStart + 1, "\n  integrations: [qwik()],");
       }
     }
 

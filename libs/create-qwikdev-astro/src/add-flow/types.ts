@@ -39,4 +39,3 @@ export type MultiFrameworkResult = {
   notes: string[];
   edits: ConfigEdit[];
 };
-

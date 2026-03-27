@@ -63,7 +63,12 @@ export function filterAstroPlugins(plugins: PluginOption[]): PluginOption[] {
 
       if (isAllowedPlugin) return true;
 
-      return !(isCoreBuildPlugin || isAstroInternalPlugin || isAstroBuildPlugin || isQwikPlugin);
+      return !(
+        isCoreBuildPlugin ||
+        isAstroInternalPlugin ||
+        isAstroBuildPlugin ||
+        isQwikPlugin
+      );
     });
 }
 

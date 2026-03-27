@@ -1,7 +1,7 @@
-import { test } from "@japa/runner";
-import { readFile, rm, mkdtemp } from "node:fs/promises";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { test } from "@japa/runner";
 import { determineJsxStrategy } from "../src/add-flow/jsx-strategy.js";
 import { scaffoldQwikComponent } from "../src/add-flow/scaffold.js";
 
@@ -39,7 +39,9 @@ test.group("scaffoldQwikComponent", () => {
     }
   });
 
-  test("secondary strategy writes Counter.tsx WITH pragma as first line", async ({ assert }) => {
+  test("secondary strategy writes Counter.tsx WITH pragma as first line", async ({
+    assert
+  }) => {
     const tmpDir = await mkdtemp(join(tmpdir(), "scaffold-secondary-"));
     try {
       const strategy = determineJsxStrategy("secondary");

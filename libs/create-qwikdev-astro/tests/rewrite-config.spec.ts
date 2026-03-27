@@ -75,7 +75,10 @@ export default {
 
     const output = rewriteConfig(source, result);
     assert.isNotNull(output);
-    assert.include(output!, `react({ include: ['src/components/react/**/*'], ssr: true })`);
+    assert.include(
+      output!,
+      `react({ include: ['src/components/react/**/*'], ssr: true })`
+    );
   });
 
   test("qwik() call gets exclude added", ({ assert }) => {
@@ -243,7 +246,9 @@ export default {
 });
 
 test.group("generateWarning", () => {
-  test("unsafe outcome returns warning mentioning spread and manual config", ({ assert }) => {
+  test("unsafe outcome returns warning mentioning spread and manual config", ({
+    assert
+  }) => {
     const result: MultiFrameworkResult = {
       outcome: "unsafe",
       frameworks: [],

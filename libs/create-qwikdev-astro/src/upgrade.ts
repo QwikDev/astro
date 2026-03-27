@@ -224,14 +224,18 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
         try {
           const updatedPkgJson = getPackageJson(input.absDir);
           const updatedDeps = {
-            ...((updatedPkgJson.dependencies as Record<string, string> | undefined) ?? {}),
-            ...((updatedPkgJson.devDependencies as Record<string, string> | undefined) ?? {})
+            ...((updatedPkgJson.dependencies as Record<string, string> | undefined) ??
+              {}),
+            ...((updatedPkgJson.devDependencies as Record<string, string> | undefined) ??
+              {})
           };
           const coreVersion = updatedDeps["@qwik.dev/core"];
           if (coreVersion) {
             const aliasSpec = `@builder.io/qwik@npm:@qwik.dev/core@${coreVersion}`;
             await pm.add([aliasSpec], { cwd: input.absDir });
-            this.info(`Added alias: @builder.io/qwik -> npm:@qwik.dev/core@${coreVersion}`);
+            this.info(
+              `Added alias: @builder.io/qwik -> npm:@qwik.dev/core@${coreVersion}`
+            );
           }
         } catch {
           this.warn(
@@ -432,7 +436,9 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       lines.push("  Review changed files");
       lines.push(`  Run your project: ${this.gray(`${pm.name} run dev`)}`);
       lines.push(`  Migration docs: ${this.gray(MIGRATION_DOCS_URL)}`);
-      lines.push(`  Update ecosystem packages: ${this.gray("@qwik-ui/headless, @qwikest/icons, etc. to latest versions")}`);
+      lines.push(
+        `  Update ecosystem packages: ${this.gray("@qwik-ui/headless, @qwikest/icons, etc. to latest versions")}`
+      );
 
       this.note(lines.join("\n"), "Upgrade Summary");
       this.outro("Upgrade complete!");

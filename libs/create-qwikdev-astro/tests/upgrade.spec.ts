@@ -1,10 +1,10 @@
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { test } from "@japa/runner";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
 import pm from "panam";
-import upgradeApp, { defaultUpgradeDefinition } from "../src/upgrade.js";
 import { ProgramTester } from "../src/tester.js";
+import upgradeApp, { defaultUpgradeDefinition } from "../src/upgrade.js";
 
 process.env.NODE_ENV = "test";
 process.env.CI = "1";
@@ -268,7 +268,9 @@ test.group("upgrade full execution with package install", (group) => {
       assert.isTrue(configContent.includes("@qwik.dev/astro"));
       assert.isFalse(configContent.includes("@qwikdev/astro"));
 
-      const tsconfig = JSON.parse(readFileSync(join(projectDir, "tsconfig.json"), "utf-8"));
+      const tsconfig = JSON.parse(
+        readFileSync(join(projectDir, "tsconfig.json"), "utf-8")
+      );
       assert.equal(tsconfig.compilerOptions.jsxImportSource, "@qwik.dev/core");
 
       const counterContent = readFileSync(
