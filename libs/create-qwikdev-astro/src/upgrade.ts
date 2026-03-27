@@ -173,8 +173,12 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       }
 
       // Step 2: Swap packages
+      const failures: string[] = [];
       this.step("Swapping Qwik packages...");
-      const OLD_PACKAGES = ["@builder.io/qwik", "@builder.io/qwik-city", "@qwikdev/astro"];
+      // Note: @builder.io/qwik-city is NOT removed here because router migration
+      // (import rewriting, replacement package install) is out of scope.
+      // Removing it without migration would break apps that depend on it.
+      const OLD_PACKAGES = ["@builder.io/qwik", "@qwikdev/astro"];
       const NEW_PACKAGES = ["@qwik.dev/astro@latest", "@qwik.dev/core@latest"];
 
       let pkgJson: Record<string, any> = {};
@@ -197,6 +201,7 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
           try {
             await pm.x(`remove ${toRemove.join(" ")}`, { cwd: input.absDir });
           } catch {
+            failures.push(`Failed to remove old packages: ${toRemove.join(", ")}`);
             this.warn(`Failed to remove old packages: ${toRemove.join(", ")}`);
           }
         }
@@ -205,6 +210,7 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
           results.removedPackages = toRemove;
           results.installedPackages = NEW_PACKAGES;
         } catch {
+          failures.push("Failed to install new packages: " + NEW_PACKAGES.join(" "));
           this.warn("Failed to install new packages. Run manually: " + NEW_PACKAGES.join(" "));
         }
       } else {
@@ -214,6 +220,17 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
         this.info(`Would install: ${NEW_PACKAGES.join(", ")}`);
         results.removedPackages = toRemove;
         results.installedPackages = NEW_PACKAGES;
+      }
+
+      // Bail if package swap failed — config/import rewriting on inconsistent
+      // packages would leave the project in a broken state
+      if (failures.length > 0) {
+        this.error("Package migration failed:");
+        for (const f of failures) {
+          this.error(`  - ${f}`);
+        }
+        this.error("Please resolve manually before continuing.");
+        return 1;
       }
 
       // Step 3: Rewrite astro.config
