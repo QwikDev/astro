@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { stripJsonComments } from "./utils";
 
 /**
  * Maps old package specifiers to their new equivalents in Qwik v2 / @qwik.dev namespace.
@@ -146,7 +147,7 @@ export function rewriteTsconfig(
 
   let tsconfig: Record<string, any>;
   try {
-    tsconfig = JSON.parse(content);
+    tsconfig = JSON.parse(stripJsonComments(content));
   } catch {
     return { changed: false };
   }

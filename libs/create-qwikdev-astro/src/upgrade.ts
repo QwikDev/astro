@@ -222,7 +222,6 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
             `Failed to install new packages. Run manually: ${newPackages.join(" ")}`
           );
         }
-
       } else {
         if (toRemove.length > 0) {
           this.info(`Would remove: ${toRemove.join(", ")}`);

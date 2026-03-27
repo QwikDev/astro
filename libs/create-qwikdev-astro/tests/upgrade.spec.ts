@@ -50,18 +50,16 @@ export default defineConfig({
 `
   );
 
+  // Use JSONC format (JSON with comments) to exercise the stripJsonComments path
   writeFileSync(
     join(dir, "tsconfig.json"),
-    JSON.stringify(
-      {
-        compilerOptions: {
-          jsxImportSource: "@builder.io/qwik",
-          strict: true
-        }
-      },
-      null,
-      2
-    )
+    `{
+  // This is a JSONC comment that must not break parsing
+  "compilerOptions": {
+    "jsxImportSource": "@builder.io/qwik",
+    "strict": true
+  }
+}`
   );
 
   const srcDir = join(dir, "src", "components");
@@ -181,6 +179,31 @@ test.group("upgrade rewrite execution", (group) => {
     assert.equal(tsconfig.compilerOptions.jsxImportSource, "@qwik.dev/core");
   });
 
+  test("rewriteTsconfig handles JSONC comments in tsconfig", async ({ assert }) => {
+    const { rewriteTsconfig } = await import("../src/upgrade-rewrite.js");
+    const tmpDir = join(root, "jsonc-test");
+    ensureDirSync(tmpDir);
+
+    // Write a tsconfig with JSONC comments (not valid JSON)
+    writeFileSync(
+      join(tmpDir, "tsconfig.json"),
+      `{
+  // JSONC comment — must not cause JSON.parse failure
+  "compilerOptions": {
+    "jsxImportSource": "@builder.io/qwik"
+  }
+}`
+    );
+
+    const result = rewriteTsconfig(tmpDir, false);
+    assert.isTrue(result.changed, "rewriteTsconfig should succeed on JSONC input");
+    assert.equal(result.oldValue, "@builder.io/qwik");
+    assert.equal(result.newValue, "@qwik.dev/core");
+
+    const written = JSON.parse(readFileSync(join(tmpDir, "tsconfig.json"), "utf-8"));
+    assert.equal(written.compilerOptions.jsxImportSource, "@qwik.dev/core");
+  });
+
   test("rewrites source file imports", async ({ assert }) => {
     const { rewriteImports } = await import("../src/upgrade-rewrite.js");
     const absDir = projectDir;
@@ -224,8 +247,9 @@ test.group("upgrade rewrite execution", (group) => {
     const configContent = readFileSync(join(projectDir, "astro.config.mjs"), "utf-8");
     assert.isTrue(configContent.includes("@qwikdev/astro"));
 
-    const tsconfig = JSON.parse(readFileSync(join(projectDir, "tsconfig.json"), "utf-8"));
-    assert.equal(tsconfig.compilerOptions.jsxImportSource, "@builder.io/qwik");
+    // The fixture uses JSONC (comments) — check the raw text to avoid JSON.parse failure
+    const tsconfigContent = readFileSync(join(projectDir, "tsconfig.json"), "utf-8");
+    assert.isTrue(tsconfigContent.includes('"@builder.io/qwik"'));
 
     const counterContent = readFileSync(
       join(projectDir, "src", "components", "counter.tsx"),
