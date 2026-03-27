@@ -318,8 +318,12 @@ export class Application extends Program<Definition, Input> {
 		const fallbackName =
 			sanitizePackageName(destination) ||
 			sanitizePackageName(path.basename(outDir));
+		const hasPackageJson =
+			exists && fs.existsSync(path.join(outDir, "package.json"));
 		const packageName =
-			exists && (!force || copy) ? getPackageJson(outDir).name : fallbackName;
+			hasPackageJson && (!force || copy)
+				? getPackageJson(outDir).name
+				: fallbackName;
 
 		return {
 			destination,

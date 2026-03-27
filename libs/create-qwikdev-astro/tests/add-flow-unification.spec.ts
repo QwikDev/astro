@@ -188,10 +188,15 @@ test.group("--add flow multi-framework detection", (group) => {
       app.intercept("Would you like to save the changes with Git?", false);
       app.intercept("Would you like to add CI workflow?", false);
 
-      // This must not throw — interact() should handle missing package.json gracefully
-      const result = await run([pm.name, "create", fixtureRoot, "--add"]);
+      // Call interact() directly — run() would continue to execute() which calls
+      // process.exit via panic(), killing the test runner.
+      // parse() expects hideBin'd args (positional + flags only).
+      const definition = app.parse([fixtureRoot, "--add"]);
+      const input = await app.interact(definition);
 
-      assert.isTrue(result === 0 || result === 1, `Expected exit 0 or 1, got ${result}`);
+      // interact() must not throw. packageName should fall back to sanitized dir name.
+      assert.isString(input.packageName);
+      assert.isTrue(input.packageName.length > 0, "packageName should not be empty");
     } finally {
       process.env.CI = origCI;
       process.env.NODE_ENV = origNodeEnv;
