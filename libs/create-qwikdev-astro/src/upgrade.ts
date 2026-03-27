@@ -180,7 +180,6 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       // Step 2: Swap packages
       const failures: string[] = [];
       this.step("Swapping Qwik packages...");
-      // Note: @builder.io/qwik-city is NOT removed here because router migration
       // (import rewriting, replacement package install) is out of scope.
       // Removing it without migration would break apps that depend on it.
       const oldPackages = ["@builder.io/qwik", "@qwikdev/astro"];
