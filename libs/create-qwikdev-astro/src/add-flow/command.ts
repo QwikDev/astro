@@ -120,8 +120,6 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
 
       // Step 3: Detect existing frameworks in config
       const configResult = detectConfigFrameworks(configSource);
-      // TODO: detectSourceFrameworks(input.absDir) can be wired here later
-      // for heuristic JSX strategy suggestions based on source file analysis
 
       // Step 4: Handle each outcome
       if (configResult.outcome === "none") {

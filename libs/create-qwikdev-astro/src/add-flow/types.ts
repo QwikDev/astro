@@ -40,11 +40,3 @@ export type MultiFrameworkResult = {
   edits: ConfigEdit[];
 };
 
-/**
- * A signal that a framework is used in source files.
- */
-export type SourceSignal = {
-  framework: string;
-  file: string;
-  signal: "import" | "pragma" | "extension";
-};
