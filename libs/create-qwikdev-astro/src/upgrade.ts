@@ -219,11 +219,31 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
             `Failed to install new packages. Run manually: ${newPackages.join(" ")}`
           );
         }
+
+        // Add @builder.io/qwik alias so v1 ecosystem peer deps resolve to @qwik.dev/core
+        try {
+          const updatedPkgJson = getPackageJson(input.absDir);
+          const updatedDeps = {
+            ...((updatedPkgJson.dependencies as Record<string, string> | undefined) ?? {}),
+            ...((updatedPkgJson.devDependencies as Record<string, string> | undefined) ?? {})
+          };
+          const coreVersion = updatedDeps["@qwik.dev/core"];
+          if (coreVersion) {
+            const aliasSpec = `@builder.io/qwik@npm:@qwik.dev/core@${coreVersion}`;
+            await pm.add([aliasSpec], { cwd: input.absDir });
+            this.info(`Added alias: @builder.io/qwik -> npm:@qwik.dev/core@${coreVersion}`);
+          }
+        } catch {
+          this.warn(
+            "Failed to add @builder.io/qwik alias. Run manually: npm install @builder.io/qwik@npm:@qwik.dev/core@<version>"
+          );
+        }
       } else {
         if (toRemove.length > 0) {
           this.info(`Would remove: ${toRemove.join(", ")}`);
         }
         this.info(`Would install: ${newPackages.join(", ")}`);
+        this.info("Would add alias: @builder.io/qwik -> npm:@qwik.dev/core@<version>");
         results.removedPackages = toRemove;
         results.installedPackages = newPackages;
       }
@@ -412,6 +432,7 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       lines.push("  Review changed files");
       lines.push(`  Run your project: ${this.gray(`${pm.name} run dev`)}`);
       lines.push(`  Migration docs: ${this.gray(MIGRATION_DOCS_URL)}`);
+      lines.push(`  Update ecosystem packages: ${this.gray("@qwik-ui/headless, @qwikest/icons, etc. to latest versions")}`);
 
       this.note(lines.join("\n"), "Upgrade Summary");
       this.outro("Upgrade complete!");
