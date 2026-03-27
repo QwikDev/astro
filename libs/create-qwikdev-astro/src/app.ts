@@ -170,8 +170,12 @@ export class Application extends Program<Definition, Input> {
 	}
 
 	validate(definition: Definition): Input {
+		const destination =
+			definition.add && definition.destination === defaultDefinition.destination
+				? "./"
+				: definition.destination;
 		return {
-			destination: definition.destination,
+			destination,
 			adapter: definition.adapter,
 			template: definition.template ?? "",
 			add: !!definition.add,
@@ -186,11 +190,11 @@ export class Application extends Program<Definition, Input> {
 			ci: definition.ci ?? (!!definition.yes && !definition.no),
 			git: definition.git ?? (!!definition.yes && !definition.no),
 			dryRun: !!definition.dryRun,
-			outDir: resolveAbsoluteDir(definition.destination),
+			outDir: resolveAbsoluteDir(destination),
 			packageName:
-				sanitizePackageName(definition.destination) ||
+				sanitizePackageName(destination) ||
 				sanitizePackageName(
-					path.basename(resolveAbsoluteDir(definition.destination)),
+					path.basename(resolveAbsoluteDir(destination)),
 				),
 		};
 	}

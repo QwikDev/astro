@@ -231,6 +231,20 @@ test.group("--add flow multi-framework detection", (group) => {
     );
   }).disableTimeout();
 
+  test("--add --yes (non-interactive) defaults to current directory, not ./qwik-astro-app", async ({
+    assert
+  }) => {
+    // validate() is the non-interactive path (CI, --yes, --no).
+    // When --add is set, destination should resolve to "./" not "./qwik-astro-app".
+    const definition = app.parse(["--add", "--yes"]);
+    const input = app.validate(definition);
+
+    assert.isFalse(
+      input.outDir.endsWith("qwik-astro-app"),
+      `--add --yes should resolve to cwd, not ./qwik-astro-app. Got: ${input.outDir}`
+    );
+  }).disableTimeout();
+
   test("--add on React project detects framework and applies exclude", async ({
     assert
   }) => {
