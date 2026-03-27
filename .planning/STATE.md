@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed quick task 13
+stopped_at: Completed quick task 16
 last_updated: "2026-03-27T00:00:00.000Z"
-last_activity: 2026-03-27 — Completed quick task 15: hardened assertPmResult usage in upgrade.ts/app.ts; JSONC tsconfig parsing in upgrade-rewrite.ts
+last_activity: 2026-03-27 — Completed quick task 16: hardened upgrade full test to require success unconditionally; added React-only e2e --add test with real install
 progress:
   total_phases: 3
   completed_phases: 3
@@ -117,9 +117,10 @@ None yet.
 | 12 | Fix persistTsconfigForAdd to strip JSONC comments before parsing; extract stripJsonComments to utils.ts | 2026-03-27 | 37d2498 | [12-fix-persisttsconfigforadd-comment-stripp](./quick/12-fix-persisttsconfigforadd-comment-stripp/) |
 | 13 | Fix scaffold.ts Counter.tsx template path — import shared __dirname from utils.ts, single .. traversal | 2026-03-27 | c64565b | [13-fix-scaffold-ts-counter-tsx-template-pat](./quick/13-fix-scaffold-ts-counter-tsx-template-pat/) |
 | 15 | Fix unchecked panam results (assertPmResult) in upgrade.ts/app.ts; JSONC tsconfig parsing in upgrade-rewrite.ts | 2026-03-27 | e8d1f61 | [15-fix-production-readiness-issues-assertpm](./quick/15-fix-production-readiness-issues-assertpm/) |
+| 16 | Harden upgrade full test to require success unconditionally; add React-only e2e --add test with real install | 2026-03-27 | 99e89f2 | [16-harden-upgrade-test-to-require-success-a](./quick/16-harden-upgrade-test-to-require-success-a/) |
 
 ## Session Continuity
 
-Last session: 2026-03-27T23:41:51Z
-Stopped at: Completed quick task 15
+Last session: 2026-03-27T00:00:00Z
+Stopped at: Completed quick task 16
 Resume file: None
