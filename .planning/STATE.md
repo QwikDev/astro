@@ -5,7 +5,7 @@ milestone_name: milestone
 status: completed
 stopped_at: Completed quick task 10
 last_updated: "2026-03-27T00:00:00.000Z"
-last_activity: 2026-03-27 — Completed quick task 11: unify --add flag flow with add subcommand multi-framework detection
+last_activity: 2026-03-27 — Completed quick task 12: fix persistTsconfigForAdd JSONC comment stripping; extract stripJsonComments to utils.ts
 progress:
   total_phases: 3
   completed_phases: 3
@@ -114,9 +114,10 @@ None yet.
 | 9 | Add @builder.io/qwik npm alias install and ecosystem warning to upgrade script | 2026-03-27 | faa77f4 | [9-add-builder-io-qwik-npm-alias-to-upgrade](./quick/9-add-builder-io-qwik-npm-alias-to-upgrade/) |
 | 10 | Fix duplicate qwik() integration entry when --add on already-configured project | 2026-03-27 | 3b4a499 | [10-fix-duplicate-qwik-astro-addition-when-a](./quick/10-fix-duplicate-qwik-astro-addition-when-a/) |
 | 11 | Unify --add flag flow with add subcommand multi-framework detection | 2026-03-27 | 5eefd54 | [11-unify-add-and-add-flows-so-documented-pa](./quick/11-unify-add-and-add-flows-so-documented-pa/) |
+| 12 | Fix persistTsconfigForAdd to strip JSONC comments before parsing; extract stripJsonComments to utils.ts | 2026-03-27 | 37d2498 | [12-fix-persisttsconfigforadd-comment-stripp](./quick/12-fix-persisttsconfigforadd-comment-stripp/) |
 
 ## Session Continuity
 
-Last session: 2026-03-27T19:27:01Z
-Stopped at: Completed quick task 11
+Last session: 2026-03-27T19:42:26Z
+Stopped at: Completed quick task 12
 Resume file: None
