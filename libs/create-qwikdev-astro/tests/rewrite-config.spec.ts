@@ -1,6 +1,13 @@
+import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import { generateWarning, rewriteConfig } from "../src/add-flow/rewrite-config.js";
 import type { MultiFrameworkResult } from "../src/add-flow/types.js";
+
+declare module "@japa/runner/core" {
+  interface TestContext {
+    assert: Assert;
+  }
+}
 
 test.group("rewriteConfig", () => {
   test("react() with no args gets include added", ({ assert }) => {

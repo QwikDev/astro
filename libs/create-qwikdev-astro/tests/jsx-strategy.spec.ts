@@ -1,9 +1,16 @@
+import type { Assert } from "@japa/assert";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "@japa/runner";
 import { determineJsxStrategy } from "../src/add-flow/jsx-strategy.js";
 import { scaffoldQwikComponent } from "../src/add-flow/scaffold.js";
+
+declare module "@japa/runner/core" {
+  interface TestContext {
+    assert: Assert;
+  }
+}
 
 test.group("determineJsxStrategy", () => {
   test("primary returns correct strategy", ({ assert }) => {

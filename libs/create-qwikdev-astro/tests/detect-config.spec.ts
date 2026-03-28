@@ -1,5 +1,12 @@
+import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import { detectConfigFrameworks } from "../src/add-flow/detect-config.js";
+
+declare module "@japa/runner/core" {
+  interface TestContext {
+    assert: Assert;
+  }
+}
 
 test.group("detectConfigFrameworks", () => {
   test("single react integration detected", ({ assert }) => {

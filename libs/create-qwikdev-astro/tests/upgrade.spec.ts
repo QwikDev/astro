@@ -1,3 +1,4 @@
+import type { Assert } from "@japa/assert";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "@japa/runner";
@@ -6,6 +7,12 @@ import pm from "panam";
 import { ProgramTester } from "../src/tester.js";
 import upgradeApp, { defaultUpgradeDefinition } from "../src/upgrade.js";
 import { stripJsonComments } from "../src/utils.js";
+
+declare module "@japa/runner/core" {
+  interface TestContext {
+    assert: Assert;
+  }
+}
 
 process.env.NODE_ENV = "test";
 process.env.CI = "1";
