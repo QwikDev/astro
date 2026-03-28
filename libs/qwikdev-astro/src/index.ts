@@ -151,13 +151,6 @@ export default defineIntegration({
             ssr: {
               noExternal: ["@qwik.dev/core", "@qwik.dev/core/optimizer"]
             },
-            build: {
-              rollupOptions: {
-                output: {
-                  inlineDynamicImports: false
-                }
-              }
-            },
             plugins: [
               qwikNoExternalPlugin,
               virtualModulePlugin,
