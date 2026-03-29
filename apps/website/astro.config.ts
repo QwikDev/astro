@@ -7,19 +7,19 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   prefetch: {
     prefetchAll: true,
-    defaultStrategy: "viewport"
+    defaultStrategy: "viewport",
   },
   integrations: [qwik({ clientRouter: true }), icon(), mdx()],
   markdown: {
     shikiConfig: {
       themes: {
         light: "github-light",
-        dark: "github-dark"
+        dark: "github-dark",
       },
-      defaultColor: false
-    }
+      defaultColor: false,
+    },
   },
   image: {
-    domains: ["img.youtube.com", "avatars.githubusercontent.com"]
-  }
+    domains: ["img.youtube.com", "avatars.githubusercontent.com"],
+  },
 });

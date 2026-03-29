@@ -7,8 +7,8 @@ const docs = defineCollection({
     title: z.string(),
     label: z.string(),
     description: z.string(),
-    order: z.number()
-  })
+    order: z.number(),
+  }),
 });
 
 export const collections = { docs };

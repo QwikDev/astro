@@ -32,6 +32,12 @@ const { title, currentPath, toc = [] } = Astro.props;
     <meta name="description" content="Qwik + Astro documentation" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+    <meta property="og:title" content={`${title} — Qwik + Astro`} />
+    <meta property="og:image" content={`/og${currentPath}.png`} />
+    <meta property="og:type" content="article" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} — Qwik + Astro`} />
+    <meta name="twitter:image" content={`/og${currentPath}.png`} />
     <title>{title} — Qwik + Astro</title>
     <ClientRouter />
   </head>

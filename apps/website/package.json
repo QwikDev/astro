@@ -32,6 +32,7 @@
     "sharp": "^0.33.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4"
+    "@biomejs/biome": "^1.9.4",
+    "satori": "^0.26.0"
   }
 }
