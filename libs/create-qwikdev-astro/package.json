@@ -2,7 +2,7 @@
   "name": "@qwik.dev/create-astro",
   "type": "module",
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Interactive CLI for creating @qwik.dev/astro projects.",
   "scripts": {
     "check": "tsc --noEmit",
