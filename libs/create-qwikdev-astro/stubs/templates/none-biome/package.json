@@ -25,5 +25,13 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.0"
+  },
+  "overrides": {
+    "vite": "^7.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite": "^7.3"
+    }
   }
 }
