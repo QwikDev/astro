@@ -4,10 +4,19 @@ import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
 import { $ } from "panam/executor";
 import pm from "panam/pm";
 import pkg from "../package.json";
+import {
+  detectConfigFrameworks,
+  hasQwikImport,
+  isQwikRegistered
+} from "./add-flow/detect-config";
+import { determineJsxStrategy } from "./add-flow/jsx-strategy";
+import { generateWarning, rewriteConfig } from "./add-flow/rewrite-config";
+import { scaffoldQwikComponent } from "./add-flow/scaffold";
 import { ensureString } from "./console";
 import { type Definition as BaseDefinition, Program } from "./core";
 import {
   __dirname,
+  assertPmResult,
   clearDir,
   getPackageJson,
   notEmptyDir,
@@ -16,6 +25,7 @@ import {
   resolveRelativeDir,
   safeCopy,
   sanitizePackageName,
+  stripJsonComments,
   updatePackageName
 } from "./utils";
 
@@ -96,7 +106,7 @@ export class Application extends Program<Definition, Input> {
         alias: "a",
         type: "boolean",
         default: defaultDefinition.add,
-        desc: "Add QwikDev/astro to existing project"
+        desc: "Add @qwik.dev/astro to existing project"
       })
       .option("force", {
         alias: "f",
@@ -159,8 +169,12 @@ export class Application extends Program<Definition, Input> {
   }
 
   validate(definition: Definition): Input {
+    const destination =
+      definition.add && definition.destination === defaultDefinition.destination
+        ? "./"
+        : definition.destination;
     return {
-      destination: definition.destination,
+      destination,
       adapter: definition.adapter,
       template: definition.template ?? "",
       add: !!definition.add,
@@ -168,153 +182,143 @@ export class Application extends Program<Definition, Input> {
         definition.force ?? (definition.add ? false : !!definition.yes && !definition.no),
       copy: !!definition.copy,
       biome: definition.biome ?? (!!definition.yes && !definition.no),
-      install: definition.install ?? (!!definition.yes && !definition.no),
+      install:
+        definition.install ??
+        (!!definition.template || (!!definition.yes && !definition.no)),
       ci: definition.ci ?? (!!definition.yes && !definition.no),
       git: definition.git ?? (!!definition.yes && !definition.no),
       dryRun: !!definition.dryRun,
-      outDir: resolveAbsoluteDir(definition.destination),
-      packageName: sanitizePackageName(definition.destination)
+      outDir: resolveAbsoluteDir(destination),
+      packageName:
+        sanitizePackageName(destination) ||
+        sanitizePackageName(path.basename(resolveAbsoluteDir(destination)))
     };
   }
 
   async interact(definition: Definition): Promise<Input> {
-    const destination =
-      definition.destination === defaultDefinition.destination
-        ? await this.scanString(
-            `Where would you like to create your new project? ${this.gray(
-              `(Use './' for current directory)`
-            )}`,
-            definition.destination
-          )
-        : definition.destination;
+    let destination = definition.destination;
+    if (destination === defaultDefinition.destination) {
+      const defaultDest = definition.add ? "./" : definition.destination;
+      destination = await this.scanString(
+        `Where would you like to ${definition.add ? "add @qwik.dev/astro" : "create your new project"}? ${this.gray(
+          `(Use './' for current directory)`
+        )}`,
+        defaultDest
+      );
+    }
 
     const outDir = resolveAbsoluteDir(destination.trim());
     const exists = notEmptyDir(outDir);
 
-    const template: string =
+    const add = definition.force
+      ? false
+      : await this.confirmOption(
+          definition,
+          definition.add,
+          exists,
+          "Do you want to add @qwik.dev/astro to your existing project?"
+        );
+
+    const force = await this.confirmOption(
+      definition,
+      definition.force,
+      exists && !add,
+      `Directory "./${resolveRelativeDir(outDir)}" already exists and is not empty. Would you like to force the copy?`,
+      false
+    );
+
+    const shouldPrompt = !exists || add || force;
+
+    let template = definition.template ?? "";
+    let adapter: Adapter = definition.adapter;
+
+    const shouldPromptStarter =
       definition.template === undefined &&
-      (await this.scanBoolean(
-        definition,
-        "Would you like to use the default template?",
-        true
-      ))
-        ? await this.scanString("What template would you like to use?", "")
-        : (definition.template ?? "");
-
-    const useTemplate = !!template;
-
-    const add = !!(definition.add === undefined && !definition.force
-      ? exists &&
-        (await this.scanBoolean(
-          definition,
-          "Do you want to add @QwikDev/astro to your existing project?"
-        ))
-      : definition.add);
-
-    const force =
-      definition.force === undefined
-        ? exists &&
-          !add &&
-          !!(await this.scanBoolean(
-            definition,
-            `Directory "./${resolveRelativeDir(
-              outDir
-            )}" already exists and is not empty. Would you like to force the copy?`,
-            false
-          ))
-        : definition.force;
-
-    const copy =
-      !useTemplate && (add || force)
-        ? definition.copy === undefined
-          ? await this.scanBoolean(
-              definition,
-              "Copy template files safely (without overwriting existing files)?",
-              !add
-            )
-          : false
-        : !!definition.copy;
-
-    const ask = !exists || add || force;
-
-    let adapter: Adapter;
-
-    if (
-      !useTemplate &&
-      ask &&
+      shouldPrompt &&
       (!add || force) &&
-      definition.adapter === defaultDefinition.adapter
-    ) {
-      const adapterInput =
-        ((await this.scanBoolean(
-          definition,
-          "Would you like to use a server adapter?",
-          false
-        )) &&
-          (await this.scanChoice(
-            "Which adapter do you prefer?",
-            [
-              {
-                value: "node",
-                label: "Node"
-              },
-              {
-                value: "deno",
-                label: "Deno"
-              },
-              {
-                value: "none",
-                label: "None"
-              }
-            ],
-            definition.adapter
-          ))) ||
-        "none";
+      definition.adapter === defaultDefinition.adapter;
 
-      ensureString(adapterInput, (v): v is Adapter =>
-        ["none", "node", "deno"].includes(v)
+    if (shouldPromptStarter) {
+      const starter = await this.scanChoice<Adapter | "template">(
+        "How would you like to start?",
+        [
+          { value: "none", label: "Default starter (Qwik + Astro)" },
+          { value: "node", label: "With Node.js server adapter" },
+          { value: "deno", label: "With Deno server adapter" },
+          { value: "template", label: "From an Astro template" }
+        ],
+        "none" as Adapter | "template"
       );
 
-      adapter = adapterInput;
-    } else {
-      adapter = definition.adapter;
+      if (starter === "template") {
+        template = await this.scanString(
+          `Which Astro template? ${this.gray("(e.g. minimal, blog, starlight)")}`,
+          "minimal"
+        );
+      } else {
+        ensureString(starter, (v): v is Adapter => ["none", "node", "deno"].includes(v));
+        adapter = starter as Adapter;
+      }
     }
 
-    const biome = !!(ask && !add && definition.biome === undefined
-      ? await this.scanBoolean(definition, "Would you prefer Biome over ESLint/Prettier?")
-      : definition.biome);
+    const shouldAskCopy = !template && (add || force);
+    const copy = await this.confirmOption(
+      definition,
+      definition.copy,
+      shouldAskCopy,
+      "Copy template files safely (without overwriting existing files)?",
+      !add
+    );
 
-    const ci = !!(ask && definition.ci === undefined
-      ? await this.scanBoolean(definition, "Would you like to add CI workflow?")
-      : definition.ci);
+    const biome = await this.confirmOption(
+      definition,
+      definition.biome,
+      shouldPrompt && !add,
+      "Would you prefer Biome over ESLint/Prettier?"
+    );
 
-    const install = !!(ask && definition.install === undefined
-      ? await this.scanBoolean(
-          definition,
-          `Would you like to install ${pm.name} dependencies?`
-        )
-      : definition.install);
+    let install: boolean;
+    if (template) {
+      if (definition.install === false) {
+        this.error(
+          "Astro templates require dependency installation to add @qwik.dev/astro. Remove --no-install or use a starter template instead."
+        );
+        this.cancel();
+        process.exit(1);
+      }
+      install = true;
+    } else {
+      install = await this.confirmOption(
+        definition,
+        definition.install,
+        shouldPrompt,
+        `Would you like to install ${pm.name} dependencies?`
+      );
+    }
 
-    const git = !!(ask && definition.git === undefined
-      ? await this.scanBoolean(
-          definition,
-          !exists || force
-            ? "Would you like to initialize Git?"
-            : "Would you like to save the changes with Git?"
-        )
-      : definition.git);
+    const gitMessage =
+      !exists || force
+        ? "Would you like to initialize Git?"
+        : "Would you like to save the changes with Git?";
+    const git = await this.confirmOption(
+      definition,
+      definition.git,
+      shouldPrompt,
+      gitMessage
+    );
 
-    const dryRun = !!definition.dryRun;
+    const ci = await this.confirmOption(
+      definition,
+      definition.ci,
+      shouldPrompt,
+      "Would you like to add CI workflow?"
+    );
 
-    let packageName =
-      exists && (!force || copy)
-        ? getPackageJson(outDir).name
-        : sanitizePackageName(destination);
-
-    packageName =
-      !ask || definition.yes
-        ? packageName
-        : await this.scanString("What should be the name of this package?", packageName);
+    const fallbackName =
+      sanitizePackageName(destination) || sanitizePackageName(path.basename(outDir));
+    const hasPackageJson = exists && fs.existsSync(path.join(outDir, "package.json"));
+    const packageName =
+      hasPackageJson && (!force || copy) ? getPackageJson(outDir).name : fallbackName;
 
     return {
       destination,
@@ -329,11 +333,18 @@ export class Application extends Program<Definition, Input> {
       copy,
       outDir,
       packageName,
-      dryRun
+      dryRun: definition.dryRun ?? false
     };
   }
 
   async execute(input: Input): Promise<number> {
+    if (input.template && !input.install) {
+      this.error(
+        "Astro templates require dependency installation to add @qwik.dev/astro. Remove --no-install or use a starter template instead."
+      );
+      return 1;
+    }
+
     try {
       const ranInstall = await this.start(input);
       this.updatePackageJson(input);
@@ -342,16 +353,140 @@ export class Application extends Program<Definition, Input> {
       this.end(input, ranInstall);
       return 0;
     } catch (err) {
-      console.error("An error occurred during QwikDev/astro project creation:", err);
+      console.error("An error occurred during @qwik.dev/astro project creation:", err);
       return 1;
     }
   }
 
   async runAdd(input: Input) {
-    this.info("Adding @QwikDev/astro...");
+    this.info("Adding @qwik.dev/astro...");
     try {
-      if (!input.dryRun) {
-        await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir });
+      // Step 1: Locate astro.config file
+      const configExts = [".mts", ".ts", ".mjs", ".js"];
+      let configPath: string | null = null;
+      let configSource: string | null = null;
+
+      for (const ext of configExts) {
+        const candidate = path.join(input.outDir, `astro.config${ext}`);
+        if (fs.existsSync(candidate)) {
+          configPath = candidate;
+          configSource = fs.readFileSync(candidate, "utf-8");
+          break;
+        }
+      }
+
+      // Step 2: Pre-install and registration checks (existing behavior)
+      const needsPreInstall = configSource !== null && hasQwikImport(configSource);
+      const alreadyRegistered = configSource !== null && isQwikRegistered(configSource);
+
+      if (!input.dryRun && needsPreInstall) {
+        this.info("@qwik.dev/astro found in config — installing before astro add.");
+        assertPmResult(
+          await pm.add(["@qwik.dev/astro", "@qwik.dev/core"], {
+            cwd: input.outDir
+          }),
+          "pm.add @qwik.dev/astro"
+        );
+      }
+
+      // Step 3: Multi-framework detection
+      if (configSource !== null) {
+        const configResult = detectConfigFrameworks(configSource);
+
+        if (configResult.outcome === "safe") {
+          // Prompt for JSX strategy
+          const choice = (await this.scanChoice(
+            "Should Qwik be the primary JSX source?",
+            [
+              {
+                value: "primary",
+                label: "Yes — Qwik owns tsconfig jsxImportSource"
+              },
+              {
+                value: "secondary",
+                label: "No — keep existing framework as primary"
+              }
+            ],
+            "primary"
+          )) as "primary" | "secondary";
+
+          const strategy = determineJsxStrategy(choice);
+
+          // Persist tsconfig change if primary
+          this.persistTsconfigForAdd(input, strategy);
+
+          // Rewrite config with exclude patterns
+          const rewrittenSource = rewriteConfig(configSource, configResult);
+          if (rewrittenSource !== null && configPath !== null && !input.dryRun) {
+            fs.writeFileSync(configPath, rewrittenSource, "utf-8");
+          }
+
+          // Scaffold Qwik component
+          await scaffoldQwikComponent(input.outDir, strategy, input.dryRun);
+
+          // Install qwik via astro add (or skip if already registered)
+          if (!input.dryRun) {
+            if (alreadyRegistered) {
+              this.info(
+                "@qwik.dev/astro already registered in config — skipping astro add."
+              );
+            } else {
+              assertPmResult(
+                await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
+                "astro add @qwik.dev/astro"
+              );
+            }
+          }
+        } else if (
+          configResult.outcome === "unsafe" ||
+          configResult.outcome === "already-configured"
+        ) {
+          // Warn and proceed without auto-config
+          this.warn(generateWarning(configResult));
+          const strategy = determineJsxStrategy("secondary");
+          await scaffoldQwikComponent(input.outDir, strategy, input.dryRun);
+
+          if (!input.dryRun) {
+            if (alreadyRegistered) {
+              this.info(
+                "@qwik.dev/astro already registered in config — skipping astro add."
+              );
+            } else {
+              assertPmResult(
+                await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
+                "astro add @qwik.dev/astro"
+              );
+            }
+          }
+        } else {
+          // outcome === "none" — no other frameworks, add as primary
+          if (!input.dryRun) {
+            if (alreadyRegistered) {
+              this.info(
+                "@qwik.dev/astro already registered in config — skipping astro add."
+              );
+            } else {
+              assertPmResult(
+                await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
+                "astro add @qwik.dev/astro"
+              );
+            }
+          }
+          const strategy = determineJsxStrategy("primary");
+          this.persistTsconfigForAdd(input, strategy);
+          await scaffoldQwikComponent(input.outDir, strategy, input.dryRun);
+        }
+      } else {
+        // No config file found — just run astro add directly
+        if (!input.dryRun) {
+          assertPmResult(
+            await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
+            "astro add @qwik.dev/astro"
+          );
+        }
+        const strategy = determineJsxStrategy("primary");
+        this.persistTsconfigForAdd(input, strategy);
+        await scaffoldQwikComponent(input.outDir, strategy, input.dryRun);
       }
 
       if (input.copy) {
@@ -359,6 +494,30 @@ export class Application extends Program<Definition, Input> {
       }
     } catch (e: any) {
       this.panic(`${e.message ?? e}: . Please try it manually.`);
+    }
+  }
+
+  private persistTsconfigForAdd(
+    input: Input,
+    strategy: import("./add-flow/jsx-strategy.js").JsxStrategy
+  ): void {
+    if (strategy.tsconfigSource === null) return;
+
+    const tsconfigPath = path.join(input.outDir, "tsconfig.json");
+    if (!fs.existsSync(tsconfigPath)) return;
+
+    const tsconfigRaw = fs.readFileSync(tsconfigPath, "utf-8");
+    let tsconfig: any;
+    try {
+      tsconfig = JSON.parse(stripJsonComments(tsconfigRaw));
+    } catch {
+      return; // Can't parse even after stripping — don't touch it
+    }
+    tsconfig.compilerOptions = tsconfig.compilerOptions ?? {};
+    tsconfig.compilerOptions.jsxImportSource = strategy.tsconfigSource;
+
+    if (!input.dryRun) {
+      fs.writeFileSync(tsconfigPath, `${JSON.stringify(tsconfig, null, 2)}\n`, "utf-8");
     }
   }
 
@@ -401,24 +560,37 @@ export class Application extends Program<Definition, Input> {
       input.template,
       "--add",
       "@qwik.dev/astro",
-      input.install ? "--install" : "--no-install",
+      "--install",
       input.git ? "--git" : "--no-git"
     ];
 
-    if (input.dryRun) {
-      args.push("--dry-run");
-    }
+    if (input.dryRun) args.push("--dry-run");
 
     await this.prepareDir(input);
 
     const res = await pm.create(args.join(" "));
-    if (!res.status) {
-      this.panic(`Template creation failed: ${res.error}`);
-    }
+    if (!res.status) this.panic(`Template creation failed: ${res.error}`);
 
     this.copyTools(input);
+    return true;
+  }
 
-    return this.runInstall(input);
+  private async confirmOption(
+    definition: Definition,
+    flag: boolean | undefined,
+    shouldAsk: boolean,
+    message: string,
+    initialValue?: boolean
+  ): Promise<boolean> {
+    if (flag !== undefined) return flag;
+    if (!shouldAsk) return false;
+
+    const response =
+      initialValue !== undefined
+        ? await this.scanBoolean(definition, message, initialValue)
+        : await this.scanBoolean(definition, message);
+
+    return response ?? false;
   }
 
   async start(input: Input): Promise<boolean> {
@@ -509,7 +681,15 @@ export class Application extends Program<Definition, Input> {
       this.step(`Installing${input.template ? " new " : " "}dependencies...`);
 
       if (!input.dryRun) {
-        await pm.install({ cwd: input.outDir });
+        try {
+          const installResult = await pm.install({ cwd: input.outDir });
+          assertPmResult(installResult, "install dependencies");
+        } catch (e) {
+          this.error(
+            `Dependency installation failed: ${e instanceof Error ? e.message : e}`
+          );
+          return false;
+        }
       }
 
       ranInstall = true;

@@ -16,15 +16,49 @@
 
 ## Quick Start
 
+**npm**
 ```bash
 npm create @qwik.dev/astro@latest
 ```
 
-Or add to an existing Astro project:
-
+**pnpm**
 ```bash
-npx astro add @qwik.dev/astro
+pnpm create @qwik.dev/astro@latest
 ```
+
+**yarn**
+```bash
+yarn create @qwik.dev/astro
+```
+
+**bun**
+```bash
+bun create @qwik.dev/astro
+```
+
+### Add to an existing project
+
+**npm**
+```bash
+npm create @qwik.dev/astro@latest ./my-project --add
+```
+
+**pnpm**
+```bash
+pnpm create @qwik.dev/astro@latest ./my-project --add
+```
+
+**yarn**
+```bash
+yarn create @qwik.dev/astro ./my-project --add
+```
+
+**bun**
+```bash
+bun create @qwik.dev/astro ./my-project --add
+```
+
+See the [CLI documentation](libs/create-qwikdev-astro/README.md) for all available commands and options.
 
 For full installation instructions, guides, and API reference, visit **[qwik.dev/astro](https://qwik.dev/astro)**.
 
@@ -32,11 +66,30 @@ For full installation instructions, guides, and API reference, visit **[qwik.dev
 
 This is the v2 branch (`build/v2`), which supports **Qwik v2** and **Astro 6+** under the new `@qwik.dev/astro` package name. If you need Astro <5 or Qwik v1, use the [`@qwikdev/astro`](https://www.npmjs.com/package/@qwikdev/astro) package (without the dot).
 
-For a step-by-step migration guide, see [Upgrading to v2](https://astro.qwik.dev/docs/upgrade/).
+Run the upgrade script from your project directory:
+
+```sh
+npm create @qwik.dev/astro@latest upgrade
+```
+
+The upgrade script handles package swaps and import rewrites automatically. However, it does not cover Astro-specific breaking changes:
+
+- **`<ViewTransitions />` renamed to `<ClientRouter />`** — Astro renamed this component. Update your layouts accordingly.
+- **`clientRouter` is now required in the integration config** — `@qwik.dev/astro` requires a `clientRouter: true | false` property in your `astro.config`:
+
+  ```js
+  import qwik from "@qwik.dev/astro";
+
+  export default defineConfig({
+    integrations: [qwik({ clientRouter: true })],
+  });
+  ```
+
+If the script doesn't work for your setup, follow the [manual upgrade guide](https://astro.qwik.dev/docs/upgrade/).
 
 ## Contributing
 
-See our [Contributing Guide](https://qwik.dev/astro/contributing) to get started.
+See our [Contributing Guide](https://astro.qwik.dev/docs/contributing/) to get started.
 
 ## Help
 

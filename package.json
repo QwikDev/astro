@@ -46,15 +46,15 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@changesets/cli": "^2.29.4",
+    "@changesets/cli": "^2.30.0",
     "@playwright/test": "^1.58.2",
     "@qwik.dev/astro": "workspace:*",
-    "@qwik.dev/core": "https://pkg.pr.new/QwikDev/qwik/@qwik.dev/core@9d29f75",
+    "@qwik.dev/core": "2.0.0-beta.30",
     "@qwik.dev/create-astro": "workspace:*",
-    "@types/node": "^22.15.31",
+    "@types/node": "^22.19.15",
     "astro": "6.0.6",
-    "lefthook": "^1.11.13",
+    "lefthook": "^1.13.6",
     "pkg-pr-new": "^0.0.35",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.2"
   }
 }

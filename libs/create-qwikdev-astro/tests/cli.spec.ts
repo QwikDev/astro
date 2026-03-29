@@ -1,14 +1,25 @@
+import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import { TestContext } from "@japa/runner/core";
-import { run } from "@qwik.dev/create-astro";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 import pm from "panam";
+import addApp, { defaultAddDefinition } from "../src/add-flow/command.js";
+import { run } from "../src/index.js";
+import { ProgramTester } from "../src/tester.js";
+import type { PathTester } from "../src/tester.js";
+
+declare module "@japa/runner/core" {
+  interface TestContext {
+    assert: Assert;
+    path(path: string): PathTester;
+  }
+}
 
 process.env.NODE_ENV = "test";
 process.env.CI = "1";
 
 const integration = "@qwik.dev/astro";
-const root = "labs";
+const root = "/tmp/qwik-astro-test-cli";
 const project = "test-app";
 
 delete process.env.npm_config_user_agent;
@@ -68,8 +79,11 @@ const getGeneratedFiles = (options: GeneratedOptions = {}): string[] => {
 
   if (!options.template) {
     files.push(
-      "src/assets/astro.svg",
-      "src/assets/qwik.svg",
+      "src/assets/qwik-astro-logo.svg",
+      "src/assets/icon-components.svg",
+      "src/assets/icon-config.svg",
+      "src/assets/icon-layouts.svg",
+      "src/assets/icon-pages.svg",
       "src/components/counter.module.css",
       "src/components/counter.tsx",
       "src/layouts/Layout.astro",
@@ -151,6 +165,19 @@ test.group(`create ${integration} app`, (group) => {
       template: true
     });
   }).disableTimeout();
+
+  test("with template and --no-install fails", async ({ assert }) => {
+    const destination = `${root}/${project}`;
+    const result = await run([
+      pm.name,
+      "create",
+      destination,
+      "--template",
+      "minimal",
+      "--no-install"
+    ]);
+    assert.equal(result, 1);
+  });
 });
 
 test.group(`create ${integration} with yes and no options`, (group) => {
@@ -222,3 +249,42 @@ function testProjectFiles(
     assert.isTrue(testFile.isFile());
   }
 }
+
+const addTester = new ProgramTester(addApp);
+
+test.group("add command", () => {
+  test("default definition", ({ assert }) => {
+    const def = addTester.parse([]);
+    assert.isTrue(def.has("directory", "dryRun"));
+    assert.isTrue(def.get("directory").isString());
+    assert.isTrue(def.get("directory").equals("."));
+    assert.isTrue(def.get("directory").equals(defaultAddDefinition.directory));
+  });
+
+  test("directory argument", ({ assert }) => {
+    const def = addTester.parse(["./my-project"]);
+    assert.isTrue(def.get("directory").equals("./my-project"));
+  });
+
+  test("--dry-run option", ({ assert }) => {
+    const def = addTester.parse(["--dry-run"]);
+    assert.isTrue(def.get("dryRun").isBoolean());
+    assert.isTrue(def.get("dryRun").isTrue());
+  });
+
+  test("--yes option", ({ assert }) => {
+    const def = addTester.parse(["--yes"]);
+    assert.isTrue(def.get("yes").isTrue());
+  });
+
+  test("--no option", ({ assert }) => {
+    const def = addTester.parse(["--no"]);
+    assert.isTrue(def.get("no").isTrue());
+  });
+
+  test("combined: directory + --dry-run", ({ assert }) => {
+    const def = addTester.parse(["./proj", "--dry-run"]);
+    assert.isTrue(def.get("directory").equals("./proj"));
+    assert.isTrue(def.get("dryRun").isTrue());
+  });
+});

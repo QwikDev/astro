@@ -1,7 +1,7 @@
 import { assert } from "@japa/assert";
 import { configure, processCLIArgs, run } from "@japa/runner";
 import { TestContext } from "@japa/runner/core";
-import { PathTester } from "@qwik.dev/create-astro/tester";
+import { PathTester } from "../src/tester.js";
 
 declare module "@japa/runner/core" {
   interface TestContext {
@@ -16,7 +16,7 @@ TestContext.macro("path", function (path: string) {
 processCLIArgs(process.argv.splice(2));
 
 configure({
-  files: ["tests/**/*.spec.ts"],
+  files: ["tests/**/*.spec.ts", "src/**/*.test.ts"],
   plugins: [assert()]
 });
 
