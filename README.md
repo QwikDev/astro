@@ -40,23 +40,26 @@ bun create @qwik.dev/astro
 
 **npm**
 ```bash
-npm create @qwik.dev/astro@latest ./my-project --add
+npm create @qwik.dev/astro@latest add
 ```
 
 **pnpm**
 ```bash
-pnpm create @qwik.dev/astro@latest ./my-project --add
+pnpm create @qwik.dev/astro@latest add
 ```
 
 **yarn**
 ```bash
-yarn create @qwik.dev/astro ./my-project --add
+yarn create @qwik.dev/astro add
 ```
 
 **bun**
 ```bash
-bun create @qwik.dev/astro ./my-project --add
+bun create @qwik.dev/astro add
 ```
+
+The `add` command targets the current directory by default. Pass a path such as
+`npm create @qwik.dev/astro@latest add ./my-project` to add Qwik to a different Astro app. Supports official Astro templates and many community starters/themes
 
 See the [CLI documentation](libs/create-qwikdev-astro/README.md) for all available commands and options.
 
@@ -71,6 +74,9 @@ Run the upgrade script from your project directory:
 ```sh
 npm create @qwik.dev/astro@latest upgrade
 ```
+
+Pass a path such as `npm create @qwik.dev/astro@latest upgrade ./my-project`
+to upgrade a different project directory.
 
 The upgrade script handles package swaps and import rewrites automatically. However, it does not cover Astro-specific breaking changes:
 

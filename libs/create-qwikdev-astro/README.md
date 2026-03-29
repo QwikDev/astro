@@ -14,7 +14,7 @@ If you already have an existing Astro project and want to add the integration,
 you can do so with the following command:
 
   ```bash
-  npm create @qwik.dev/astro@latest --add
+  npm create @qwik.dev/astro@latest add
   ```
 
 ### Create a new project
@@ -26,58 +26,64 @@ you can use the following command:
   npm create @qwik.dev/astro@latest
   ```
 
+### Upgrade from v1
+
+If you have an existing v1 project (`@builder.io/qwik` + `@qwikdev/astro`),
+you can upgrade to v2 with:
+
+  ```bash
+  npm create @qwik.dev/astro@latest upgrade
+  ```
+
 ---
 
 ## 🚀 **Installation & Usage**
 
 ### 🧑‍💻 Usage
 
-Run the following command using your preferred package manager:
+The CLI has three entry points:
 
-- **With `NPM`**:
+#### Create a new project
 
-  ```bash
-  npm create @qwik.dev/astro@latest [destination] [adapter] [...options]
-  ```
+```bash
+npm create @qwik.dev/astro@latest [destination] [adapter] [...options]
+```
 
-- **With `Yarn`**:
+#### Add Qwik to an existing Astro project
 
-  ```bash
-  yarn create @qwik.dev/astro [destination] [adapter] [...options]
-  ```
+```bash
+npm create @qwik.dev/astro@latest add [directory] [--dry-run] [--yes] [--no]
+```
 
-- **With `PNPM`**:
+#### Upgrade a v1 project
 
-  ```bash
-  pnpm create @qwik.dev/astro [destination] [adapter] [...options]
-  ```
+```bash
+npm create @qwik.dev/astro@latest upgrade [directory] [--dry-run] [--yes] [--no]
+```
 
-- **With `Bun`**:
+Replace `npm create` with `pnpm create`, `yarn create`, or `bun create`
+if you prefer a different package manager.
 
-  ```bash
-  bun create @qwik.dev/astro [destination] [adapter] [...options]
-  ```
+### 🛠️ Command Reference
 
-### 🛠️ Flags
+#### Create Arguments
 
-#### Arguments
-
-  Customize the command with the following arguments:
+Customize the create command with the following arguments:
 
   | Name        | Type                       | Default value    | Description                       |
   | :-----------| :--------------------------| :----------------| :---------------------------------|
   | destination | String                     | ./qwik-astro-app | Directory of the project.         |
   | adapter     | "deno" or "node" or "none" | none             | Server adapter.                   |
 
-#### Options
+#### Create Options
 
-  Enhance your project setup with these additional flags:
+Enhance your project setup with these additional flags:
 
   | Name                         | Shortcut        | Description                                    |
   | :--------------------------- | :---------------| :----------------------------------------------|
   | `--help`                     | `-h`            | Display all available options.                 |
   | `--template`                 | `-t`            | Use an Astro template.                         |
-  | `--add` / `--no-add`         | `-a` / `--no-a` | Add QwikDev/astro to an existing project.      |
+  | `--add` / `--no-add`         | `-a` / `--no-a` | Legacy add flow. Prefer the `add` subcommand.  |
   | `--force` / `--no-force`     | `-f` / `--no-f` | Overwrite target directory, if needed.         |
   | `--copy` / `--no-copy`       | `-c` / `--no-c` | Copy files without overwriting.                |
   | `--biome` / `--no-biome`     |                 | Use Biome instead of ESLint/Prettier.          |
@@ -87,6 +93,40 @@ Run the following command using your preferred package manager:
   | `--yes`                      | `-y`            | Accept all default configurations.             |
   | `--no`                       | `-n`            | Decline all default configurations.            |
   | `--dry-run`                  |                 | Simulate the setup process without executing.  |
+
+#### Add Arguments
+
+Use the `add` command to target an existing Astro project:
+
+| Name      | Type   | Default value | Description                    |
+| :-------- | :----- | :------------ | :----------------------------- |
+| directory | String | .             | Project directory to add Qwik. |
+
+#### Add Options
+
+| Name        | Shortcut | Description                                   |
+| :---------- | :------- | :-------------------------------------------- |
+| `--help`    | `-h`     | Display all available options.                |
+| `--dry-run` |          | Simulate the add flow without executing it.   |
+| `--yes`     | `-y`     | Accept defaults and skip prompts.             |
+| `--no`      | `-n`     | Decline defaults and skip prompts when valid. |
+
+#### Upgrade Arguments
+
+Use the `upgrade` command to target an existing v1 project:
+
+| Name      | Type   | Default value | Description                 |
+| :-------- | :----- | :------------ | :-------------------------- |
+| directory | String | .             | Project directory to upgrade. |
+
+#### Upgrade Options
+
+| Name        | Shortcut | Description                                       |
+| :---------- | :------- | :------------------------------------------------ |
+| `--help`    | `-h`     | Display all available options.                    |
+| `--dry-run` |          | Show planned changes without modifying files.     |
+| `--yes`     | `-y`     | Accept defaults and continue without prompting.   |
+| `--no`      | `-n`     | Decline defaults and abort when prompts would be required. |
 
 ### 💡 Examples
 
@@ -113,14 +153,20 @@ npm create @qwik.dev/astro@latest
    npm create @qwik.dev/astro@latest my-project --yes
    ```
 
-2. Add **Qwik/Astro** to an Existing Project**
+2. Add **Qwik/Astro** to an Existing Project
 
     If you already have an existing project
     and want to integrate QwikDev/Astro without creating a new project,
-    you can use the `--add` option:
+    you can use the `add` subcommand:
 
     ```bash
-    npm create @qwik.dev/astro@latest my-existing-project --add
+    npm create @qwik.dev/astro@latest add ./my-existing-project
+    ```
+
+    To target the current directory, omit the path:
+
+    ```bash
+    npm create @qwik.dev/astro@latest add
     ```
 
 3. Use an Official Template
@@ -156,10 +202,10 @@ npm create @qwik.dev/astro@latest
 
 6. Advanced Use Cases
 
-    You can combine multiple flags to set up your project exactly as needed:
+    You can combine multiple flags on the create flow to set up your project exactly as needed:
 
     ```bash
-    npm create @qwik.dev/astro my-existing-project --add --copy --template portfolio --yes --no-git --no-ci
+    npm create @qwik.dev/astro@latest my-project --template portfolio --yes --no-git --no-ci
     ```
 
 ### 📦 API
@@ -171,7 +217,7 @@ For developers looking to programmatically access the CLI functionality:
     Run the CLI programmatically without arguments:
 
     ```typescript
-    import createQwikAstro from '@qwikdev/create-astro';
+    import createQwikAstro from '@qwik.dev/create-astro';
 
     createQwikAstro();
     ```
@@ -181,14 +227,31 @@ For developers looking to programmatically access the CLI functionality:
     Specify arguments directly:
 
     ```typescript
-    import { run } from '@qwikdev/create-astro';
+    import { run } from '@qwik.dev/create-astro';
 
-    run(["./qwik-astro-app", "node"]);
+    // Create a new project
+    run(["node", "cli", "./qwik-astro-app", "node"]);
+
+    // Add to existing project
+    run(["node", "cli", "add", "./my-project"]);
+
+    // Upgrade from v1
+    run(["node", "cli", "upgrade", "./my-project"]);
     ```
 
-3. Definition Types
+3. Sub-path Exports
 
-    Define the structure of the CLI options and arguments:
+    Fine-grained access to individual commands:
+
+    ```typescript
+    import { app } from '@qwik.dev/create-astro/app';
+    import { add } from '@qwik.dev/create-astro/add';
+    import { upgrade } from '@qwik.dev/create-astro/upgrade';
+    ```
+
+4. Definition Types
+
+    Define the structure of the create, add, and upgrade commands:
 
     ```typescript
     export type Definition = {
@@ -206,9 +269,23 @@ For developers looking to programmatically access the CLI functionality:
       no?: boolean;
       dryRun?: boolean;
     };
+
+    export type AddDefinition = {
+      directory: string;
+      dryRun?: boolean;
+      yes?: boolean;
+      no?: boolean;
+    };
+
+    export type UpgradeDefinition = {
+      directory: string;
+      dryRun?: boolean;
+      yes?: boolean;
+      no?: boolean;
+    };
     ```
 
-4. Default Settings
+5. Default Settings
 
     Here are the default configurations:
 
@@ -216,7 +293,7 @@ For developers looking to programmatically access the CLI functionality:
     export const defaultDefinition = {
       destination: "./qwik-astro-app",
       adapter: "none",
-      template: "",
+      template: undefined,
       add: undefined,
       force: undefined,
       copy: undefined,
@@ -227,6 +304,20 @@ For developers looking to programmatically access the CLI functionality:
       yes: undefined,
       no: undefined,
       dryRun: undefined
+    } as const;
+
+    export const defaultAddDefinition = {
+      directory: ".",
+      dryRun: undefined,
+      yes: undefined,
+      no: undefined
+    } as const;
+
+    export const defaultUpgradeDefinition = {
+      directory: ".",
+      dryRun: undefined,
+      yes: undefined,
+      no: undefined
     } as const;
     ```
 
