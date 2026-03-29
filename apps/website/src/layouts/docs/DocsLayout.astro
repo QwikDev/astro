@@ -22,6 +22,7 @@ interface Props {
 }
 
 const { title, currentPath, toc = [] } = Astro.props;
+const ogImage = new URL(`/og${currentPath}.png`, Astro.site ?? Astro.url).href;
 ---
 
 <!doctype html>
@@ -33,11 +34,11 @@ const { title, currentPath, toc = [] } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <meta property="og:title" content={`${title} — Qwik + Astro`} />
-    <meta property="og:image" content={`/og${currentPath}.png`} />
+    <meta property="og:image" content={ogImage} />
     <meta property="og:type" content="article" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={`${title} — Qwik + Astro`} />
-    <meta name="twitter:image" content={`/og${currentPath}.png`} />
+    <meta name="twitter:image" content={ogImage} />
     <title>{title} — Qwik + Astro</title>
     <ClientRouter />
   </head>
