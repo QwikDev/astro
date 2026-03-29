@@ -8,6 +8,7 @@ interface Props {
 }
 
 const { title } = Astro.props;
+const ogImage = "https://astro.qwik.dev/og/index.png";
 
 import "@fontsource-variable/unbounded";
 import "@fontsource/yusei-magic";
@@ -21,6 +22,12 @@ import "@fontsource/yusei-magic";
 		<meta name="description" content="Qwik + Astro integration" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
+		<meta property="og:title" content={title} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:type" content="website" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:image" content={ogImage} />
 		<title>{title}</title>
 		<ClientRouter />
 	</head>

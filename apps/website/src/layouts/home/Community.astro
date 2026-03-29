@@ -157,8 +157,8 @@ const guides = [
       <Image
         src={jackAvatar}
         alt={team.jack.name}
-        width={72}
-        height={72}
+        width={144}
+        height={144}
         class="team-avatar"
       />
       <span class="team-name">{team.jack.name}</span>
@@ -176,8 +176,8 @@ const guides = [
       <Image
         src={siguiAvatar}
         alt={team.sigui.name}
-        width={72}
-        height={72}
+        width={144}
+        height={144}
         class="team-avatar"
       />
       <span class="team-name">{team.sigui.name}</span>
@@ -205,8 +205,8 @@ const guides = [
       <Image
         src={matthewAvatar}
         alt={team.matthew.name}
-        width={72}
-        height={72}
+        width={144}
+        height={144}
         class="team-avatar"
       />
       <span class="team-name">{team.matthew.name}</span>
@@ -223,8 +223,8 @@ const guides = [
       <Image
         src={nateAvatar}
         alt={team.nate.name}
-        width={72}
-        height={72}
+        width={144}
+        height={144}
         class="team-avatar"
       />
       <span class="team-name">{team.nate.name}</span>
@@ -448,6 +448,8 @@ const guides = [
     height: 72px;
     border-radius: 9999px;
     margin-bottom: var(--space-3xs);
+    position: relative;
+    z-index: 1;
   }
 
   .team-name {

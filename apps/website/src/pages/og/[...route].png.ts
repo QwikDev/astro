@@ -7,37 +7,52 @@ import sharp from "sharp";
 
 export const prerender = true;
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const docs = await getCollection("docs");
-  return docs.map((entry) => ({
-    params: {
-      route: entry.id === "installation" ? "docs" : `docs/${entry.id}`,
-    },
-    props: { title: entry.data.title },
-  }));
-};
-
-export const GET: APIRoute = async ({ props }) => {
-  const { title } = props as { title: string };
-
-  // Load local woff font (Satori supports TTF/OTF/WOFF, not WOFF2)
+// Cache shared assets at module scope so they're loaded once per build
+const assetsPromise = (async () => {
   const fontPath = join(
     process.cwd(),
     "src/assets/fonts/unbounded-latin-700-normal.woff",
   );
-  const fontData = await readFile(fontPath);
-
-  // Load logo SVG and convert to base64 PNG for satori img support
   const logoPath = join(process.cwd(), "src/assets/qwik-v2-logo.svg");
-  const logoSvg = await readFile(logoPath);
-  const logoPng = await sharp(logoSvg).resize(160, 182).png().toBuffer();
-  const logoBase64 = `data:image/png;base64,${logoPng.toString("base64")}`;
-
-  // Load background SVG pattern and tile it into a dark background image
   const bgPath = join(process.cwd(), "src/assets/og-background.svg");
-  const bgSvg = await readFile(bgPath);
-  const bgPng = await sharp(bgSvg).resize(600, 600).png().toBuffer();
-  const bgBase64 = `data:image/png;base64,${bgPng.toString("base64")}`;
+
+  const [fontData, logoSvg, bgSvg] = await Promise.all([
+    readFile(fontPath),
+    readFile(logoPath),
+    readFile(bgPath),
+  ]);
+
+  const [logoPng, bgPng] = await Promise.all([
+    sharp(logoSvg).resize(160, 182).png().toBuffer(),
+    sharp(bgSvg).resize(600, 600).png().toBuffer(),
+  ]);
+
+  return {
+    fontData,
+    logoBase64: `data:image/png;base64,${logoPng.toString("base64")}`,
+    bgBase64: `data:image/png;base64,${bgPng.toString("base64")}`,
+  };
+})();
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const docs = await getCollection("docs");
+  return [
+    {
+      params: { route: "index" },
+      props: { title: "Qwik + Astro" },
+    },
+    ...docs.map((entry) => ({
+      params: {
+        route: entry.id === "installation" ? "docs" : `docs/${entry.id}`,
+      },
+      props: { title: entry.data.title },
+    })),
+  ];
+};
+
+export const GET: APIRoute = async ({ props }) => {
+  const { title } = props as { title: string };
+  const { fontData, logoBase64, bgBase64 } = await assetsPromise;
 
   const svg = await satori(
     {
