@@ -22,7 +22,7 @@ interface Props {
 }
 
 const { title, currentPath, toc = [] } = Astro.props;
-const ogImage = new URL(`/og${currentPath}.png`, Astro.site ?? Astro.url).href;
+const ogImage = `https://astro.qwik.dev/og${currentPath}.png`;
 ---
 
 <!doctype html>
