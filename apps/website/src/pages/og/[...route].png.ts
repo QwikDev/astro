@@ -71,6 +71,7 @@ export const GET: APIRoute = async ({ props }) => {
                 opacity: 0.8,
                 maskImage:
                   "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 60%)",
+                // biome-ignore lint/style/useNamingConvention: Satori requires WebkitMaskImage
                 WebkitMaskImage:
                   "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 60%)",
               },
