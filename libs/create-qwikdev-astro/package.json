@@ -154,6 +154,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "homepage": "https://qwik.dev/astro",
   "bugs": "https://github.com/QwikDev/astro/issues",
   "dependencies": {
     "@clack/prompts": "^0.11.0",

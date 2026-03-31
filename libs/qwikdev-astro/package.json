@@ -53,6 +53,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "homepage": "https://qwik.dev/astro",
   "bugs": "https://github.com/QwikDev/astro/issues",
   "dependencies": {
     "astro-integration-kit": "^0.20.0"
