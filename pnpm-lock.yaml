@@ -212,7 +212,7 @@ importers:
         specifier: '>=2.0.0-beta.30 <3.0.0'
         version: 2.0.0-beta.30(prettier@3.8.1)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.2(@opentelemetry/api@1.9.0)(@types/node@22.19.15)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3)))
       astro:
-        specifier: 6.0.6
+        specifier: ^6.0.0
         version: 6.0.6(@netlify/blobs@10.7.4)(@types/node@25.5.0)(@vercel/functions@3.4.3)(jiti@2.6.1)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
     devDependencies:
       vite:

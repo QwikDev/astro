@@ -60,6 +60,6 @@
   },
   "peerDependencies": {
     "@qwik.dev/core": ">=2.0.0-beta.30 <3.0.0",
-    "astro": "6.0.6"
+    "astro": "^6.0.0"
   }
 }
