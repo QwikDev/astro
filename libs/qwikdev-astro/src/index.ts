@@ -1,17 +1,14 @@
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import type { RenderOptions } from "@qwik.dev/core";
 import { qwikVite } from "@qwik.dev/core/optimizer";
 import type { QwikManifest, QwikVitePluginOptions } from "@qwik.dev/core/optimizer";
 import type { AstroConfig, AstroIntegration } from "astro";
-import { defineIntegration, watchDirectory } from "astro-integration-kit";
-import type { Plugin } from "vite";
+import type { FilterPattern, Plugin } from "vite";
 import { type ViteBuilder, createFilter } from "vite";
 import {
   INTEGRATION_NAME,
   ROOT_ENTRYPOINT,
   SERVER_ENTRYPOINT,
   VIRTUAL_MODULE_NAME,
-  optionsSchema
 } from "./constants";
 import {
   createAstroQwikPostPlugin,
@@ -80,33 +77,40 @@ export const clientRouter = ${JSON.stringify(clientRouter)};`;
   };
 }
 
-/**
- * This project uses Astro Integration Kit.
- * @see https://astro-integration-kit.netlify.app/
- */
-export default defineIntegration({
-  name: INTEGRATION_NAME,
-  optionsSchema,
+type Options = {
+  /** Tell Qwik which files to process. */
+  include?: FilterPattern
 
-  setup({ options }) {
-    let srcDir = "";
-    let serverDir = "";
-    let finalDir = "";
+  /** Tell Qwik which files to ignore. */
+  exclude?: FilterPattern
 
-    let qwikManifest: QwikManifest | null = null;
+  /** Enable debug mode with the qwikVite plugin. */
+  debug?: boolean
 
-    let astroConfig: AstroConfig | null = null;
-    const packageDir = dirname(fileURLToPath(import.meta.url));
-    const filter = createFilter(options?.include, options?.exclude);
+  /** Options passed into each Qwik component's `renderToStream` call. */
+  renderOpts?: RenderOptions
 
-    const lifecycleHooks: AstroIntegration["hooks"] = {
+  /** Enable SPA-style navigation support with Astro's ClientRouter. */
+  clientRouter?: boolean
+}
+
+export default function qwik(options?: Options): AstroIntegration {
+  let srcDir = "";
+  let serverDir = "";
+  let finalDir = "";
+
+  let qwikManifest: QwikManifest | null = null;
+
+  let astroConfig: AstroConfig | null = null;
+  const filter = createFilter(options?.include, options?.exclude);
+
+  return {
+    name: INTEGRATION_NAME,
+    hooks: {
       "astro:config:setup": async (setupProps) => {
         const { addRenderer, updateConfig, config, command } = setupProps;
         astroConfig = config;
         const isDev = command === "dev";
-
-        // integration HMR support
-        watchDirectory(setupProps, packageDir);
 
         addRenderer({
           name: INTEGRATION_NAME,
@@ -199,11 +203,6 @@ export default defineIntegration({
           await originalBuildApp(b);
         };
       }
-    };
-
-    return {
-      name: INTEGRATION_NAME,
-      hooks: lifecycleHooks
-    };
-  }
-});
+    }
+  };
+}
