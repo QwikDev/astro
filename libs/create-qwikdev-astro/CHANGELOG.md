@@ -1,5 +1,11 @@
 # @qwikdev/create-astro
 
+## 1.0.3
+
+### Patch Changes
+
+- Fix the package test script and release the CLI package alongside the latest Astro integration.
+
 ## 0.2.3
 
 ### Patch Changes

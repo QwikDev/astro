@@ -1,5 +1,11 @@
 # @qwik.dev/astro
 
+## 1.0.2
+
+### Patch Changes
+
+- 8d93389: Simplifies internals
+
 ## 0.8.3
 
 ### Patch Changes

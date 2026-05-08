@@ -2,14 +2,14 @@
   "name": "@qwik.dev/create-astro",
   "type": "module",
   "license": "MIT",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Interactive CLI for creating @qwik.dev/astro projects.",
   "scripts": {
     "check": "tsc --noEmit",
     "build": "tsdown",
     "prod": "pnpm check && pnpm build",
     "start": "tsdown --watch",
-    "test": "pnm tsx bin/test.ts",
+    "test": "pnpm tsx bin/test.ts",
     "tsx": "tsx"
   },
   "contributors": [
