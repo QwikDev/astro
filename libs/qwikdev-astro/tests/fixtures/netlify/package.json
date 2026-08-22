@@ -4,8 +4,8 @@
   "type": "module",
   "version": "0.0.1",
   "dependencies": {
-    "@astrojs/netlify": "7.0.3",
+    "@astrojs/netlify": "8.2.3",
     "@qwik.dev/astro": "workspace:*",
-    "astro": "6.0.6"
+    "astro": "7.2.4"
   }
 }

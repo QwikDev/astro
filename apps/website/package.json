@@ -18,15 +18,15 @@
     "start": "astro dev --open"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.8",
-    "@astrojs/mdx": "^5.0.3",
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/mdx": "^7.0.7",
     "@fontsource-variable/unbounded": "^5.2.8",
     "@fontsource/yusei-magic": "^5.2.8",
     "@iconify-json/lucide": "^1.2.99",
     "@qds.dev/ui": "^0.14.3",
     "@qwik.dev/astro": "workspace:*",
-    "@qwik.dev/core": "2.0.0-beta.30",
-    "astro": "6.0.6",
+    "@qwik.dev/core": "2.0.0-beta.40",
+    "astro": "7.2.4",
     "astro-icon": "^1.1.5",
     "pagefind": "^1.4.0",
     "sharp": "^0.33.5"

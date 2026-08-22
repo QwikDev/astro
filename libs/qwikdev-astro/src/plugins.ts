@@ -3,31 +3,7 @@ import type { QwikManifest, QwikVitePluginOptions } from "@qwik.dev/core/optimiz
 import type { InlineConfig, PluginOption } from "vite";
 import { build } from "vite";
 
-import { SERVER_ENTRYPOINT, VIRTUAL_MODULES } from "./constants";
-
-/** Intercepts `@qwik-client-manifest` to provide the manifest from our standalone Qwik client build. */
-export function createQwikManifestPlugin(
-  getManifest: () => QwikManifest | null
-): PluginOption {
-  const virtualId = VIRTUAL_MODULES["@qwik-client-manifest"];
-
-  return {
-    name: "astro-qwik-manifest",
-    enforce: "pre",
-    resolveId(id) {
-      if (id === "@qwik-client-manifest") return virtualId;
-      return undefined;
-    },
-    load(id) {
-      if (id !== virtualId) return undefined;
-      const manifest = getManifest();
-      return {
-        code: `export const manifest = ${manifest ? JSON.stringify(manifest) : "undefined"};`,
-        moduleSideEffects: false
-      };
-    }
-  };
-}
+import { SERVER_ENTRYPOINT } from "./constants";
 
 /** Strips qwikVite's outputOptions hook so the standalone Qwik client build handles client output instead. */
 export function stripOutputOptions(plugins: PluginOption[]) {
@@ -55,11 +31,10 @@ export function filterAstroPlugins(plugins: PluginOption[]): PluginOption[] {
       const isCoreBuildPlugin = plugin.name === "astro:build";
       const isAstroBuildPlugin = plugin.name.startsWith("astro:build");
       const isAstroInternalPlugin = plugin.name.includes("@astro");
+      const isAstroTransitionPlugin = plugin.name === "astro:transitions";
 
       const isAllowedPlugin =
-        plugin.name === "astro:transitions" ||
-        plugin.name.includes("virtual") ||
-        plugin.name === "astro:tsconfig-alias";
+        plugin.name.includes("virtual") || plugin.name === "astro:tsconfig-alias";
 
       if (isAllowedPlugin) return true;
 
@@ -67,6 +42,7 @@ export function filterAstroPlugins(plugins: PluginOption[]): PluginOption[] {
         isCoreBuildPlugin ||
         isAstroInternalPlugin ||
         isAstroBuildPlugin ||
+        isAstroTransitionPlugin ||
         isQwikPlugin
       );
     });

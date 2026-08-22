@@ -12,7 +12,6 @@ import {
 } from "./constants";
 import {
   createAstroQwikPostPlugin,
-  createQwikManifestPlugin,
   runQwikClientBuild,
   stripOutputOptions
 } from "./plugins";
@@ -60,7 +59,11 @@ function createQwikNoExternalPlugin(): Plugin {
   };
 }
 
-function createVirtualModulePlugin(renderOpts: unknown, clientRouter: boolean): Plugin {
+function createVirtualModulePlugin(
+  renderOpts: unknown,
+  clientRouter: boolean,
+  getManifest: () => QwikManifest | null
+): Plugin {
   return {
     name: "qwik-astro:virtual",
     resolveId(id) {
@@ -69,8 +72,11 @@ function createVirtualModulePlugin(renderOpts: unknown, clientRouter: boolean): 
     },
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
+        const manifest = getManifest();
         return `export const renderOpts = ${JSON.stringify(renderOpts)};
-export const clientRouter = ${JSON.stringify(clientRouter)};`;
+export const clientRouter = ${JSON.stringify(clientRouter)};
+export const manifest = ${manifest ? JSON.stringify(manifest) : "undefined"};
+globalThis.__QWIK_MANIFEST__ = manifest;`;
       }
       return undefined;
     }
@@ -121,11 +127,11 @@ export default function qwik(options?: Options): AstroIntegration {
 
         const fileFilter = createQwikFileFilter(filter);
         const qwikNoExternalPlugin = createQwikNoExternalPlugin();
-        const qwikManifestPlugin = createQwikManifestPlugin(() => qwikManifest);
         const astroQwikPostPlugin = createAstroQwikPostPlugin(isDev);
         const virtualModulePlugin = createVirtualModulePlugin(
           options?.renderOpts ?? {},
-          options?.clientRouter ?? false
+          options?.clientRouter ?? false,
+          () => qwikManifest
         );
 
         const qwikSetupConfig: QwikVitePluginOptions = {
@@ -152,13 +158,17 @@ export default function qwik(options?: Options): AstroIntegration {
 
         updateConfig({
           vite: {
+            // Astro's prerender environment bypasses Qwik's transform that
+            // replaces this compile-time feature flag.
+            define: {
+              "__EXPERIMENTAL__.suspense": "false"
+            },
             ssr: {
               noExternal: ["@qwik.dev/core", "@qwik.dev/core/optimizer"]
             },
             plugins: [
               qwikNoExternalPlugin,
               virtualModulePlugin,
-              qwikManifestPlugin,
               ...qwikPlugins,
               astroQwikPostPlugin
             ]
