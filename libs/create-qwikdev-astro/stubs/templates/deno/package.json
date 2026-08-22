@@ -9,7 +9,7 @@
     "check": "npm run check.fmt && npm run check.lint && astro check",
     "check.fmt": "prettier --check .",
     "check.lint": "eslint \"**/*.{js,jsx,ts,tsx,astro}\"",
-    "deploy": "deployctl deploy --project=qwik-astro --no-static --include=./dist ./dist/server/entry.mjs",
+    "deploy": "deployctl deploy --project=qwik-astro --no-static --include=./dist ./dist/server/index.mjs",
     "dev": "astro dev",
     "fix": "npm run lint && npm run fmt",
     "fmt": "prettier --write .",
@@ -17,19 +17,19 @@
     "lint.dry-run": "eslint --fix-dry-run \"**/*.{js,jsx,ts,tsx,astro}\"",
     "preview": "npm run build && npm run serve",
     "prod": "npm run check && astro build",
-    "serve": "deno run -A --unstable ./dist/server/entry.mjs",
+    "serve": "deno run -A --unstable ./dist/server/index.mjs",
     "start": "astro dev --open"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
     "@deno/astro-adapter": "^0.6.0",
     "@qwik.dev/core": "2.0.0-beta.40",
-    "@qwik.dev/astro": "^1.0.0",
+    "@qwik.dev/astro": "^2.0.0",
     "astro": "^7.2.4"
   },
   "devDependencies": {
     "@types/eslint": "^8.56.10",
-    "@types/node": "^20.12.7",
+    "@types/node": "^22.19.15",
     "@typescript-eslint/eslint-plugin": "^7.7.0",
     "@typescript-eslint/parser": "^7.7.0",
     "eslint": "^8.57.0",
@@ -37,13 +37,5 @@
     "eslint-plugin-qwik": "^1.5.2",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.13.0"
-  },
-  "overrides": {
-    "vite": "^8.0.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "vite": "^8.0.0"
-    }
   }
 }

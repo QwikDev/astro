@@ -33,8 +33,14 @@ test.describe("Static Build Output", () => {
     expect(qwikChunks.length).toBeGreaterThan(0);
   });
 
-  test("build output contains q-manifest.json", () => {
-    expect(existsSync(join(distDir, "q-manifest.json"))).toBe(true);
+  test("build output contains a populated q-manifest.json", async () => {
+    const manifestPath = join(distDir, "q-manifest.json");
+    expect(existsSync(manifestPath)).toBe(true);
+
+    const manifest = JSON.parse(await readFile(manifestPath, "utf-8"));
+    expect(manifest.core).toBeTruthy();
+    expect(manifest.qwikLoader).toBeTruthy();
+    expect(Object.keys(manifest.mapping)).not.toHaveLength(0);
   });
 
   test("build output contains rendered HTML with q:container", async () => {

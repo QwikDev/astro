@@ -8,12 +8,12 @@ import {
   INTEGRATION_NAME,
   ROOT_ENTRYPOINT,
   SERVER_ENTRYPOINT,
-  VIRTUAL_MODULE_NAME,
+  VIRTUAL_MODULE_NAME
 } from "./constants";
 import {
   createAstroQwikPostPlugin,
   runQwikClientBuild,
-  stripOutputOptions
+  stripClientOutputHooks
 } from "./plugins";
 import { createQwikFileFilter, resolveQwikPaths, scanQwikEntrypoints } from "./scan";
 
@@ -25,8 +25,8 @@ const QWIK_NOEXTERNAL = ["@qwik.dev/core", "@qwik.dev/core/optimizer"];
  * Ensures Qwik packages are in `resolve.noExternal` at the per-environment level.
  *
  * Qwik core's `qwikVite` plugin has a `configEnvironment` hook that does this,
- * but it only targets `name === 'ssr'`. Astro 6 creates additional server environments
- * (e.g. "prerender") that also need noExternal. Vite 7 sets `consumer: "server"` for
+ * but it only targets `name === 'ssr'`. Astro creates additional server environments
+ * (e.g. "prerender") that also need noExternal. Vite sets `consumer: "server"` for
  * any non-client environment, but qwik checks `name` not `consumer` because `consumer`
  * isn't set yet when `configEnvironment` runs.
  *
@@ -72,10 +72,10 @@ function createVirtualModulePlugin(
     },
     load(id) {
       if (id === RESOLVED_VIRTUAL_ID) {
-        const manifest = getManifest();
+        const manifest = getManifest() ?? {};
         return `export const renderOpts = ${JSON.stringify(renderOpts)};
 export const clientRouter = ${JSON.stringify(clientRouter)};
-export const manifest = ${manifest ? JSON.stringify(manifest) : "undefined"};
+export const manifest = ${JSON.stringify(manifest)};
 globalThis.__QWIK_MANIFEST__ = manifest;`;
       }
       return undefined;
@@ -85,20 +85,20 @@ globalThis.__QWIK_MANIFEST__ = manifest;`;
 
 type Options = {
   /** Tell Qwik which files to process. */
-  include?: FilterPattern
+  include?: FilterPattern;
 
   /** Tell Qwik which files to ignore. */
-  exclude?: FilterPattern
+  exclude?: FilterPattern;
 
   /** Enable debug mode with the qwikVite plugin. */
-  debug?: boolean
+  debug?: boolean;
 
   /** Options passed into each Qwik component's `renderToStream` call. */
-  renderOpts?: RenderOptions
+  renderOpts?: RenderOptions;
 
   /** Enable SPA-style navigation support with Astro's ClientRouter. */
-  clientRouter?: boolean
-}
+  clientRouter?: boolean;
+};
 
 export default function qwik(options?: Options): AstroIntegration {
   let srcDir = "";
@@ -152,9 +152,7 @@ export default function qwik(options?: Options): AstroIntegration {
 
         const qwikPlugins = qwikVite(qwikSetupConfig);
 
-        if (!isDev) {
-          stripOutputOptions(qwikPlugins);
-        }
+        if (!isDev) stripClientOutputHooks(qwikPlugins);
 
         updateConfig({
           vite: {

@@ -16,6 +16,8 @@
 
 ## Quick Start
 
+Astro 7 requires Node.js 22.12.0 or newer when using the Node.js runtime.
+
 **npm**
 ```bash
 npm create @qwik.dev/astro@latest
@@ -67,7 +69,7 @@ For full installation instructions, guides, and API reference, visit **[qwik.dev
 
 ## Upgrading from v1
 
-This is the v2 branch (`build/v2`), which supports **Qwik v2** and **Astro 6+** under the new `@qwik.dev/astro` package name. If you need Astro <5 or Qwik v1, use the [`@qwikdev/astro`](https://www.npmjs.com/package/@qwikdev/astro) package (without the dot).
+This is the v2 branch (`build/v2`), which supports **Qwik v2** and **Astro 7+** under the new `@qwik.dev/astro` package name. If you need Astro 6, use `@qwik.dev/astro` v1. If you need Astro <5 or Qwik v1, use the [`@qwikdev/astro`](https://www.npmjs.com/package/@qwikdev/astro) package (without the dot).
 
 Run the upgrade script from your project directory:
 

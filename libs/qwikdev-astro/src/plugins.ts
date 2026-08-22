@@ -5,12 +5,18 @@ import { build } from "vite";
 
 import { SERVER_ENTRYPOINT } from "./constants";
 
-/** Strips qwikVite's outputOptions hook so the standalone Qwik client build handles client output instead. */
-export function stripOutputOptions(plugins: PluginOption[]) {
+/**
+ * Strips Qwik's client-output hooks from Astro's builds. The standalone Qwik
+ * client build owns those outputs; allowing Astro's client environment to emit
+ * another manifest overwrites the valid manifest with one that only describes
+ * Astro's own client entries.
+ */
+export function stripClientOutputHooks(plugins: PluginOption[]) {
   for (const plugin of plugins) {
-    if (plugin && typeof plugin === "object" && "outputOptions" in plugin) {
-      delete plugin.outputOptions;
-    }
+    if (!plugin || typeof plugin !== "object") continue;
+    if ("outputOptions" in plugin) delete plugin.outputOptions;
+    if (plugin.name === "vite-plugin-qwik-post" && "generateBundle" in plugin)
+      delete plugin.generateBundle;
   }
 }
 /**

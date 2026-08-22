@@ -1,6 +1,6 @@
-import type { Assert } from "@japa/assert";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import type { TestContext } from "@japa/runner/core";
 import pm from "panam";
@@ -94,11 +94,7 @@ export default defineConfig({
 
   writeFileSync(
     join(dir, "tsconfig.json"),
-    JSON.stringify(
-      { compilerOptions: { jsxImportSource: "react" } },
-      null,
-      2
-    )
+    JSON.stringify({ compilerOptions: { jsxImportSource: "react" } }, null, 2)
   );
 
   writeFileSync(
@@ -153,6 +149,7 @@ function writeReactAstroProjectNoQwik(dir: string) {
         name: "react-only-add-test",
         type: "module",
         dependencies: {
+          // This e2e flow installs the currently published v1 integration.
           astro: "^6.0.6",
           "@astrojs/react": "^4.0.0",
           react: "^19.0.0",
@@ -221,7 +218,10 @@ test.group("--add flow multi-framework detection", (group) => {
       // Intercept all prompts that interact() would ask
       app.intercept("Where would you like to create your new project?", fixtureRoot);
       app.intercept("Do you want to add @qwik.dev/astro to your existing project?", true);
-      app.intercept("Copy template files safely (without overwriting existing files)?", true);
+      app.intercept(
+        "Copy template files safely (without overwriting existing files)?",
+        true
+      );
       app.intercept("Would you like to install pnpm dependencies?", false);
       app.intercept("Would you like to save the changes with Git?", false);
       app.intercept("Would you like to add CI workflow?", false);
@@ -302,7 +302,9 @@ test.group("--add flow multi-framework detection", (group) => {
     assert.include(configAfter, "react(");
 
     // tsconfig should still have jsxImportSource: "react" (not overwritten since secondary)
-    const tsconfig = JSON.parse(readFileSync(join(fixtureRoot, "tsconfig.json"), "utf-8"));
+    const tsconfig = JSON.parse(
+      readFileSync(join(fixtureRoot, "tsconfig.json"), "utf-8")
+    );
     assert.equal(tsconfig.compilerOptions.jsxImportSource, "react");
 
     // Counter.tsx should be scaffolded
@@ -340,12 +342,22 @@ test.group("--add e2e with real install (React project)", (group) => {
     const configAfter = readFileSync(join(fixtureRoot, "astro.config.mjs"), "utf-8");
     assert.include(configAfter, "qwik", "Config should contain qwik integration");
     // React must be preserved
-    assert.include(configAfter, "react(", "Config should still contain react integration");
+    assert.include(
+      configAfter,
+      "react(",
+      "Config should still contain react integration"
+    );
     // Exclude pattern added for secondary strategy
-    assert.include(configAfter, "exclude", "Config should contain exclude pattern for secondary strategy");
+    assert.include(
+      configAfter,
+      "exclude",
+      "Config should contain exclude pattern for secondary strategy"
+    );
 
     // tsconfig should keep react as primary (secondary strategy)
-    const tsconfig = JSON.parse(readFileSync(join(fixtureRoot, "tsconfig.json"), "utf-8"));
+    const tsconfig = JSON.parse(
+      readFileSync(join(fixtureRoot, "tsconfig.json"), "utf-8")
+    );
     assert.equal(tsconfig.compilerOptions.jsxImportSource, "react");
 
     // Counter.tsx should be scaffolded with pragma (secondary)

@@ -8,6 +8,8 @@ this CLI has you covered.
 
 ## Quickstart 🎉
 
+Astro 7 projects require Node.js 22.12.0 or newer when using the Node.js runtime.
+
 ### Have an existing project?
 
 If you already have an existing Astro project and want to add the integration,

@@ -8,7 +8,7 @@
     "dev.debug": "node --inspect ./node_modules/astro/astro.js dev",
     "start": "astro dev --open",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "node ./dist/server/index.mjs",
     "astro": "astro"
   },
   "dependencies": {
