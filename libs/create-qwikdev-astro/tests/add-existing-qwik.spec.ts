@@ -1,6 +1,6 @@
-import type { Assert } from "@japa/assert";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import type { TestContext } from "@japa/runner/core";
 import pm from "panam";
@@ -76,6 +76,8 @@ function writeExistingProject(configSource: string) {
       {
         name: "existing-astro-project",
         type: "module",
+        // This flow installs the currently published integration, which remains v1.0/Astro 6
+        // until the changeset in this PR is released.
         dependencies: { astro: "^6.0.6" }
       },
       null,
@@ -151,53 +153,62 @@ test.group("isQwikRegistered", () => {
 
 // ── integration: --add flow ───────────────────────────────────────────
 
-test.group("--add on existing project with @qwik.dev/astro already in config", (group) => {
-  group.each.setup(() => cleanup);
-  group.each.teardown(cleanup);
+test.group(
+  "--add on existing project with @qwik.dev/astro already in config",
+  (group) => {
+    group.each.setup(() => cleanup);
+    group.each.teardown(cleanup);
 
-  test("inline config — pre-installs then succeeds", async ({ assert }) => {
-    writeExistingProject(INLINE_CONFIG);
+    test("inline config — pre-installs then succeeds", async ({ assert }) => {
+      writeExistingProject(INLINE_CONFIG);
 
-    const result = await run([pm.name, "create", fixtureRoot, "--add", "--no"]);
+      const result = await run([pm.name, "create", fixtureRoot, "--add", "--no"]);
 
-    assert.equal(result, 0);
-    const pkg = JSON.parse(readFileSync(join(fixtureRoot, "package.json"), "utf-8"));
-    assert.isDefined(pkg.dependencies["@qwik.dev/astro"]);
-  }).disableTimeout();
+      assert.equal(result, 0);
+      const pkg = JSON.parse(readFileSync(join(fixtureRoot, "package.json"), "utf-8"));
+      assert.isDefined(pkg.dependencies["@qwik.dev/astro"]);
+    }).disableTimeout();
 
-  test("variable-exported config — pre-installs then succeeds", async ({ assert }) => {
-    writeExistingProject(VARIABLE_CONFIG);
+    test("variable-exported config — pre-installs then succeeds", async ({ assert }) => {
+      writeExistingProject(VARIABLE_CONFIG);
 
-    const result = await run([pm.name, "create", fixtureRoot, "--add", "--no"]);
+      const result = await run([pm.name, "create", fixtureRoot, "--add", "--no"]);
 
-    assert.equal(result, 0);
-    const pkg = JSON.parse(readFileSync(join(fixtureRoot, "package.json"), "utf-8"));
-    assert.isDefined(pkg.dependencies["@qwik.dev/astro"]);
-  }).disableTimeout();
+      assert.equal(result, 0);
+      const pkg = JSON.parse(readFileSync(join(fixtureRoot, "package.json"), "utf-8"));
+      assert.isDefined(pkg.dependencies["@qwik.dev/astro"]);
+    }).disableTimeout();
 
-  test("callback config — pre-installs then succeeds", async ({ assert }) => {
-    writeExistingProject(CALLBACK_CONFIG);
+    test("callback config — pre-installs then succeeds", async ({ assert }) => {
+      writeExistingProject(CALLBACK_CONFIG);
 
-    const result = await run([pm.name, "create", fixtureRoot, "--add", "--no"]);
+      const result = await run([pm.name, "create", fixtureRoot, "--add", "--no"]);
 
-    assert.equal(result, 0);
-    const pkg = JSON.parse(readFileSync(join(fixtureRoot, "package.json"), "utf-8"));
-    assert.isDefined(pkg.dependencies["@qwik.dev/astro"]);
-  }).disableTimeout();
+      assert.equal(result, 0);
+      const pkg = JSON.parse(readFileSync(join(fixtureRoot, "package.json"), "utf-8"));
+      assert.isDefined(pkg.dependencies["@qwik.dev/astro"]);
+    }).disableTimeout();
 
-  test("does not duplicate integration when qwik already in config", async ({ assert }) => {
-    writeExistingProject(INLINE_CONFIG);
+    test("does not duplicate integration when qwik already in config", async ({
+      assert
+    }) => {
+      writeExistingProject(INLINE_CONFIG);
 
-    const result = await run([pm.name, "create", fixtureRoot, "--add", "--no"]);
+      const result = await run([pm.name, "create", fixtureRoot, "--add", "--no"]);
 
-    assert.equal(result, 0);
+      assert.equal(result, 0);
 
-    // Key assertion: config content should NOT have duplicates
-    const configAfter = readFileSync(join(fixtureRoot, "astro.config.ts"), "utf-8");
-    // Should not contain qwikDev (the aliased name astro add would introduce)
-    assert.notInclude(configAfter, "qwikDev");
-    // Count occurrences of qwik() — should be exactly 1
-    const qwikCalls = configAfter.match(/qwik\(\)/g) ?? [];
-    assert.equal(qwikCalls.length, 1, "qwik() should appear exactly once in integrations");
-  }).disableTimeout();
-});
+      // Key assertion: config content should NOT have duplicates
+      const configAfter = readFileSync(join(fixtureRoot, "astro.config.ts"), "utf-8");
+      // Should not contain qwikDev (the aliased name astro add would introduce)
+      assert.notInclude(configAfter, "qwikDev");
+      // Count occurrences of qwik() — should be exactly 1
+      const qwikCalls = configAfter.match(/qwik\(\)/g) ?? [];
+      assert.equal(
+        qwikCalls.length,
+        1,
+        "qwik() should appear exactly once in integrations"
+      );
+    }).disableTimeout();
+  }
+);

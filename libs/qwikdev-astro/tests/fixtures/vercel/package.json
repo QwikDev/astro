@@ -4,8 +4,8 @@
   "type": "module",
   "version": "0.0.1",
   "dependencies": {
-    "@astrojs/vercel": "10.0.1",
+    "@astrojs/vercel": "11.0.7",
     "@qwik.dev/astro": "workspace:*",
-    "astro": "6.0.6"
+    "astro": "7.2.4"
   }
 }

@@ -4,8 +4,8 @@
   "type": "module",
   "version": "0.0.1",
   "dependencies": {
-    "@astrojs/node": "10.0.2",
+    "@astrojs/node": "11.1.4",
     "@qwik.dev/astro": "workspace:*",
-    "astro": "6.0.6"
+    "astro": "7.2.4"
   }
 }

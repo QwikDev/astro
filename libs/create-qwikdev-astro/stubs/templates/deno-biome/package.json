@@ -9,33 +9,25 @@
     "check": "biome ci . && astro check",
     "check.format": "biome format .",
     "check.lint": "biome check .",
-    "deploy": "deployctl deploy --project=qwik-astro --no-static --include=./dist ./dist/server/entry.mjs",
+    "deploy": "deployctl deploy --project=qwik-astro --no-static --include=./dist ./dist/server/index.mjs",
     "dev": "astro dev",
     "fix": "npm run lint && npm run format && npm run sync",
     "format": "biome format --write .",
     "lint": "biome check --write --unsafe .",
     "preview": "npm run build && npm run serve",
     "prod": "npm run build && npm run deploy",
-    "serve": "deno run -A --unstable ./dist/server/entry.mjs",
+    "serve": "deno run -A --unstable ./dist/server/index.mjs",
     "start": "astro dev --open"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.8",
-    "@deno/astro-adapter": "^0.3.1",
-    "@qwik.dev/core": "2.0.0-beta.30",
-    "@qwik.dev/astro": "^1.0.0",
-    "astro": "^6.0.6",
+    "@astrojs/check": "^0.9.10",
+    "@deno/astro-adapter": "^0.6.0",
+    "@qwik.dev/core": "2.0.0-beta.40",
+    "@qwik.dev/astro": "^1.1.0",
+    "astro": "^7.2.4",
     "typescript": "^5.4.3"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.6.3"
-  },
-  "overrides": {
-    "vite": "^7.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "vite": "^7.3"
-    }
   }
 }

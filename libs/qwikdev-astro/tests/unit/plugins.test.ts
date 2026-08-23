@@ -1,39 +1,30 @@
 import { describe, expect, it } from "vitest";
-import { VIRTUAL_MODULES } from "../../src/constants";
-import { createQwikManifestPlugin } from "../../src/plugins";
+import { filterAstroPlugins, stripClientOutputHooks } from "../../src/plugins";
 
-describe("createQwikManifestPlugin", () => {
-  function getPlugin(manifest: any = null) {
-    return createQwikManifestPlugin(() => manifest) as any;
-  }
+describe("stripClientOutputHooks", () => {
+  it("removes Qwik client output hooks from Astro builds", () => {
+    const plugins = [
+      { name: "vite-plugin-qwik", outputOptions: () => undefined },
+      { name: "vite-plugin-qwik-post", generateBundle: () => undefined },
+      { name: "user-plugin", generateBundle: () => undefined }
+    ];
 
-  it("resolves @qwik-client-manifest to virtual id", () => {
-    const plugin = getPlugin();
-    const resolved = plugin.resolveId("@qwik-client-manifest");
-    expect(resolved).toBe(VIRTUAL_MODULES["@qwik-client-manifest"]);
+    stripClientOutputHooks(plugins);
+
+    expect(plugins[0]).not.toHaveProperty("outputOptions");
+    expect(plugins[1]).not.toHaveProperty("generateBundle");
+    expect(plugins[2]).toHaveProperty("generateBundle");
   });
+});
 
-  it("returns undefined for unrelated ids", () => {
-    const plugin = getPlugin();
-    expect(plugin.resolveId("some-other-module")).toBeUndefined();
-  });
+describe("filterAstroPlugins", () => {
+  it("excludes Astro's transition plugin from the standalone Qwik build", () => {
+    const plugins = filterAstroPlugins([
+      { name: "astro:transitions" },
+      { name: "virtual:test" },
+      { name: "user-plugin" }
+    ]);
 
-  it("loads manifest as undefined when no manifest available", () => {
-    const plugin = getPlugin(null);
-    const result = plugin.load(VIRTUAL_MODULES["@qwik-client-manifest"]);
-    expect(result.code).toContain("export const manifest = undefined");
-  });
-
-  it("loads manifest as JSON when manifest is available", () => {
-    const manifest = { symbols: {}, mapping: {} };
-    const plugin = getPlugin(manifest);
-    const result = plugin.load(VIRTUAL_MODULES["@qwik-client-manifest"]);
-    expect(result.code).toContain("export const manifest = ");
-    expect(result.code).not.toContain("undefined");
-  });
-
-  it("returns undefined for unrelated load ids", () => {
-    const plugin = getPlugin();
-    expect(plugin.load("some-other-id")).toBeUndefined();
+    expect(plugins.map((plugin) => plugin.name)).toEqual(["virtual:test", "user-plugin"]);
   });
 });

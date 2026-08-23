@@ -66,7 +66,7 @@ The integration entrypoint. It registers Qwik as an Astro renderer and configure
 
 ### Astro hooks
 
-- **`astro:config:setup`** — Registers the Qwik renderer via `addRenderer()`, defines the `virtual:qwikdev-astro` virtual module for runtime render options, resolves source/build paths, and configures `qwikVite()` with file filters, entry points, and output directories. In build mode, it strips `outputOptions` from qwikVite so Astro controls output directories.
+- **`astro:config:setup`** — Registers the Qwik renderer via `addRenderer()`, defines the `virtual:qwik-astro` virtual module for runtime render options and the client manifest, resolves source/build paths, and configures `qwikVite()` with file filters, entry points, and output directories. In build mode, it strips Qwik's client-output hooks so the standalone client build remains authoritative.
 
 - **`astro:build:setup`** — Overrides Astro's `buildApp` to run the Qwik client build **before** prerender. Scans for Qwik entrypoints using `scanQwikEntrypoints()`, runs `runQwikClientBuild()` to produce the manifest, then calls the original Astro build.
 
@@ -80,9 +80,9 @@ Unlike other integrations, Qwik needs the client build manifest available during
 
 ## plugins.ts
 
-### `createQwikManifestPlugin`
+### Manifest injection
 
-Virtual module plugin for `@qwik-client-manifest` that provides the manifest JSON from the standalone client build. Pre-enforced to override qwikVite's built-in manifest.
+The `virtual:qwik-astro` module exposes the manifest from the standalone client build and installs it on `globalThis` before the Qwik renderer runs. Development mode uses an empty manifest because it does not have production symbol mappings.
 
 ### `runQwikClientBuild`
 

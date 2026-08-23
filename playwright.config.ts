@@ -17,6 +17,11 @@ export default defineConfig({
       testDir: "./libs/qwikdev-astro/tests/platform"
     },
     {
+      name: "dev",
+      testMatch: "dev.test.ts",
+      testDir: "./libs/qwikdev-astro/tests/platform"
+    },
+    {
       name: "node",
       testMatch: "node.test.ts",
       testDir: "./libs/qwikdev-astro/tests/platform"

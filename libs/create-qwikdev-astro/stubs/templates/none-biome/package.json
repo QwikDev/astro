@@ -2,6 +2,9 @@
   "name": "@qwik.dev/astro-biome-starter",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "astro": "astro",
     "sync": "astro sync",
@@ -18,20 +21,12 @@
     "start": "astro dev --open"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.8",
-    "@qwik.dev/core": "2.0.0-beta.30",
-    "@qwik.dev/astro": "^1.0.0",
-    "astro": "^6.0.6"
+    "@astrojs/check": "^0.9.10",
+    "@qwik.dev/core": "2.0.0-beta.40",
+    "@qwik.dev/astro": "^1.1.0",
+    "astro": "^7.2.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.0"
-  },
-  "overrides": {
-    "vite": "^7.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "vite": "^7.3"
-    }
   }
 }

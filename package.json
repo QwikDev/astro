@@ -49,10 +49,10 @@
     "@changesets/cli": "^2.30.0",
     "@playwright/test": "^1.58.2",
     "@qwik.dev/astro": "workspace:*",
-    "@qwik.dev/core": "2.0.0-beta.30",
+    "@qwik.dev/core": "2.0.0-beta.40",
     "@qwik.dev/create-astro": "workspace:*",
     "@types/node": "^22.19.15",
-    "astro": "6.0.6",
+    "astro": "7.2.4",
     "lefthook": "^1.13.6",
     "pkg-pr-new": "^0.0.35",
     "vitest": "^4.1.2"
