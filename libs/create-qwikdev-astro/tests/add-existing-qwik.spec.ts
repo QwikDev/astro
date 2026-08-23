@@ -76,7 +76,7 @@ function writeExistingProject(configSource: string) {
       {
         name: "existing-astro-project",
         type: "module",
-        // This flow installs the currently published integration, which remains v1/Astro 6
+        // This flow installs the currently published integration, which remains v1.0/Astro 6
         // until the changeset in this PR is released.
         dependencies: { astro: "^6.0.6" }
       },

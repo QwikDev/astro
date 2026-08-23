@@ -14,11 +14,11 @@ function readPackageJson(templateName: string) {
 
 test.group("Astro 7 templates", () => {
   for (const templateName of templateNames) {
-    test(`${templateName} uses the Astro 7 integration`, ({ assert }) => {
+    test(`${templateName} uses the v1 Astro 7 integration`, ({ assert }) => {
       const pkg = readPackageJson(templateName);
 
       assert.equal(pkg.dependencies.astro, "^7.2.4");
-      assert.equal(pkg.dependencies["@qwik.dev/astro"], "^2.0.0");
+      assert.equal(pkg.dependencies["@qwik.dev/astro"], "^1.1.0");
       assert.isUndefined(pkg.overrides);
       assert.isUndefined(pkg.pnpm);
     });

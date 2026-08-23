@@ -28,10 +28,10 @@ you can use the following command:
   npm create @qwik.dev/astro@latest
   ```
 
-### Upgrade from v1
+### Upgrade from legacy Qwik v1
 
 If you have an existing v1 project (`@builder.io/qwik` + `@qwikdev/astro`),
-you can upgrade to v2 with:
+you can upgrade to the Qwik v2 beta integration with:
 
   ```bash
   npm create @qwik.dev/astro@latest upgrade

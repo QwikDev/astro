@@ -149,7 +149,7 @@ function writeReactAstroProjectNoQwik(dir: string) {
         name: "react-only-add-test",
         type: "module",
         dependencies: {
-          // This e2e flow installs the currently published v1 integration.
+          // This e2e flow installs the currently published v1.0 integration.
           astro: "^6.0.6",
           "@astrojs/react": "^4.0.0",
           react: "^19.0.0",
