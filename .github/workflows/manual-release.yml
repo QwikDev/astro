@@ -71,7 +71,7 @@ jobs:
           if [ -n "${{ github.event.inputs.preid }}" ]; then
             BUMP_CMD="$BUMP_CMD --preid ${{ github.event.inputs.preid }}"
           fi
-          $BUMP_CMD --commit "chore: release v%s" --tag "v%s" --all
+          $BUMP_CMD --commit "chore: release v%s" --tag "v%s" --all --no-push
           NEW_VERSION=$(node -p "require('./package.json').version")
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
 
