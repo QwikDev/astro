@@ -9,7 +9,7 @@
     "build": "tsdown",
     "prod": "pnpm check && pnpm build",
     "start": "tsdown --watch",
-    "test": "pnpm tsx bin/test.ts",
+    "test": "tsx bin/test.ts",
     "tsx": "tsx"
   },
   "contributors": [
