@@ -11,7 +11,7 @@ export const prerender = true;
 const assetsPromise = (async () => {
   const fontPath = join(
     process.cwd(),
-    "src/assets/fonts/unbounded-latin-700-normal.woff",
+    "src/assets/fonts/unbounded-latin-700-normal.woff"
   );
   const logoPath = join(process.cwd(), "src/assets/qwik-v2-logo.svg");
   const bgPath = join(process.cwd(), "src/assets/og-background.svg");
@@ -19,18 +19,18 @@ const assetsPromise = (async () => {
   const [fontData, logoSvg, bgSvg] = await Promise.all([
     readFile(fontPath),
     readFile(logoPath),
-    readFile(bgPath),
+    readFile(bgPath)
   ]);
 
   const [logoPng, bgPng] = await Promise.all([
     sharp(logoSvg).resize(160, 182).png().toBuffer(),
-    sharp(bgSvg).resize(600, 600).png().toBuffer(),
+    sharp(bgSvg).resize(600, 600).png().toBuffer()
   ]);
 
   return {
     fontData,
     logoBase64: `data:image/png;base64,${logoPng.toString("base64")}`,
-    bgBase64: `data:image/png;base64,${bgPng.toString("base64")}`,
+    bgBase64: `data:image/png;base64,${bgPng.toString("base64")}`
   };
 })();
 
@@ -39,14 +39,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
   return [
     {
       params: { route: "index" },
-      props: { title: "Qwik + Astro" },
+      props: { title: "Qwik + Astro" }
     },
     ...docs.map((entry) => ({
       params: {
-        route: entry.id === "installation" ? "docs" : `docs/${entry.id}`,
+        route: entry.id === "installation" ? "docs" : `docs/${entry.id}`
       },
-      props: { title: entry.data.title },
-    })),
+      props: { title: entry.data.title }
+    }))
   ];
 };
 
@@ -67,7 +67,7 @@ export const GET: APIRoute = async ({ props }) => {
           height: "100%",
           backgroundColor: "#0a0a0a",
           position: "relative",
-          fontFamily: "Unbounded",
+          fontFamily: "Unbounded"
         },
         children: [
           // Background pattern (top area)
@@ -88,9 +88,9 @@ export const GET: APIRoute = async ({ props }) => {
                   "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 60%)",
                 // biome-ignore lint/style/useNamingConvention: Satori requires WebkitMaskImage
                 WebkitMaskImage:
-                  "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 60%)",
-              },
-            },
+                  "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 60%)"
+              }
+            }
           },
           // Content
           {
@@ -100,7 +100,7 @@ export const GET: APIRoute = async ({ props }) => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "center"
               },
               children: [
                 // Logo
@@ -110,8 +110,8 @@ export const GET: APIRoute = async ({ props }) => {
                     src: logoBase64,
                     width: 160,
                     height: 182,
-                    style: { marginBottom: "40px" },
-                  },
+                    style: { marginBottom: "40px" }
+                  }
                 },
                 // Title
                 {
@@ -123,16 +123,16 @@ export const GET: APIRoute = async ({ props }) => {
                       color: "white",
                       textAlign: "center",
                       maxWidth: "900px",
-                      lineHeight: 1.2,
+                      lineHeight: 1.2
                     },
-                    children: title,
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
+                    children: title
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
     },
     {
       width: 1200,
@@ -142,10 +142,10 @@ export const GET: APIRoute = async ({ props }) => {
           name: "Unbounded",
           data: fontData,
           style: "normal",
-          weight: 700,
-        },
-      ],
-    },
+          weight: 700
+        }
+      ]
+    }
   );
 
   const png = await sharp(Buffer.from(svg)).png().toBuffer();
@@ -153,7 +153,7 @@ export const GET: APIRoute = async ({ props }) => {
   return new Response(new Uint8Array(png), {
     headers: {
       "Content-Type": "image/png",
-      "Cache-Control": "public, max-age=31536000, immutable",
-    },
+      "Cache-Control": "public, max-age=31536000, immutable"
+    }
   });
 };

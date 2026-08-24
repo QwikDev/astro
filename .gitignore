@@ -13,3 +13,7 @@ node_modules/
 .claude
 **/public/pagefind
 .planning
+
+# agent harness / board state
+.fable-opus/
+.goalbuddy-board/

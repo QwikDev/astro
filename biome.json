@@ -7,7 +7,10 @@
       "dist",
       "node_modules",
       "**/q-astro-manifest.json",
-      "**/.vercel/**"
+      "**/.vercel/**",
+      "**/.netlify/**",
+      ".fable-opus/**",
+      "**/.goalbuddy-board/**"
     ]
   },
 
@@ -103,7 +106,8 @@
 
   "vcs": {
     "clientKind": "git",
-    "enabled": true
+    "enabled": true,
+    "useIgnoreFile": true
   },
 
   "extends": ["./apps/website/biome.json", "./libs/create-qwikdev-astro/biome.json"]
