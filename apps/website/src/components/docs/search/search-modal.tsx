@@ -91,8 +91,14 @@ export const SearchModal = component$(() => {
   useOnDocument(
     "keydown",
     $((e: Event) => {
-      const event = e as KeyboardEvent;
+      // SearchModal is rendered more than once (desktop sidebar + mobile drawer),
+      // so every instance registers this listener and they all receive the very
+      // same KeyboardEvent object. Stamping it lets only the first one act -
+      // otherwise the extra clicks would toggle the modal straight back closed.
+      const event = e as KeyboardEvent & { searchShortcutHandled?: boolean };
+      if (event.searchShortcutHandled) return;
       if ((event.metaKey || event.ctrlKey) && event.key === "k") {
+        event.searchShortcutHandled = true;
         event.preventDefault();
         const trigger = document.querySelector(
           "[data-search-trigger]"
