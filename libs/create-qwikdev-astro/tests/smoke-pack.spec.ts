@@ -1,7 +1,7 @@
-import type { Assert } from "@japa/assert";
 import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
+import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 
 declare module "@japa/runner/core" {
@@ -43,7 +43,11 @@ function ensureBuiltPackage() {
   // Install tarball into a clean directory
   mkdirSync(installDir, { recursive: true });
   execSync("npm init -y", { cwd: installDir, stdio: "pipe" });
-  execSync(`npm install "${tarball}"`, { cwd: installDir, stdio: "pipe", timeout: 60_000 });
+  execSync(`npm install "${tarball}"`, {
+    cwd: installDir,
+    stdio: "pipe",
+    timeout: 60_000
+  });
 }
 
 test.group("built-package smoke test", (group) => {
@@ -72,7 +76,13 @@ test.group("built-package smoke test", (group) => {
   });
 
   test("Counter.tsx template is present in installed package", ({ assert }) => {
-    const counterPath = join(pkgRoot, "stubs", "templates", "qwik-component", "Counter.tsx");
+    const counterPath = join(
+      pkgRoot,
+      "stubs",
+      "templates",
+      "qwik-component",
+      "Counter.tsx"
+    );
     assert.isTrue(existsSync(counterPath), "Counter.tsx template exists");
   });
 
@@ -84,7 +94,9 @@ test.group("built-package smoke test", (group) => {
     assert.isTrue(output.includes("create-astro"), "help mentions create-astro");
   });
 
-  test("scaffoldQwikComponent from installed dist creates Counter.tsx with pragma", async ({ assert }) => {
+  test("scaffoldQwikComponent from installed dist creates Counter.tsx with pragma", async ({
+    assert
+  }) => {
     // Discover the hashed scaffold chunk from the installed dist/
     const distDir = join(pkgRoot, "dist");
     const scaffoldChunk = readdirSync(distDir).find(
@@ -109,7 +121,11 @@ test.group("built-package smoke test", (group) => {
     const targetDir = join(root, "scaffold-test-project");
     mkdirSync(targetDir, { recursive: true });
 
-    const strategy = { qwikIsPrimary: false, pragma: "/** @jsxImportSource @qwik.dev/core */", tsconfigSource: null };
+    const strategy = {
+      qwikIsPrimary: false,
+      pragma: "/** @jsxImportSource @qwik.dev/core */",
+      tsconfigSource: null
+    };
     const counterPath = await scaffoldFn!(targetDir, strategy, false);
 
     // Assert Counter.tsx was created
@@ -117,7 +133,10 @@ test.group("built-package smoke test", (group) => {
 
     // Assert content has pragma + template
     const content = readFileSync(counterPath, "utf-8");
-    assert.isTrue(content.startsWith("/** @jsxImportSource @qwik.dev/core */"), "pragma is first line");
+    assert.isTrue(
+      content.startsWith("/** @jsxImportSource @qwik.dev/core */"),
+      "pragma is first line"
+    );
     assert.isTrue(content.includes("component$"), "template content includes component$");
   });
 });

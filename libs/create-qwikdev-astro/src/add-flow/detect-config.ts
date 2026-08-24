@@ -22,7 +22,7 @@ export function hasQwikImport(configSource: string): boolean {
     sourceType: "module"
   });
 
-  for (const node of (parsed.program?.body ?? [])) {
+  for (const node of parsed.program?.body ?? []) {
     const n = node as unknown as ASTNode;
     if (n.type !== "ImportDeclaration") continue;
     const source = n.source as ASTNode | undefined;

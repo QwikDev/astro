@@ -11,296 +11,266 @@ import pm from "panam/pm";
  * so callers must check explicitly.
  */
 export function assertPmResult(
-	result: { status: boolean; error?: unknown },
-	label: string,
+  result: { status: boolean; error?: unknown },
+  label: string
 ): void {
-	if (!result.status) {
-		throw new Error(
-			`${label} failed${result.error ? `: ${result.error}` : ""}`,
-		);
-	}
+  if (!result.status) {
+    throw new Error(`${label} failed${result.error ? `: ${result.error}` : ""}`);
+  }
 }
 
 export const __filename = getModuleFilename();
 export const __dirname = path.dirname(__filename);
 
 export function safeCopy(source: string, target: string): void {
-	statSync(source).isDirectory()
-		? safeCopyDir(source, target)
-		: safeCopyFile(source, target);
+  statSync(source).isDirectory()
+    ? safeCopyDir(source, target)
+    : safeCopyFile(source, target);
 }
 
 export function safeCopyDir(sourceDir: string, targetDir: string): void {
-	const files = readdirSync(sourceDir);
-	ensureDirSync(targetDir);
+  const files = readdirSync(sourceDir);
+  ensureDirSync(targetDir);
 
-	for (const file of files) {
-		safeCopy(join(sourceDir, file), join(targetDir, file));
-	}
+  for (const file of files) {
+    safeCopy(join(sourceDir, file), join(targetDir, file));
+  }
 }
 
 export function safeCopyFile(sourceFile: string, targetFile: string): void {
-	const name = basename(sourceFile);
+  const name = basename(sourceFile);
 
-	if (!pathExistsSync(targetFile)) {
-		copySync(sourceFile, targetFile);
-	} else if (name.endsWith(".json")) {
-		deepMergeJsonFile(targetFile, sourceFile, true);
-	} else if (name.startsWith(".") && name.endsWith("ignore")) {
-		mergeDotIgnoreFiles(targetFile, sourceFile, true);
-	}
+  if (!pathExistsSync(targetFile)) {
+    copySync(sourceFile, targetFile);
+  } else if (name.endsWith(".json")) {
+    deepMergeJsonFile(targetFile, sourceFile, true);
+  } else if (name.startsWith(".") && name.endsWith("ignore")) {
+    mergeDotIgnoreFiles(targetFile, sourceFile, true);
+  }
 }
 
 export function deepMergeJsonFile<T>(
-	targetJsonPath: string,
-	sourceJsonPath: string,
-	replace = false,
+  targetJsonPath: string,
+  sourceJsonPath: string,
+  replace = false
 ): T {
-	const deepMerge = deepMergeJson<T>(
-		fileGetContents(targetJsonPath),
-		fileGetContents(sourceJsonPath),
-	);
+  const deepMerge = deepMergeJson<T>(
+    fileGetContents(targetJsonPath),
+    fileGetContents(sourceJsonPath)
+  );
 
-	if (replace) {
-		putJson(targetJsonPath, deepMerge);
-	}
+  if (replace) {
+    putJson(targetJsonPath, deepMerge);
+  }
 
-	return deepMerge;
+  return deepMerge;
 }
 
 export function deepMergeJson<T>(targetJson: string, sourceJson: string): T {
-	return deepMerge(
-		JSON.parse(targetJson),
-		JSON.parse(sourceJson),
-	) as unknown as T;
+  return deepMerge(JSON.parse(targetJson), JSON.parse(sourceJson)) as unknown as T;
 }
 
 export function deepMerge<T>(target: T, source: Partial<T>): T {
-	for (const key of Object.keys(source) as (keyof T)[]) {
-		const targetValue = target[key];
-		const sourceValue = source[key] as Partial<T[keyof T]>;
+  for (const key of Object.keys(source) as (keyof T)[]) {
+    const targetValue = target[key];
+    const sourceValue = source[key] as Partial<T[keyof T]>;
 
-		if (isObject(targetValue) && isObject(sourceValue)) {
-			target[key] = deepMerge(targetValue, sourceValue);
-		} else if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
-			target[key] = Array.from(
-				new Set([...targetValue, ...sourceValue]),
-			) as any;
-		} else {
-			target[key] = sourceValue as T[keyof T];
-		}
-	}
-	return target;
+    if (isObject(targetValue) && isObject(sourceValue)) {
+      target[key] = deepMerge(targetValue, sourceValue);
+    } else if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
+      target[key] = Array.from(new Set([...targetValue, ...sourceValue])) as any;
+    } else {
+      target[key] = sourceValue as T[keyof T];
+    }
+  }
+  return target;
 }
 
 function isObject(item: unknown): item is Record<string, any> {
-	return item !== null && typeof item === "object" && !Array.isArray(item);
+  return item !== null && typeof item === "object" && !Array.isArray(item);
 }
 
 export function mergeDotIgnoreFiles(
-	target: string,
-	source: string,
-	replace = false,
+  target: string,
+  source: string,
+  replace = false
 ): string {
-	const contents = mergeDotIgnoreContents(
-		fileGetContents(target),
-		fileGetContents(source),
-	);
+  const contents = mergeDotIgnoreContents(
+    fileGetContents(target),
+    fileGetContents(source)
+  );
 
-	if (replace) {
-		filePutContents(target, contents);
-	}
+  if (replace) {
+    filePutContents(target, contents);
+  }
 
-	return contents;
+  return contents;
 }
 
-export function mergeDotIgnoreContents(
-	content1: string,
-	content2: string,
-): string {
-	return mergeDotIgnoreLines(content1.split("\n"), content2.split("\n")).join(
-		"\n",
-	);
+export function mergeDotIgnoreContents(content1: string, content2: string): string {
+  return mergeDotIgnoreLines(content1.split("\n"), content2.split("\n")).join("\n");
 }
 
-export function mergeDotIgnoreLines(
-	lines1: string[],
-	lines2: string[],
-): string[] {
-	const lines = Array.from(
-		new Set([
-			...lines1.map((line) => line.trim()),
-			...lines2.map((line) => line.trim()),
-		]),
-	).filter((line) => line !== "");
+export function mergeDotIgnoreLines(lines1: string[], lines2: string[]): string[] {
+  const lines = Array.from(
+    new Set([...lines1.map((line) => line.trim()), ...lines2.map((line) => line.trim())])
+  ).filter((line) => line !== "");
 
-	return formatLines(lines);
+  return formatLines(lines);
 }
 
 function formatLines(lines: string[]): string[] {
-	const formattedLines: string[] = [];
-	let previousWasComment = false;
+  const formattedLines: string[] = [];
+  let previousWasComment = false;
 
-	lines.forEach((line, index) => {
-		const isComment = line.startsWith("#");
+  lines.forEach((line, index) => {
+    const isComment = line.startsWith("#");
 
-		if (isComment && !previousWasComment && index !== 0) {
-			formattedLines.push("");
-		}
+    if (isComment && !previousWasComment && index !== 0) {
+      formattedLines.push("");
+    }
 
-		formattedLines.push(line);
-		previousWasComment = isComment;
-	});
+    formattedLines.push(line);
+    previousWasComment = isComment;
+  });
 
-	return formattedLines;
+  return formattedLines;
 }
 
 export function getModuleFilename(): string {
-	const error = new Error();
-	const stack = error.stack;
-	const matches = stack?.match(
-		/^Error\s+at[^\r\n]+\s+at *(?:[^\r\n(]+\((.+?)(?::\d+:\d+)?\)|(.+?)(?::\d+:\d+)?) *([\r\n]|$)/,
-	);
-	const filename = matches?.[1] || matches?.[2];
-	if (filename?.startsWith("file://")) {
-		return fileURLToPath(filename);
-	}
-	return filename || fileURLToPath(import.meta.url);
+  const error = new Error();
+  const stack = error.stack;
+  const matches = stack?.match(
+    /^Error\s+at[^\r\n]+\s+at *(?:[^\r\n(]+\((.+?)(?::\d+:\d+)?\)|(.+?)(?::\d+:\d+)?) *([\r\n]|$)/
+  );
+  const filename = matches?.[1] || matches?.[2];
+  if (filename?.startsWith("file://")) {
+    return fileURLToPath(filename);
+  }
+  return filename || fileURLToPath(import.meta.url);
 }
 
 export function isCI(): boolean {
-	return Boolean(process.env.CI || process.env.GITHUB_ACTIONS);
+  return Boolean(process.env.CI || process.env.GITHUB_ACTIONS);
 }
 
 export function isTest(): boolean {
-	return process.env.NODE_ENV === "test";
+  return process.env.NODE_ENV === "test";
 }
 
 export function isHome(dir: string): boolean {
-	return dir.startsWith(process.env.HOME ?? "~/");
+  return dir.startsWith(process.env.HOME ?? "~/");
 }
 
 export function resolveAbsoluteDir(dir: string) {
-	return isHome(dir) ? resolve(os.homedir(), dir) : resolve(process.cwd(), dir);
+  return isHome(dir) ? resolve(os.homedir(), dir) : resolve(process.cwd(), dir);
 }
 
 export function resolveRelativeDir(dir: string) {
-	return isHome(dir)
-		? relative(os.homedir(), dir)
-		: relative(process.cwd(), dir);
+  return isHome(dir) ? relative(os.homedir(), dir) : relative(process.cwd(), dir);
 }
 
 export function notEmptyDir(dir: string): boolean {
-	return fs.existsSync(dir) && fs.readdirSync(dir).length > 0;
+  return fs.existsSync(dir) && fs.readdirSync(dir).length > 0;
 }
 
 // Used from https://github.com/QwikDev/qwik/blob/main/packages/create-qwik/src/helpers/clearDir.ts
 export const clearDir = async (dir: string) => {
-	const files = await fs.promises.readdir(dir);
+  const files = await fs.promises.readdir(dir);
 
-	return await Promise.all(
-		files.map((pathToFile) =>
-			fs.promises.rm(join(dir, pathToFile), { recursive: true }),
-		),
-	);
+  return await Promise.all(
+    files.map((pathToFile) => fs.promises.rm(join(dir, pathToFile), { recursive: true }))
+  );
 };
 
 function fileGetContents(file: string): string {
-	if (!fs.existsSync(file)) {
-		throw new Error(`File ${file} not found`);
-	}
-	return fs.readFileSync(file, { encoding: "utf8" }).toString();
+  if (!fs.existsSync(file)) {
+    throw new Error(`File ${file} not found`);
+  }
+  return fs.readFileSync(file, { encoding: "utf8" }).toString();
 }
 
 function filePutContents(file: string, contents: string) {
-	return fs.writeFileSync(file, contents, { encoding: "utf8" });
+  return fs.writeFileSync(file, contents, { encoding: "utf8" });
 }
 
-function fileReplaceContents(
-	file: string,
-	search: string | RegExp,
-	replace: string,
-) {
-	let contents = fileGetContents(file);
-	contents = contents.replace(search, replace);
-	filePutContents(file, contents);
+function fileReplaceContents(file: string, search: string | RegExp, replace: string) {
+  let contents = fileGetContents(file);
+  contents = contents.replace(search, replace);
+  filePutContents(file, contents);
 }
 
 export function getPackageJsonPath(dir = __dirname): string {
-	return join(dir, "package.json");
+  return join(dir, "package.json");
 }
 
-function packageJsonReplace(
-	dir: string,
-	search: string | RegExp,
-	replace: string,
-) {
-	fileReplaceContents(getPackageJsonPath(dir), search, replace);
+function packageJsonReplace(dir: string, search: string | RegExp, replace: string) {
+  fileReplaceContents(getPackageJsonPath(dir), search, replace);
 }
 
 export function replacePackageJsonRunCommand(dir: string) {
-	packageJsonReplace(dir, /npm run/g, pm.runCommand());
+  packageJsonReplace(dir, /npm run/g, pm.runCommand());
 }
 
 const npmPackageNamePattern =
-	/^(?:(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*)$/;
+  /^(?:(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*)$/;
 
 export function sanitizePackageName(name: string): string {
-	name = name
-		.trim()
-		.replace(/\\/g, "/")
-		.split("/")
-		.filter(Boolean)
-		.map((segment) =>
-			segment
-				.toLowerCase()
-				.replace(/[^a-z0-9-_]/g, "-")
-				.replace(/^-+|-+$/g, ""),
-		)
-		.join("-");
-	name = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-	name = name.replace(/[^a-zA-Z0-9\-._~/@]/g, "-");
-	name = name.replace(/^[-.]+|[-.]+$/g, "");
-	name = name.replace(/[-.]{2,}/g, "-");
-	name = name.toLowerCase();
+  name = name
+    .trim()
+    .replace(/\\/g, "/")
+    .split("/")
+    .filter(Boolean)
+    .map((segment) =>
+      segment
+        .toLowerCase()
+        .replace(/[^a-z0-9-_]/g, "-")
+        .replace(/^-+|-+$/g, "")
+    )
+    .join("-");
+  name = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  name = name.replace(/[^a-zA-Z0-9\-._~/@]/g, "-");
+  name = name.replace(/^[-.]+|[-.]+$/g, "");
+  name = name.replace(/[-.]{2,}/g, "-");
+  name = name.toLowerCase();
 
-	return name;
+  return name;
 }
 
 function isValidPackageName(name: string): boolean {
-	return npmPackageNamePattern.test(name);
+  return npmPackageNamePattern.test(name);
 }
 
 function validatePackageName(name: string): string {
-	name = sanitizePackageName(name);
+  name = sanitizePackageName(name);
 
-	if (!isValidPackageName(name)) {
-		throw new Error(`Invalid package name: ${name}`);
-	}
+  if (!isValidPackageName(name)) {
+    throw new Error(`Invalid package name: ${name}`);
+  }
 
-	return name;
+  return name;
 }
 
 export function getPackageJson(dir: string): Record<string, any> {
-	const packageJsonPath = getPackageJsonPath(dir);
+  const packageJsonPath = getPackageJsonPath(dir);
 
-	return JSON.parse(fileGetContents(packageJsonPath));
+  return JSON.parse(fileGetContents(packageJsonPath));
 }
 
 export function setPackageJson(dir: string, json: Record<string, any>) {
-	putJson(getPackageJsonPath(dir), json);
+  putJson(getPackageJsonPath(dir), json);
 }
 
 export function putJson<T>(path: string, json: T) {
-	filePutContents(path, JSON.stringify(json, null, 2));
+  filePutContents(path, JSON.stringify(json, null, 2));
 }
 
 export function updatePackageName(newName: string, dir = __dirname): void {
-	const cleanedName = validatePackageName(newName);
-	const packageJson = getPackageJson(dir);
+  const cleanedName = validatePackageName(newName);
+  const packageJson = getPackageJson(dir);
 
-	packageJson.name = cleanedName;
-	setPackageJson(dir, packageJson);
+  packageJson.name = cleanedName;
+  setPackageJson(dir, packageJson);
 }
 
 /**
@@ -314,36 +284,36 @@ export function updatePackageName(newName: string, dir = __dirname): void {
  * - Trailing commas before } or ]
  */
 export function stripJsonComments(text: string): string {
-	let result = "";
-	let i = 0;
-	while (i < text.length) {
-		// Skip strings — preserve their content verbatim
-		if (text[i] === '"') {
-			const start = i;
-			i++;
-			while (i < text.length && text[i] !== '"') {
-				if (text[i] === "\\") i++; // skip escaped char
-				i++;
-			}
-			i++; // closing quote
-			result += text.slice(start, i);
-			continue;
-		}
-		// Single-line comment
-		if (text[i] === "/" && text[i + 1] === "/") {
-			while (i < text.length && text[i] !== "\n") i++;
-			continue;
-		}
-		// Block comment
-		if (text[i] === "/" && text[i + 1] === "*") {
-			i += 2;
-			while (i < text.length && !(text[i] === "*" && text[i + 1] === "/")) i++;
-			i += 2;
-			continue;
-		}
-		result += text[i];
-		i++;
-	}
-	// Remove trailing commas before } or ]
-	return result.replace(/,\s*([}\]])/g, "$1");
+  let result = "";
+  let i = 0;
+  while (i < text.length) {
+    // Skip strings — preserve their content verbatim
+    if (text[i] === '"') {
+      const start = i;
+      i++;
+      while (i < text.length && text[i] !== '"') {
+        if (text[i] === "\\") i++; // skip escaped char
+        i++;
+      }
+      i++; // closing quote
+      result += text.slice(start, i);
+      continue;
+    }
+    // Single-line comment
+    if (text[i] === "/" && text[i + 1] === "/") {
+      while (i < text.length && text[i] !== "\n") i++;
+      continue;
+    }
+    // Block comment
+    if (text[i] === "/" && text[i + 1] === "*") {
+      i += 2;
+      while (i < text.length && !(text[i] === "*" && text[i + 1] === "/")) i++;
+      i += 2;
+      continue;
+    }
+    result += text[i];
+    i++;
+  }
+  // Remove trailing commas before } or ]
+  return result.replace(/,\s*([}\]])/g, "$1");
 }

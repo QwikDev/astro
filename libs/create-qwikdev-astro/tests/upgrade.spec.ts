@@ -1,6 +1,6 @@
-import type { Assert } from "@japa/assert";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import { emptyDirSync, ensureDirSync } from "fs-extra";
 import pm from "panam";

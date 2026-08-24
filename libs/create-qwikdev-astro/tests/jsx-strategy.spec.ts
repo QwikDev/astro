@@ -1,7 +1,7 @@
-import type { Assert } from "@japa/assert";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import { determineJsxStrategy } from "../src/add-flow/jsx-strategy.js";
 import { scaffoldQwikComponent } from "../src/add-flow/scaffold.js";
@@ -72,7 +72,9 @@ test.group("scaffoldQwikComponent", () => {
     }
   });
 
-  test("template resolves to real Counter.tsx with Qwik component content", async ({ assert }) => {
+  test("template resolves to real Counter.tsx with Qwik component content", async ({
+    assert
+  }) => {
     const tmpDir = await mkdtemp(join(tmpdir(), "scaffold-template-"));
     try {
       const strategy = determineJsxStrategy("primary");
