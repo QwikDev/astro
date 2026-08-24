@@ -1,3 +1,5 @@
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import { TestContext } from "@japa/runner/core";
@@ -26,6 +28,17 @@ delete process.env.npm_config_user_agent;
 
 const setup = () => {
   ensureDirSync(root);
+
+  // Deno enforces a minimum dependency age, so `deno install` refuses freshly
+  // published versions of `@qwik.dev/astro` and the template runs fail. There is
+  // no env var for it and an ancestor `deno.json` only applies through a
+  // workspace, so declare the generated project as a workspace member here and
+  // opt out. Test-scoped only — nothing shipped changes. The group teardown
+  // empties `root`, so this must be rewritten on every setup.
+  writeFileSync(
+    join(root, "deno.json"),
+    `${JSON.stringify({ minimumDependencyAge: 0, workspace: [`./${project}`] }, null, 2)}\n`
+  );
 
   return () => emptyDirSync(root);
 };

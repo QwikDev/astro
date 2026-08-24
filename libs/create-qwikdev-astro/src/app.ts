@@ -569,7 +569,17 @@ export class Application extends Program<Definition, Input> {
 
     await this.prepareDir(input);
 
-    const res = await pm.create(args.join(" "));
+    // panam's `PackageManager.create()` mis-parses its arguments under Deno: it
+    // derives the npm package from `args[1]` (the DESTINATION) instead of
+    // `args[0]`, then slices the destination away — so `astro <dest> -- …`
+    // becomes `deno run -A npm:/create-<first path segment>` with no
+    // destination, installing an unrelated package and scaffolding nothing.
+    // Invoke the creator directly for Deno; every other package manager keeps
+    // panam's `create()` and its exact argument semantics.
+    const [creator, ...createArgs] = args;
+    const res = pm.isDeno()
+      ? await $(pm.realname, ["run", "-A", `npm:create-${creator}`, ...createArgs]).result
+      : await pm.create(args.join(" "));
     if (!res.status) this.panic(`Template creation failed: ${res.error}`);
 
     this.copyTools(input);
