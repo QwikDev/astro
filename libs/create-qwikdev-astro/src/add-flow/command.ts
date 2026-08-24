@@ -1,9 +1,14 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import pm from "panam/pm";
-import pkg from "../../package.json";
+import pkg from "../../package.json" with { type: "json" };
 import { type Definition as BaseDefinition, Program } from "../core.js";
-import { assertPmResult, resolveAbsoluteDir, stripJsonComments } from "../utils.js";
+import {
+  assertPmResult,
+  npmSpec,
+  resolveAbsoluteDir,
+  stripJsonComments
+} from "../utils.js";
 import {
   detectConfigFrameworks,
   hasQwikImport,
@@ -112,7 +117,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
         this.warn("No astro.config file found — running astro add directly.");
         if (!input.dryRun) {
           assertPmResult(
-            await pm.x("astro add @qwik.dev/astro", { cwd: input.absDir }),
+            await pm.x(npmSpec("astro add @qwik.dev/astro"), { cwd: input.absDir }),
             "astro add @qwik.dev/astro"
           );
         } else {
@@ -245,7 +250,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
     }
 
     assertPmResult(
-      await pm.x("astro add @qwik.dev/astro", { cwd: input.absDir }),
+      await pm.x(npmSpec("astro add @qwik.dev/astro"), { cwd: input.absDir }),
       "astro add @qwik.dev/astro"
     );
   }

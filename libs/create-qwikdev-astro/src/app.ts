@@ -3,7 +3,7 @@ import path from "node:path";
 import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
 import { $ } from "panam/executor";
 import pm from "panam/pm";
-import pkg from "../package.json";
+import pkg from "../package.json" with { type: "json" };
 import {
   detectConfigFrameworks,
   hasQwikImport,
@@ -20,6 +20,7 @@ import {
   clearDir,
   getPackageJson,
   notEmptyDir,
+  npmSpec,
   replacePackageJsonRunCommand,
   resolveAbsoluteDir,
   resolveRelativeDir,
@@ -432,7 +433,7 @@ export class Application extends Program<Definition, Input> {
               );
             } else {
               assertPmResult(
-                await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
+                await pm.x(npmSpec("astro add @qwik.dev/astro"), { cwd: input.outDir }),
                 "astro add @qwik.dev/astro"
               );
             }
@@ -453,7 +454,7 @@ export class Application extends Program<Definition, Input> {
               );
             } else {
               assertPmResult(
-                await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
+                await pm.x(npmSpec("astro add @qwik.dev/astro"), { cwd: input.outDir }),
                 "astro add @qwik.dev/astro"
               );
             }
@@ -467,7 +468,7 @@ export class Application extends Program<Definition, Input> {
               );
             } else {
               assertPmResult(
-                await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
+                await pm.x(npmSpec("astro add @qwik.dev/astro"), { cwd: input.outDir }),
                 "astro add @qwik.dev/astro"
               );
             }
@@ -480,7 +481,7 @@ export class Application extends Program<Definition, Input> {
         // No config file found — just run astro add directly
         if (!input.dryRun) {
           assertPmResult(
-            await pm.x("astro add @qwik.dev/astro", { cwd: input.outDir }),
+            await pm.x(npmSpec("astro add @qwik.dev/astro"), { cwd: input.outDir }),
             "astro add @qwik.dev/astro"
           );
         }

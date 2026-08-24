@@ -19,6 +19,19 @@ export function assertPmResult(
   }
 }
 
+/**
+ * Qualify an executable spec for the active runtime.
+ *
+ * Deno's `run`/`exec` resolves a bare specifier such as `astro` as a FILE PATH
+ * relative to the cwd, so `pm.x("astro add …")` fails with
+ * `Module not found file:///…/astro`. Prefixing with `npm:` tells Deno to
+ * resolve the executable from npm instead. Every other package manager takes
+ * the command unchanged.
+ */
+export function npmSpec(command: string): string {
+  return pm.isDeno() ? `npm:${command}` : command;
+}
+
 export const __filename = getModuleFilename();
 export const __dirname = path.dirname(__filename);
 

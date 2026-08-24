@@ -1,5 +1,5 @@
 import pm from "panam/pm";
-import pkg from "../package.json";
+import pkg from "../package.json" with { type: "json" };
 import { type Definition as BaseDefinition, Program } from "./core";
 import { checkGitStatus, validateProject } from "./upgrade-preflight";
 import {
@@ -9,7 +9,7 @@ import {
   rewriteTsconfig,
   scanForAsyncPatterns
 } from "./upgrade-rewrite";
-import { assertPmResult, getPackageJson, resolveAbsoluteDir } from "./utils";
+import { assertPmResult, getPackageJson, npmSpec, resolveAbsoluteDir } from "./utils";
 
 const MIGRATION_DOCS_URL = "https://qwikdev-build-v2.qwik-8nx.pages.dev/docs/upgrade/";
 
@@ -165,7 +165,9 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
       this.step("Running @astrojs/upgrade...");
       if (!input.dryRun) {
         try {
-          const dlxResult = await pm.dlx("@astrojs/upgrade", { cwd: input.absDir });
+          const dlxResult = await pm.dlx(npmSpec("@astrojs/upgrade"), {
+            cwd: input.absDir
+          });
           assertPmResult(dlxResult, "@astrojs/upgrade");
           results.astroUpgradeRan = true;
         } catch {
