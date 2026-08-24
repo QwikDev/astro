@@ -13,6 +13,24 @@ import { assertPmResult, getPackageJson, npmSpec, resolveAbsoluteDir } from "./u
 
 const MIGRATION_DOCS_URL = "https://qwikdev-build-v2.qwik-8nx.pages.dev/docs/upgrade/";
 
+/**
+ * The exact command a user should run to retry `@astrojs/upgrade` by hand,
+ * spelled the same way `pm.dlx()` spells it for the detected package manager.
+ */
+function astroUpgradeCommand(): string {
+  const spec = npmSpec("@astrojs/upgrade");
+
+  if (pm.isDeno()) {
+    return `deno run -A -r ${spec}`;
+  }
+
+  if (pm.isPnpm() || pm.isYarn()) {
+    return `${pm.name} dlx ${spec}`;
+  }
+
+  return `${pm.name} x ${spec}`;
+}
+
 export type UpgradeDefinition = BaseDefinition & {
   directory: string;
   dryRun?: boolean;
@@ -171,10 +189,13 @@ export class UpgradeCommand extends Program<UpgradeDefinition, UpgradeInput> {
           assertPmResult(dlxResult, "@astrojs/upgrade");
           results.astroUpgradeRan = true;
         } catch {
-          this.error(
-            "@astrojs/upgrade failed. Please run it manually before retrying the Qwik upgrade."
+          // Failures in this third-party updater are advisory, not fatal: its own
+          // message prescribes a manual fallback, and runtime-specific breakage in
+          // Astro's tool (e.g. its `deno add astro@x` path) must not block the Qwik
+          // migration — swapping packages and rewriting imports is this CLI's job.
+          this.warn(
+            `@astrojs/upgrade failed. Continuing with the Qwik upgrade — please run it manually: ${astroUpgradeCommand()}`
           );
-          return 1;
         }
       } else {
         this.info(`Would run @astrojs/upgrade via ${pm.name}`);
