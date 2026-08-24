@@ -1,0 +1,137 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version bump type"
+        required: true
+        default: "minor"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      preid:
+        description: "Prerelease ID (e.g., alpha, beta) - leave empty for stable release"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: "Release"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          registry-url: https://registry.npmjs.org/
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Get current version and previous tag
+        id: current_version
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$PREVIOUS_TAG" ]; then
+            PREVIOUS_TAG=$(git rev-list --max-parents=0 HEAD)
+          fi
+          echo "PREVIOUS_TAG=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+
+      - name: Configure git identity
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Bump versions
+        id: bump
+        run: |
+          BUMP_CMD="pnpm bumpp package.json libs/*/package.json --release ${{ github.event.inputs.version }} --yes"
+          if [ -n "${{ github.event.inputs.preid }}" ]; then
+            BUMP_CMD="$BUMP_CMD --preid ${{ github.event.inputs.preid }}"
+          fi
+          $BUMP_CMD --commit "chore: release v%s" --tag "v%s" --all
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog for this release
+        id: changelog
+        run: |
+          CURRENT_TAG="v${{ steps.bump.outputs.NEW_VERSION }}"
+          PREVIOUS_TAG="${{ steps.current_version.outputs.PREVIOUS_TAG }}"
+          # HEAD~1 excludes the version bump commit itself from the changelog
+          pnpm changelogen --output RELEASE_CHANGELOG.md --no-commit --no-tag --from $PREVIOUS_TAG --to HEAD~1
+          awk '
+            BEGIN { found=0 }
+            /^## / {
+              if (found) exit
+              found=1
+              next
+            }
+            found {print}
+          ' RELEASE_CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ] || [ "$(tr -d '[:space:]' < release-notes.md)" = "" ]; then
+            echo "Release v${{ steps.bump.outputs.NEW_VERSION }}" > release-notes.md
+          fi
+          rm RELEASE_CHANGELOG.md
+
+      - name: Push changes and tags
+        run: |
+          git push
+          git push --tags
+
+      - name: Verify versions bumped correctly
+        run: |
+          EXPECTED_VERSION="${{ steps.bump.outputs.NEW_VERSION }}"
+          ROOT_VERSION=$(node -p "require('./package.json').version")
+          if [ "$ROOT_VERSION" != "$EXPECTED_VERSION" ]; then exit 1; fi
+          for pkg in libs/*/package.json; do
+            PKG_VERSION=$(node -p "require('./$pkg').version")
+            if [ "$PKG_VERSION" != "$EXPECTED_VERSION" ]; then exit 1; fi
+          done
+
+      - name: Build packages
+        run: pnpm build.create-qwikdev-astro
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.bump.outputs.NEW_VERSION }}
+          name: v${{ steps.bump.outputs.NEW_VERSION }}
+          body_path: release-notes.md
+          draft: false
+          prerelease: ${{ github.event.inputs.preid != '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clean up release notes file
+        run: rm release-notes.md
+
+      - name: Publish to npm with provenance
+        run: |
+          # Publish each package using npm (OIDC requires npm, not pnpm)
+          for pkg in libs/qwikdev-astro libs/create-qwikdev-astro; do
+            echo "Publishing $pkg..."
+            (cd $pkg && npm publish --access public) || echo "Skipped $pkg (may already exist)"
+          done
