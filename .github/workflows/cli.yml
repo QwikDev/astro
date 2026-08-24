@@ -34,6 +34,10 @@ jobs:
         uses: siguici/setup-js@v1
         with:
           runtime: ${{ matrix.runtime }}
-          pm: ${{ matrix.pm }}
+          # Pin pnpm to the repo's `packageManager` version. Left unpinned,
+          # setup-js resolves `latest`, then tries `pnpm install -g pnpm@<latest>`
+          # against the action's PNPM_HOME and fails with
+          # "The configured global bin directory ... is not in PATH".
+          pm: ${{ matrix.pm == 'pnpm' && 'pnpm@10.33.2' || matrix.pm }}
           scripts: build,test
           cwd: ./libs/create-qwikdev-astro
