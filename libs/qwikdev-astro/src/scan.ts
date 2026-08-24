@@ -1,7 +1,5 @@
 import { execFile } from "node:child_process";
-import { readFile, readdir } from "node:fs/promises";
-import { join, relative, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { relative, resolve } from "node:path";
 import { promisify } from "node:util";
 import type { AstroConfig } from "astro";
 import { QWIK_ENTRYPOINT_PATTERN, SCAN_EXTENSIONS } from "./constants";
@@ -49,12 +47,15 @@ export async function scanQwikEntrypoints(
   filter: (id: string) => boolean,
   debug?: boolean
 ): Promise<Set<string>> {
-  const rootDir = fileURLToPath(config.root);
-  const files = (await grepQwikFiles(rootDir)) ?? (await walkQwikFiles(rootDir));
+  const rootDir = config.root.pathname;
+  const stdout = await grepQwikFiles(rootDir);
+  if (!stdout) return new Set();
 
+  const files = stdout.split("\n").sort();
   const entrypoints = new Set<string>();
-  for (const absolutePath of files.sort()) {
-    if (absolutePath.includes("node_modules") || !filter(absolutePath)) continue;
+  for (const relativePath of files) {
+    const absolutePath = resolve(rootDir, relativePath);
+    if (relativePath.includes("node_modules") || !filter(absolutePath)) continue;
     entrypoints.add(absolutePath);
     if (debug) console.debug(`[qwikdev/astro] Found Qwik entrypoint: ${absolutePath}`);
   }
@@ -62,8 +63,7 @@ export async function scanQwikEntrypoints(
   return entrypoints;
 }
 
-/** Lists files matching the Qwik entrypoint pattern with grep, or null when grep is unavailable. */
-async function grepQwikFiles(cwd: string): Promise<string[] | null> {
+async function grepQwikFiles(cwd: string): Promise<string> {
   try {
     const result = await execFileAsync(
       "grep",
@@ -76,37 +76,8 @@ async function grepQwikFiles(cwd: string): Promise<string[] | null> {
       ],
       { cwd, encoding: "utf-8" }
     );
-    const stdout = result.stdout.trim();
-    if (!stdout) return [];
-    return stdout.split("\n").map((relativePath) => resolve(cwd, relativePath));
-  } catch (error) {
-    // grep exits with 1 when no files match
-    if ((error as { code?: number | string }).code === 1) return [];
-    return null;
+    return result.stdout.trim();
+  } catch {
+    return "";
   }
-}
-
-/** Fallback for hosts without grep (e.g. Windows): recursively scans for files matching the Qwik entrypoint pattern. */
-async function walkQwikFiles(rootDir: string): Promise<string[]> {
-  const extensions = SCAN_EXTENSIONS.map((ext) => ext.slice(1));
-  const files: string[] = [];
-
-  async function walk(dir: string): Promise<void> {
-    const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
-    await Promise.all(
-      entries.map(async (entry) => {
-        const path = join(dir, entry.name);
-        if (entry.isDirectory()) {
-          if (entry.name === "node_modules" || entry.name === ".git") return;
-          return walk(path);
-        }
-        if (!extensions.some((ext) => entry.name.endsWith(ext))) return;
-        const content = await readFile(path, "utf-8").catch(() => "");
-        if (QWIK_ENTRYPOINT_PATTERN.test(content)) files.push(path);
-      })
-    );
-  }
-
-  await walk(rootDir);
-  return files;
 }
