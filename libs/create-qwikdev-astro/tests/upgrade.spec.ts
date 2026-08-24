@@ -37,9 +37,16 @@ function scaffoldOldProject(dir: string): void {
         name: "upgrade-test-fixture",
         version: "0.0.1",
         dependencies: {
-          astro: "^4.16.0",
-          "@builder.io/qwik": "^1.19.0",
-          "@qwikdev/astro": "^0.5.16"
+          // These versions must be mutually resolvable under bare npm, which
+          // enforces peer ranges strictly (pnpm/yarn/bun do not):
+          //  - @qwikdev/astro@0.5.16 pins `@builder.io/qwik` to exactly 1.5.6
+          //    as a peer, so a floating `^1.19.x` range ERESOLVEs on install.
+          //  - the upgrade installs the currently published integration, whose
+          //    peer range is astro ^7.0.0 — the fixture must match or the
+          //    `@qwik.dev/astro@latest` install fails peer resolution.
+          astro: "^7.0.0",
+          "@builder.io/qwik": "1.5.6",
+          "@qwikdev/astro": "0.5.16"
         }
       },
       null,
