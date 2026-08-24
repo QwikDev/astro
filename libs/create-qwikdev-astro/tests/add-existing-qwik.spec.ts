@@ -76,9 +76,9 @@ function writeExistingProject(configSource: string) {
       {
         name: "existing-astro-project",
         type: "module",
-        // This flow installs the currently published integration, which remains v1.0/Astro 6
-        // until the changeset in this PR is released.
-        dependencies: { astro: "^6.0.6" }
+        // This flow installs the currently published integration, whose peer range is
+        // astro ^7.0.0 — the fixture must match or bare-npm fails peer resolution.
+        dependencies: { astro: "^7.0.0" }
       },
       null,
       2

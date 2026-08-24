@@ -65,7 +65,7 @@ export default defineConfig({
         name: "react-astro-project",
         type: "module",
         dependencies: {
-          astro: "^6.0.6",
+          astro: "^7.0.0",
           "@astrojs/react": "^4.0.0"
         }
       },
@@ -104,7 +104,7 @@ export default defineConfig({
         name: "react-astro-project",
         type: "module",
         dependencies: {
-          astro: "^6.0.6",
+          astro: "^7.0.0",
           "@astrojs/react": "^4.0.0"
         }
       },
@@ -150,7 +150,7 @@ function writeReactAstroProjectNoQwik(dir: string) {
         type: "module",
         dependencies: {
           // This e2e flow installs the currently published v1.0 integration.
-          astro: "^6.0.6",
+          astro: "^7.0.0",
           "@astrojs/react": "^4.0.0",
           react: "^19.0.0",
           "react-dom": "^19.0.0"
