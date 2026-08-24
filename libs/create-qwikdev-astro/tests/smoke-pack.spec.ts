@@ -31,13 +31,26 @@ function ensureBuiltPackage() {
   // Build
   execSync("npx tsdown", { cwd: pkgDir, stdio: "pipe" });
 
-  // Pack — pnpm pack prints tarball contents then the path on the last line
-  const packOutput = execSync("pnpm pack --pack-destination " + root, {
+  // Pack — use npm, which ships with Node on every CI runner and in every
+  // package-manager matrix cell (pnpm/yarn are not guaranteed to be on PATH).
+  // npm writes its "notice" listing to stderr and the tarball filename to
+  // stdout, so the last non-empty stdout line is the tarball name.
+  const packOutput = execSync(`npm pack --pack-destination "${root}"`, {
     cwd: pkgDir,
-    encoding: "utf-8"
-  }).trim();
+    encoding: "utf-8",
+    stdio: ["ignore", "pipe", "pipe"]
+  });
 
-  const lastLine = packOutput.split("\n").pop()!.trim();
+  const lastLine = packOutput
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .pop();
+
+  if (!lastLine) {
+    throw new Error("npm pack produced no tarball name on stdout");
+  }
+
   tarball = lastLine.startsWith("/") ? lastLine : join(root, lastLine);
 
   // Install tarball into a clean directory
