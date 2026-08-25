@@ -21,13 +21,33 @@ const cliPath = join(pkgRoot, "dist", "cli.mjs");
 let tarball = "";
 
 /**
+ * Remove the temp root, tolerating files the OS refuses to unlink.
+ *
+ * WHY: this suite dynamically `import()`s an ESM chunk from inside `root`.
+ * Windows keeps a lock on a loaded module's file for the lifetime of the
+ * process, and a module cannot be unloaded once imported — so by the time
+ * teardown runs, that file is guaranteed to be locked and `rmSync` throws
+ * EPERM. A leftover file in the OS temp dir on an ephemeral CI runner is not
+ * a test failure, so warn once and keep going rather than turning a green
+ * suite into a non-zero exit.
+ */
+function removeRootBestEffort() {
+  try {
+    rmSync(root, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`smoke-pack: could not fully remove ${root} (${message}) — ignoring`);
+  }
+}
+
+/**
  * Build, pack, and install the tarball once before all tests.
  * Runs eagerly at import time so the group.setup teardown is simple.
  */
 function ensureBuiltPackage() {
   if (tarball) return;
 
-  rmSync(root, { recursive: true, force: true });
+  removeRootBestEffort();
   mkdirSync(root, { recursive: true });
 
   // Build
@@ -68,7 +88,7 @@ function ensureBuiltPackage() {
 test.group("built-package smoke test", (group) => {
   group.setup(() => {
     ensureBuiltPackage();
-    return () => rmSync(root, { recursive: true, force: true });
+    return () => removeRootBestEffort();
   });
 
   group.each.timeout(60_000);
