@@ -138,6 +138,7 @@
 .search-results {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--space-3xs);
 }
 
