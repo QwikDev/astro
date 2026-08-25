@@ -5,7 +5,7 @@ import pkg from "../../package.json" with { type: "json" };
 import { type Definition as BaseDefinition, Program } from "../core.js";
 import {
   assertPmResult,
-  npmSpec,
+  execLocalBin,
   resolveAbsoluteDir,
   stripJsonComments
 } from "../utils.js";
@@ -117,7 +117,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
         this.warn("No astro.config file found — running astro add directly.");
         if (!input.dryRun) {
           assertPmResult(
-            await pm.x(npmSpec("astro add @qwik.dev/astro"), { cwd: input.absDir }),
+            await execLocalBin("astro add @qwik.dev/astro", { cwd: input.absDir }),
             "astro add @qwik.dev/astro"
           );
         } else {
@@ -250,7 +250,7 @@ export class AddCommand extends Program<AddDefinition, AddInput> {
     }
 
     assertPmResult(
-      await pm.x(npmSpec("astro add @qwik.dev/astro"), { cwd: input.absDir }),
+      await execLocalBin("astro add @qwik.dev/astro", { cwd: input.absDir }),
       "astro add @qwik.dev/astro"
     );
   }

@@ -3,6 +3,7 @@ import os from "node:os";
 import path, { join, resolve, relative, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
+import type { ProcessOptions, ProcessResult } from "panam/executor";
 import pm from "panam/pm";
 
 /**
@@ -30,6 +31,73 @@ export function assertPmResult(
  */
 export function npmSpec(command: string): string {
   return pm.isDeno() ? `npm:${command}` : command;
+}
+
+/**
+ * Run a CLI that lives in the project's local `node_modules/.bin` (currently
+ * only `astro add …`) through the active package manager.
+ *
+ * WHY yarn is special-cased: panam maps `pm.x()` onto `yarn exec` for yarn
+ * (`PackageManager#x` delegates to `#exec`, which emits `exec` for pnpm/yarn).
+ * On Windows, `yarn exec <bin>` cannot resolve a locally installed binary:
+ * npm-style installs write BOTH an extension-less sh wrapper (`.bin/astro`) and
+ * a cmd shim (`.bin/astro.cmd`), and yarn v1's exec only ever looks for the
+ * extension-less file — which cmd.exe cannot execute. Every `astro add` call
+ * therefore failed on Windows + yarn, `assertPmResult` threw, and the CLI
+ * panicked (issue #294).
+ *
+ * `yarn run <bin> …` goes through yarn's own PATH setup, which prepends
+ * `node_modules/.bin` and lets the OS pick the `.cmd` shim, so it resolves the
+ * same binary on every platform.
+ *
+ * Every other package manager keeps the exact `pm.x(npmSpec(command))` path it
+ * has always used, including the deno `npm:` prefix applied by `npmSpec`.
+ */
+export function execLocalBin(
+  command: string,
+  options?: ProcessOptions
+): Promise<ProcessResult> {
+  return pm.isYarn() ? pm.run(command, options) : pm.x(npmSpec(command), options);
+}
+
+/**
+ * Render an unknown thrown value as one diagnostic sentence, keeping any
+ * `stderr` / `stdout` / `cause` detail the error happens to carry.
+ *
+ * WHY: the panic template used to be `${e.message ?? e}: .`, which threw away
+ * every detail a failed subprocess reported — the CI logs for issue #294 read
+ * literally "failed: .", which says something broke but not which command or
+ * why. Surface whatever the error actually knows instead.
+ */
+export function describeError(error: unknown): string {
+  const detail = (value: unknown): string => {
+    if (value === undefined || value === null) return "";
+    if (value instanceof Error) return value.message.trim();
+    if (typeof value === "string") return value.trim();
+    return String(value).trim();
+  };
+
+  const parts = [detail(error) || "Unknown error"];
+
+  if (typeof error === "object" && error !== null) {
+    const source = error as { stderr?: unknown; stdout?: unknown; cause?: unknown };
+
+    for (const [label, value] of [
+      ["stderr", source.stderr],
+      ["stdout", source.stdout],
+      ["cause", source.cause]
+    ] as const) {
+      const text = detail(value);
+      // Skip empty streams and detail already contained in the message itself.
+      if (text && !parts.some((part) => part.includes(text))) {
+        parts.push(`${label}: ${text}`);
+      }
+    }
+  }
+
+  const message = parts.join(" | ");
+
+  return /[.!?:]$/.test(message) ? message : `${message}.`;
 }
 
 export const __filename = getModuleFilename();
