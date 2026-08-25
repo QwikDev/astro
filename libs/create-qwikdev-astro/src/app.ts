@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import fs, { cpSync } from "node:fs";
 import path from "node:path";
 import { copySync, ensureDirSync, pathExistsSync } from "fs-extra/esm";
@@ -18,9 +19,10 @@ import {
   __dirname,
   assertPmResult,
   clearDir,
+  describeError,
+  execLocalBin,
   getPackageJson,
   notEmptyDir,
-  npmSpec,
   replacePackageJsonRunCommand,
   resolveAbsoluteDir,
   resolveRelativeDir,
@@ -69,6 +71,39 @@ export type Input = Required<Omit<Definition, "yes" | "no">> & {
   outDir: string;
   packageName: string;
 };
+
+const GIT_FALLBACK_NAME = "QwikDev Astro";
+const GIT_FALLBACK_EMAIL = "create-qwikdev-astro@users.noreply.github.com";
+
+/**
+ * Extra `git` arguments seeding a committer identity, but ONLY when git has
+ * none of its own.
+ *
+ * `git commit` hard-fails with "Please tell me who you are" on any machine
+ * where neither config nor the environment supplies an identity — a fresh CI
+ * runner, a clean container — which turns the optional git step of a scaffold
+ * into a failed run.
+ *
+ * The probe is not optional: `git -c` outranks every config file, so passing
+ * these unconditionally would stamp this placeholder over the real
+ * `user.name` / `user.email` of every user who has git set up properly.
+ * `git var GIT_COMMITTER_IDENT` answers exactly the question that matters —
+ * "could git author a commit right now?" — including identities git derives
+ * on its own, and exits non-zero when it could not.
+ */
+function gitIdentityArgs(cwd: string): string[] {
+  try {
+    execFileSync("git", ["var", "GIT_COMMITTER_IDENT"], { cwd, stdio: "pipe" });
+    return [];
+  } catch {
+    return [
+      "-c",
+      `user.name=${GIT_FALLBACK_NAME}`,
+      "-c",
+      `user.email=${GIT_FALLBACK_EMAIL}`
+    ];
+  }
+}
 
 export function defineDefinition(definition: UserDefinition): Definition {
   return { ...defaultDefinition, ...definition };
@@ -433,7 +468,7 @@ export class Application extends Program<Definition, Input> {
               );
             } else {
               assertPmResult(
-                await pm.x(npmSpec("astro add @qwik.dev/astro"), { cwd: input.outDir }),
+                await execLocalBin("astro add @qwik.dev/astro", { cwd: input.outDir }),
                 "astro add @qwik.dev/astro"
               );
             }
@@ -454,7 +489,7 @@ export class Application extends Program<Definition, Input> {
               );
             } else {
               assertPmResult(
-                await pm.x(npmSpec("astro add @qwik.dev/astro"), { cwd: input.outDir }),
+                await execLocalBin("astro add @qwik.dev/astro", { cwd: input.outDir }),
                 "astro add @qwik.dev/astro"
               );
             }
@@ -468,7 +503,7 @@ export class Application extends Program<Definition, Input> {
               );
             } else {
               assertPmResult(
-                await pm.x(npmSpec("astro add @qwik.dev/astro"), { cwd: input.outDir }),
+                await execLocalBin("astro add @qwik.dev/astro", { cwd: input.outDir }),
                 "astro add @qwik.dev/astro"
               );
             }
@@ -481,7 +516,7 @@ export class Application extends Program<Definition, Input> {
         // No config file found — just run astro add directly
         if (!input.dryRun) {
           assertPmResult(
-            await pm.x(npmSpec("astro add @qwik.dev/astro"), { cwd: input.outDir }),
+            await execLocalBin("astro add @qwik.dev/astro", { cwd: input.outDir }),
             "astro add @qwik.dev/astro"
           );
         }
@@ -494,7 +529,7 @@ export class Application extends Program<Definition, Input> {
         this.copyTemplate(input);
       }
     } catch (e: any) {
-      this.panic(`${e.message ?? e}: . Please try it manually.`);
+      this.panic(`${describeError(e)} Please try it manually.`);
     }
   }
 
@@ -733,6 +768,7 @@ export class Application extends Program<Definition, Input> {
             await $(
               "git",
               [
+                ...gitIdentityArgs(outDir),
                 "commit",
                 "-m",
                 `${addChanges ? "➕ Add @qwik.dev/astro" : "Initial commit 🎉"}`
@@ -748,7 +784,12 @@ export class Application extends Program<Definition, Input> {
           s.stop(`${addChanges ? "Changes added to Git ✨" : "Git initialized 🎲"}`);
         } catch (e) {
           s.stop(`Git failed to ${addChanges ? "add new changes" : "initialize"}`);
-          if (!initialized) {
+          // Branch on `addChanges`, not `initialized`: in add mode against a
+          // directory with no .git yet, `initialized` is false but the step is
+          // still "add new changes", so keying off `initialized` reported
+          // "Git failed to initialize" for a failure that had nothing to do
+          // with init — and handed the user the wrong recovery command.
+          if (!addChanges) {
             this.error(
               "Git failed to initialize. You can do this manually by running: git init"
             );

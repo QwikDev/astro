@@ -1,6 +1,6 @@
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, sep } from "node:path";
 import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 import { determineJsxStrategy } from "../src/add-flow/jsx-strategy.js";
@@ -65,7 +65,7 @@ test.group("scaffoldQwikComponent", () => {
     try {
       const strategy = determineJsxStrategy("primary");
       const outPath = await scaffoldQwikComponent(tmpDir, strategy);
-      assert.include(outPath, "src/components/qwik");
+      assert.include(outPath.split(sep).join("/"), "src/components/qwik");
       await readFile(outPath, "utf-8");
     } finally {
       await rm(tmpDir, { recursive: true });

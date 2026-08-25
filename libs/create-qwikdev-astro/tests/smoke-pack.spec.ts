@@ -1,6 +1,8 @@
 import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from "node:fs";
-import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { isAbsolute, join } from "node:path";
+import { pathToFileURL } from "node:url";
 import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 
@@ -10,7 +12,7 @@ declare module "@japa/runner/core" {
   }
 }
 
-const root = "/tmp/qwik-astro-smoke-pack";
+const root = join(tmpdir(), "qwik-astro-smoke-pack");
 const pkgDir = join(import.meta.dirname!, "..");
 const installDir = join(root, "install-test");
 const pkgRoot = join(installDir, "node_modules", "@qwik.dev", "create-astro");
@@ -19,13 +21,33 @@ const cliPath = join(pkgRoot, "dist", "cli.mjs");
 let tarball = "";
 
 /**
+ * Remove the temp root, tolerating files the OS refuses to unlink.
+ *
+ * WHY: this suite dynamically `import()`s an ESM chunk from inside `root`.
+ * Windows keeps a lock on a loaded module's file for the lifetime of the
+ * process, and a module cannot be unloaded once imported — so by the time
+ * teardown runs, that file is guaranteed to be locked and `rmSync` throws
+ * EPERM. A leftover file in the OS temp dir on an ephemeral CI runner is not
+ * a test failure, so warn once and keep going rather than turning a green
+ * suite into a non-zero exit.
+ */
+function removeRootBestEffort() {
+  try {
+    rmSync(root, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`smoke-pack: could not fully remove ${root} (${message}) — ignoring`);
+  }
+}
+
+/**
  * Build, pack, and install the tarball once before all tests.
  * Runs eagerly at import time so the group.setup teardown is simple.
  */
 function ensureBuiltPackage() {
   if (tarball) return;
 
-  rmSync(root, { recursive: true, force: true });
+  removeRootBestEffort();
   mkdirSync(root, { recursive: true });
 
   // Build
@@ -51,7 +73,7 @@ function ensureBuiltPackage() {
     throw new Error("npm pack produced no tarball name on stdout");
   }
 
-  tarball = lastLine.startsWith("/") ? lastLine : join(root, lastLine);
+  tarball = isAbsolute(lastLine) ? lastLine : join(root, lastLine);
 
   // Install tarball into a clean directory
   mkdirSync(installDir, { recursive: true });
@@ -66,7 +88,7 @@ function ensureBuiltPackage() {
 test.group("built-package smoke test", (group) => {
   group.setup(() => {
     ensureBuiltPackage();
-    return () => rmSync(root, { recursive: true, force: true });
+    return () => removeRootBestEffort();
   });
 
   group.each.timeout(60_000);
@@ -120,7 +142,9 @@ test.group("built-package smoke test", (group) => {
     // Dynamically import from the *installed* package — this exercises
     // the exact __dirname → ../stubs/templates/qwik-component/Counter.tsx
     // resolution path that previously broke due to a packaging regression.
-    const scaffoldModule = await import(join(distDir, scaffoldChunk!));
+    const scaffoldModule = await import(
+      pathToFileURL(join(distDir, scaffoldChunk!)).href
+    );
 
     // Find the scaffoldQwikComponent export (minified name varies).
     // It's the only async function in the chunk (takes projectDir, strategy, dryRun).
