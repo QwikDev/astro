@@ -1,6 +1,8 @@
 import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from "node:fs";
-import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { isAbsolute, join } from "node:path";
+import { pathToFileURL } from "node:url";
 import type { Assert } from "@japa/assert";
 import { test } from "@japa/runner";
 
@@ -10,7 +12,7 @@ declare module "@japa/runner/core" {
   }
 }
 
-const root = "/tmp/qwik-astro-smoke-pack";
+const root = join(tmpdir(), "qwik-astro-smoke-pack");
 const pkgDir = join(import.meta.dirname!, "..");
 const installDir = join(root, "install-test");
 const pkgRoot = join(installDir, "node_modules", "@qwik.dev", "create-astro");
@@ -51,7 +53,7 @@ function ensureBuiltPackage() {
     throw new Error("npm pack produced no tarball name on stdout");
   }
 
-  tarball = lastLine.startsWith("/") ? lastLine : join(root, lastLine);
+  tarball = isAbsolute(lastLine) ? lastLine : join(root, lastLine);
 
   // Install tarball into a clean directory
   mkdirSync(installDir, { recursive: true });
@@ -120,7 +122,9 @@ test.group("built-package smoke test", (group) => {
     // Dynamically import from the *installed* package — this exercises
     // the exact __dirname → ../stubs/templates/qwik-component/Counter.tsx
     // resolution path that previously broke due to a packaging regression.
-    const scaffoldModule = await import(join(distDir, scaffoldChunk!));
+    const scaffoldModule = await import(
+      pathToFileURL(join(distDir, scaffoldChunk!)).href
+    );
 
     // Find the scaffoldQwikComponent export (minified name varies).
     // It's the only async function in the chunk (takes projectDir, strategy, dryRun).
