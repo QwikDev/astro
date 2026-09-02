@@ -1,5 +1,9 @@
-import { describe, expect, it } from "vitest";
-import { createQwikFileFilter, resolveQwikPaths } from "../../src/scan";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { createQwikFileFilter, resolveQwikPaths, scanQwikEntrypoints } from "../../src/scan";
 
 describe("resolveQwikPaths", () => {
   function makeConfig(overrides: { adapter?: { name: string } } = {}) {
@@ -30,6 +34,35 @@ describe("resolveQwikPaths", () => {
   it("handles vercel adapter specially", () => {
     const result = resolveQwikPaths(makeConfig({ adapter: { name: "@astrojs/vercel" } }));
     expect(result.finalDir).toContain("dist");
+  });
+});
+
+describe("scanQwikEntrypoints", () => {
+  let root: string;
+
+  beforeEach(() => {
+    root = mkdtempSync(join(tmpdir(), "qwik-astro-scan-"));
+    mkdirSync(join(root, "src"));
+    mkdirSync(join(root, "node_modules", "dep"), { recursive: true });
+    writeFileSync(join(root, "src", "counter.tsx"), 'import { component$ } from "@qwik.dev/core";\n');
+    writeFileSync(join(root, "src", "plain.tsx"), "export const x = 1;\n");
+    writeFileSync(join(root, "node_modules", "dep", "index.js"), 'require("@qwik.dev/core");\n');
+  });
+
+  afterEach(() => {
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  it("finds entrypoints as native absolute paths from a file URL root", async () => {
+    const config = { root: pathToFileURL(`${root}/`) } as any;
+    const entrypoints = await scanQwikEntrypoints(config, () => true);
+    expect([...entrypoints]).toEqual([join(root, "src", "counter.tsx")]);
+  });
+
+  it("respects the filter", async () => {
+    const config = { root: pathToFileURL(`${root}/`) } as any;
+    const entrypoints = await scanQwikEntrypoints(config, () => false);
+    expect(entrypoints.size).toBe(0);
   });
 });
 
