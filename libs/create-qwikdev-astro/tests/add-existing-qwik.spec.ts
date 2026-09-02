@@ -167,6 +167,11 @@ test.group(
       assert.equal(result, 0);
       const pkg = JSON.parse(readFileSync(join(fixtureRoot, "package.json"), "utf-8"));
       assert.isDefined(pkg.dependencies["@qwik.dev/astro"]);
+      assert.match(
+        pkg.dependencies["@qwik.dev/core"],
+        /^[\^~]?2\./,
+        "pre-install must pin a 2.x core, never the 0.0.0 placeholder"
+      );
     }).disableTimeout();
 
     test("variable-exported config — pre-installs then succeeds", async ({ assert }) => {
@@ -177,6 +182,11 @@ test.group(
       assert.equal(result, 0);
       const pkg = JSON.parse(readFileSync(join(fixtureRoot, "package.json"), "utf-8"));
       assert.isDefined(pkg.dependencies["@qwik.dev/astro"]);
+      assert.match(
+        pkg.dependencies["@qwik.dev/core"],
+        /^[\^~]?2\./,
+        "pre-install must pin a 2.x core, never the 0.0.0 placeholder"
+      );
     }).disableTimeout();
 
     test("callback config — pre-installs then succeeds", async ({ assert }) => {
@@ -187,6 +197,11 @@ test.group(
       assert.equal(result, 0);
       const pkg = JSON.parse(readFileSync(join(fixtureRoot, "package.json"), "utf-8"));
       assert.isDefined(pkg.dependencies["@qwik.dev/astro"]);
+      assert.match(
+        pkg.dependencies["@qwik.dev/core"],
+        /^[\^~]?2\./,
+        "pre-install must pin a 2.x core, never the 0.0.0 placeholder"
+      );
     }).disableTimeout();
 
     test("does not duplicate integration when qwik already in config", async ({

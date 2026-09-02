@@ -416,9 +416,14 @@ export class Application extends Program<Definition, Input> {
       const alreadyRegistered = configSource !== null && isQwikRegistered(configSource);
 
       if (!input.dryRun && needsPreInstall) {
+        // WHY: "@qwik.dev/core@latest" (not the bare name) — behaves identically on
+        // npm/pnpm/yarn/bun, but Deno's bare-specifier fallback under its default 24h
+        // minimumDependencyAge otherwise picks the only non-prerelease version, the
+        // 0.0.0 placeholder, and the optimizer import fails. @latest lets Deno resolve
+        // the newest version its age cutoff allows. Mirrors upgrade.ts.
         this.info("@qwik.dev/astro found in config — installing before astro add.");
         assertPmResult(
-          await pm.add(["@qwik.dev/astro", "@qwik.dev/core"], {
+          await pm.add(["@qwik.dev/astro", "@qwik.dev/core@latest"], {
             cwd: input.outDir
           }),
           "pm.add @qwik.dev/astro"
