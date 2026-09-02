@@ -3,7 +3,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createQwikFileFilter, resolveQwikPaths, scanQwikEntrypoints } from "../../src/scan";
+import {
+  createQwikFileFilter,
+  resolveQwikPaths,
+  scanQwikEntrypoints
+} from "../../src/scan";
 
 describe("resolveQwikPaths", () => {
   function makeConfig(overrides: { adapter?: { name: string } } = {}) {
@@ -44,9 +48,15 @@ describe("scanQwikEntrypoints", () => {
     root = mkdtempSync(join(tmpdir(), "qwik-astro-scan-"));
     mkdirSync(join(root, "src"));
     mkdirSync(join(root, "node_modules", "dep"), { recursive: true });
-    writeFileSync(join(root, "src", "counter.tsx"), 'import { component$ } from "@qwik.dev/core";\n');
+    writeFileSync(
+      join(root, "src", "counter.tsx"),
+      'import { component$ } from "@qwik.dev/core";\n'
+    );
     writeFileSync(join(root, "src", "plain.tsx"), "export const x = 1;\n");
-    writeFileSync(join(root, "node_modules", "dep", "index.js"), 'require("@qwik.dev/core");\n');
+    writeFileSync(
+      join(root, "node_modules", "dep", "index.js"),
+      'require("@qwik.dev/core");\n'
+    );
   });
 
   afterEach(() => {
