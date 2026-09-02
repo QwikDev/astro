@@ -1,5 +1,6 @@
 import { execFile } from "node:child_process";
 import { relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import type { AstroConfig } from "astro";
 import { QWIK_ENTRYPOINT_PATTERN, SCAN_EXTENSIONS } from "./constants";
@@ -47,7 +48,9 @@ export async function scanQwikEntrypoints(
   filter: (id: string) => boolean,
   debug?: boolean
 ): Promise<Set<string>> {
-  const rootDir = config.root.pathname;
+  // fileURLToPath, not .pathname: on Windows .pathname is "/C:/project/",
+  // which is not a valid cwd (spawn fails with ENOENT) or resolve() base.
+  const rootDir = fileURLToPath(config.root);
   const stdout = await grepQwikFiles(rootDir);
   if (!stdout) return new Set();
 
